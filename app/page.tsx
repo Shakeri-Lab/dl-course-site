@@ -95,22 +95,47 @@ const courseModules = [
 
 export default function CoursePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
       <div className="container mx-auto px-4 py-8">
         {/* Hero Section */}
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold text-gray-900 mb-4">Deep Learning Mastery</h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-            A comprehensive journey through the fundamentals and applications of deep learning. From neural network
-            basics to cutting-edge architectures.
+        <div className="text-center mb-16">
+          <div className="mb-6">
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl mb-6">
+              <span className="text-3xl">🧠</span>
+            </div>
+          </div>
+          <h1 className="text-6xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-6">
+            Deep Learning Mastery
+          </h1>
+          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
+            A comprehensive journey through the fundamentals and applications of deep learning. Master neural networks, 
+            modern architectures, and real-world applications with hands-on projects.
           </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <div className="flex items-center space-x-2 text-sm text-gray-500">
+              <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+              <span>12 Comprehensive Modules</span>
+            </div>
+            <div className="flex items-center space-x-2 text-sm text-gray-500">
+              <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+              <span>60+ Hours of Content</span>
+            </div>
+            <div className="flex items-center space-x-2 text-sm text-gray-500">
+              <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
+              <span>Hands-on Projects</span>
+            </div>
+          </div>
         </div>
 
         {/* Course Overview */}
-        <Card className="mb-12 max-w-4xl mx-auto">
-          <CardHeader>
-            <CardTitle className="text-2xl">Course Overview</CardTitle>
-            <CardDescription>What you'll learn in this comprehensive deep learning course</CardDescription>
+        <Card className="mb-16 max-w-5xl mx-auto shadow-xl border-0 bg-white/80 backdrop-blur-sm">
+          <CardHeader className="pb-8">
+            <CardTitle className="text-3xl text-center bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+              Course Overview
+            </CardTitle>
+            <CardDescription className="text-center text-lg text-gray-600">
+              What you'll learn in this comprehensive deep learning course
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div>
@@ -180,21 +205,21 @@ export default function CoursePage() {
             </p>
           </div>
 
-          <div className="grid gap-4">
+          <div className="grid gap-6">
             {courseModules.map((module) => (
-              <Card key={module.id} className="hover:shadow-lg transition-all duration-200">
-                <CardContent className="p-6">
+              <Card key={module.id} className="hover:shadow-xl transition-all duration-300 border-0 bg-white/90 backdrop-blur-sm hover:bg-white group">
+                <CardContent className="p-8">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4 flex-1">
-                      <div className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 text-blue-600 font-bold text-lg">
+                    <div className="flex items-center space-x-6 flex-1">
+                      <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white font-bold text-xl shadow-lg group-hover:scale-105 transition-transform duration-300">
                         {module.id}
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-xl font-semibold text-gray-900 mb-1">{module.title}</h3>
-                        <p className="text-gray-600 mb-3">{module.description}</p>
+                        <h3 className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors duration-300">{module.title}</h3>
+                        <p className="text-gray-600 mb-4 text-lg leading-relaxed">{module.description}</p>
                         <div className="flex flex-wrap gap-2">
                           {module.topics.slice(0, 3).map((topic, index) => (
-                            <Badge key={index} variant="secondary" className="text-xs">
+                            <Badge key={index} variant="secondary" className="text-sm bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors duration-200">
                               {topic}
                             </Badge>
                           ))}
@@ -203,14 +228,14 @@ export default function CoursePage() {
                     </div>
                     <div className="flex items-center space-x-4">
                       <div className="text-right">
-                        <div className="flex items-center text-sm text-gray-500 mb-2">
-                          <Clock className="h-4 w-4 mr-1" />
-                          {module.estimatedTime}
+                        <div className="flex items-center text-sm text-gray-500 mb-3">
+                          <Clock className="h-4 w-4 mr-2" />
+                          <span className="font-medium">{module.estimatedTime}</span>
                         </div>
                         <Link href={`/module/${module.id}`}>
-                          <Button>
+                          <Button className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 px-6 py-2">
                             Explore Module
-                            <ArrowRight className="h-4 w-4 ml-2" />
+                            <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
                           </Button>
                         </Link>
                       </div>

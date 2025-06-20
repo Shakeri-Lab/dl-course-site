@@ -4,13 +4,16 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import { Button } from "@/components/ui/button"
 import { Github, ExternalLink } from "lucide-react"
+import Link from "next/link"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Deep Learning Mastery - Course Materials",
-  description: "Comprehensive deep learning course materials and resources",
-    generator: 'v0.dev'
+  title: "Deep Learning Mastery - DYNAMO Lab Course",
+  description: "Comprehensive deep learning course from DYNAMO Lab at UVA - Master neural networks, modern architectures, and real-world applications",
+  generator: 'Next.js',
+  keywords: ["deep learning", "neural networks", "machine learning", "AI", "course", "UVA", "DYNAMO Lab"],
+  authors: [{ name: "DYNAMO Lab - University of Virginia" }],
 }
 
 export default function RootLayout({
@@ -25,26 +28,26 @@ export default function RootLayout({
           <div className="container mx-auto px-4">
             <div className="flex items-center justify-between h-16">
               <div className="flex items-center space-x-8">
-                <a href="/" className="text-xl font-bold text-gray-900 hover:text-blue-600">
+                <Link href="/" className="text-xl font-bold text-gray-900 hover:text-blue-600">
                   Deep Learning Mastery
-                </a>
+                </Link>
                 <div className="hidden md:flex items-center space-x-6 text-sm">
-                  <a href="/resources" className="text-gray-600 hover:text-gray-900 transition-colors">
+                  <Link href="/resources" className="text-gray-600 hover:text-gray-900 transition-colors">
                     Resources
-                  </a>
-                  <a href="/setup" className="text-gray-600 hover:text-gray-900 transition-colors">
+                  </Link>
+                  <Link href="/setup" className="text-gray-600 hover:text-gray-900 transition-colors">
                     Setup
-                  </a>
-                  <a href="/faq" className="text-gray-600 hover:text-gray-900 transition-colors">
+                  </Link>
+                  <Link href="/faq" className="text-gray-600 hover:text-gray-900 transition-colors">
                     FAQ
-                  </a>
+                  </Link>
                 </div>
               </div>
 
               <div className="flex items-center space-x-3">
                 <Button asChild size="sm" variant="outline">
                   <a
-                    href="https://github.com/your-username/dl-course-materials"
+                    href="https://github.com/Shakeri-Lab/dl-course-site"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -70,27 +73,39 @@ export default function RootLayout({
         {children}
 
         {/* Clean Footer */}
-        <footer className="bg-gray-900 text-white py-8 mt-16">
-          <div className="container mx-auto px-4 text-center">
-            <div className="mb-4">
-              <h3 className="text-lg font-semibold mb-2">Deep Learning Mastery</h3>
-              <p className="text-gray-300 text-sm max-w-2xl mx-auto">
+        <footer className="bg-gray-900 text-white py-12 mt-16">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-8">
+              <h3 className="text-2xl font-bold mb-2">Deep Learning Mastery</h3>
+              <p className="text-gray-300 text-lg max-w-3xl mx-auto mb-4">
                 Comprehensive course materials for learning deep learning from fundamentals to advanced applications.
-                All materials are open source and freely available.
               </p>
+              <div className="flex items-center justify-center space-x-2 text-sm text-gray-400">
+                <span>Developed by</span>
+                <a 
+                  href="https://shakeri-lab.github.io/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-400 hover:text-blue-300 font-semibold transition-colors duration-200"
+                >
+                  DYNAMO Lab
+                </a>
+                <span>•</span>
+                <span>University of Virginia</span>
+              </div>
             </div>
             <div className="flex justify-center space-x-6 text-sm">
-              <a href="/resources" className="text-gray-300 hover:text-white transition-colors">
+              <Link href="/resources" className="text-gray-300 hover:text-white transition-colors">
                 Resources
-              </a>
-              <a href="/setup" className="text-gray-300 hover:text-white transition-colors">
+              </Link>
+              <Link href="/setup" className="text-gray-300 hover:text-white transition-colors">
                 Setup Guide
-              </a>
-              <a href="/faq" className="text-gray-300 hover:text-white transition-colors">
+              </Link>
+              <Link href="/faq" className="text-gray-300 hover:text-white transition-colors">
                 FAQ
-              </a>
+              </Link>
               <a
-                href="https://github.com/your-username/dl-course-materials"
+                href="https://github.com/Shakeri-Lab/dl-course-site"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-300 hover:text-white transition-colors"
@@ -106,8 +121,8 @@ export default function RootLayout({
                 Canvas
               </a>
             </div>
-            <div className="border-t border-gray-800 mt-6 pt-6 text-xs text-gray-400">
-              <p>&copy; 2024 Deep Learning Mastery. Course materials are open source and freely available.</p>
+            <div className="border-t border-gray-800 mt-8 pt-6 text-xs text-gray-400 text-center">
+              <p>&copy; 2025 DYNAMO Lab, University of Virginia. Course materials are open source and freely available.</p>
             </div>
           </div>
         </footer>
