@@ -34,8 +34,9 @@ interface Module {
 
 // Generate all module IDs for static generation
 export function generateStaticParams() {
-  return Array.from({ length: 12 }, (_, i) => ({
-    id: (i + 1).toString(),
+  // Module 1 has its own dedicated page (app/module/1), so exclude it here to prevent route conflict
+  return Array.from({ length: 11 }, (_, i) => ({
+    id: (i + 2).toString(), // generates 2..12
   }))
 }
 
