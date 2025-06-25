@@ -9,7 +9,7 @@ import Link from "next/link"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Deep Learning Mastery - DYNAMO Lab Course",
+  title: "Deep Learning - DYNAMO Lab Course",
   description: "Comprehensive deep learning course from DYNAMO Lab at UVA - Master neural networks, modern architectures, and real-world applications",
   generator: 'Next.js',
   keywords: ["deep learning", "neural networks", "machine learning", "AI", "course", "UVA", "DYNAMO Lab"],
@@ -29,7 +29,7 @@ export default function RootLayout({
             <div className="flex items-center justify-between h-16">
               <div className="flex items-center space-x-8">
                 <Link href="/" className="text-xl font-bold text-gray-900 hover:text-blue-600">
-                  Deep Learning Mastery
+                  Deep Learning
                 </Link>
                 <div className="hidden md:flex items-center space-x-6 text-sm">
                   <Link href="/resources" className="text-gray-600 hover:text-gray-900 transition-colors">
@@ -76,7 +76,7 @@ export default function RootLayout({
         <footer className="bg-gray-900 text-white py-12 mt-16">
           <div className="container mx-auto px-4">
             <div className="text-center mb-8">
-              <h3 className="text-2xl font-bold mb-2">Deep Learning Mastery</h3>
+              <h3 className="text-2xl font-bold mb-2">Deep Learning</h3>
               <p className="text-gray-300 text-lg max-w-3xl mx-auto mb-4">
                 Comprehensive course materials for learning deep learning from fundamentals to advanced applications.
               </p>
