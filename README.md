@@ -384,23 +384,31 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 Each module page (`/module/[id]`) follows this structure *in order*:
 
-1. **Lecture Video** – Embedded YouTube iframe using a 16:9 responsive container (`padding-bottom: 56.25%`) and wrapped in `max-w-4xl mx-auto` so the video is not full-width on large screens.
-2. **Lecture Notes** – Bullet points or link to a PDF/slides that recap key concepts.
-3. **Further Reading** – Reference to the online textbook *Dive into Deep Learning* (D2L) with the exact chapter/section range (e.g. "read up to § 5.2").
-4. **Homework** – **ONE consolidated card per homework** (e.g. "Homework 1").  At the **top-right** of the card:
-   - `Notebook` button → links to the starter notebook inside `notebooks/moduleX/`.
-   - `Submit on Gradescope` button → external submission link.
-   Inside the card list the parts **1-N + Bonus** with descriptive headings so students see the dependency chain.  **Do not** include individual "Starter Code" buttons for each part—only the single notebook button at the top.
+1. **Lecture Video** – Embedded YouTube iframe inside a responsive 16:9 container (`padding-bottom: 56.25%`) and wrapped in `max-w-4xl mx-auto` for reasonable width.
+2. **Resources & Homework Card** – one card that contains **everything else**:
+   - A short paragraph with the recommended reading from *Dive into Deep Learning* (D2L), e.g. “read up to § 5.2”.
+   - A second paragraph describing the homework notebook (number of parts, bonus, etc.).
+   - Action buttons in the card header (right-aligned):
+     ```
+     [ Lecture Notes ]   [ Homework Notebook ]   [ Submit on Gradescope ]
+     ```
+     *Lecture Notes* links to a PDF/MD/Notebook with lecture slides or bullet notes inside the `notes/` folder (or external).
+     *Homework Notebook* links to the starter `.ipynb` in `notebooks/moduleX/`.
+     *Submit on Gradescope* is an external link for submission.
+
+That's it—no separate "Lecture Notes" or "Homework" sections. The page remains minimal: video ➜ single card.
 
 ### Notebook Repository Layout
 ```text
 notebooks/
   module1/
-    homework1.ipynb   # starter notebook referenced on the page
+    homework1.ipynb
   module2/
     homework1.ipynb
-    homework2.ipynb   # if a module has multiple notebooks, create hw2, hw3 …
 ```
 
-> **Workflow:** Copy `app/module/1/page.tsx` as a template when creating new modules, then update:
-> • YouTube `src` and `title`  • Lecture notes  • D2L reading range  • Homework parts & notebook link.
+### Creating a New Module
+1. Duplicate `app/module/1/page.tsx` ➜ `app/module/2/page.tsx` (etc.).
+2. Change:
+   • YouTube `src` and `title`  • D2L reading range  • Button links.
+3. Add the new notebook under `notebooks/moduleX/`.
