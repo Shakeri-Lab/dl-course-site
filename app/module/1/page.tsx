@@ -42,42 +42,11 @@ export default function ModuleOnePage() {
           </CardContent>
         </Card>
 
-        {/* Further Reading */}
+        {/* Resources & Homework */}
         <Card className="mb-12">
           <CardHeader>
-            <CardTitle className="text-xl flex items-center">
-              📖 Further Reading
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-gray-700 mb-2">
-              For a deeper treatment, you can read <a href="https://d2l.ai/index.html" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">D2L Online Book</a> until end of <strong>5.2. Implementation of Multilayer Perceptrons</strong>.
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Lecture Notes */}
-        <Card className="mb-12">
-          <CardHeader>
-            <CardTitle className="text-2xl">Lecture Notes</CardTitle>
-            <CardDescription>Key definitions & takeaway points.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ul className="list-disc list-inside space-y-1 text-gray-700">
-              <li>Historical milestones of neural networks and deep learning.</li>
-              <li>Difference between traditional machine learning and representation learning.</li>
-              <li>Definition of a perceptron and the concept of activation functions.</li>
-              <li>Training via empirical risk minimisation.</li>
-              <li>Preview of optimisation algorithms (GD, SGD).</li>
-            </ul>
-          </CardContent>
-        </Card>
-
-        {/* Consolidated Homework Section */}
-        <Card className="mb-12">
-          <CardHeader className="space-y-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-2xl">Homework 1</CardTitle>
+              <CardTitle className="text-xl flex items-center">📚 Resources & Homework</CardTitle>
               <div className="flex space-x-2">
                 <Button asChild variant="outline" size="sm">
                   <a href="https://github.com/Shakeri-Lab/dl-course-site/raw/main/notes/module1.pdf" target="_blank" rel="noopener noreferrer">
@@ -86,7 +55,7 @@ export default function ModuleOnePage() {
                 </Button>
                 <Button asChild variant="outline" size="sm">
                   <a href={`${githubRoot}/homework1.ipynb`} target="_blank" rel="noopener noreferrer">
-                    <Github className="h-4 w-4 mr-1" /> Notebook
+                    <Github className="h-4 w-4 mr-1" /> Homework Notebook
                   </a>
                 </Button>
                 <Button asChild size="sm">
@@ -94,77 +63,17 @@ export default function ModuleOnePage() {
                     <ExternalLink className="h-4 w-4 mr-1" /> Submit on Gradescope
                   </a>
                 </Button>
-                <Button asChild size="sm" variant="outline">
-                  <a href="https://canvas.instructure.com" target="_blank" rel="noopener noreferrer">
-                    <ExternalLink className="h-4 w-4 mr-1" /> Open in Canvas
-                  </a>
-                </Button>
               </div>
             </div>
           </CardHeader>
-          <CardContent className="space-y-8">
-            {/* Part 1 */}
-            <div className="space-y-3">
-              <h3 className="text-lg font-semibold text-gray-900">1 – From Maximum Likelihood to Cross-Entropy Loss</h3>
-              <p className="text-gray-700 mb-2">6 Parts + Bonus (complete sequentially).</p>
-              <ol className="list-decimal list-inside space-y-1 text-gray-700 ml-4">
-                <li>Derive binary cross-entropy from maximum likelihood (include gradient).</li>
-                <li>Extend derivation to multi-class softmax.</li>
-                <li>Code binary & multi-class cross-entropy from scratch.</li>
-                <li>Verify numerically vs. scikit-learn logistic regression.</li>
-                <li>Explore effect of label smoothing.</li>
-                <li>Analyse gradient behaviour near saturation.</li>
-                <li><strong>Bonus:</strong> Implement focal loss and compare on an imbalanced dataset.</li>
-              </ol>
-            </div>
-
-            {/* Part 2 */}
-            <div className="space-y-3">
-              <h3 className="text-lg font-semibold text-gray-900">2 – Normal Equations vs. Gradient Descent</h3>
-              <p className="text-gray-700">
-                Understand computational trade-offs between analytical and iterative solutions. Implement both methods, measure runtime, accuracy, memory usage and conditioning effects. See the template function <code className="bg-gray-100 px-1 rounded">compare_methods</code> in the starter notebook.
-              </p>
-            </div>
-
-            {/* Part 3 */}
-            <div className="space-y-3">
-              <h3 className="text-lg font-semibold text-gray-900">3 – SGD Exploration: Escaping Local Minima</h3>
-              <p className="text-gray-700">
-                Reproduce the two-hole landscape, perform a systematic hyper-parameter study and design your own complex loss landscape.
-              </p>
-            </div>
-
-            {/* Part 4 */}
-            <div className="space-y-3">
-              <h3 className="text-lg font-semibold text-gray-900">4 – Modern Optimizers Showdown (PyTorch)</h3>
-              <p className="text-gray-700">
-                Compare SGD, Momentum, Adam, AdaGrad and RMSProp on challenging optimisation problems including the Rosenbrock function and your two-hole landscape.
-              </p>
-            </div>
-
-            {/* Part 5 */}
-            <div className="space-y-3">
-              <h3 className="text-lg font-semibold text-gray-900">5 – Hebbian Learning: "Neurons That Fire Together, Wire Together"</h3>
-              <p className="text-gray-700">
-                Implement pure Hebbian learning, Oja's rule and analyse their limitations using a pattern association task.
-              </p>
-            </div>
-
-            {/* Part 6 */}
-            <div className="space-y-3">
-              <h3 className="text-lg font-semibold text-gray-900">6 – The XOR Challenge</h3>
-              <p className="text-gray-700">
-                Build and train a minimal neural network that solves the XOR problem to solidify your understanding of non-linear activation functions.
-              </p>
-            </div>
-
-            {/* Bonus */}
-            <div className="space-y-3">
-              <h3 className="text-lg font-semibold text-gray-900">Bonus – Bias-Variance Decomposition in Practice</h3>
-              <p className="text-gray-700">
-                Conduct an empirical study of the bias-variance trade-off across model complexities using bootstrap sampling.
-              </p>
-            </div>
+          <CardContent className="space-y-4">
+            <p className="text-gray-700">
+              Recommended reading: <a href="https://d2l.ai/index.html" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">*Dive into Deep Learning*</a> – up to&nbsp;
+              <strong>Section 5.2 “Implementation of Multilayer Perceptrons”</strong>.
+            </p>
+            <p className="text-gray-700">
+              Homework 1 covers six progressive parts (plus a bonus) inside the single notebook. Read the instructions at the top of the notebook and complete the parts in order.
+            </p>
           </CardContent>
         </Card>
       </div>
