@@ -66,6 +66,17 @@ export default function RootLayout({
                     <span className="hidden sm:inline">Canvas</span>
                   </a>
                 </Button>
+
+                <Button asChild size="sm" variant="outline">
+                  <a
+                    href="https://gradescope.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <ExternalLink className="h-4 w-4 mr-1" />
+                    <span className="hidden sm:inline">Gradescope</span>
+                  </a>
+                </Button>
               </div>
             </div>
           </div>

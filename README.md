@@ -386,26 +386,27 @@ Each module page (`/module/[id]`) follows this structure *in order*:
 
 1. **Lecture Video** – Embedded YouTube iframe inside a responsive 16:9 container (`padding-bottom: 56.25%`) and wrapped in `max-w-4xl mx-auto` for reasonable width.
 2. **Resources & Homework Card** – one card that contains **everything else**:
-   - A short paragraph with the recommended reading from *Dive into Deep Learning* (D2L), e.g. “read up to § 5.2”.
+   - A short paragraph with the recommended reading from *Dive into Deep Learning* (D2L), e.g. "read up to § 5.2".
    - A second paragraph describing the homework notebook (number of parts, bonus, etc.).
    - Action buttons in the card header (right-aligned):
      ```
-     [ Lecture Notes ]   [ Homework Notebook ]   [ Submit on Gradescope ]
+     [ Notes & Notebook ]   (Gradescope link is in the top navbar)
      ```
-     *Lecture Notes* links to a PDF/MD/Notebook with lecture slides or bullet notes inside the `notes/` folder (or external).
-     *Homework Notebook* links to the starter `.ipynb` in `notebooks/moduleX/`.
+     *Notes & Notebook* links to a PDF/MD/Notebook with lecture slides or bullet notes inside the `notes/` folder (or external).
      *Submit on Gradescope* is an external link for submission.
 
 That's it—no separate "Lecture Notes" or "Homework" sections. The page remains minimal: video ➜ single card.
 
 ### Notebook Repository Layout
 ```text
-notebooks/
-  module1/
-    homework1.ipynb
-  module2/
-    homework1.ipynb
+notebooks/ (kept only if you want rendered copies)  
+# Active development happens in the separate repo:
+https://github.com/Shakeri-Lab/dl-course-materials
 ```
+
+In each module folder of that repo you keep:
+* `notes.pdf` or `notes.ipynb`
+* `homework.ipynb`
 
 ### Creating a New Module
 1. Duplicate `app/module/1/page.tsx` ➜ `app/module/2/page.tsx` (etc.).

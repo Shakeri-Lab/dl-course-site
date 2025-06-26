@@ -49,18 +49,8 @@ export default function ModuleOnePage() {
               <CardTitle className="text-xl flex items-center">📚 Resources & Homework</CardTitle>
               <div className="flex space-x-2">
                 <Button asChild variant="outline" size="sm">
-                  <a href="https://github.com/Shakeri-Lab/dl-course-site/raw/main/notes/module1.pdf" target="_blank" rel="noopener noreferrer">
-                    <ExternalLink className="h-4 w-4 mr-1" /> Lecture Notes
-                  </a>
-                </Button>
-                <Button asChild variant="outline" size="sm">
-                  <a href={`${githubRoot}/homework1.ipynb`} target="_blank" rel="noopener noreferrer">
-                    <Github className="h-4 w-4 mr-1" /> Homework Notebook
-                  </a>
-                </Button>
-                <Button asChild size="sm">
-                  <a href="https://gradescope.com" target="_blank" rel="noopener noreferrer">
-                    <ExternalLink className="h-4 w-4 mr-1" /> Submit on Gradescope
+                  <a href="https://github.com/Shakeri-Lab/dl-course-materials/tree/main/module1" target="_blank" rel="noopener noreferrer">
+                    <Github className="h-4 w-4 mr-1" /> Notes &amp; Notebook
                   </a>
                 </Button>
               </div>
@@ -68,11 +58,11 @@ export default function ModuleOnePage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-gray-700">
-              Recommended reading: <a href="https://d2l.ai/index.html" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">*Dive into Deep Learning*</a> – up to&nbsp;
-              <strong>Section 5.2 “Implementation of Multilayer Perceptrons”</strong>.
+              Recommended reading: <a href="https://d2l.ai/index.html" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Dive into Deep Learning</a> – up to&nbsp;
+              <strong>Section 5.2 "Implementation of Multilayer Perceptrons"</strong>.
             </p>
             <p className="text-gray-700">
-              Homework 1 covers six progressive parts (plus a bonus) inside the single notebook. Read the instructions at the top of the notebook and complete the parts in order.
+              Homework covers different parts (plus a bonus) inside the single notebook. Read the instructions at the top of the notebook and complete the parts in order.
             </p>
           </CardContent>
         </Card>
