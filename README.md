@@ -384,16 +384,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 Each module page (`/module/[id]`) follows this structure *in order*:
 
-1. **Lecture Video** – Embedded YouTube iframe inside a responsive 16:9 container (`padding-bottom: 56.25%`) and wrapped in `max-w-4xl mx-auto` for reasonable width.
-2. **Resources & Homework Card** – one card that contains **everything else**:
-   - A short paragraph with the recommended reading from *Dive into Deep Learning* (D2L), e.g. "read up to § 5.2".
-   - A second paragraph describing the homework notebook (number of parts, bonus, etc.).
-   - Action buttons in the card header (right-aligned):
-     ```
-     [ Notes & Notebook ]   (Gradescope link is in the top navbar)
-     ```
-     *Notes & Notebook* links to a PDF/MD/Notebook with lecture slides or bullet notes inside the `notes/` folder (or external).
-     *Submit on Gradescope* is an external link for submission.
+1. **Lecture Video** – Embedded YouTube iframe inside a responsive 16:9 container (`padding-bottom: 56.25%`) and wrapped in `max-w-4xl mx-auto`.  A right-aligned button in the header links to **"Lecture Notes & HW Notebook"** (GitHub).
+2. **Resources & Homework Card** – placed directly under the video and contains:
+     - A short paragraph with the recommended reading from *Dive into Deep Learning* (D2L), e.g. "read up to § 5.2".
+     - A second paragraph describing the homework notebook.
+   (No buttons here—the *Notes & Notebook* button is next to the lecture title, and Gradescope lives in the top navbar.)
 
 That's it—no separate "Lecture Notes" or "Homework" sections. The page remains minimal: video ➜ single card.
 

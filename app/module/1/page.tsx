@@ -25,7 +25,14 @@ export default function ModuleOnePage() {
         {/* Lecture Video */}
         <Card className="mb-12">
           <CardHeader>
-            <CardTitle className="text-2xl">Lecture 1 – From Linear Regression to Neural Networks</CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-2xl">Lecture 1 – From Linear Regression to Neural Networks</CardTitle>
+              <Button asChild variant="outline" size="sm">
+                <a href="https://github.com/Shakeri-Lab/dl-course-materials/tree/main/module1" target="_blank" rel="noopener noreferrer">
+                  <Github className="h-4 w-4 mr-1" /> Lecture Notes &amp; HW Notebook
+                </a>
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="max-w-4xl mx-auto">
@@ -45,16 +52,7 @@ export default function ModuleOnePage() {
         {/* Resources & Homework */}
         <Card className="mb-12">
           <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-xl flex items-center">📚 Resources & Homework</CardTitle>
-              <div className="flex space-x-2">
-                <Button asChild variant="outline" size="sm">
-                  <a href="https://github.com/Shakeri-Lab/dl-course-materials/tree/main/module1" target="_blank" rel="noopener noreferrer">
-                    <Github className="h-4 w-4 mr-1" /> Notes &amp; Notebook
-                  </a>
-                </Button>
-              </div>
-            </div>
+            <CardTitle className="text-xl flex items-center">📚 Resources & Homework</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-gray-700">
