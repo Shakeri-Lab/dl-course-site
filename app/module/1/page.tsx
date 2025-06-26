@@ -42,6 +42,20 @@ export default function ModuleOnePage() {
           </CardContent>
         </Card>
 
+        {/* Further Reading */}
+        <Card className="mb-12">
+          <CardHeader>
+            <CardTitle className="text-xl flex items-center">
+              📖 Further Reading
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-gray-700 mb-2">
+              For a deeper treatment, you can read <a href="https://d2l.ai/index.html" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">D2L Online Book</a> until end of <strong>5.2. Implementation of Multilayer Perceptrons</strong>.
+            </p>
+          </CardContent>
+        </Card>
+
         {/* Lecture Notes */}
         <Card className="mb-12">
           <CardHeader>
@@ -59,26 +73,17 @@ export default function ModuleOnePage() {
           </CardContent>
         </Card>
 
-        {/* Further Reading */}
-        <Card className="mb-12">
-          <CardHeader>
-            <CardTitle className="text-xl flex items-center">
-              📖 Further Reading
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-gray-700 mb-2">
-              For a deeper treatment, you can read <a href="https://d2l.ai/index.html" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">D2L Online Book</a> until end of <strong>5.2. Implementation of Multilayer Perceptrons</strong>.
-            </p>
-          </CardContent>
-        </Card>
-
         {/* Consolidated Homework Section */}
         <Card className="mb-12">
           <CardHeader className="space-y-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-2xl">Homework 1</CardTitle>
               <div className="flex space-x-2">
+                <Button asChild variant="outline" size="sm">
+                  <a href="https://github.com/Shakeri-Lab/dl-course-site/raw/main/notes/module1.pdf" target="_blank" rel="noopener noreferrer">
+                    <ExternalLink className="h-4 w-4 mr-1" /> Lecture Notes
+                  </a>
+                </Button>
                 <Button asChild variant="outline" size="sm">
                   <a href={`${githubRoot}/homework1.ipynb`} target="_blank" rel="noopener noreferrer">
                     <Github className="h-4 w-4 mr-1" /> Notebook
@@ -87,6 +92,11 @@ export default function ModuleOnePage() {
                 <Button asChild size="sm">
                   <a href="https://gradescope.com" target="_blank" rel="noopener noreferrer">
                     <ExternalLink className="h-4 w-4 mr-1" /> Submit on Gradescope
+                  </a>
+                </Button>
+                <Button asChild size="sm" variant="outline">
+                  <a href="https://canvas.instructure.com" target="_blank" rel="noopener noreferrer">
+                    <ExternalLink className="h-4 w-4 mr-1" /> Open in Canvas
                   </a>
                 </Button>
               </div>
