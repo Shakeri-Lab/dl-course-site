@@ -23,8 +23,8 @@ const courseModules = [
   },
   {
     id: 3,
-    title: "Optimization and Training",
-    description: "SGD, Adam, learning rates, and regularization",
+    title: "Optimization Foundations & Ablation Methodology",
+    description: "Optimization algorithms and experimental design",
     estimatedTime: "4-5 hours",
     topics: ["Optimizers", "Learning Rate Scheduling", "Regularization"],
   },

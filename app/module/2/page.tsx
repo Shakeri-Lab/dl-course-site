@@ -54,7 +54,7 @@ export default function ModulePage() {
           <CardContent className="space-y-4">
             <p className="text-gray-700">
               Recommended reading: <a href="https://d2l.ai/index.html" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Dive into Deep Learning</a> – until end of&nbsp;
-              <strong>Chapter 6 "Builders' Guide"</strong>.
+              <strong>Chapter 5 "Multilayer Perceptrons"</strong>.
             </p>
             <p className="text-gray-700">
               Homework 2 focuses on implementing neural network fundamentals, backpropagation, and exploring different activation functions. Complete the exercises in the provided notebook.
