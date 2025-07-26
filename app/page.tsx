@@ -16,8 +16,8 @@ const courseModules = [
   },
   {
     id: 2,
-    title: "Neural Network Fundamentals",
-    description: "Architecture, forward/backward propagation",
+    title: "Backpropagation",
+    description: "The algorithm that powers deep learning",
     estimatedTime: "4-5 hours",
     topics: ["Backpropagation", "Gradient Descent", "Activation Functions"],
   },

@@ -4,7 +4,7 @@ import { Github, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 
 export const metadata = {
-  title: "Module 2 – Neural Network Fundamentals",
+  title: "Module 2 – Backpropagation",
   description: "Lecture video and assignments for Module 2 of the Deep Learning course by DYNAMO Lab."
 }
 
@@ -23,9 +23,9 @@ export default function ModulePage() {
         <Card className="mb-12">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle className="text-2xl">Lecture 2 – Neural Network Fundamentals</CardTitle>
+              <CardTitle className="text-2xl">Lecture 2 – Backpropagation</CardTitle>
               <Button asChild variant="outline" size="sm">
-                <a href="https://github.com/Shakeri-Lab/dl-course-materials/tree/main/module2" target="_blank" rel="noopener noreferrer">
+                <a href="https://github.com/Shakeri-Lab/dl-course/tree/main/module-2" target="_blank" rel="noopener noreferrer">
                   <Github className="h-4 w-4 mr-1" /> Lecture Notes &amp; HW Notebook
                 </a>
               </Button>
@@ -36,7 +36,7 @@ export default function ModulePage() {
               <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
                 <iframe
                   src="https://www.youtube.com/embed/JcYMZxoxCBA"
-                  title="Neural Network Fundamentals – Lecture 2"
+                  title="Backpropagation – Lecture 2"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
                   className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"

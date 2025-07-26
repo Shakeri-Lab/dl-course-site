@@ -28,7 +28,7 @@ export default function ModuleOnePage() {
             <div className="flex items-center justify-between">
               <CardTitle className="text-2xl">Lecture 1 – From Linear Regression to Neural Networks</CardTitle>
               <Button asChild variant="outline" size="sm">
-                <a href="https://github.com/Shakeri-Lab/dl-course-materials/tree/main/module1" target="_blank" rel="noopener noreferrer">
+                <a href="https://github.com/Shakeri-Lab/dl-course/tree/main/module-1" target="_blank" rel="noopener noreferrer">
                   <Github className="h-4 w-4 mr-1" /> Lecture Notes &amp; HW Notebook
                 </a>
               </Button>

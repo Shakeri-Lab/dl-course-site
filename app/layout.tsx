@@ -55,28 +55,6 @@ export default function RootLayout({
                     <span className="hidden sm:inline">GitHub</span>
                   </a>
                 </Button>
-
-                <Button asChild size="sm">
-                  <a
-                    href="https://canvas.instructure.com/courses/your-course"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <ExternalLink className="h-4 w-4 mr-1" />
-                    <span className="hidden sm:inline">Canvas</span>
-                  </a>
-                </Button>
-
-                <Button asChild size="sm" variant="outline">
-                  <a
-                    href="https://gradescope.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <ExternalLink className="h-4 w-4 mr-1" />
-                    <span className="hidden sm:inline">Gradescope</span>
-                  </a>
-                </Button>
               </div>
             </div>
           </div>
@@ -122,14 +100,6 @@ export default function RootLayout({
                 className="text-gray-300 hover:text-white transition-colors"
               >
                 GitHub
-              </a>
-              <a
-                href="https://canvas.instructure.com/courses/your-course"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-300 hover:text-white transition-colors"
-              >
-                Canvas
               </a>
             </div>
             <div className="border-t border-gray-800 mt-8 pt-6 text-xs text-gray-400 text-center">

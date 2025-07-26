@@ -396,15 +396,15 @@ That's it—no separate "Lecture Notes" or "Homework" sections. The page remains
 ```text
 notebooks/ (kept only if you want rendered copies)  
 # Active development happens in the separate repo:
-https://github.com/Shakeri-Lab/dl-course-materials
+https://github.com/Shakeri-Lab/dl-course
 ```
 
 In each module folder of that repo you keep:
-* `notes.pdf` or `notes.ipynb`
-* `homework.ipynb`
+ * `notes.pdf` or `notes.ipynb`
+ * `homework.ipynb`
 
 ### Creating a New Module
-1. Duplicate `app/module/1/page.tsx` ➜ `app/module/2/page.tsx` (etc.).
-2. Change:
-   • YouTube `src` and `title`  • D2L reading range  • Button links.
-3. Add the new notebook under `notebooks/moduleX/`.
+ 1. Duplicate `app/module/1/page.tsx` ➜ `app/module/2/page.tsx` (etc.).
+ 2. Change:
+    • YouTube `src` and `title`  • D2L reading range  • Button links.
+3. Add the new materials under `https://github.com/Shakeri-Lab/dl-course/tree/main/module-X`.
