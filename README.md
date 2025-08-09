@@ -43,10 +43,15 @@ This project implements a **hybrid approach** combining the best of GitHub Pages
 ### Local Development
 
 1. **Clone the repository**
-   \`\`\`bash
-   git clone https://github.com/your-username/dl-course-materials.git
-   cd dl-course-materials
-   \`\`\`
+   ```bash
+   # HTTPS
+   git clone https://github.com/Shakeri-Lab/dl-course-site.git
+   cd dl-course-site
+
+   # or SSH
+   git clone git@github.com:Shakeri-Lab/dl-course-site.git
+   cd dl-course-site
+   ```
 
 2. **Install dependencies**
    \`\`\`bash
@@ -87,7 +92,7 @@ This project implements a **hybrid approach** combining the best of GitHub Pages
 ## 📁 Project Structure
 
 \`\`\`
-dl-course-materials/
+dl-course-site/
 ├── app/                          # Next.js app directory
 │   ├── page.tsx                 # Homepage with course overview
 │   ├── layout.tsx               # Global layout and navigation
@@ -408,3 +413,18 @@ In each module folder of that repo you keep:
  2. Change:
     • YouTube `src` and `title`  • D2L reading range  • Button links.
 3. Add the new materials under `https://github.com/Shakeri-Lab/dl-course/tree/main/module-X`.
+
+## 🧰 Git Remote (SSH)
+
+If you prefer SSH, the remote for this repository is:
+
+```text
+git@github.com:Shakeri-Lab/dl-course-site.git
+```
+
+To switch an existing clone to SSH:
+
+```bash
+git remote set-url origin git@github.com:Shakeri-Lab/dl-course-site.git
+git remote -v
+```
