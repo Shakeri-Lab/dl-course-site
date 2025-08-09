@@ -49,6 +49,28 @@ export default function ModuleOnePage() {
           </CardContent>
         </Card>
 
+        {/* Additional Lecture Video: DL1.2 */}
+        <Card className="mb-12">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-2xl">DL1.2 – Linear Regression via Neural Networks in Python (From-Scratch Guide to Module 1)</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="max-w-4xl mx-auto">
+              <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+                <iframe
+                  src="https://www.youtube.com/embed/WOFb8EKAy7I"
+                  title="DL1.2: Linear Regression via Neural Networks in Python | From-Scratch Guide to Module 1"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Resources & Homework */}
         <Card className="mb-12">
           <CardHeader>
