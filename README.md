@@ -428,3 +428,12 @@ To switch an existing clone to SSH:
 git remote set-url origin git@github.com:Shakeri-Lab/dl-course-site.git
 git remote -v
 ```
+
+## 🔐 Git Remote (HTTPS)
+
+To switch the remote to HTTPS and push:
+
+```bash
+git remote set-url origin https://github.com/Shakeri-Lab/dl-course-site.git
+git push origin main
+```
