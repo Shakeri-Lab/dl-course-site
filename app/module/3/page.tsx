@@ -34,9 +34,37 @@ export default function ModulePage() {
           <CardContent>
             <div className="max-w-4xl mx-auto">
               <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
-                <div className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg bg-gray-200 flex items-center justify-center">
-                  <p className="text-gray-600">Video coming soon</p>
-                </div>
+                <iframe
+                  src="https://www.youtube.com/embed/V0l6b5R6Vkw"
+                  title="3.1: Coding in PyTorch | Regularized Linear Regression in PyTorch"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
+                />
+              </div>
+              <div className="mt-6 space-y-3 text-gray-800">
+                <h3 className="text-xl font-semibold">3.1: Coding in PyTorch — Regularized Linear Regression in PyTorch</h3>
+                <p>
+                  Before we dive into deep multilayer perceptrons (piecewise linear regression), we’ll add two essentials while
+                  staying in the linear regression setting:
+                </p>
+                <ul className="list-disc pl-6 space-y-1">
+                  <li>
+                    <strong>Regularization in neural nets:</strong> we’ll write a custom loss that <em>explicitly</em> takes the network
+                    parameters, adding weight decay to the usual residual term.
+                  </li>
+                  <li>
+                    <strong>Working with data splits:</strong> we’ll hold out a validation set to monitor training and tune hyperparameters
+                    without bias.
+                  </li>
+                </ul>
+                <p>
+                  Concretely, we’ll minimize <code>MSE(y, ŷ) + λ‖θ‖²</code> on the training split and use the validation split to evaluate
+                  generalization in an unbiased way.
+                </p>
+                <p>
+                  Watch on YouTube: <a className="text-blue-600 underline" href="https://youtu.be/V0l6b5R6Vkw" target="_blank" rel="noopener noreferrer">https://youtu.be/V0l6b5R6Vkw</a>
+                </p>
               </div>
             </div>
           </CardContent>
