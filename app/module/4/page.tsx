@@ -53,12 +53,10 @@ export default function ModulePage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-gray-700">
-              Recommended reading: <a href="https://d2l.ai/index.html" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Dive into Deep Learning</a> –&nbsp;
-              <strong>Chapter 7 "Convolutional Neural Networks"</strong>.
+              Recommended reading: See convolutional neural network chapters in your preferred deep learning text (e.g., the CNN sections in Dive into Deep Learning).
             </p>
             <p className="text-gray-700">
-              Homework 4 focuses on implementing convolutional layers, receptive fields, and training CNNs on image datasets.
-              Complete the exercises in the provided notebook.
+              Homework 4 focuses on implementing and training CNNs for image classification tasks. Complete the exercises in the provided notebook.
             </p>
           </CardContent>
         </Card>

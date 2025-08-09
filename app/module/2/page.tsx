@@ -46,7 +46,32 @@ export default function ModulePage() {
           </CardContent>
         </Card>
 
-        
+        {/* Lecture Video 2.2 */}
+        <Card className="mb-12">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-2xl">Lecture 2.2 – Coding in PyTorch &amp; Linear Regression with Autograd</CardTitle>
+              <Button asChild variant="outline" size="sm">
+                <a href="https://github.com/Shakeri-Lab/dl-course/tree/main/module-2" target="_blank" rel="noopener noreferrer">
+                  <Github className="h-4 w-4 mr-1" /> Lecture Notes &amp; HW Notebook
+                </a>
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="max-w-4xl mx-auto">
+              <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+                <iframe
+                  src="https://www.youtube.com/embed/MKh0OtgrVHQ"
+                  title="DL2.2: Coding in PyTorch & Linear Regression with Autograd"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Resources & Homework */}
         <Card className="mb-12">
