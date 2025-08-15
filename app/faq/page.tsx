@@ -36,7 +36,7 @@ const faqCategories = [
       {
         question: "Can I use TensorFlow instead of PyTorch?",
         answer:
-          "The course covers both frameworks. Most examples use PyTorch, but TensorFlow alternatives are provided. Choose based on your preference or career goals.",
+          "The course will be taught using PyTorch.",
       },
       {
         question: "What if I can't install the required software?",
@@ -61,7 +61,7 @@ const faqCategories = [
       {
         question: "What if I miss a deadline?",
         answer:
-          "Check the Canvas syllabus for late submission policies. Contact the instructor immediately if you have extenuating circumstances.",
+          "Check the Canvas syllabus for late submission policies. Contact the instructor and TAs immediately if you have extenuating circumstances.",
       },
     ],
   },
@@ -89,15 +89,22 @@ const faqCategories = [
 
 const contactInfo = {
   instructor: {
-    name: "Dr. Jane Smith",
-    email: "jane.smith@university.edu",
-    officeHours: "Tuesdays & Thursdays, 2-4 PM",
+    name: "Dr. Heman Shakeri",
+    email: "hs9hd@virginia.edu",
+    officeHours: "See Canvas for schedule.",
   },
-  ta: {
-    name: "Alex Johnson",
-    email: "alex.johnson@university.edu",
-    officeHours: "Mondays & Wednesdays, 3-5 PM",
-  },
+  tas: [
+    {
+      name: "Justin Lee",
+      email: "jgh2xh@virginia.edu",
+      officeHours: "See Canvas for schedule.",
+    },
+    {
+      name: "Tom Lever",
+      email: "tsl2b@virginia.edu",
+      officeHours: "See Canvas for schedule.",
+    },
+  ],
 }
 
 export default function FAQPage() {
@@ -125,7 +132,7 @@ export default function FAQPage() {
               </p>
               <Button asChild size="sm">
                 <a
-                  href="https://canvas.instructure.com/courses/your-course/discussion_topics"
+                  href="https://canvas.its.virginia.edu/"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -186,27 +193,29 @@ export default function FAQPage() {
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Mail className="h-5 w-5 text-green-600" />
-                  <span>Teaching Assistant</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <p className="font-semibold">{contactInfo.ta.name}</p>
-                  <p className="text-sm text-gray-600">{contactInfo.ta.email}</p>
-                  <div className="flex items-center space-x-2 text-sm text-gray-600">
-                    <Clock className="h-4 w-4" />
-                    <span>{contactInfo.ta.officeHours}</span>
+            {contactInfo.tas.map((ta, idx) => (
+              <Card key={idx}>
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <Mail className="h-5 w-5 text-green-600" />
+                    <span>Teaching Assistant</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <p className="font-semibold">{ta.name}</p>
+                    <p className="text-sm text-gray-600">{ta.email}</p>
+                    <div className="flex items-center space-x-2 text-sm text-gray-600">
+                      <Clock className="h-4 w-4" />
+                      <span>{ta.officeHours}</span>
+                    </div>
                   </div>
-                </div>
-                <Button asChild className="mt-4" size="sm" variant="outline">
-                  <a href={`mailto:${contactInfo.ta.email}`}>Send Email</a>
-                </Button>
-              </CardContent>
-            </Card>
+                  <Button asChild className="mt-4" size="sm" variant="outline">
+                    <a href={`mailto:${ta.email}`}>Send Email</a>
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
 
@@ -227,7 +236,7 @@ export default function FAQPage() {
             </Button>
             <Button asChild variant="outline" className="justify-start">
               <a
-                href="https://canvas.instructure.com/courses/your-course/discussion_topics"
+                href="https://canvas.its.virginia.edu/"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -247,7 +256,7 @@ export default function FAQPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild>
               <a
-                href="https://canvas.instructure.com/courses/your-course/discussion_topics"
+                href="https://canvas.its.virginia.edu/"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -256,8 +265,8 @@ export default function FAQPage() {
               </a>
             </Button>
             <Button asChild variant="outline">
-              <a href={`mailto:${contactInfo.instructor.email}`}>
-                Email Instructor
+              <a href={`mailto:hs9hd@virginia.edu,jgh2xh@virginia.edu,tsl2b@virginia.edu`}>
+                Email Teaching Team
                 <Mail className="h-4 w-4 ml-2" />
               </a>
             </Button>

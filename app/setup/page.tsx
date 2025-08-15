@@ -348,7 +348,7 @@ export default function SetupPage() {
           <div className="flex flex-wrap gap-3">
             <Button asChild variant="outline">
               <a
-                href="https://canvas.instructure.com/courses/your-course/discussion_topics/setup-help"
+                href="https://canvas.its.virginia.edu/"
                 target="_blank"
                 rel="noopener noreferrer"
               >
