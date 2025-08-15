@@ -19,7 +19,7 @@ export default function ModulePage() {
           </Link>
         </div>
 
-        {/* Lecture Video */}
+        {/* Lecture Video 4.1 */}
         <Card className="mb-12">
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -46,6 +46,33 @@ export default function ModulePage() {
           </CardContent>
         </Card>
 
+        {/* Lecture Video 4.2 */}
+        <Card className="mb-12">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-2xl">DL4.2 – Coding up your first CNN</CardTitle>
+              <Button asChild variant="outline" size="sm">
+                <a href="https://github.com/Shakeri-Lab/dl-course/tree/main/module-4" target="_blank" rel="noopener noreferrer">
+                  <Github className="h-4 w-4 mr-1" /> Lecture Notes &amp; HW Notebook
+                </a>
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="max-w-4xl mx-auto">
+              <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+                <iframe
+                  src="https://www.youtube.com/embed/Dprs8jH13GA"
+                  title="DL4.2: Coding up your first CNN"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Resources & Homework */}
         <Card className="mb-12">
           <CardHeader>
@@ -53,7 +80,7 @@ export default function ModulePage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-gray-700">
-              Recommended reading: See convolutional neural network chapters in your preferred deep learning text (e.g., the CNN sections in Dive into Deep Learning).
+              Recommended reading: <a href="https://d2l.ai/index.html" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Dive into Deep Learning</a> — <strong>Chapter 7</strong>.
             </p>
             <p className="text-gray-700">
               Homework 4 focuses on implementing and training CNNs for image classification tasks. Complete the exercises in the provided notebook.
