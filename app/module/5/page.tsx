@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Github, ArrowLeft } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 
 export const metadata = {
@@ -24,11 +23,6 @@ export default function ModulePage() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="text-2xl">Lecture 5 – Modern CNN Architectures and Transfer Learning</CardTitle>
-              <Button asChild variant="outline" size="sm">
-                <a href="https://github.com/Shakeri-Lab/dl-course/tree/main/module-5" target="_blank" rel="noopener noreferrer">
-                  <Github className="h-4 w-4 mr-1" /> Lecture Notes &amp; HW Notebook
-                </a>
-              </Button>
             </div>
           </CardHeader>
           <CardContent>

@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Github, ExternalLink, ArrowLeft } from "lucide-react"
+import { ExternalLink, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 
 export const metadata = {
@@ -27,11 +27,6 @@ export default function ModuleOnePage() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="text-2xl">Lecture 1 – From Linear Regression to Neural Networks</CardTitle>
-              <Button asChild variant="outline" size="sm">
-                <a href="https://github.com/Shakeri-Lab/dl-course/tree/main/module-1" target="_blank" rel="noopener noreferrer">
-                  <Github className="h-4 w-4 mr-1" /> Lecture Notes &amp; HW Notebook
-                </a>
-              </Button>
             </div>
           </CardHeader>
           <CardContent>
@@ -54,11 +49,6 @@ export default function ModuleOnePage() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="text-2xl">Lecture 1.2 – Linear Regression via Neural Networks in Python</CardTitle>
-              <Button asChild variant="outline" size="sm">
-                <a href="https://github.com/Shakeri-Lab/dl-course/tree/main/module-1" target="_blank" rel="noopener noreferrer">
-                  <Github className="h-4 w-4 mr-1" /> Lecture Notes &amp; HW Notebook
-                </a>
-              </Button>
             </div>
           </CardHeader>
           <CardContent>
@@ -92,7 +82,7 @@ export default function ModuleOnePage() {
             <div className="pt-2">
               <Button asChild>
                 <a
-                  href="https://colab.research.google.com/drive/1lNxYvpKIZDtZNdsrG5hq2558DE1voNMu#scrollTo=BDsVLCfeWhqK"
+                  href="https://colab.research.google.com/drive/1lNxYvpKIZDtZNdsrG5hq2558DE1voNMu?usp=sharing"
                   target="_blank"
                   rel="noopener noreferrer"
                 >

@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Github, ArrowLeft } from "lucide-react"
+import { ExternalLink, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 
 export const metadata = {
@@ -24,11 +24,6 @@ export default function ModulePage() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="text-2xl">Lecture 2 – Backpropagation</CardTitle>
-              <Button asChild variant="outline" size="sm">
-                <a href="https://github.com/Shakeri-Lab/dl-course/tree/main/module-2" target="_blank" rel="noopener noreferrer">
-                  <Github className="h-4 w-4 mr-1" /> Lecture Notes &amp; HW Notebook
-                </a>
-              </Button>
             </div>
           </CardHeader>
           <CardContent>
@@ -51,11 +46,6 @@ export default function ModulePage() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="text-2xl">Lecture 2.2 – Coding in PyTorch &amp; Linear Regression with Autograd</CardTitle>
-              <Button asChild variant="outline" size="sm">
-                <a href="https://github.com/Shakeri-Lab/dl-course/tree/main/module-2" target="_blank" rel="noopener noreferrer">
-                  <Github className="h-4 w-4 mr-1" /> Lecture Notes &amp; HW Notebook
-                </a>
-              </Button>
             </div>
           </CardHeader>
           <CardContent>
@@ -86,6 +76,18 @@ export default function ModulePage() {
             <p className="text-gray-700">
               Homework 2 focuses on implementing neural network fundamentals, backpropagation, and exploring different activation functions. Complete the exercises in the provided notebook.
             </p>
+            <div className="pt-2">
+              <Button asChild>
+                <a
+                  href="https://colab.research.google.com/drive/1lNxYvpKIZDtZNdsrG5hq2558DE1voNMu?usp=sharing"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Open Colab Notebook
+                  <ExternalLink className="h-4 w-4 ml-2" />
+                </a>
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>
