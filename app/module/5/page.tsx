@@ -1,4 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { ExternalLink } from "lucide-react"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 
@@ -36,6 +38,30 @@ export default function ModulePage() {
                   className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
                 />
               </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Resources & Homework */}
+        <Card className="mb-12">
+          <CardHeader>
+            <CardTitle className="text-xl flex items-center">📚 Resources & Homework</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-gray-700">
+              Recommended reading: <a href="https://d2l.ai/index.html" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Dive into Deep Learning</a> — review CNN architecture sections.
+            </p>
+            <div className="pt-2">
+              <Button asChild>
+                <a
+                  href="https://colab.research.google.com/drive/1U487JBOOdJhIV72a9RZl0ASiSnkpX5KJ?usp=sharing"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Open Colab Notebook
+                  <ExternalLink className="h-4 w-4 ml-2" />
+                </a>
+              </Button>
             </div>
           </CardContent>
         </Card>

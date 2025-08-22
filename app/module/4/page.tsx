@@ -1,4 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { ExternalLink } from "lucide-react"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 
@@ -74,6 +76,18 @@ export default function ModulePage() {
             <p className="text-gray-700">
               Homework 4 focuses on implementing and training CNNs for image classification tasks. Complete the exercises in the provided notebook.
             </p>
+            <div className="pt-2">
+              <Button asChild>
+                <a
+                  href="https://colab.research.google.com/drive/1U487JBOOdJhIV72a9RZl0ASiSnkpX5KJ?usp=sharing"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Open Colab Notebook
+                  <ExternalLink className="h-4 w-4 ml-2" />
+                </a>
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>
