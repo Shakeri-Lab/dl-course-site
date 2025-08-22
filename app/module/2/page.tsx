@@ -63,10 +63,10 @@ export default function ModulePage() {
           </CardContent>
         </Card>
 
-        {/* Resources & Homework */}
+        {/* Resources & Lecture Code */}
         <Card className="mb-12">
           <CardHeader>
-            <CardTitle className="text-xl flex items-center">📚 Resources & Homework</CardTitle>
+            <CardTitle className="text-xl flex items-center">📚 Resources & Lecture Code</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-gray-700">
@@ -74,7 +74,7 @@ export default function ModulePage() {
               <strong>Chapter 5 "Multilayer Perceptrons"</strong>.
             </p>
             <p className="text-gray-700">
-              Homework 2 focuses on implementing neural network fundamentals, backpropagation, and exploring different activation functions. Complete the exercises in the provided notebook.
+              The Colab notebook contains the lecture code for Module 2 (backpropagation and PyTorch basics). Follow along by running the cells in order.
             </p>
             <div className="pt-2">
               <Button asChild>

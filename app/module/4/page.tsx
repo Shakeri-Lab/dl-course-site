@@ -64,17 +64,17 @@ export default function ModulePage() {
           </CardContent>
         </Card>
 
-        {/* Resources & Homework */}
+        {/* Resources & Lecture Code */}
         <Card className="mb-12">
           <CardHeader>
-            <CardTitle className="text-xl flex items-center">📚 Resources & Homework</CardTitle>
+            <CardTitle className="text-xl flex items-center">📚 Resources & Lecture Code</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-gray-700">
               Recommended reading: <a href="https://d2l.ai/index.html" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Dive into Deep Learning</a> — <strong>Chapter 7</strong>.
             </p>
             <p className="text-gray-700">
-              Homework 4 focuses on implementing and training CNNs for image classification tasks. Complete the exercises in the provided notebook.
+              The Colab notebook includes the lecture code for Module 4 (CNNs and a first PyTorch CNN). Use it to reproduce the code demos from lecture.
             </p>
             <div className="pt-2">
               <Button asChild>
