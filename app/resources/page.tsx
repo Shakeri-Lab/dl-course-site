@@ -104,6 +104,18 @@ const resources = [
     estimatedTime: "3-4 months",
     tags: ["Comprehensive", "Andrew Ng", "Certificates"],
   },
+  {
+    id: 9,
+    title: "Homework 1 Colab Notebook",
+    description: "Colab notebook for Homework 1 (Module 1)",
+    type: "tutorial",
+    category: "Practice",
+    difficulty: "Beginner",
+    rating: 5.0,
+    url: "https://colab.research.google.com/drive/1lNxYvpKIZDtZNdsrG5hq2558DE1voNMu#scrollTo=BDsVLCfeWhqK",
+    estimatedTime: "Variable",
+    tags: ["Homework", "Colab", "Module 1"],
+  },
 ]
 
 const categories = ["All", "Fundamentals", "Implementation", "Visualization", "Research", "Practice"]

@@ -89,6 +89,18 @@ export default function ModuleOnePage() {
             <p className="text-gray-700">
               Homework covers different parts (plus a bonus) inside the single notebook. Read the instructions at the top of the notebook and complete the parts in order.
             </p>
+            <div className="pt-2">
+              <Button asChild>
+                <a
+                  href="https://colab.research.google.com/drive/1lNxYvpKIZDtZNdsrG5hq2558DE1voNMu#scrollTo=BDsVLCfeWhqK"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Open Colab Notebook
+                  <ExternalLink className="h-4 w-4 ml-2" />
+                </a>
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>
