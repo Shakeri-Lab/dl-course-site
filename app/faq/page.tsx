@@ -21,7 +21,7 @@ const faqCategories = [
       {
         question: "What's the difference between this site and Canvas?",
         answer:
-          "This site contains all learning materials (videos, readings, code). Canvas handles course management (quizzes, assignments, grades, discussions, deadlines).",
+          "This site contains all learning materials (videos, readings, code). Canvas handles course management (quizzes, assignments, grades, deadlines).",
       },
     ],
   },
