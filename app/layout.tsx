@@ -3,7 +3,7 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import { Button } from "@/components/ui/button"
-import { Github, ExternalLink } from "lucide-react"
+import { ExternalLink } from "lucide-react"
 import Link from "next/link"
 
 const inter = Inter({ subsets: ["latin"] })
@@ -44,18 +44,7 @@ export default function RootLayout({
                 </div>
               </div>
 
-              <div className="flex items-center space-x-3">
-                <Button asChild size="sm" variant="outline">
-                  <a
-                    href="https://github.com/Shakeri-Lab/dl-course-site"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Github className="h-4 w-4 mr-1" />
-                    <span className="hidden sm:inline">GitHub</span>
-                  </a>
-                </Button>
-              </div>
+              <div className="flex items-center space-x-3" />
             </div>
           </div>
         </nav>
@@ -93,14 +82,7 @@ export default function RootLayout({
               <Link href="/faq" className="text-gray-300 hover:text-white transition-colors">
                 FAQ
               </Link>
-              <a
-                href="https://github.com/Shakeri-Lab/dl-course-site"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-300 hover:text-white transition-colors"
-              >
-                GitHub
-              </a>
+              
             </div>
             <div className="border-t border-gray-800 mt-8 pt-6 text-xs text-gray-400 text-center">
               <p>&copy; 2025 DYNAMO Lab, University of Virginia. Course materials are open source and freely available.</p>

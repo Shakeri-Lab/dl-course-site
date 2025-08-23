@@ -41,7 +41,7 @@ const faqCategories = [
       {
         question: "What if I can't install the required software?",
         answer:
-          "Use Google Colab as a backup - it requires no installation. Check the setup guide for troubleshooting, or ask for help in Canvas discussions.",
+          "Use Google Colab as a backup - it requires no installation. Check the setup guide for troubleshooting, or ask for help in Ed Discussion.",
       },
     ],
   },
@@ -71,7 +71,7 @@ const faqCategories = [
       {
         question: "Where should I ask questions?",
         answer:
-          "Use Canvas discussion forums for course-related questions so everyone can benefit. Email the instructor for private matters or urgent issues.",
+          "Use Ed Discussion for course-related questions so everyone can benefit. Email the instructor for private matters or urgent issues.",
       },
       {
         question: "Are there office hours?",
@@ -115,8 +115,8 @@ export default function FAQPage() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Frequently Asked Questions</h1>
           <p className="text-lg text-gray-600">
-            Common questions about the Deep Learning Mastery course. Can't find what you're looking for? Ask in Canvas
-            discussions or contact us directly.
+            Common questions about the Deep Learning Mastery course. Can't find what you're looking for? Ask in Ed Discussion
+            or contact us directly.
           </p>
         </div>
 
@@ -132,11 +132,11 @@ export default function FAQPage() {
               </p>
               <Button asChild size="sm">
                 <a
-                  href="https://canvas.its.virginia.edu/"
+                  href="https://edstem.org/us/courses/83711/discussion"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Go to Canvas Discussions
+                  Go to Ed Discussion
                   <ExternalLink className="h-4 w-4 ml-2" />
                 </a>
               </Button>
@@ -236,11 +236,11 @@ export default function FAQPage() {
             </Button>
             <Button asChild variant="outline" className="justify-start">
               <a
-                href="https://canvas.its.virginia.edu/"
+                href="https://edstem.org/us/courses/83711/discussion"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <span>Canvas Discussions</span>
+                <span>Ed Discussion</span>
                 <ExternalLink className="h-4 w-4 ml-2" />
               </a>
             </Button>
@@ -256,11 +256,11 @@ export default function FAQPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild>
               <a
-                href="https://canvas.its.virginia.edu/"
+                href="https://edstem.org/us/courses/83711/discussion"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Ask in Canvas Discussions
+                Ask in Ed Discussion
                 <ExternalLink className="h-4 w-4 ml-2" />
               </a>
             </Button>
