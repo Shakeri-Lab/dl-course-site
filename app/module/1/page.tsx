@@ -82,7 +82,7 @@ export default function ModuleOnePage() {
             <div className="pt-2">
               <Button asChild>
                 <a
-                  href="https://colab.research.google.com/drive/1lNxYvpKIZDtZNdsrG5hq2558DE1voNMu?usp=sharing"
+                  href="https://colab.research.google.com/drive/1dXLaMnIOQtcBqCZ9LnPiSEpVYmtviRxB?usp=sharing"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
