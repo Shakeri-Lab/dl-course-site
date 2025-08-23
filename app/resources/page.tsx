@@ -112,7 +112,7 @@ const resources = [
     category: "Practice",
     difficulty: "Beginner",
     rating: 5.0,
-    url: "https://colab.research.google.com/drive/1lNxYvpKIZDtZNdsrG5hq2558DE1voNMu?usp=sharing",
+    url: "https://colab.research.google.com/drive/1JUuiHRj0CcYkMIBFVq6W9TKWm7AsvpiL?usp=sharing",
     estimatedTime: "Variable",
     tags: ["Homework", "Colab", "Module 1"],
   },

@@ -91,6 +91,19 @@ export default function ModuleOnePage() {
                 </a>
               </Button>
             </div>
+
+            <div className="pt-2">
+              <Button asChild variant="outline">
+                <a
+                  href="https://colab.research.google.com/drive/1JUuiHRj0CcYkMIBFVq6W9TKWm7AsvpiL?usp=sharing"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Open Homework 1 on Colab
+                  <ExternalLink className="h-4 w-4 ml-2" />
+                </a>
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>
