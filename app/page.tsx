@@ -3,7 +3,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { ArrowRight, Clock } from "lucide-react"
+import { ArrowRight, Clock, ExternalLink } from "lucide-react"
 import Link from "next/link"
 
 const courseModules = [
@@ -104,6 +104,14 @@ export default function CoursePage() {
             <p className="text-lg text-gray-600">
               Explore the complete curriculum with hands-on exercises and real-world applications
             </p>
+            <div className="mt-4 flex justify-center">
+              <Button asChild variant="outline">
+                <a href="/syllabus.pdf" target="_blank" rel="noopener noreferrer">
+                  Course Syllabus (PDF)
+                  <ExternalLink className="h-4 w-4 ml-2" />
+                </a>
+              </Button>
+            </div>
           </div>
 
           <div className="grid gap-6">
