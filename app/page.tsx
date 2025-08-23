@@ -106,10 +106,10 @@ export default function CoursePage() {
             </p>
             <div className="mt-4 flex justify-center">
               <Button asChild variant="outline">
-                <a href="/syllabus.pdf" target="_blank" rel="noopener noreferrer">
+                <Link href="/syllabus.pdf" target="_blank" rel="noopener noreferrer">
                   Course Syllabus (PDF)
                   <ExternalLink className="h-4 w-4 ml-2" />
-                </a>
+                </Link>
               </Button>
             </div>
           </div>
