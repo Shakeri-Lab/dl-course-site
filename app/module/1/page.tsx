@@ -33,7 +33,7 @@ export default function ModuleOnePage() {
             <div className="max-w-4xl mx-auto">
               <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
                 <iframe
-                  src="https://www.youtube.com/embed/bpvleOXJrk8"
+                  src="https://www.youtube.com/embed/-bdoWPWjyTc"
                   title="From Linear Regression to Neural Networks – Lecture 1"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
