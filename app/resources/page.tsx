@@ -17,7 +17,6 @@ const resources = [
     difficulty: "Intermediate",
     rating: 4.8,
     url: "https://www.deeplearningbook.org/",
-    estimatedTime: "Self-paced",
     tags: ["Theory", "Mathematics", "Comprehensive"],
   },
   {
@@ -29,7 +28,6 @@ const resources = [
     difficulty: "Beginner",
     rating: 4.7,
     url: "http://neuralnetworksanddeeplearning.com/",
-    estimatedTime: "20-30 hours",
     tags: ["Interactive", "Beginner-friendly", "Visual"],
   },
   {
@@ -41,7 +39,6 @@ const resources = [
     difficulty: "Intermediate",
     rating: 4.6,
     url: "https://pytorch.org/tutorials/",
-    estimatedTime: "Variable",
     tags: ["PyTorch", "Hands-on", "Official"],
   },
   {
@@ -53,7 +50,6 @@ const resources = [
     difficulty: "Beginner",
     rating: 4.9,
     url: "https://www.3blue1brown.com/topics/linear-algebra",
-    estimatedTime: "3.5 hours",
     tags: ["Visual", "Intuitive", "Mathematics"],
   },
   {
@@ -65,7 +61,6 @@ const resources = [
     difficulty: "Advanced",
     rating: 4.5,
     url: "https://paperswithcode.com/",
-    estimatedTime: "Ongoing",
     tags: ["Research", "State-of-art", "Code"],
   },
   {
@@ -77,7 +72,6 @@ const resources = [
     difficulty: "Intermediate",
     rating: 4.8,
     url: "https://distill.pub/",
-    estimatedTime: "Variable",
     tags: ["Interactive", "Research", "Visual"],
   },
   {
@@ -89,7 +83,6 @@ const resources = [
     difficulty: "Beginner",
     rating: 4.4,
     url: "https://www.kaggle.com/learn",
-    estimatedTime: "2-4 hours each",
     tags: ["Practical", "Free", "Certificates"],
   },
   {
@@ -101,7 +94,6 @@ const resources = [
     difficulty: "Intermediate",
     rating: 4.7,
     url: "https://www.coursera.org/specializations/deep-learning",
-    estimatedTime: "3-4 months",
     tags: ["Comprehensive", "Andrew Ng", "Certificates"],
   },
   {
@@ -113,7 +105,6 @@ const resources = [
     difficulty: "Beginner",
     rating: 5.0,
     url: "https://colab.research.google.com/drive/1JUuiHRj0CcYkMIBFVq6W9TKWm7AsvpiL?usp=sharing",
-    estimatedTime: "Variable",
     tags: ["Homework", "Colab", "Module 1"],
   },
 ]
