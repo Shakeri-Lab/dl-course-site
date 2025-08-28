@@ -3,7 +3,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { ArrowRight, Clock, ExternalLink } from "lucide-react"
+import { ArrowRight, ExternalLink } from "lucide-react"
 import Link from "next/link"
 
 const courseModules = [
@@ -11,84 +11,72 @@ const courseModules = [
     id: 1,
     title: "Introduction to Deep Learning",
     description: "Foundations, history, and key concepts",
-    estimatedTime: "3-4 hours",
     topics: ["Neural Networks Basics", "Perceptrons", "History of AI"],
   },
   {
     id: 2,
     title: "Backpropagation",
     description: "The algorithm that powers deep learning",
-    estimatedTime: "4-5 hours",
     topics: ["Backpropagation", "Gradient Descent", "Activation Functions"],
   },
   {
     id: 3,
     title: "Optimization Foundations & Ablation Methodology",
     description: "Optimization algorithms and experimental design",
-    estimatedTime: "4-5 hours",
     topics: ["Optimizers", "Learning Rate Scheduling", "Regularization"],
   },
   {
     id: 4,
     title: "Convolutional Neural Networks",
     description: "CNNs for computer vision applications",
-    estimatedTime: "5-6 hours",
     topics: ["Convolution", "Pooling", "CNN Architectures"],
   },
   {
     id: 5,
     title: "Advanced CNN Architectures",
     description: "ResNet, DenseNet, and modern architectures",
-    estimatedTime: "4-5 hours",
     topics: ["ResNet", "DenseNet", "EfficientNet"],
   },
   {
     id: 6,
     title: "",
     description: "Under construction",
-    estimatedTime: "",
     topics: [],
   },
   {
     id: 7,
     title: "",
     description: "Under construction",
-    estimatedTime: "",
     topics: [],
   },
   {
     id: 8,
     title: "",
     description: "Under construction",
-    estimatedTime: "",
     topics: [],
   },
   {
     id: 9,
     title: "",
     description: "Under construction",
-    estimatedTime: "",
     topics: [],
   },
   {
     id: 10,
     title: "",
     description: "Under construction",
-    estimatedTime: "",
     topics: [],
   },
   {
     id: 11,
     title: "",
     description: "Under construction",
-    estimatedTime: "",
     topics: [],
   },
   {
     id: 12,
     title: "",
     description: "Under construction",
-    estimatedTime: "",
     topics: [],
   },
 ]
@@ -144,10 +132,6 @@ export default function CoursePage() {
                     {module.title && (
                       <div className="flex items-center space-x-4">
                         <div className="text-right">
-                          <div className="flex items-center text-sm text-gray-500 mb-3">
-                            <Clock className="h-4 w-4 mr-2" />
-                            <span className="font-medium">{module.estimatedTime}</span>
-                          </div>
                           <Link href={`/module/${module.id}`}>
                             <Button className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 px-6 py-2">
                               Explore Module
