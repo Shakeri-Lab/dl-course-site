@@ -276,10 +276,6 @@ export default function ResourcesPage() {
                       {resource.type}
                     </Badge>
                   </div>
-                  <div className="flex items-center space-x-1">
-                    <Star className="h-4 w-4 text-yellow-500 fill-current" />
-                    <span className="text-sm text-gray-600">{resource.rating}</span>
-                  </div>
                 </div>
 
                 <CardTitle className="text-lg">{resource.title}</CardTitle>
