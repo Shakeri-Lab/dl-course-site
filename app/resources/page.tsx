@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { BookOpen, Video, Code, ExternalLink, Search, Star, Clock } from "lucide-react"
+import { BookOpen, Video, Code, ExternalLink, Search, Star } from "lucide-react"
 import { useState } from "react"
 
 const resources = [
@@ -284,12 +284,8 @@ export default function ResourcesPage() {
 
               <CardContent>
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center">
                     <Badge className={getDifficultyColor(resource.difficulty)}>{resource.difficulty}</Badge>
-                    <div className="flex items-center space-x-1 text-sm text-gray-600">
-                      <Clock className="h-4 w-4" />
-                      <span>{resource.estimatedTime}</span>
-                    </div>
                   </div>
 
                   <div className="flex flex-wrap gap-1">
