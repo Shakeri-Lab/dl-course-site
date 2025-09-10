@@ -106,6 +106,11 @@ export default function ModuleOnePage() {
             </div>
           </CardContent>
         </Card>
+        <div className="mt-8">
+          <Link href="/">
+            <Button variant="outline">⟵ Back to Modules Menu</Button>
+          </Link>
+        </div>
       </div>
     </div>
   )
