@@ -71,7 +71,7 @@ export default function ModulePage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-gray-700">
-              Recommended reading: <a href="https://d2l.ai/index.html" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Dive into Deep Learning</a> — <strong>Chapter 7</strong>.
+              Recommended reading: <a href="https://d2l.ai/index.html" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Dive into Deep Learning</a> — D2L: <strong>5.6; Ch. 7; 8.1; 14.1</strong>.
             </p>
             <p className="text-gray-700">
               The Colab notebook includes the lecture code for Module 4 (CNNs and a first PyTorch CNN). Use it to reproduce the code demos from lecture.

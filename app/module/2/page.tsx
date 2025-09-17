@@ -70,8 +70,7 @@ export default function ModulePage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-gray-700">
-              Recommended reading: <a href="https://d2l.ai/index.html" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Dive into Deep Learning</a> – until end of&nbsp;
-              <strong>Chapter 5 "Multilayer Perceptrons"</strong>.
+              Recommended reading: <a href="https://d2l.ai/index.html" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Dive into Deep Learning</a> — D2L: <strong>2.4; 2.5; 5.3</strong>.
             </p>
             <p className="text-gray-700">
               The Colab notebook contains the lecture code for Module 2 (backpropagation and PyTorch basics). Follow along by running the cells in order.

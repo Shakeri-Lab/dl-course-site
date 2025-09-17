@@ -73,8 +73,7 @@ export default function ModuleOnePage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-gray-700">
-              Recommended reading: <a href="https://d2l.ai/index.html" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Dive into Deep Learning</a> – from Section 3 up to&nbsp;
-              <strong>Section 5.2 "Implementation of Multilayer Perceptrons"</strong>.
+              Recommended reading: <a href="https://d2l.ai/index.html" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Dive into Deep Learning</a> — D2L: <strong>2.3; 3.1.4; 4.1; 5.1; 12.4</strong>.
             </p>
             <p className="text-gray-700">
               This Colab notebook contains the lecture code demonstrated in class. Read the instructions at the top and run the cells in order.

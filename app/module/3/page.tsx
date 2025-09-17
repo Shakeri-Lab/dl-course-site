@@ -116,7 +116,7 @@ export default function ModulePage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-gray-700">
-              Recommended reading: <a href="https://d2l.ai/index.html" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Dive into Deep Learning</a> — through the end of <strong>Chapter 6</strong>.
+              Recommended reading: <a href="https://d2l.ai/index.html" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Dive into Deep Learning</a> — D2L: <strong>3.6–3.7; 12; 19</strong>.
             </p>
             <p className="text-gray-700">
               The Colab notebook contains the lecture code for Module 3 (optimization and training MLPs). Run the cells sequentially as demonstrated in the lecture.
