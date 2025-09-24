@@ -39,8 +39,8 @@ const courseModules = [
   },
   {
     id: 6,
-    title: "",
-    description: "Under construction",
+    title: "Encoder Decoder Architectures",
+    description: "Sequence-to-sequence models with encoder–decoder design",
     topics: [],
   },
   {
