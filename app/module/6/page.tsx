@@ -41,6 +41,28 @@ export default function ModulePage() {
           </CardContent>
         </Card>
 
+        {/* Lecture Video 6.2 */}
+        <Card className="mb-12">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-2xl">Lecture 6.2 – Encoder-Decoder Architectures (Part 2)</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="max-w-4xl mx-auto">
+              <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+                <iframe
+                  src="https://www.youtube.com/embed/RkOjUjdbKbg"
+                  title="Encoder-Decoder Architectures – Lecture 6.2"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Resources & Lecture Code */}
         <Card className="mb-12">
           <CardHeader>
