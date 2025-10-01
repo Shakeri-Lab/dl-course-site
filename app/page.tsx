@@ -40,8 +40,8 @@ const courseModules = [
   {
     id: 6,
     title: "Encoder Decoder Architectures",
-    description: "Sequence-to-sequence models with encoder–decoder design",
-    topics: [],
+    description: "encoder–decoder design",
+    topics: ["Seq2Seq", "Encoder–Decoder", "U-Net"],
   },
   {
     id: 7,
