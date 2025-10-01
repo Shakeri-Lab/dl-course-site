@@ -45,9 +45,9 @@ const courseModules = [
   },
   {
     id: 7,
-    title: "",
-    description: "Under construction",
-    topics: [],
+    title: "Recurrent Neural Networks",
+    description: "RNNs, LSTMs, and sequence modeling",
+    topics: ["RNN Basics", "LSTM", "GRU"],
   },
   {
     id: 8,
