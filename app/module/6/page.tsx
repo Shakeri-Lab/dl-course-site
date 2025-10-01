@@ -92,6 +92,9 @@ export default function ModulePage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-gray-700">
+              Recommended reading: <a href="https://d2l.ai/index.html" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Dive into Deep Learning</a> — D2L: <strong>10.6; 14.10; 14.11</strong>.
+            </p>
+            <p className="text-gray-700">
               The Colab notebook contains the lecture code for Module 6 (encoder–decoder architectures). Use it to follow along with the in-class demos.
             </p>
             <div className="pt-2">
