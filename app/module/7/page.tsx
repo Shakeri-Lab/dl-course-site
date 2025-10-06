@@ -119,6 +119,19 @@ export default function ModulePage() {
                 </a>
               </Button>
             </div>
+
+            <div className="pt-2">
+              <Button asChild variant="outline">
+                <a
+                  href="https://colab.research.google.com/drive/1Nb4OuNQ3nrcUDNg-CZobMFmMWcf3zBGB?usp=sharing"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  HW seq2seq (Colab)
+                  <ExternalLink className="h-4 w-4 ml-2" />
+                </a>
+              </Button>
+            </div>
           </CardContent>
         </Card>
 
