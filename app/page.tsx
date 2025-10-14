@@ -51,9 +51,9 @@ const courseModules = [
   },
   {
     id: 8,
-    title: "",
-    description: "Under construction",
-    topics: [],
+    title: "Attention Mechanism",
+    description: "attention, queries-keys-values, scaled dot-product",
+    topics: ["Attention Basics", "Q-K-V", "Scaled Dot-Product"],
   },
   {
     id: 9,
