@@ -76,7 +76,7 @@ export default function ModulePage() {
             <div className="max-w-4xl mx-auto">
               <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
                 <iframe
-                  src="https://www.youtube.com/embed/wG49AA3g7kE"
+                  src="https://www.youtube.com/embed/nDcFkXXFzJs"
                   title="Implementing Attention in seq2seq Decoder – Lecture 8.3"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
