@@ -28,6 +28,9 @@ export default function ModulePage() {
             <p className="text-gray-700">
               Recommended reading: <a href="https://d2l.ai/index.html" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Dive into Deep Learning</a> — D2L: <strong>Chapter 11 up to 11.5</strong>.
             </p>
+            <p className="text-gray-700">
+              Homework note: Submit with Module 9 — Add attention to your last seq2seq assignment (same translation task) and compare with your previous best results.
+            </p>
             <div className="pt-2">
               <Button asChild>
                 <a
@@ -39,6 +42,72 @@ export default function ModulePage() {
                   <ExternalLink className="h-4 w-4 ml-2" />
                 </a>
               </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Lecture Video 8.1 */}
+        <Card className="mb-12">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-2xl">Lecture 8 – Attention Mechanism (Part 1)</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="max-w-4xl mx-auto">
+              <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+                <iframe
+                  src="https://www.youtube.com/embed/8WBIyiaW7Cc"
+                  title="Attention Mechanism – Lecture 8.1"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Lecture Video 8.2 */}
+        <Card className="mb-12">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-2xl">Lecture 8.2 – Attention Mechanism (Part 2)</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="max-w-4xl mx-auto">
+              <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+                <iframe
+                  src="https://www.youtube.com/embed/oq92FA-_xa4"
+                  title="Attention Mechanism – Lecture 8.2"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Lecture Video 8.3 */}
+        <Card className="mb-12">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-2xl">Lecture 8.3 – Implementing Attention in seq2seq Decoder</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="max-w-4xl mx-auto">
+              <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+                <iframe
+                  src="https://www.youtube.com/embed/_pXUqnVEpJk"
+                  title="Implementing Attention in seq2seq Decoder – Lecture 8.3"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
+                />
+              </div>
             </div>
           </CardContent>
         </Card>
