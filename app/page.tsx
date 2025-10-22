@@ -57,9 +57,9 @@ const courseModules = [
   },
   {
     id: 9,
-    title: "",
-    description: "Under construction",
-    topics: [],
+    title: "Transformer",
+    description: "self-attention, positional encoding, encoder–decoder transformer",
+    topics: ["Self-Attention", "Positional Encoding", "Transformer"],
   },
   {
     id: 10,
