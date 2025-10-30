@@ -23,7 +23,7 @@ export default function ModulePage() {
         <Card className="mb-12">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle className="text-2xl">Lecture 10 – Transformer Models in Vision and Text</CardTitle>
+              <CardTitle className="text-2xl">10.1 Vision Transformer (ViT)</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -45,7 +45,7 @@ export default function ModulePage() {
         <Card className="mb-12">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle className="text-2xl">Lecture 10.2 – Transformer Models (Part 2)</CardTitle>
+              <CardTitle className="text-2xl">10.2 Pretrained Transformer Models</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -67,7 +67,7 @@ export default function ModulePage() {
         <Card className="mb-12">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle className="text-2xl">Lecture 10.3 – Transformer Models (Part 3)</CardTitle>
+              <CardTitle className="text-2xl">10.3 Scaling of Decoder Transformer Models</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
