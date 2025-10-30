@@ -63,9 +63,9 @@ const courseModules = [
   },
   {
     id: 10,
-    title: "",
-    description: "Under construction",
-    topics: [],
+    title: "Transformer Models in Vision and Text",
+    description: "ViT, DeiT, BERT/T5/GPT, scaling laws",
+    topics: ["ViT", "BERT/T5/GPT", "Scaling"],
   },
   {
     id: 11,
