@@ -97,8 +97,18 @@ export default function ModulePage() {
               Recommended reading: <a href="https://d2l.ai/index.html" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Dive into Deep Learning</a> — D2L: <strong>Chapter 11 up to 11.5</strong>.
             </p>
             <p className="text-gray-700">
-              Homework note: Submit with Module 9 — Add attention to your last seq2seq assignment (same translation task) and compare with your previous best results.
+              Homework note: Submit with Module 9 — Add <strong>cross-attention</strong> to your prior <strong>GRU-based seq2seq</strong> model so that the decoder can attend over <em>all encoder hidden states</em> at each decoding step (same translation task). Report and compare accuracy/bleu vs your previous best.
             </p>
+            <div className="pt-2">
+              <p className="text-gray-700 font-medium mb-2">Cross-Attention diagram preview:</p>
+              <div className="rounded-lg border overflow-hidden">
+                <iframe
+                  src="/seq2seq_cross_attention.pdf"
+                  title="Seq2Seq Cross-Attention Diagram"
+                  className="w-full h-96"
+                />
+              </div>
+            </div>
             <div className="pt-2">
               <Button asChild>
                 <a
