@@ -103,7 +103,7 @@ export default function ModulePage() {
               <p className="text-gray-700 font-medium mb-2">Cross-Attention diagram preview:</p>
               <div className="rounded-lg border overflow-hidden">
                 <iframe
-                  src="/seq2seq_cross_attention.pdf"
+                  src="/dl-course-site/seq2seq_cross_attention.pdf"
                   title="Seq2Seq Cross-Attention Diagram"
                   className="w-full h-96"
                 />
