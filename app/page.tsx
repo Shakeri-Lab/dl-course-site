@@ -135,77 +135,77 @@ const courseModules: CourseModule[] = [
   {
     id: 1,
     title: "Introduction to Deep Learning",
-    description: "Foundations, history, and key concepts",
+    description: "Foundations, history, key ideas",
     topics: ["Neural Networks Basics", "Perceptrons", "History of AI"],
     category: "fundamentals",
   },
   {
     id: 2,
     title: "Backpropagation",
-    description: "The algorithm that powers deep learning",
-    topics: ["Backpropagation", "Gradient Descent", "Activation Functions"],
+    description: "Backpropagation powers modern training",
+    topics: ["Backpropagation", "Gradient Descent", "Activations"],
     category: "fundamentals",
   },
   {
     id: 3,
     title: "Optimization Foundations & Ablation Methodology",
-    description: "Optimization algorithms and experimental design",
-    topics: ["Optimizers", "Learning Rate Scheduling", "Regularization"],
+    description: "Optimization strategy and ablation workflow",
+    topics: ["Optimizers", "LR Schedules", "Regularization"],
     category: "fundamentals",
   },
   {
     id: 4,
     title: "Convolutional Neural Networks",
-    description: "CNNs for computer vision applications",
-    topics: ["Convolution", "Pooling", "CNN Architectures"],
+    description: "CNNs for visual understanding",
+    topics: ["Convolution", "Pooling", "Vision Models"],
     category: "cnn",
   },
   {
     id: 5,
     title: "Advanced CNN Architectures",
-    description: "ResNet, DenseNet, and modern architectures",
+    description: "Next-gen CNN design patterns",
     topics: ["ResNet", "DenseNet", "EfficientNet"],
     category: "cnn",
   },
   {
     id: 6,
     title: "Encoder Decoder Architectures",
-    description: "Encoder–decoder design",
+    description: "Encoder–decoder design patterns",
     topics: ["Seq2Seq", "Encoder–Decoder", "U-Net"],
     category: "bridge",
   },
   {
     id: 7,
     title: "Recurrent Neural Networks",
-    description: "RNNs, LSTMs, and sequence modeling",
+    description: "RNNs, LSTMs, sequential data",
     topics: ["RNN Basics", "LSTM", "GRU"],
     category: "rnn",
   },
   {
     id: 8,
     title: "Attention Mechanism",
-    description: "Attention, queries-keys-values, scaled dot-product",
+    description: "Attention concepts, Q-K-V, scaling",
     topics: ["Attention Basics", "Q-K-V", "Scaled Dot-Product"],
     category: "attention",
   },
   {
     id: 9,
     title: "Transformer",
-    description: "Self-attention, positional encoding, encoder–decoder transformer",
+    description: "Transformer building blocks",
     topics: ["Self-Attention", "Positional Encoding", "Transformer"],
     category: "transformer",
   },
   {
     id: 10,
     title: "Transformer Models in Vision and Text",
-    description: "ViT, DeiT, BERT/T5/GPT, scaling laws",
+    description: "Vision + text transformer stack",
     topics: ["ViT", "BERT/T5/GPT", "Scaling"],
     category: "transformer",
   },
   {
     id: 11,
     title: "Prompting, PEFT & Quantization",
-    description: "ICL/Prompting, RAG; LoRA/PEFT; QLoRA & quantization",
+    description: "Prompting, PEFT, quantization toolkit",
     topics: ["Prompting/RAG", "PEFT", "QLoRA"],
     category: "advanced",
   },
@@ -253,7 +253,7 @@ function ModuleCard({ module, position }: { module: CourseModule; position: numb
     <Card
       ref={cardRef}
       className={cn(
-        "module-card reveal-card group relative overflow-hidden border border-white/30 bg-white/60 backdrop-blur-2xl",
+        "module-card reveal-card group relative h-full overflow-hidden border border-white/30 bg-white/60 backdrop-blur-2xl",
         offsetClass,
         isVisible && "is-visible"
       )}
@@ -264,8 +264,8 @@ function ModuleCard({ module, position }: { module: CourseModule; position: numb
         style={{ background: theme.halo }}
       />
       <span className="pointer-events-none absolute inset-x-8 top-5 h-px bg-gradient-to-r from-transparent via-white/60 to-transparent" />
-      <CardContent className="relative flex flex-col gap-6 p-8">
-        <div className="flex flex-col gap-6">
+      <CardContent className="relative flex h-full flex-col p-8">
+        <div className="flex flex-1 flex-col gap-6">
           <div className="flex items-start gap-6">
             <div
               className="module-badge relative flex h-16 w-16 items-center justify-center rounded-3xl text-2xl font-semibold text-white shadow-lg"
@@ -307,25 +307,17 @@ function ModuleCard({ module, position }: { module: CourseModule; position: numb
         </div>
 
         {hasContent ? (
-          <div className="flex items-center justify-between pt-2">
-            <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.25em] text-slate-400">
-              <span className="h-1 w-6 rounded-full bg-gradient-to-r from-[#FFBA69]/70 to-[#2E77D1]/70" />
-              <span>UVA Dynamo Lab</span>
-            </div>
+          <div className="mt-8 flex items-center justify-end">
             <Link
               href={`/module/${module.id}`}
-              className="group inline-flex items-center gap-2 rounded-full border border-slate-300/60 bg-white/50 px-4 py-2 text-sm font-semibold text-slate-700 transition-all duration-300 hover:border-transparent hover:bg-gradient-to-r hover:from-[#FFBA69]/80 hover:to-[#2E77D1]/80 hover:text-[#123C5A]"
+              className="group inline-flex items-center gap-2 rounded-full border border-slate-300/60 bg-white/60 px-4 py-2 text-sm font-semibold text-slate-700 transition-all duration-300 hover:border-transparent hover:bg-gradient-to-r hover:from-[#FFBA69]/80 hover:to-[#2E77D1]/80 hover:text-[#123C5A]"
             >
               Explore Module
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
           </div>
         ) : (
-          <div className="flex items-center justify-between pt-2">
-            <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.25em] text-slate-400">
-              <span className="h-1 w-6 rounded-full bg-gradient-to-r from-slate-300 to-slate-500" />
-              <span>Stay Tuned</span>
-            </div>
+          <div className="mt-8 flex items-center justify-end">
             <span className="rounded-full border border-dashed border-slate-300/70 bg-white/40 px-4 py-2 text-xs font-semibold text-slate-500">
               Materials in progress
             </span>
@@ -348,7 +340,7 @@ export default function CoursePage() {
           Dynamo Lab • UVA
         </span>
         <h1 className="mt-6 text-4xl font-semibold tracking-tight text-slate-900 md:text-5xl">
-          A modern, minimal home for mastering Deep Learning
+          Deep Learning
         </h1>
         <p className="mt-4 max-w-2xl text-lg text-slate-600">
           Journey from first principles to cutting-edge transformer systems through curated lectures, guided notebooks,
@@ -378,7 +370,7 @@ export default function CoursePage() {
 
       <section className="relative mx-auto max-w-6xl px-6">
         <div className="pointer-events-none absolute -right-24 top-10 hidden h-40 w-40 rounded-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.6),rgba(255,255,255,0))] blur-2xl lg:block" />
-        <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid auto-rows-fr gap-8 md:grid-cols-2 xl:grid-cols-3">
           {courseModules.map((module, index) => (
             <ModuleCard key={module.id} module={module} position={index} />
           ))}

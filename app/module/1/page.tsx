@@ -13,17 +13,17 @@ export default function ModuleOnePage() {
   const githubRoot = "https://github.com/Shakeri-Lab/dl-course-site/tree/main/assignments/module1"
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
+    <div className="relative min-h-screen bg-transparent pb-20">
+      <div className="mx-auto w-full max-w-5xl px-6 py-12">
         {/* Back */}
-        <div className="mb-6">
-          <Link href="/" className="inline-flex items-center text-blue-600 hover:text-blue-800">
+        <div className="mb-8">
+          <Link href="/" className="inline-flex items-center text-slate-500 transition-colors hover:text-[#002862]">
             <ArrowLeft className="h-4 w-4 mr-2" /> Back to Modules
           </Link>
         </div>
 
         {/* Lecture Video */}
-        <Card className="mb-12">
+        <Card className="mb-12 border border-white/30 bg-white/70 backdrop-blur-xl shadow-[0_32px_60px_-38px_rgba(0,40,98,0.45)]">
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="text-2xl">Lecture 1 – From Linear Regression to Neural Networks</CardTitle>
@@ -45,7 +45,7 @@ export default function ModuleOnePage() {
         </Card>
 
         {/* Lecture Video 1.2 */}
-        <Card className="mb-12">
+        <Card className="mb-12 border border-white/30 bg-white/70 backdrop-blur-xl shadow-[0_32px_60px_-38px_rgba(0,40,98,0.45)]">
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="text-2xl">Lecture 1.2 – Linear Regression via Neural Networks in Python</CardTitle>
@@ -67,15 +67,15 @@ export default function ModuleOnePage() {
         </Card>
 
         {/* Resources & Lecture Code */}
-        <Card className="mb-12">
+        <Card className="mb-12 border border-white/30 bg-white/70 backdrop-blur-xl shadow-[0_32px_60px_-38px_rgba(0,40,98,0.45)]">
           <CardHeader>
             <CardTitle className="text-xl flex items-center">📚 Resources & Lecture Code</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="text-gray-700">
-              Recommended reading: <a href="https://d2l.ai/index.html" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Dive into Deep Learning</a> — D2L: <strong>2.3; 3.1.4; 4.1; 5.1; 12.4</strong>.
+            <p className="text-slate-600">
+              Recommended reading: <a href="https://d2l.ai/index.html" target="_blank" rel="noopener noreferrer" className="text-[#002862] underline decoration-[#FFBA69]/70 underline-offset-4 hover:text-[#001a44]">Dive into Deep Learning</a> — D2L: <strong>2.3; 3.1.4; 4.1; 5.1; 12.4</strong>.
             </p>
-            <p className="text-gray-700">
+            <p className="text-slate-600">
               This Colab notebook contains the lecture code demonstrated in class. Read the instructions at the top and run the cells in order.
             </p>
             <div className="pt-2">

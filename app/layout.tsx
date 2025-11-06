@@ -2,6 +2,7 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Inter, Space_Grotesk } from "next/font/google"
 import "./globals.css"
+import Image from "next/image"
 import Link from "next/link"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-body" })
@@ -53,9 +54,16 @@ export default function RootLayout({
                 </Link>
               </div>
             </div>
-            <div className="hidden items-center space-x-4 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 md:flex">
+            <div className="hidden items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 md:flex">
               <span className="h-2 w-2 rounded-full bg-[#FFBA69]/70 shadow-[0_0_10px_rgba(255,186,105,0.6)]" />
-              <span>University of Virginia</span>
+              <Image
+                src="/logo_transparent.png"
+                alt="Shakeri Lab logo"
+                width={24}
+                height={24}
+                className="h-6 w-6 rounded-full border border-white/60 bg-white/80 p-0.5 shadow-[0_6px_18px_-10px_rgba(0,40,98,0.45)]"
+              />
+              <span>Shakeri Lab</span>
             </div>
           </div>
         </nav>
