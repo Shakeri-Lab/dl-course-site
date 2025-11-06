@@ -69,9 +69,9 @@ const courseModules = [
   },
   {
     id: 11,
-    title: "",
-    description: "Under construction",
-    topics: [],
+    title: "Prompting, PEFT & Quantization",
+    description: "ICL/Prompting, RAG; LoRA/PEFT; QLoRA & quantization",
+    topics: ["Prompting/RAG", "PEFT", "QLoRA"],
   },
   {
     id: 12,
