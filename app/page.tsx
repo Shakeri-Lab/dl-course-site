@@ -335,11 +335,7 @@ export default function CoursePage() {
       <div className="pointer-events-none absolute left-[8%] top-[55%] h-72 w-72 rounded-full bg-[radial-gradient(circle_at_center,rgba(46,119,209,0.35),rgba(46,119,209,0))] blur-[90px]" />
 
       <header className="relative mx-auto flex max-w-4xl flex-col items-center px-6 pb-10 pt-16 text-center">
-        <span className="inline-flex items-center gap-2 rounded-full border border-white/40 bg-white/60 px-4 py-1 text-xs font-semibold uppercase tracking-[0.28em] text-slate-500 backdrop-blur">
-          <span className="h-2 w-2 rounded-full bg-[#FFBA69]/80 shadow-[0_0_8px_rgba(255,186,105,0.8)]" />
-          Dynamo Lab • UVA
-        </span>
-        <h1 className="mt-6 text-4xl font-semibold tracking-tight text-slate-900 md:text-5xl">
+        <h1 className="text-4xl font-semibold tracking-tight text-slate-900 md:text-5xl">
           Deep Learning
         </h1>
         <p className="mt-4 max-w-2xl text-lg text-slate-600">

@@ -57,7 +57,7 @@ export default function RootLayout({
             <div className="hidden items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 md:flex">
               <span className="h-2 w-2 rounded-full bg-[#FFBA69]/70 shadow-[0_0_10px_rgba(255,186,105,0.6)]" />
               <Image
-                src="/logo_transparent.png"
+                src="/images/logo_transparent.png"
                 alt="Shakeri Lab logo"
                 width={24}
                 height={24}
