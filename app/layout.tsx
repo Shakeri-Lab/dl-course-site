@@ -81,13 +81,13 @@ export default function RootLayout({
               </p>
               <div className="flex items-center justify-center space-x-2 text-sm text-gray-400">
                 <span>Developed by</span>
-                <a 
-                  href="https://shakeri-lab.github.io/" 
-                  target="_blank" 
+                <a
+                  href="https://shakeri-lab.github.io/"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-400 hover:text-blue-300 font-semibold transition-colors duration-200"
                 >
-                  DYNAMO Lab
+                  Shakeri Lab
                 </a>
                 <span>•</span>
                 <span>University of Virginia</span>
