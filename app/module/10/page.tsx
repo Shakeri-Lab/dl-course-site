@@ -106,11 +106,11 @@ export default function ModulePage() {
             <div className="pt-2">
               <Button asChild>
                 <a
-                  href="https://colab.research.google.com/drive/1kVDgeXvQX5HdsuhrnMAgreCxNtyE9M8d?usp=sharing"
+                  href="https://colab.research.google.com/drive/1qbTNmh_4_6CUiNCKpgvPndiID8RTxx3J?usp=sharing"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Hugging Face Transformer Tutorial
+                  DeiT Playground (Colab)
                   <ExternalLink className="h-4 w-4 ml-2" />
                 </a>
               </Button>
@@ -119,11 +119,11 @@ export default function ModulePage() {
             <div className="pt-2">
               <Button asChild>
                 <a
-                  href="https://colab.research.google.com/drive/1qbTNmh_4_6CUiNCKpgvPndiID8RTxx3J?usp=sharing"
+                  href="https://colab.research.google.com/drive/1kVDgeXvQX5HdsuhrnMAgreCxNtyE9M8d?usp=sharing"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  DeiT Playground (Colab)
+                  Hugging Face Transformer Tutorial (Colab)
                   <ExternalLink className="h-4 w-4 ml-2" />
                 </a>
               </Button>
