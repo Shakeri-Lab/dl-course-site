@@ -106,7 +106,7 @@ export default function RootLayout({
               
             </div>
             <div className="border-t border-gray-800 mt-8 pt-6 text-xs text-gray-400 text-center">
-              <p>&copy; 2025 DYNAMO Lab, University of Virginia. Course materials are open source and freely available.</p>
+              <p>&copy; 2025 Shakeri Lab, University of Virginia. Course materials are open source and freely available.</p>
             </div>
           </div>
         </footer>
