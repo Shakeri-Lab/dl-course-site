@@ -202,9 +202,9 @@ Each Canvas module should include:
 
 ### Managing Resources
 - **Videos**: Host on YouTube/Vimeo, embed links
-- **Slides**: Store in `public/slides/` directory
-- **Notebooks**: Host on Google Colab, link to GitHub
-- **Readings**: Link to external sources or PDFs
+- **Slides/PDFs**: Place directly in `public/` (served at `/dl-course-site/<filename>.pdf` in production)
+- **Notebooks**: Host on Google Colab; include links on module pages
+- **Readings**: Link to external sources or PDFs in `public/`
 
 ## 🔍 SEO and Analytics
 
@@ -256,8 +256,8 @@ npm start
 
 ### GitHub Pages (Recommended)
 1. Push changes to main branch
-2. GitHub Actions automatically deploys
-3. Site available at `https://username.github.io/repository-name`
+2. The site exports static files (Next.js `output: 'export'`) and serves under base path `/dl-course-site`
+3. Live URL: `https://shakeri-lab.github.io/dl-course-site/`
 
 ### Custom Domain Setup
 1. Add CNAME file: `echo "yourdomain.com" > public/CNAME`

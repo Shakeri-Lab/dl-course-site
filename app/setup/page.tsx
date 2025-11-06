@@ -211,12 +211,20 @@ export default function SetupPage() {
                   <span>Works on any device</span>
                 </div>
               </div>
-              <Button asChild variant="outline" className="w-full">
-                <a href="https://colab.research.google.com/" target="_blank" rel="noopener noreferrer">
-                  Open Google Colab
-                  <ExternalLink className="h-4 w-4 ml-2" />
-                </a>
-              </Button>
+              <div className="space-y-2">
+                <Button asChild variant="outline" className="w-full">
+                  <a href="https://colab.research.google.com/" target="_blank" rel="noopener noreferrer">
+                    Open Google Colab
+                    <ExternalLink className="h-4 w-4 ml-2" />
+                  </a>
+                </Button>
+                <Button asChild className="w-full">
+                  <a href="https://services.sheerid.com/verify/67a3f0217c740a497f6b4af3/?externalUserId=e4ae4d51-a65a-41f5-838e-969523ee9d96" target="_blank" rel="noopener noreferrer">
+                    Apply for Colab Pro (student verification)
+                    <ExternalLink className="h-4 w-4 ml-2" />
+                  </a>
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>
