@@ -60,10 +60,10 @@ export default function RootLayout({
               <Image
                 src={ShakeriLogo}
                 alt="Shakeri Lab logo"
-                width={26}
-                height={26}
+                width={52}
+                height={52}
                 priority
-                className="h-6 w-6 rounded-full border border-white/60 bg-white/80 p-0.5 shadow-[0_6px_18px_-10px_rgba(0,40,98,0.45)]"
+                className="h-12 w-12 rounded-full border border-white/60 bg-white/80 p-1 shadow-[0_10px_28px_-18px_rgba(0,40,98,0.45)]"
               />
               <span>Shakeri Lab</span>
             </div>
