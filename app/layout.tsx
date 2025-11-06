@@ -1,12 +1,11 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
+import { Inter, Space_Grotesk } from "next/font/google"
 import "./globals.css"
-import { Button } from "@/components/ui/button"
-import { ExternalLink } from "lucide-react"
 import Link from "next/link"
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({ subsets: ["latin"], variable: "--font-body" })
+const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-heading" })
 
 export const metadata: Metadata = {
   title: "Deep Learning - DYNAMO Lab Course",
@@ -23,28 +22,40 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <nav className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
-          <div className="container mx-auto px-4">
-            <div className="flex items-center justify-between h-16">
-              <div className="flex items-center space-x-8">
-                <Link href="/" className="text-xl font-bold text-gray-900 hover:text-blue-600">
-                  Deep Learning
+      <body className={`${inter.variable} ${spaceGrotesk.variable} antialiased`}>
+        <nav className="sticky top-0 z-50 border-b border-white/30 bg-white/80 backdrop-blur-xl shadow-[0_12px_30px_-18px_rgba(35,45,75,0.45)]">
+          <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-6">
+            <div className="flex items-center space-x-10">
+              <Link
+                href="/"
+                className="text-xl font-semibold text-slate-900 transition-colors duration-200 hover:text-[#002862]"
+              >
+                Deep Learning
+              </Link>
+              <div className="hidden items-center space-x-6 text-sm font-medium text-slate-600 md:flex">
+                <Link
+                  href="/resources"
+                  className="relative transition-colors duration-200 hover:text-[#002862] after:absolute after:-bottom-1 after:left-0 after:h-[2px] after:w-0 after:bg-gradient-to-r after:from-[#FFBA69] after:to-[#002862] after:transition-all after:duration-300 hover:after:w-full"
+                >
+                  Resources
                 </Link>
-                <div className="hidden md:flex items-center space-x-6 text-sm">
-                  <Link href="/resources" className="text-gray-600 hover:text-gray-900 transition-colors">
-                    Resources
-                  </Link>
-                  <Link href="/setup" className="text-gray-600 hover:text-gray-900 transition-colors">
-                    Setup
-                  </Link>
-                  <Link href="/faq" className="text-gray-600 hover:text-gray-900 transition-colors">
-                    FAQ
-                  </Link>
-                </div>
+                <Link
+                  href="/setup"
+                  className="relative transition-colors duration-200 hover:text-[#002862] after:absolute after:-bottom-1 after:left-0 after:h-[2px] after:w-0 after:bg-gradient-to-r after:from-[#FFBA69] after:to-[#002862] after:transition-all after:duration-300 hover:after:w-full"
+                >
+                  Setup
+                </Link>
+                <Link
+                  href="/faq"
+                  className="relative transition-colors duration-200 hover:text-[#002862] after:absolute after:-bottom-1 after:left-0 after:h-[2px] after:w-0 after:bg-gradient-to-r after:from-[#FFBA69] after:to-[#002862] after:transition-all after:duration-300 hover:after:w-full"
+                >
+                  FAQ
+                </Link>
               </div>
-
-              <div className="flex items-center space-x-3" />
+            </div>
+            <div className="hidden items-center space-x-4 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 md:flex">
+              <span className="h-2 w-2 rounded-full bg-[#FFBA69]/70 shadow-[0_0_10px_rgba(255,186,105,0.6)]" />
+              <span>University of Virginia</span>
             </div>
           </div>
         </nav>

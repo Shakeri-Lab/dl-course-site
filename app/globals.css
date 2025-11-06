@@ -2,10 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: Arial, Helvetica, sans-serif;
-}
-
 @layer utilities {
   .text-balance {
     text-wrap: balance;
@@ -89,6 +85,72 @@ body {
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    font-family: var(--font-body), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    @apply bg-background text-foreground antialiased;
+    background: linear-gradient(135deg, rgba(245, 219, 193, 0.65) 0%, rgba(237, 233, 249, 0.7) 45%, rgba(228, 236, 249, 0.85) 100%);
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
   }
+
+  body::before,
+  body::after {
+    content: "";
+    position: fixed;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.6;
+    mix-blend-mode: screen;
+    filter: blur(0px);
+  }
+
+  body::before {
+    top: -180px;
+    right: -140px;
+    width: 420px;
+    height: 420px;
+    background: radial-gradient(circle at center, rgba(255, 192, 120, 0.45) 0%, rgba(255, 192, 120, 0) 70%);
+  }
+
+  body::after {
+    bottom: -240px;
+    left: -180px;
+    width: 520px;
+    height: 520px;
+    background: radial-gradient(circle at center, rgba(0, 51, 102, 0.22) 0%, rgba(0, 51, 102, 0) 70%);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading), var(--font-body), sans-serif;
+    letter-spacing: -0.01em;
+  }
+}
+
+.module-card {
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.5s ease, background 0.5s ease;
+}
+
+.module-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 28px 60px -32px rgba(0, 40, 98, 0.55);
+}
+
+.module-card.reveal-card {
+  opacity: 0;
+  transform: translateY(20px) scale(0.98);
+}
+
+.module-card.reveal-card.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.65s ease;
+}
+
+.module-badge {
+  box-shadow: 0 18px 45px -20px rgba(0, 40, 98, 0.5);
 }
