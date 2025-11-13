@@ -2,19 +2,19 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Inter, Space_Grotesk } from "next/font/google"
 import "./globals.css"
-import Image from "next/image"
 import Link from "next/link"
+import Image from "next/image"
 import ShakeriLogo from "@/public/images/logo_transparent.png"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-body" })
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-heading" })
 
 export const metadata: Metadata = {
-  title: "Deep Learning - DYNAMO Lab Course",
-  description: "Comprehensive deep learning course from DYNAMO Lab at UVA - Master neural networks, modern architectures, and real-world applications",
+  title: "Deep Learning - Shakeri Lab",
+  description: "Comprehensive deep learning course from Shakeri Lab at UVA's School of Data Science.",
   generator: 'Next.js',
-  keywords: ["deep learning", "neural networks", "machine learning", "AI", "course", "UVA", "DYNAMO Lab"],
-  authors: [{ name: "DYNAMO Lab - University of Virginia" }],
+  keywords: ["deep learning", "neural networks", "machine learning", "AI", "course", "UVA", "Shakeri Lab"],
+  authors: [{ name: "Shakeri Lab - University of Virginia" }],
 }
 
 export default function RootLayout({
@@ -56,22 +56,26 @@ export default function RootLayout({
               </div>
             </div>
             <div className="hidden items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 md:flex">
-              <span className="h-2 w-2 rounded-full bg-[#FFBA69]/70 shadow-[0_0_10px_rgba(255,186,105,0.6)]" />
-              <Image
-                src={ShakeriLogo}
-                alt="Shakeri Lab logo"
-                width={52}
-                height={52}
-                priority
-                className="h-12 w-12 rounded-full border border-white/60 bg-white/80 p-1 shadow-[0_10px_28px_-18px_rgba(0,40,98,0.45)]"
-              />
               <a
                 href="https://shakeri-lab.github.io/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-slate-500 transition-colors hover:text-[#002862]"
+                className="flex items-center gap-3 text-slate-500 transition-colors hover:text-[#002862]"
               >
-                Shakeri Lab
+                <Image
+                  src={ShakeriLogo}
+                  alt="Shakeri Lab logo"
+                  width={52}
+                  height={52}
+                  priority
+                  className="h-12 w-12 rounded-full border border-white/60 bg-white/80 p-1 shadow-[0_10px_28px_-18px_rgba(0,40,98,0.45)]"
+                />
+                <span className="text-left leading-tight">
+                  Shakeri Lab
+                  <span className="block text-[0.7rem] tracking-[0.24em] text-slate-400">
+                    School of Data Science • UVA
+                  </span>
+                </span>
               </a>
             </div>
           </div>
@@ -86,7 +90,7 @@ export default function RootLayout({
               <p className="text-gray-300 text-lg max-w-3xl mx-auto mb-4">
                 Comprehensive course materials for learning deep learning from fundamentals to advanced applications.
               </p>
-              <div className="flex items-center justify-center space-x-2 text-sm text-gray-400">
+              <div className="flex flex-wrap items-center justify-center gap-2 text-sm text-gray-400">
                 <span>Developed by</span>
                 <a
                   href="https://shakeri-lab.github.io/"
@@ -96,6 +100,8 @@ export default function RootLayout({
                 >
                   Shakeri Lab
                 </a>
+                <span>•</span>
+                <span>School of Data Science</span>
                 <span>•</span>
                 <span>University of Virginia</span>
               </div>
@@ -122,8 +128,8 @@ export default function RootLayout({
                   className="text-blue-300 underline underline-offset-2 hover:text-blue-200"
                 >
                   Shakeri Lab
-                </a>
-                , University of Virginia. Course materials are open source and freely available.
+                </a>{" "}
+                • School of Data Science • University of Virginia. Course materials are open source and freely available.
               </p>
             </div>
           </div>
