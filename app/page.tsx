@@ -211,10 +211,10 @@ const courseModules: CourseModule[] = [
   },
   {
     id: 12,
-    title: "",
-    description: "Under construction",
-    topics: [],
-    category: "upcoming",
+    title: "Multimodal Learning & GenAI",
+    description: "Vision-language fusion plus diffusion, VAE, and GAN generative pipelines.",
+    topics: ["Multimodal", "Diffusion", "VAE", "GAN"],
+    category: "advanced",
   },
 ]
 
