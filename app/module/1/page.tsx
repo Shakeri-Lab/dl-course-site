@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ExternalLink, ArrowLeft } from "lucide-react"
 import Link from "next/link"
+import { ModulePager } from "@/components/module-pager"
 
 export const metadata = {
   title: "Module 1 – Introduction to Deep Learning",
@@ -105,6 +106,8 @@ export default function ModuleOnePage() {
             </div>
           </CardContent>
         </Card>
+        <ModulePager current={1} />
+
         <div className="mt-8">
           <Link href="/">
             <Button variant="outline">⟵ Back to Modules Menu</Button>

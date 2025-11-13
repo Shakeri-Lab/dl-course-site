@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ExternalLink, ArrowLeft } from "lucide-react"
 import Link from "next/link"
+import { ModulePager } from "@/components/module-pager"
 
 export const metadata = {
   title: "Module 2 – Backpropagation",
@@ -89,6 +90,8 @@ export default function ModulePage() {
             </div>
           </CardContent>
         </Card>
+        <ModulePager current={2} />
+
         <div className="mt-8">
           <Link href="/">
             <Button variant="outline">⟵ Back to Modules Menu</Button>

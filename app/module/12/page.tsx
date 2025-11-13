@@ -1,15 +1,105 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { ExternalLink, ArrowLeft } from "lucide-react"
+import Link from "next/link"
+
+import { ModulePager } from "@/components/module-pager"
+
+const sessions = [
+  {
+    id: "12.1",
+    title: "Multimodal Learning",
+    description:
+      "Vision-language alignment, contrastive objectives (e.g., CLIP), and fusion strategies for building multimodal systems.",
+    pdf: "/dl-course-site/12.1%20Multimodal%20Leaning.pdf",
+    notebook: "https://colab.research.google.com/drive/10CNVZa0wmGUYatqpVvd0O0cbfk9WyMvB?usp=sharing",
+  },
+  {
+    id: "12.2",
+    title: "Diffusion Models",
+    description:
+      "Noise schedules, forward/reverse processes, and sampling recipes that power modern generative diffusion pipelines.",
+    pdf: "/dl-course-site/12.2%20Diffusion.pdf",
+    notebook: "https://colab.research.google.com/drive/111Iux63gpCEKFcTb17aXYo8Y5WEW4Jez?usp=sharing",
+  },
+  {
+    id: "12.3",
+    title: "Variational Autoencoders (VAE)",
+    description:
+      "Latent variable modeling with encoder/decoder pairs, ELBO optimization, and practical VAE architectures.",
+    pdf: "/dl-course-site/12.3%20VAE.pdf",
+    notebook: "https://colab.research.google.com/drive/1seQyM-w2kQLm48bdyo2uKRGUZPRP42hr?usp=sharing",
+  },
+  {
+    id: "12.4",
+    title: "Generative Adversarial Networks (GAN)",
+    description:
+      "Adversarial training, loss variants, and practical tips for stabilizing GANs for image generation.",
+    pdf: "/dl-course-site/12.4%20GAN.pdf",
+    notebook: "https://colab.research.google.com/drive/1Gz5laYgBDddXRfaTgZNq-kswXZFREIb5?usp=sharing",
+  },
+] as const
+
 export const metadata = {
-  title: "Module 12 – Coming Soon",
-  description: "Placeholder page – content will be added later."
+  title: "Module 12 – Multimodal Learning & GenAI",
+  description: "Slides, previews, and Colab notebooks for multimodal learning and generative AI."
 }
 
 export default function ModulePage() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 py-20">
-      <h1 className="text-4xl font-bold mb-4">Module 12 – Coming Soon</h1>
-      <p className="text-slate-600">Detailed content, lecture video, reading, and assignments will be added here.</p>
-      <div className="mt-8">
-        <a href="/" className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">⟵ Back to Modules Menu</a>
+    <div className="relative min-h-screen bg-transparent pb-20">
+      <div className="mx-auto w-full max-w-5xl px-6 py-12">
+        {/* Back */}
+        <div className="mb-8">
+          <Link href="/" className="inline-flex items-center text-slate-500 transition-colors hover:text-[#002862]">
+            <ArrowLeft className="h-4 w-4 mr-2" /> Back to Modules
+          </Link>
+        </div>
+
+        {sessions.map((session) => (
+          <Card key={session.id} className="mb-12 border border-white/30 bg-white/70 backdrop-blur-xl shadow-[0_32px_60px_-38px_rgba(0,40,98,0.45)]">
+            <CardHeader>
+              <CardTitle className="text-2xl">{session.id} – {session.title}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-5">
+              <p className="text-slate-600">{session.description}</p>
+
+              <div>
+                <p className="text-slate-600 font-medium mb-2">Slide preview</p>
+                <div className="rounded-lg border border-white/60 bg-white/80 shadow-inner overflow-hidden">
+                  <iframe
+                    src={session.pdf}
+                    title={`${session.title} slides`}
+                    className="h-96 w-full"
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-wrap gap-3">
+                <Button asChild variant="outline">
+                  <a href={session.pdf} target="_blank" rel="noopener noreferrer">
+                    View Slides
+                    <ExternalLink className="h-4 w-4 ml-2" />
+                  </a>
+                </Button>
+                <Button asChild>
+                  <a href={session.notebook} target="_blank" rel="noopener noreferrer">
+                    Open Colab Notebook
+                    <ExternalLink className="h-4 w-4 ml-2" />
+                  </a>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+
+        <ModulePager current={12} />
+
+        <div className="mt-8">
+          <Link href="/">
+            <Button variant="outline">⟵ Back to Modules Menu</Button>
+          </Link>
+        </div>
       </div>
     </div>
   )
