@@ -4,6 +4,46 @@ import { ExternalLink, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { ModulePager } from "@/components/module-pager"
 
+type Session = {
+  id: string
+  title: string
+  pdf: string
+  readings: { label: string; url: string }[]
+}
+
+const slides: Session[] = [
+  {
+    id: "11.1",
+    title: "ICL, Prompt Engineering, and RAG",
+    pdf: "/dl-course-site/11.1-%20ICL-PromptEng-RAG.pdf",
+    readings: [
+      { label: "Brown et al., GPT-3 Few-Shot Learning", url: "https://arxiv.org/abs/2005.14165" },
+      { label: "Wei et al., Chain-of-Thought Prompting", url: "https://arxiv.org/abs/2201.11903" },
+      { label: "Lewis et al., Retrieval-Augmented Generation", url: "https://arxiv.org/abs/2005.11401" },
+    ],
+  },
+  {
+    id: "11.2",
+    title: "Parameter-Efficient Fine-Tuning (PEFT)",
+    pdf: "/dl-course-site/11.2%20PEFT.pdf",
+    readings: [
+      { label: "Hu et al., LoRA", url: "https://arxiv.org/abs/2106.09685" },
+      { label: "Li & Liang, Prefix-Tuning", url: "https://arxiv.org/abs/2101.00190" },
+      { label: "Liu et al., P-Tuning v2", url: "https://arxiv.org/abs/2110.07602" },
+    ],
+  },
+  {
+    id: "11.3",
+    title: "Quantization & QLoRA",
+    pdf: "/dl-course-site/11.3-%20Quantization-QLoRA.pdf",
+    readings: [
+      { label: "Dettmers et al., QLoRA", url: "https://arxiv.org/abs/2305.14314" },
+      { label: "Frantar et al., GPTQ", url: "https://arxiv.org/abs/2210.17323" },
+      { label: "Lin et al., AWQ", url: "https://arxiv.org/abs/2306.00978" },
+    ],
+  },
+]
+
 export const metadata = {
   title: "Module 11 – Prompting, PEFT, and Quantization (Gemma)",
   description: "Slides, required readings, and Gemma fine-tuning resources for Module 11."
@@ -20,79 +60,53 @@ export default function ModulePage() {
           </Link>
         </div>
 
-        {/* Slides */}
-        <Card className="mb-12 border border-white/30 bg-white/70 backdrop-blur-xl shadow-[0_32px_60px_-38px_rgba(0,40,98,0.45)]">
-          <CardHeader>
-            <CardTitle className="text-xl flex items-center">📑 Slides</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="space-y-2">
-              <Button asChild variant="outline">
-                <a href="/dl-course-site/11.1-%20ICL-PromptEng-RAG.pdf" target="_blank" rel="noopener noreferrer">
-                  11.1 – ICL, Prompt Engineering, and RAG
-                  <ExternalLink className="h-4 w-4 ml-2" />
-                </a>
-              </Button>
-              <Button asChild variant="outline">
-                <a href="/dl-course-site/11.2%20PEFT.pdf" target="_blank" rel="noopener noreferrer">
-                  11.2 – PEFT
-                  <ExternalLink className="h-4 w-4 ml-2" />
-                </a>
-              </Button>
-              <Button asChild variant="outline">
-                <a href="/dl-course-site/11.3-%20Quantization-QLoRA.pdf" target="_blank" rel="noopener noreferrer">
-                  11.3 – Quantization and QLoRA
-                  <ExternalLink className="h-4 w-4 ml-2" />
-                </a>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        {slides.map((session) => (
+          <Card key={session.id} className="mb-12 border border-white/30 bg-white/70 backdrop-blur-xl shadow-[0_32px_60px_-38px_rgba(0,40,98,0.45)]">
+            <CardHeader>
+              <CardTitle className="text-2xl">{session.id} – {session.title}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-5">
+              <div>
+                <p className="text-slate-600 font-medium mb-2">Slide preview</p>
+                <div className="rounded-lg border border-white/60 bg-white/80 shadow-inner overflow-hidden">
+                  <iframe
+                    src={session.pdf}
+                    title={`${session.title} slides`}
+                    className="h-96 w-full"
+                  />
+                </div>
+              </div>
 
-        {/* Required Reading */}
-        <Card className="mb-12 border border-white/30 bg-white/70 backdrop-blur-xl shadow-[0_32px_60px_-38px_rgba(0,40,98,0.45)]">
-          <CardHeader>
-            <CardTitle className="text-xl flex items-center">📚 Required Reading</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div>
-              <h3 className="font-semibold mb-2">Slides</h3>
-              <ul className="list-disc pl-6 space-y-1 text-slate-600">
-                <li><a className="text-[#002862] underline decoration-[#FFBA69]/70 underline-offset-4 hover:text-[#001a44]" href="/dl-course-site/11.1-%20ICL-PromptEng-RAG.pdf" target="_blank" rel="noopener noreferrer">11.1 – ICL, Prompt Engineering, and RAG</a></li>
-                <li><a className="text-[#002862] underline decoration-[#FFBA69]/70 underline-offset-4 hover:text-[#001a44]" href="/dl-course-site/11.2%20PEFT.pdf" target="_blank" rel="noopener noreferrer">11.2 – PEFT</a></li>
-                <li><a className="text-[#002862] underline decoration-[#FFBA69]/70 underline-offset-4 hover:text-[#001a44]" href="/dl-course-site/11.3-%20Quantization-QLoRA.pdf" target="_blank" rel="noopener noreferrer">11.3 – Quantization and QLoRA</a></li>
-              </ul>
-            </div>
+              <div className="flex flex-wrap gap-3">
+                <Button asChild variant="outline">
+                  <a href={session.pdf} target="_blank" rel="noopener noreferrer">
+                    View Slides
+                    <ExternalLink className="h-4 w-4 ml-2" />
+                  </a>
+                </Button>
+              </div>
 
-            <div>
-              <h3 className="font-semibold mb-2">ICL, Prompting, and RAG</h3>
-              <ul className="list-disc pl-6 space-y-1 text-slate-600">
-                <li><a className="text-[#002862] underline decoration-[#FFBA69]/70 underline-offset-4 hover:text-[#001a44]" href="https://arxiv.org/abs/2005.14165" target="_blank" rel="noopener noreferrer">Brown et al., Language Models are Few-Shot Learners (GPT-3)</a></li>
-                <li><a className="text-[#002862] underline decoration-[#FFBA69]/70 underline-offset-4 hover:text-[#001a44]" href="https://arxiv.org/abs/2201.11903" target="_blank" rel="noopener noreferrer">Wei et al., Chain-of-Thought Prompting</a></li>
-                <li><a className="text-[#002862] underline decoration-[#FFBA69]/70 underline-offset-4 hover:text-[#001a44]" href="https://arxiv.org/abs/2203.11171" target="_blank" rel="noopener noreferrer">Wang et al., Self-Consistency Improves CoT Reasoning</a></li>
-                <li><a className="text-[#002862] underline decoration-[#FFBA69]/70 underline-offset-4 hover:text-[#001a44]" href="https://arxiv.org/abs/2005.11401" target="_blank" rel="noopener noreferrer">Lewis et al., Retrieval-Augmented Generation (RAG)</a></li>
-              </ul>
-            </div>
+              <div>
+                <p className="text-slate-600 font-medium mb-2">Suggested reading</p>
+                <ul className="list-disc pl-6 space-y-1 text-slate-600">
+                  {session.readings.map((reading) => (
+                    <li key={reading.url}>
+                      <a
+                        href={reading.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#002862] underline decoration-[#FFBA69]/70 underline-offset-4 hover:text-[#001a44]"
+                      >
+                        {reading.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
 
-            <div>
-              <h3 className="font-semibold mb-2">PEFT (Parameter-Efficient Fine-Tuning)</h3>
-              <ul className="list-disc pl-6 space-y-1 text-slate-600">
-                <li><a className="text-[#002862] underline decoration-[#FFBA69]/70 underline-offset-4 hover:text-[#001a44]" href="https://arxiv.org/abs/2106.09685" target="_blank" rel="noopener noreferrer">Hu et al., LoRA</a></li>
-                <li><a className="text-[#002862] underline decoration-[#FFBA69]/70 underline-offset-4 hover:text-[#001a44]" href="https://arxiv.org/abs/2101.00190" target="_blank" rel="noopener noreferrer">Li & Liang, Prefix-Tuning</a></li>
-                <li><a className="text-[#002862] underline decoration-[#FFBA69]/70 underline-offset-4 hover:text-[#001a44]" href="https://arxiv.org/abs/2110.07602" target="_blank" rel="noopener noreferrer">Liu et al., P-Tuning v2</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="font-semibold mb-2">Quantization and QLoRA</h3>
-              <ul className="list-disc pl-6 space-y-1 text-slate-600">
-                <li><a className="text-[#002862] underline decoration-[#FFBA69]/70 underline-offset-4 hover:text-[#001a44]" href="https://arxiv.org/abs/2305.14314" target="_blank" rel="noopener noreferrer">Dettmers et al., QLoRA</a></li>
-                <li><a className="text-[#002862] underline decoration-[#FFBA69]/70 underline-offset-4 hover:text-[#001a44]" href="https://arxiv.org/abs/2210.17323" target="_blank" rel="noopener noreferrer">Frantar et al., GPTQ</a></li>
-                <li><a className="text-[#002862] underline decoration-[#FFBA69]/70 underline-offset-4 hover:text-[#001a44]" href="https://arxiv.org/abs/2306.00978" target="_blank" rel="noopener noreferrer">Lin et al., AWQ</a></li>
-              </ul>
-            </div>
-          </CardContent>
-        </Card>
 
         {/* Gemma Fine-Tuning Colabs */}
         <Card className="mb-12 border border-white/30 bg-white/70 backdrop-blur-xl shadow-[0_32px_60px_-38px_rgba(0,40,98,0.45)]">
