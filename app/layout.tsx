@@ -1,29 +1,33 @@
+"use client"
+
 import type React from "react"
-import type { Metadata } from "next"
 import { Inter, Space_Grotesk } from "next/font/google"
 import "./globals.css"
 import Link from "next/link"
 import Image from "next/image"
 import ShakeriLogo from "@/public/images/logo_transparent.png"
+import { useState } from "react"
+import { Menu, X } from "lucide-react"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-body" })
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-heading" })
-
-export const metadata: Metadata = {
-  title: "Deep Learning - Shakeri Lab",
-  description: "Comprehensive deep learning course from Shakeri Lab at UVA's School of Data Science.",
-  generator: 'Next.js',
-  keywords: ["deep learning", "neural networks", "machine learning", "AI", "course", "UVA", "Shakeri Lab"],
-  authors: [{ name: "Shakeri Lab - University of Virginia" }],
-}
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
   return (
     <html lang="en">
+      <head>
+        <title>Deep Learning - Shakeri Lab</title>
+        <meta name="description" content="Comprehensive deep learning course from Shakeri Lab at UVA's School of Data Science." />
+        <meta name="generator" content="Next.js" />
+        <meta name="keywords" content="deep learning, neural networks, machine learning, AI, course, UVA, Shakeri Lab" />
+        <meta name="author" content="Shakeri Lab - University of Virginia" />
+      </head>
       <body className={`${inter.variable} ${spaceGrotesk.variable} antialiased`}>
         <nav className="sticky top-0 z-50 border-b border-white/30 bg-white/80 backdrop-blur-xl shadow-[0_12px_30px_-18px_rgba(35,45,75,0.45)]">
           <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-6">
@@ -78,7 +82,65 @@ export default function RootLayout({
                 </span>
               </a>
             </div>
+            {/* Mobile menu button */}
+            <button
+              className="md:hidden p-2 text-slate-600 hover:text-[#002862] transition-colors"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle mobile menu"
+            >
+              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
           </div>
+          {/* Mobile menu */}
+          {mobileMenuOpen && (
+            <div className="md:hidden border-t border-white/30 bg-white/95 backdrop-blur-xl">
+              <div className="px-6 py-4 space-y-3">
+                <Link
+                  href="/resources"
+                  className="block text-sm font-medium text-slate-600 hover:text-[#002862] transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Resources
+                </Link>
+                <Link
+                  href="/setup"
+                  className="block text-sm font-medium text-slate-600 hover:text-[#002862] transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Setup
+                </Link>
+                <Link
+                  href="/faq"
+                  className="block text-sm font-medium text-slate-600 hover:text-[#002862] transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  FAQ
+                </Link>
+                <div className="pt-3 border-t border-slate-200">
+                  <a
+                    href="https://shakeri-lab.github.io/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 hover:text-[#002862] transition-colors"
+                  >
+                    <Image
+                      src={ShakeriLogo}
+                      alt="Shakeri Lab logo"
+                      width={40}
+                      height={40}
+                      className="h-10 w-10 rounded-full border border-white/60 bg-white/80 p-1 shadow-sm"
+                    />
+                    <span className="text-left leading-tight">
+                      Shakeri Lab
+                      <span className="block text-[0.65rem] tracking-[0.2em] text-slate-400">
+                        School of Data Science • UVA
+                      </span>
+                    </span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          )}
         </nav>
         {children}
 
