@@ -251,7 +251,7 @@ function ModuleCard({ module, position }: { module: CourseModule; position: numb
     <Card
       ref={cardRef}
       className={cn(
-        "module-card reveal-card group relative h-full min-h-[210px] md:min-h-[230px] overflow-hidden border border-white/30 bg-white/60 backdrop-blur-2xl",
+        "module-card reveal-card group relative h-full min-h-[180px] md:min-h-[200px] overflow-hidden border border-white/30 bg-white/60 backdrop-blur-2xl",
         isVisible && "is-visible"
       )}
       style={{ boxShadow: theme.cardShadow }}
@@ -261,11 +261,11 @@ function ModuleCard({ module, position }: { module: CourseModule; position: numb
         style={{ background: theme.halo }}
       />
       <span className="pointer-events-none absolute inset-x-8 top-5 h-px bg-gradient-to-r from-transparent via-white/60 to-transparent" />
-      <CardContent className="relative flex h-full flex-col p-6 md:p-7">
-        <div className="flex flex-1 flex-col gap-4">
-          <div className="flex items-start gap-4">
+      <CardContent className="relative flex h-full flex-col p-5 md:p-6">
+        <div className="flex flex-1 flex-col gap-3">
+          <div className="flex items-start gap-3">
             <div
-              className="module-badge relative flex h-14 w-14 items-center justify-center rounded-3xl text-xl font-semibold text-white shadow-lg"
+              className="module-badge relative flex h-12 w-12 items-center justify-center rounded-3xl text-lg font-semibold text-white shadow-lg"
               style={{ background: theme.badgeGradient, boxShadow: theme.badgeShadow }}
             >
               {module.id}
@@ -276,7 +276,7 @@ function ModuleCard({ module, position }: { module: CourseModule; position: numb
               <div className="flex flex-wrap items-center gap-3">
                 <h3 className="text-xl font-semibold text-slate-900">{displayTitle}</h3>
                 <span
-                  className="rounded-full bg-white/60 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.28em]"
+                  className="rounded-full bg-white/60 px-2.5 py-0.5 text-[0.6rem] font-semibold uppercase tracking-[0.26em]"
                   style={{ color: theme.accentText, border: "1px solid rgba(255,255,255,0.4)" }}
                 >
                   {categoryLabels[module.category]}
@@ -290,7 +290,7 @@ function ModuleCard({ module, position }: { module: CourseModule; position: numb
               {module.topics.slice(0, 4).map((topic, index) => (
                 <Badge
                   key={index}
-                  className="rounded-full border border-white/40 px-3 py-1 text-xs font-medium backdrop-blur"
+                  className="rounded-full border border-white/40 px-2.5 py-0.5 text-[0.7rem] font-medium backdrop-blur"
                   style={{ background: theme.tagBackground, color: theme.tagColor }}
                   variant="secondary"
                 >
@@ -302,7 +302,7 @@ function ModuleCard({ module, position }: { module: CourseModule; position: numb
         </div>
 
         {hasContent ? (
-          <div className="mt-6 flex items-center justify-end">
+          <div className="mt-4 flex items-center justify-end">
             <Link
               href={`/module/${module.id}`}
               className="group inline-flex items-center gap-2 rounded-full border border-slate-300/60 bg-white/60 px-3.5 py-1.5 text-xs font-semibold text-slate-700 transition-all duration-300 hover:border-transparent hover:bg-gradient-to-r hover:from-[#FFBA69]/80 hover:to-[#2E77D1]/80 hover:text-[#123C5A]"
@@ -312,7 +312,7 @@ function ModuleCard({ module, position }: { module: CourseModule; position: numb
             </Link>
           </div>
         ) : (
-          <div className="mt-6 flex items-center justify-end">
+          <div className="mt-4 flex items-center justify-end">
             <span className="rounded-full border border-dashed border-slate-300/70 bg-white/40 px-4 py-2 text-xs font-semibold text-slate-500">
               Materials in progress
             </span>
@@ -361,7 +361,7 @@ export default function CoursePage() {
 
       <section className="relative mx-auto max-w-6xl px-6">
         <div className="pointer-events-none absolute -right-24 top-10 hidden h-40 w-40 rounded-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.6),rgba(255,255,255,0))] blur-2xl lg:block" />
-        <div className="grid auto-rows-fr gap-6 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid auto-rows-fr gap-5 md:grid-cols-2 xl:grid-cols-3">
           {courseModules.map((module, index) => (
             <ModuleCard key={module.id} module={module} position={index} />
           ))}
