@@ -235,7 +235,7 @@ function ModuleCard({ module, position }: { module: CourseModule; position: numb
           }
         })
       },
-      { rootMargin: "0px 0px -10% 0px", threshold: 0.2 }
+      { rootMargin: "0px 0px 20% 0px", threshold: 0.05 }
     )
 
     observer.observe(element)
@@ -253,7 +253,7 @@ function ModuleCard({ module, position }: { module: CourseModule; position: numb
     <Card
       ref={cardRef}
       className={cn(
-        "module-card reveal-card group relative h-full overflow-hidden border border-white/30 bg-white/60 backdrop-blur-2xl",
+        "module-card reveal-card group relative overflow-hidden border border-white/30 bg-white/60 backdrop-blur-2xl",
         offsetClass,
         isVisible && "is-visible"
       )}
@@ -264,20 +264,20 @@ function ModuleCard({ module, position }: { module: CourseModule; position: numb
         style={{ background: theme.halo }}
       />
       <span className="pointer-events-none absolute inset-x-8 top-5 h-px bg-gradient-to-r from-transparent via-white/60 to-transparent" />
-      <CardContent className="relative flex h-full flex-col p-8">
-        <div className="flex flex-1 flex-col gap-6">
-          <div className="flex items-start gap-6">
+      <CardContent className="relative flex h-full flex-col p-6 md:p-7">
+        <div className="flex flex-1 flex-col gap-4">
+          <div className="flex items-start gap-4">
             <div
-              className="module-badge relative flex h-16 w-16 items-center justify-center rounded-3xl text-2xl font-semibold text-white shadow-lg"
+              className="module-badge relative flex h-14 w-14 items-center justify-center rounded-3xl text-xl font-semibold text-white shadow-lg"
               style={{ background: theme.badgeGradient, boxShadow: theme.badgeShadow }}
             >
               {module.id}
               <span className="absolute inset-0 rounded-3xl border border-white/35" />
             </div>
 
-            <div className="flex-1 space-y-3">
+            <div className="flex-1 space-y-2">
               <div className="flex flex-wrap items-center gap-3">
-                <h3 className="text-2xl font-semibold text-slate-900">{displayTitle}</h3>
+                <h3 className="text-xl font-semibold text-slate-900">{displayTitle}</h3>
                 <span
                   className="rounded-full bg-white/60 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.28em]"
                   style={{ color: theme.accentText, border: "1px solid rgba(255,255,255,0.4)" }}
@@ -285,8 +285,6 @@ function ModuleCard({ module, position }: { module: CourseModule; position: numb
                   {categoryLabels[module.category]}
                 </span>
               </div>
-
-              <p className="text-base leading-relaxed text-slate-600">{module.description}</p>
             </div>
           </div>
 
@@ -307,17 +305,17 @@ function ModuleCard({ module, position }: { module: CourseModule; position: numb
         </div>
 
         {hasContent ? (
-          <div className="mt-8 flex items-center justify-end">
+          <div className="mt-6 flex items-center justify-end">
             <Link
               href={`/module/${module.id}`}
-              className="group inline-flex items-center gap-2 rounded-full border border-slate-300/60 bg-white/60 px-4 py-2 text-sm font-semibold text-slate-700 transition-all duration-300 hover:border-transparent hover:bg-gradient-to-r hover:from-[#FFBA69]/80 hover:to-[#2E77D1]/80 hover:text-[#123C5A]"
+              className="group inline-flex items-center gap-2 rounded-full border border-slate-300/60 bg-white/60 px-3.5 py-1.5 text-xs font-semibold text-slate-700 transition-all duration-300 hover:border-transparent hover:bg-gradient-to-r hover:from-[#FFBA69]/80 hover:to-[#2E77D1]/80 hover:text-[#123C5A]"
             >
               Explore Module
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
           </div>
         ) : (
-          <div className="mt-8 flex items-center justify-end">
+          <div className="mt-6 flex items-center justify-end">
             <span className="rounded-full border border-dashed border-slate-300/70 bg-white/40 px-4 py-2 text-xs font-semibold text-slate-500">
               Materials in progress
             </span>
@@ -366,7 +364,7 @@ export default function CoursePage() {
 
       <section className="relative mx-auto max-w-6xl px-6">
         <div className="pointer-events-none absolute -right-24 top-10 hidden h-40 w-40 rounded-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.6),rgba(255,255,255,0))] blur-2xl lg:block" />
-        <div className="grid auto-rows-fr gap-8 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid auto-rows-fr gap-6 md:grid-cols-2 xl:grid-cols-3">
           {courseModules.map((module, index) => (
             <ModuleCard key={module.id} module={module} position={index} />
           ))}
