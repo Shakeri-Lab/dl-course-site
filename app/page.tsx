@@ -244,8 +244,6 @@ function ModuleCard({ module, position }: { module: CourseModule; position: numb
   }, [])
 
   const theme = moduleThemes[module.category] ?? moduleThemes.default
-  const offsets = ["md:mt-0", "md:mt-12 xl:mt-16", "md:-mt-10 xl:-mt-4"]
-  const offsetClass = offsets[position % offsets.length]
   const hasContent = Boolean(module.title)
   const displayTitle = hasContent ? module.title : "Coming Soon"
 
@@ -253,8 +251,7 @@ function ModuleCard({ module, position }: { module: CourseModule; position: numb
     <Card
       ref={cardRef}
       className={cn(
-        "module-card reveal-card group relative overflow-hidden border border-white/30 bg-white/60 backdrop-blur-2xl",
-        offsetClass,
+        "module-card reveal-card group relative h-full min-h-[210px] md:min-h-[230px] overflow-hidden border border-white/30 bg-white/60 backdrop-blur-2xl",
         isVisible && "is-visible"
       )}
       style={{ boxShadow: theme.cardShadow }}
