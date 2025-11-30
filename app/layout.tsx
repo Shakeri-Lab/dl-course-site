@@ -27,6 +27,8 @@ export default function RootLayout({
         <meta name="generator" content="Next.js" />
         <meta name="keywords" content="deep learning, neural networks, machine learning, AI, course, UVA, Shakeri Lab" />
         <meta name="author" content="Shakeri Lab - University of Virginia" />
+        <link rel="icon" type="image/png" href="/favicon.png" />
+        <link rel="apple-touch-icon" href="/favicon.png" />
       </head>
       <body className={`${inter.variable} ${spaceGrotesk.variable} antialiased`}>
         <nav className="sticky top-0 z-50 border-b border-white/30 bg-white/80 backdrop-blur-xl shadow-[0_12px_30px_-18px_rgba(35,45,75,0.45)]">
