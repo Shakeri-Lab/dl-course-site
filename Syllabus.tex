@@ -1,0 +1,686 @@
+\documentclass[11pt,letterpaper,oneside]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{textcomp}
+
+% Packages for layout and formatting
+\usepackage[margin=0.2in]{geometry}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{multicol}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{pdflscape}
+\usepackage{multirow}
+\usepackage{fancyhdr}
+\usepackage{wrapfig}
+\usepackage{tikz}
+\usepackage{listings}
+\usepackage[most]{tcolorbox}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usetikzlibrary{positioning, arrows.meta, shapes.geometric}
+\usetikzlibrary{shadows}
+\usepackage{mdframed}
+
+
+\usepackage{array}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{ragged2e}
+
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\tiny,  % Changed from \scriptsize to \tiny
+    keywordstyle=\color{blue},
+    commentstyle=\color{gray},
+    stringstyle=\color{red},
+    frame=single,
+    breaklines=true,
+    showstringspaces=false,
+    captionpos=b,
+    abovecaptionskip=2pt,  % Reduced from 3pt
+    belowcaptionskip=2pt   % Reduced from 3pt
+}
+
+% Remove ``Listing X:" from captions
+\renewcommand{\lstlistingname}{}
+% Define colors
+\definecolor{uvacolor}{RGB}{35,45,75} % UVA blue
+
+% Configure hyperlinks
+\hypersetup{
+    colorlinks=true,
+    linkcolor=uvacolor,
+    urlcolor=uvacolor,
+    citecolor=uvacolor
+}
+
+% Header and footer
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\small DS 6050: Deep Learning}
+\rhead{\small Fall 2025}
+\cfoot{\small \thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% Title formatting
+\titleformat{\section}
+  {\normalfont\large\bfseries\color{uvacolor}}
+  {}{0em}{}
+\titleformat{\subsection}
+  {\normalfont\normalsize\bfseries}
+  {}{0em}{}
+
+% Tighter spacing
+\titlespacing*{\section}{0pt}{1.2ex plus 1ex minus .2ex}{0.6ex plus .2ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 1ex minus .2ex}{0.4ex plus .2ex}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.6ex plus 0.3ex minus 0.2ex}
+
+% Compact lists
+\setlist[itemize]{noitemsep,topsep=0pt,parsep=0pt,partopsep=0pt,leftmargin=*}
+\setlist[enumerate]{noitemsep,topsep=0pt,parsep=0pt,partopsep=0pt,leftmargin=*}
+
+\begin{document}
+
+\begin{center}
+\textbf{\LARGE\color{uvacolor} DS 6050: Deep Learning}\\[0.3em]
+\textbf{\large School of Data Science, University of Virginia}\\[0.3em]
+\textbf{Fall 2025}\\[0.2em]
+\end{center}
+
+% Instructor information in a framed box
+\begin{center}
+\fbox{
+\begin{minipage}{0.9\textwidth}
+\begin{tabular}{@{}p{0.45\textwidth} p{0.45\textwidth}@{}}
+\textbf{Instructor:} Heman Shakeri, PhD & \textbf{Email:} hs9hd@virginia.edu \\[0.3em]
+\textbf{TAs:} Justin Lee, and Tom Lever  &
+jgh2xh \& tsl2b@virginia.edu  \\
+\end{tabular}
+\end{minipage}
+}
+\end{center}
+
+\vspace{1em}
+
+% Side-by-side sections with smaller font and visible boundaries
+\noindent
+\fbox{
+\begin{minipage}[t]{0.46\textwidth}
+{\small
+% \textbf{\large When and Where Do We Meet?}
+\begin{itemize}
+\item \textbf{Asynchronous Lectures \& Readings:} Available weekly on Canvas.
+\item \textbf{Zoom Sessions:} Wednesdays, 8:30 PM -- 9:30 PM 
+% (\hyperlink{https://virginia.zoom.us/j/91970267982?pwd=AQV23FTozEvG8Xam58mE1FzN9PjidF.1}{Zoom Link}). . 
+\item \textbf{Course Website:} \hyperlink{https://shakeri-lab.github.io/dl-course-site/}{Link}
+\end{itemize}
+}
+\end{minipage}
+}
+\hfill
+\fbox{
+\begin{minipage}[t]{0.46\textwidth}
+{\small
+\textbf{Other Resources:}
+\begin{itemize}
+\item Assignments submission (UVA Canvas)
+\item Discussion Forums \& Announcements (\hyperlink{https://edstem.org/us/courses/83711/discussion}{Ed Discussion})
+\end{itemize}
+}
+\end{minipage}
+}
+
+
+
+
+% \begin{tabularx}{\textwidth}{@{}X X@{}}
+% \textbf{Instructor:} Heman Shakeri, PhD & \textbf{Office:} TBD \\
+% \textbf{Email:} hs9hd@virginia.edu & \textbf{Office Hours:} TBA on Canvas \\
+% \textbf{Teaching Assistants:} TBA on Canvas & \textbf{TA Office Hours:} TBA on Canvas \\
+% \end{tabularx}
+
+
+
+% \section{When and Where Do We Meet?}
+
+% \begin{itemize}
+% \item \textbf{Asynchronous Lectures \& Readings:} Available weekly on Canvas.
+% \item \textbf{Live Synchronous Sessions:} Wednesdays, 8:30 PM -- 9:30 PM Eastern Time (via Zoom). 
+% \item \textbf{Detailed Course Calendar:} Dynamic schedule available on Canvas, updated regularly.
+% \end{itemize}
+
+% \subsection{Key Course Resources on Canvas:}
+% \begin{itemize}
+% \item Detailed Course Schedule (\textcolor{blue}{link})
+% \item Asynchronous Lecture Videos \& Notes
+% \item Assignment Specifications \& Unit Tests
+% \item Submission Links \& Grading Rubrics
+% \item Discussion Forums \& Announcements
+% \end{itemize}
+
+\section{Why Should You Care About Learning Deep Learning?}
+
+How can you design an AI that truly understands complex medical images, not just mimics patterns? How do you build a language model that can generate coherent text, or an algorithm that can innovate in scientific discovery? These are the kinds of ``grand challenges'' that today's data scientists and ML engineers tackle, requiring more than just off-the-shelf code. They demand a deep, quantitative understanding of how these models work, from first principles.
+
+You've likely seen countless AI tutorials online, much like the millions of fitness videos on YouTube. Yet, professional athletes and Olympic medalists dedicate themselves to rigorous training camps with expert coaches. Why? Because true mastery---the kind that forges resilient skill and deep intuition---isn't about mimicking surface-level actions. It's built on structured guidance, disciplined hands-on practice with expert feedback, and a profound grasp of fundamentals.
+
+This course is your intensive ``training camp'' for deep learning. It's where you'll move beyond superficial understanding to forge genuine expertise, from the core out, embracing the deliberate practice needed to push your boundaries and achieve lasting skill.
+
+\section{How Will This Course Help You Succeed (As a Data Scientist/ML Engineer)?}
+
+Grand challenges in AI require data scientists who can think critically, design robust systems, and make informed trade-offs. This course will equip you with a conceptual and practical framework to tackle such complex problems in your future research, engineering practice, or advanced studies.
+
+By the end of this training camp, you will be better able to answer critical questions like:
+\begin{enumerate}
+\item How do I use math and core principles to truly understand why, how, and where deep learning models succeed or fail? (No more magical black boxes!)
+\item When and how can I build fundamental components (like backpropagation or an attention mechanism) ``from scratch'' to solidify my understanding, before leveraging powerful frameworks like PyTorch?
+\item I've taken calculus, linear algebra, and ML I -- how do I integrate all that knowledge with programming to solve real-world AI problems and design innovative systems?
+\item Beyond the buzzwords and LinkedIn cheatsheets, how do I develop the critical judgment to make sound engineering decisions, evaluate new research, and maintain my intellectual integrity?
+\item How do I use the foundational skills and ``learning to learn'' strategies from this course to confidently tackle future AI advancements and projects long after graduation?
+\end{enumerate}
+
+\section{Course Structure \& How You'll Master Deep Learning}
+
+\begin{figure}[h!]
+\vspace{-14pt}
+    \centering
+    \resizebox{0.7\textwidth}{!}{\input{progression.tex}}
+    \caption{Learning Progression: From Mathematical Foundations to Modern AI Systems}
+\end{figure}
+
+This course follows a carefully designed 12-module progression that builds deep learning expertise through three integrated phases:
+
+\paragraph{Phase 1: Foundations \& From-Scratch Understanding (Modules 1-3)}
+Master the mathematical underpinnings and implement core algorithms from scratch. You'll build linear models, neural networks, and backpropagation using only NumPy, developing deep intuition about how and why deep learning works. Critical emphasis on optimization foundations and ablation methodology that will recur throughout the course.
+
+\paragraph{Phase 2: Architectural Innovations \& Domain Specialization (Modules 4-9)}
+Explore how different data modalities drive architectural choices. From CNNs for spatial data to RNNs for sequences to Transformers for universal modeling, you'll understand why specific architectures excel at specific tasks. Each module revisits optimization challenges unique to that architecture, building your ability to diagnose and fix real-world training problems.
+
+\paragraph{Phase 3: Modern Practice \& Research Skills (Modules 10-12)}
+Master contemporary techniques including vision transformers, large-scale pretraining, and generative models. Learn systematic ablation studies, paper reproduction, and research methodology. The course culminates with your team tackling a ``grand challenge" using all the skills you've developed.
+
+% \paragraph{Recurring Themes Throughout:}
+% \begin{itemize}
+% \item \textbf{Optimization as Architecture-Specific Challenge:} From gradient clipping in RNNs to warmup schedules in Transformers
+% \item \textbf{Systematic Experimentation:} Ablation studies, paper reproduction, and scientific methodology
+% \item \textbf{From Understanding to Application:} Each concept implemented from scratch, then leveraged with PyTorch
+% \item \textbf{Research Skills Development:} Reading papers, designing experiments, and communicating results
+% \end{itemize}
+
+
+
+% \section{Course Structure \& How You'll Master Deep Learning}
+
+% \begin{figure}[h!]
+% \vspace{-14pt}
+%     \centering
+%     \resizebox{0.7\textwidth}{!}{\input{figs/progression.tex}}
+%     \caption{Learning Progression: From Mathematical Foundations to Transformers}
+% \end{figure}
+
+% Deep learning mastery requires a systematic progression through three distinct phases, each building essential skills for the next. Our 12-module course follows this carefully designed progression from mathematical foundations to state-of-the-art implementations. 
+
+
+% \paragraph{Example:}
+% The progression from mathematical understanding to PyTorch implementation is illustrated below with a linear layer:
+
+% \noindent
+% \begin{minipage}[t]{0.42\textwidth}  % Reduced from 0.45
+% \begin{lstlisting}[caption={\tiny Scratch Implementation}]
+% class LinearLayer:
+%     def __init__(self, input_size, output_size):
+%         self.W = np.random.randn(input_size, 
+%                     output_size) * 0.01
+%         self.b = np.zeros((1, output_size))
+    
+%     def forward(self, X):
+%         self.X = X
+%         return np.dot(X, self.W) + self.b
+    
+%     def backward(self, dY):
+%         dW = np.dot(self.X.T, dY)
+%         db = np.sum(dY, axis=0, keepdims=True)
+%         dX = np.dot(dY, self.W.T)
+%         return dX, dW, db
+
+% # Training loop
+% model = LinearLayer(784, 10)
+% lr = 0.01
+% for epoch in range(num_epochs):
+%     for batch_x, batch_y in dataloader:
+%         output = model.forward(batch_x)
+%         loss = mse_loss(output, batch_y)
+%         dY = mse_loss_grad(output, batch_y)
+%         dX, dW, db = model.backward(dY)
+%         model.W -= lr * dW
+%         model.b -= lr * db
+% \end{lstlisting}
+% \end{minipage}
+% \hfill
+% % Smaller arrow
+% \begin{minipage}[c]{0.06\textwidth}  % Reduced from 0.08
+% \centering
+% \begin{tikzpicture}[scale=0.8]  % Reduced scale
+% \draw[thick, ->, >=stealth, blue!70] (0,0) -- (0.8,0);  % Shorter arrow
+% \node[above, font=\tiny, blue!70] at (0.4,0.15) {Why};
+% \node[below, font=\tiny, blue!70] at (0.4,-0.15) {PyTorch?};
+% \end{tikzpicture}
+% \end{minipage}
+% \hfill
+% \begin{minipage}[t]{0.42\textwidth}  % Reduced from 0.45
+% \begin{lstlisting}[caption={\tiny PyTorch Equivalent}]
+% # Your scratch LinearLayer becomes:
+% model = nn.Sequential(nn.Linear(784, 10))
+
+% # Your manual training becomes:
+% optimizer = optim.SGD(model.parameters(), lr=0.01)
+% criterion = nn.MSELoss()
+
+% for epoch in range(num_epochs):
+%     for batch_x, batch_y in dataloader:
+%         output = model(batch_x)
+%         loss = criterion(output, batch_y)
+        
+%         # Automatic backward pass
+%         optimizer.zero_grad()
+%         loss.backward()
+%         optimizer.step()
+% \end{lstlisting}
+
+% % Smaller PyTorch advantages box
+% \begin{mdframed}[linewidth=0.8pt, linecolor=gray!50, backgroundcolor=blue!5, roundcorner=3pt, innertopmargin=3pt, innerbottommargin=3pt, innerleftmargin=4pt, innerrightmargin=4pt]
+% \begin{itemize}[leftmargin=0.6em, itemsep=0.05em, topsep=0.1em]
+% \item \tiny Battle-tested, handles edge cases
+% \item  \tiny SOTA optimizers, regularization
+% \item  \tiny Clear errors, gradient checking
+% \item  \tiny Large community, extensive docs
+% \item  \tiny GPU acceleration, distributed training
+% \end{itemize}
+% \end{mdframed}
+% \end{minipage}
+
+\section{Course Calendar}
+% Requires \usepackage{booktabs,tabularx}
+\begin{table}[ht]
+\centering
+\caption{Course Schedule}
+\begin{tabularx}{\linewidth}{@{}l l X@{}}
+\toprule
+\textbf{Week} & \textbf{Dates} & \textbf{Live Session Meetings} \\
+\midrule
+Week 1  & Kick off/Logistics.                         & Wed 8/27, 8:30--9:30PM \\
+Week 2  & Module 1                                    & Wed 9/3, 8:30--9:30PM \\
+Week 3  & Module 2                                    & Wed 9/10, 8:30--9:30PM \\
+Week 4  & Module 3                                    & Wed 9/17, 8:30--9:30PM \\
+Week 5  & Module 4                                    & Wed 9/24, 8:30--9:30PM \\
+Week 6  & Module 5                                    & Wed 10/1, 8:30--9:30PM \\
+Week 7  & Module 6                                    & Wed 10/8, 8:30--9:30PM \\
+Week 8  & Module 7                                    & Wed 10/15, 8:30--9:30PM \\
+Week 9  & Module 8                                    & Wed 10/22, 8:30--9:30PM \\
+Week 10 & Module 9                                    & Wed 10/29, 8:30--9:30PM \\
+Week 11 & Module 10                                   & Wed 11/5, 8:30--9:30PM \\
+Week 12 & Module 11                                   & Wed 11/12, 8:30--9:30PM \\
+Week 13 & Module 12                                   & Wed 11/19, 8:30--9:30PM \\
+Week 14 & \textcolor{cyan}{No class}                                   & \textcolor{cyan}{Wed 11/26 is a UVA holiday} \\
+Week 15 & Project presentation and Curse wrap up.     & Wed 12/3, 8:30--9:30PM \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+
+
+\section{Module Design Tables}
+
+\begin{landscape}
+\small
+\begin{longtable}{|L{1.1cm}|L{3.2cm}|L{3.3cm}|L{7.3cm}|L{4.0cm}|}
+\caption{Module Design — Deep Learning (Domain-Agnostic)}\\ \hline
+~ & \textbf{Module} & \textbf{Learning Goals} & \textbf{Learning Objectives} & \textbf{Instructional Materials} \\ \hline
+\endfirsthead
+\multicolumn{5}{c}{{\bfseries \tablename\ \thetable{} -- continued}} \\ \hline
+\textbf{Chapter} & \textbf{Module} & \textbf{Learning Goals} & \textbf{Learning Objectives} & \textbf{Instructional Materials} \\ \hline
+\endhead
+\hline \multicolumn{5}{|r|}{Continued on next page} \\ \hline
+\endfoot
+\hline
+\endlastfoot
+
+% ---------- Chapter 1 ----------
+\multirow{3}{*}{\centering\rotatebox{90}{\textcolor{Sepia}{\parbox{3.6cm}{\centering \textbf{Chapter 1}\\Foundations \& MLPs}}}} &
+\textbf{Module 1: Linear $\rightarrow$ Nonlinear} &
+\begin{itemize}
+\item Linear ops \& geometry
+\item Why nonlinearity
+\item Build an MLP
+\item SGD overview
+\end{itemize} &
+\begin{itemize}
+\item Compute matrix--vector products and visualize linear transforms.
+\item Explain XOR nonlinearity and demonstrate failure $\rightarrow$ fix with ReLU.
+\item Implement a minimal MLP (NumPy/PyTorch) and describe SGD updates.
+\end{itemize} &
+\begin{itemize}
+\item \textbf{D2L:} 2.3; 3.1.4; 4.1; 5.1; 12.4
+\item PyTorch basics; NumPy refresher
+\item Short geometric notes/figures
+\end{itemize} \\ \cline{2-5}
+
+& \textbf{Module 2: Backprop \& Autograd} &
+\begin{itemize}
+\item Chain rule \& comp.\ graphs
+\item Backward pass
+\item Autograd usage
+\end{itemize} &
+\begin{itemize}
+\item Derive gradients for a 1--2 layer network and draw the computation graph.
+\item Implement gradient checking and validate layer derivatives.
+\item Use \texttt{torch.autograd} to build a tiny autograd toy and inspect backward.
+\end{itemize} &
+\begin{itemize}
+\item \textbf{D2L:} 2.4; 2.5; 5.3
+\item PyTorch autograd guide
+\end{itemize} \\ \cline{2-5}
+
+& \textbf{Module 3: Training \& Experiments} &
+\begin{itemize}
+\item Ablations \& HPO
+\item Reproducibility \& logging
+\end{itemize} &
+\begin{itemize}
+\item Run an optimizer sweep (SGD/Momentum/Adam) with LR schedules; compare results.
+\item Design a 2--3 factor ablation; log all runs with consistent seeds and configs.
+\end{itemize} &
+\begin{itemize}
+\item \textbf{D2L:} 3.6--3.7; 12; 19
+\item W\&B (or equivalent) quickstart
+\end{itemize} \\ \hline
+
+% ---------- Chapter 2 ----------
+\multirow{2}{*}{\centering\rotatebox{90}{\textcolor{OliveGreen}{\parbox{3.6cm}{\centering \textbf{Chapter 2}\\Convolutions \& Depth}}}} &
+\textbf{Module 4: CNN Basics} &
+\begin{itemize}
+\item Why convolution \& sharing
+\item Spatial invariance
+\item Regularization
+\end{itemize} &
+\begin{itemize}
+\item Show MLP spatial limits (shifted inputs) vs a simple CNN.
+\item Implement convolutional layers and train a small CNN.
+\item Apply augmentation and dropout; run a brief augmentation ablation.
+\end{itemize} &
+\begin{itemize}
+\item \textbf{D2L:} 5.6; Ch.~7; 8.1; 14.1
+\item \textit{AlexNet} (Krizhevsky et al.\ 2012)
+\item Conv visualizers/notes
+\end{itemize} \\ \cline{2-5}
+
+& \textbf{Module 5: Modern CNNs \& Transfer} &
+\begin{itemize}
+\item Deeper blocks \& normalization
+\item Residual connections
+\item Transfer learning
+\end{itemize} &
+\begin{itemize}
+\item Inspect gradient flow; compare networks with/without BatchNorm.
+\item Implement a ResNet block; reproduce a mini-ResNet training.
+\item Fine-tune a pretrained model; summarize efficiency trade-offs (e.g., MobileNet).
+\end{itemize} &
+\begin{itemize}
+\item \textbf{D2L:} 5.4.1; 8.2--8.6; 14.2
+\item \textit{ResNet} (He et al.\ 2016); BN (Ioffe--Szegedy)
+\item Model zoo pointers
+\end{itemize} \\ \hline
+
+% ---------- Chapter 3 ----------
+\multirow{2}{*}{\centering\rotatebox{90}{\textcolor{MidnightBlue}{\parbox{3.6cm}{\centering \textbf{Chapter 3}\\Sequence Data}}}} &
+\textbf{Module 6: Encoder-Decoder Architectures} &
+\begin{itemize}
+\item Compression \& representation
+\item Fixed-size bottlenecks
+\item Skip connections
+\item Segmentation applications
+\end{itemize} &
+\begin{itemize}
+\item Implement an autoencoder from scratch; visualize learned representations.
+\item Build a CNN encoder-decoder for image tasks.
+\end{itemize} &
+\begin{itemize}
+\item \textbf{D2L:} 10.6; 14.11
+\item U-Net (Ronneberger et al.)
+\item Encoder-decoder papers
+\end{itemize} \\ \cline{2-5}
+
+& \textbf{Module 7: RNNs: Vanilla, LSTM \& seq2seq} &
+\begin{itemize}
+\item Sequential processing
+\item Vanishing/exploding gradients
+\item LSTM/GRU gates
+\item Training challenges
+\end{itemize} &
+\begin{itemize}
+\item Implement char-RNN and visualize gradient flow over time steps.
+\item Build LSTM from scratch; run gate ablation studies.
+\item Compare LSTM vs GRU performance and computational efficiency.
+\item Apply gradient clipping and truncated BPTT; analyze training stability.
+\end{itemize} &
+\begin{itemize}
+\item \textbf{D2L:} 9; 10
+\item LSTM (Hochreiter--Schmidhuber); GRU (Cho et al.)
+\item Gradient visualization tools
+\end{itemize} \\ \hline
+
+% ---------- Chapter 4 ----------
+\multirow{4}{*}{\centering\rotatebox{90}{\textcolor{RedViolet}{\parbox{3.6cm}{\centering \textbf{Chapter 4}\\Attention \& Transformers}}}} &
+\textbf{Module 8: Attention \& Seq2Seq} &
+\begin{itemize}
+\item Dot-product attention
+\item Encoder--decoder
+\item Alignment/weights
+\end{itemize} &
+\begin{itemize}
+\item Implement QKV attention; visualize attention weights.
+\item Build a toy seq2seq (copy/reverse) with attention; interpret alignments.
+\item Run a small ablation on attention variants and report findings.
+\end{itemize} &
+\begin{itemize}
+\item \textbf{D2L:} 10.5--10.7; 11.1--11.4
+\item Bahdanau et al.\ (additive attention)
+\end{itemize} \\ \cline{2-5}
+
+& \textbf{Module 9: Transformer Blocks} &
+\begin{itemize}
+\item Multi-head self-attn
+\item Positional encodings
+\item Norm/warmup/dropout
+\end{itemize} &
+\begin{itemize}
+\item Implement a transformer block and train a tiny Transformer.
+\item Compare positional encodings; pre- vs post-norm; analyze patterns.
+\item Use warmup and dropout; document stability/perf.\ impacts.
+\end{itemize} &
+\begin{itemize}
+\item \textbf{D2L:} 11.5--11.7
+\item Vaswani et al.\ \textit{Attention Is All You Need}
+\end{itemize} \\ \cline{2-5}
+
+& \textbf{Module 10: ViT Essentials (Domain-Agnostic)} &
+\begin{itemize}
+\item Patches as tokens
+\item Patch embeddings
+\item CNN--ViT trade-offs
+\end{itemize} &
+\begin{itemize}
+\item Implement patchify + linear embedding; train a tiny ViT.
+\item Run a patch-size ablation; inspect attention maps qualitatively.
+\item Compare a small ViT vs small ResNet for efficiency vs accuracy.
+\end{itemize} &
+\begin{itemize}
+\item \textbf{D2L:} 11.8
+\item Dosovitskiy et al.\ (ViT); Touvron et al.\ (DeiT)
+\end{itemize} \\ \cline{2-5}
+
+& \textbf{Module 11: Prompting, PEFT \& Quantization} &
+\begin{itemize}
+\item Prompt engineering \& RAG
+\item Parameter-efficient FT (LoRA/Prefix)
+\item Quantization for deployment
+\end{itemize} &
+\begin{itemize}
+\item Build and critique prompts; experiment with retrieval-augmented responses.
+\item Fine-tune a small model with LoRA vs full FT; compare quality/efficiency.
+\item Quantize a model and report latency/quality impacts; reflect on trade-offs.
+\end{itemize} &
+\begin{itemize}
+\item \textbf{D2L:} 11.9; 15.8--15.10; 16.6--16.7
+\item Hu et al.\ (LoRA); Brown et al.\ (GPT-3); Wei et al.\ (CoT); Dettmers et al.\ (QLoRA)
+\end{itemize} \\ \hline
+
+% ---------- Chapter 5 ----------
+\multirow{1}{*}{\centering\rotatebox{90}{\textcolor{Orange}{\parbox{3.6cm}{\centering \textbf{Chapter 5}\\Generative \& Multimodal Models}}}} &
+\textbf{Module 12: Multimodal Learning \& GenAI} &
+\begin{itemize}
+\item Vision-language fusion
+\item Generative pipelines (VAE/GAN/diffusion)
+\item Safety \& evaluation
+\end{itemize} &
+\begin{itemize}
+\item Implement a simple fusion model (e.g., CLIP-style) and inspect attention.
+\item Train a small generative model (VAE/GAN or tiny diffusion) and visualize samples.
+\item Discuss evaluation metrics and basic safety/ethics checks for generative systems.
+\end{itemize} &
+\begin{itemize}
+\item \textbf{D2L:} 4.7.5; 20.1--20.2
+\item Radford et al.\ (CLIP); Kingma--Welling (VAE); Goodfellow et al.\ (GAN); Ho et al.\ (DDPM)
+\end{itemize} \\ 
+\end{longtable}
+\end{landscape}
+
+
+\section{Assessment as Learning: How You'll Build and Demonstrate Mastery}
+
+Assessment in this course is designed primarily as a learning tool, with evaluation as a by-product. Each assessment provides opportunities to deepen understanding, receive feedback, and refine your skills.
+
+\subsection{Programming Assignments: Deliberate Practice with Feedback}
+
+Five comprehensive assignments that build your implementation skills progressively:
+
+\begin{itemize}
+\item \textbf{Learning Focus:} Each assignment includes extensive unit tests that guide your implementation and provide immediate feedback
+\item \textbf{Iterative Development:} You can discuss together and explore ideas in the forum
+\item \textbf{Reflection Component:} Brief write-ups explaining your design choices and debugging process
+\item \textbf{Peer Code Review:} Optional exchanges with classmates to learn from different approaches
+\end{itemize}
+
+\textbf{Assignment Progression (current format):}
+\begin{enumerate}
+\item Foundations \& Backprop (Modules 1--2) $\rightarrow$ Homework 1 (Colab on Module 1 page): linear models, gradients, and early autograd practice.
+\item Optimization \& CNNs (Modules 4--5) $\rightarrow$ Homework 2 (Colab on Module 5 page): training stability, convolutional stacks, and transfer learning.
+\item Seq2Seq (Module 7) $\rightarrow$ Homework 3: seq2seq (Colab). Link: \href{https://colab.research.google.com/drive/1Nb4OuNQ3nrcUDNg-CZobMFmMWcf3zBGB?usp=sharing}{Colab notebook}.
+\item Attention & Transformers (Modules 8--9) $\rightarrow$ Homework 4: Add cross-attention to your GRU-based seq2seq model (submit with Module 9; see Module 8 note).
+\item Vision/Text Transformers (Module 10) $\rightarrow$ Homework 5: Transformer 2.0 (Colab). Link: \href{https://colab.research.google.com/drive/16IskVYK7IT8LoyUEegslr0hCUmvBtEpA?usp=sharing}{Colab notebook}.
+\end{enumerate}
+
+\subsection{Module Quizzes: Knowledge Reinforcement}
+
+\begin{itemize}
+\item \textbf{Purpose:} Reinforce key concepts from asynchronous content and readings
+\item \textbf{Format:} Short (10-15 questions), open-book, focused on understanding not memorization
+\item \textbf{Completion-Based:} Full credit for thoughtful completion, encouraging exploration over perfection
+\item \textbf{Immediate Feedback:} Explanations provided for all answers to support learning
+\end{itemize}
+
+% \subsection{Codeathons: Rapid Application Challenges}
+
+% Three 2-hour focused challenges that bridge theory to practice:
+
+% \begin{itemize}
+% \item \textbf{Real-Time Problem Solving:} Apply recent concepts to novel problems
+% \item \textbf{Collaborative Options:} Work individually or in pairs (declare at start)
+% \item \textbf{Solution Sharing:} Post-codeathon discussion of different approaches
+% \item \textbf{Growth Mindset:} Emphasis on improvement across the three codeathons
+% \end{itemize}
+
+\subsection{Group Project: Solving a Grand Challenge}
+
+Multi-phase project applying course concepts to real-world problems:
+
+\paragraph{Formative Milestones:}
+\begin{enumerate}
+\item \textbf{Proposal \& Literature Review:} Receive feedback on problem framing and approach
+\item \textbf{Mid-Project Check-in:} Share challenges and get guidance from peers and instructors
+\item \textbf{Final Deliverables:} Complete solution with documentation and reflection
+\end{enumerate}
+
+\paragraph{Peer Learning Through Discussion Boards:}
+\begin{itemize}
+\item Teams post project summaries, key findings, and demos on Canvas
+\item Structured peer feedback using provided rubric
+\item Asynchronous Q\&A threads for each project
+\item ``Best Insight" awards chosen by class vote
+\end{itemize}
+
+\subsection{Participation: Building a Learning Community}
+
+Active engagement that enhances everyone's learning:
+
+\begin{itemize}
+\item \textbf{Discussion Leadership:} Each student leads one module discussion thread
+\item \textbf{Peer Support:} Help classmates with conceptual questions and debugging
+% \item \textbf{Resource Sharing:} Post helpful tutorials, papers, or tools you discover
+\item \textbf{Reflection Posts:} Weekly ``aha moments" or challenging concepts
+\item \textbf{Module Quiz Completion:} Demonstrating engagement with all content
+\end{itemize}
+
+
+\section{Grading: How Your Learning Translates to Grades}
+While assessment focuses on learning, grades provide a summary of your demonstrated mastery. The grading schema and Late Policy and Extensions is the standard MSDS practice.  Here is the breakdown for the total grade:
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{|l|c|p{7cm}|}
+\hline
+\textbf{Component} & \textbf{Weight} & \textbf{Details} \\
+\hline
+Programming Assignments & 40\% & 5 assignments × 8\% each \\
+\hline
+Group Project & 40\% & Proposal (5\%), Mid-checkpoint (10\%), Final deliverables (25\%) \\
+\hline
+Participation & 20\% & See detailed breakdown below \\
+\hline
+% \textbf{Total} & \textbf{100\%} & \\
+% \hline
+\end{tabular}
+\end{table}
+
+\subsection{Participation Breakdown (20\%)}
+
+\begin{itemize}
+\item \textbf{Module Quiz Completion (10\%):} 12 quizzes, full credit for thoughtful completion
+\item \textbf{Discussion Contributions (10\%):} Quality posts, peer responses, Project Peer Feedback, and discussion leadership
+\end{itemize}
+
+
+
+\section{Professional and Academic Integrity}
+
+As future leaders in data science and AI, uphold the highest standards of ethics and integrity. All work must comply with the UVA Honor System. Individual assignments must be your own original work, though conceptual discussions are encouraged. Any external code, ideas, or resources must be appropriately cited. The pledge should be included with relevant submissions.
+
+% \section{Additional Information}
+
+% Additional detailed sections are available on Canvas:
+% \begin{itemize}
+% \item Detailed Course Calendar/Schedule
+% \item Prerequisites \& Readiness Assessment  
+% \item Assignment Descriptions \& Rubrics
+% \item University Policies \& Accommodations
+% \item Technical Support Resources
+% \end{itemize}
+
+\end{document}
