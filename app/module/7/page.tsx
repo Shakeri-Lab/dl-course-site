@@ -128,7 +128,7 @@ export default function ModulePage() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  HW seq2seq (Colab)
+                  Homework 3: seq2seq (Colab)
                   <ExternalLink className="h-4 w-4 ml-2" />
                 </a>
               </Button>

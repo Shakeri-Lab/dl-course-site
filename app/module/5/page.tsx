@@ -75,7 +75,7 @@ export default function ModulePage() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Open Homework 5 on Colab
+                  Open Homework 2 on Colab
                   <ExternalLink className="h-4 w-4 ml-2" />
                 </a>
               </Button>
