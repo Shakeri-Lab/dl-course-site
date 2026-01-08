@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { CheckCircle, Circle, ExternalLink, Github, Settings } from "lucide-react"
 import { useState } from "react"
+import Link from "next/link"
 
 const implementationTasks = [
   {
@@ -248,13 +249,13 @@ export default function ImplementationPage() {
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Button asChild variant="outline" className="justify-start h-auto p-4">
-                <a href="/canvas-integration">
+                <Link href="/canvas-integration">
                   <Settings className="h-5 w-5 mr-3" />
                   <div className="text-left">
                     <div className="font-medium">Canvas Integration</div>
                     <div className="text-xs text-gray-600">Setup instructions</div>
                   </div>
-                </a>
+                </Link>
               </Button>
 
               <Button asChild variant="outline" className="justify-start h-auto p-4">
@@ -269,13 +270,13 @@ export default function ImplementationPage() {
               </Button>
 
               <Button asChild variant="outline" className="justify-start h-auto p-4">
-                <a href="/setup">
+                <Link href="/setup">
                   <Settings className="h-5 w-5 mr-3" />
                   <div className="text-left">
                     <div className="font-medium">Setup Guide</div>
                     <div className="text-xs text-gray-600">Student setup instructions</div>
                   </div>
-                </a>
+                </Link>
               </Button>
             </div>
           </CardContent>
@@ -291,7 +292,7 @@ export default function ImplementationPage() {
               have access to beautiful, integrated learning materials.
             </p>
             <Button asChild>
-              <a href="/">View Your Course Site</a>
+              <Link href="/">View Your Course Site</Link>
             </Button>
           </div>
         )}

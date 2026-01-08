@@ -1,8 +1,6 @@
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { ExternalLink, ArrowLeft } from "lucide-react"
-import Link from "next/link"
+import { ExternalLink } from "lucide-react"
 import { ModulePager } from "@/components/module-pager"
 
 export const metadata = {
@@ -11,18 +9,9 @@ export const metadata = {
 }
 
 export default function ModuleOnePage() {
-  const githubRoot = "https://github.com/Shakeri-Lab/dl-course-site/tree/main/assignments/module1"
-
   return (
     <div className="relative min-h-screen bg-transparent pb-20">
       <div className="mx-auto w-full max-w-5xl px-6 py-12">
-        {/* Back */}
-        <div className="mb-8">
-          <Link href="/" className="inline-flex items-center text-slate-500 transition-colors hover:text-[#002862]">
-            <ArrowLeft className="h-4 w-4 mr-2" /> Back to Modules
-          </Link>
-        </div>
-
         {/* Lecture Video */}
         <Card className="mb-12 border border-white/30 bg-white/70 backdrop-blur-xl shadow-[0_32px_60px_-38px_rgba(0,40,98,0.45)]">
           <CardHeader>
@@ -108,11 +97,6 @@ export default function ModuleOnePage() {
         </Card>
         <ModulePager current={1} />
 
-        <div className="mt-8">
-          <Link href="/">
-            <Button variant="outline">⟵ Back to Modules Menu</Button>
-          </Link>
-        </div>
       </div>
     </div>
   )

@@ -3,6 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ExternalLink, MessageCircle, Mail, Clock } from "lucide-react"
+import Link from "next/link"
 
 const faqCategories = [
   {
@@ -225,14 +226,14 @@ export default function FAQPage() {
           <p className="text-green-800 mb-4">Before reaching out, try these self-help resources:</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Button asChild variant="outline" className="justify-start">
-              <a href="/setup">
+              <Link href="/setup">
                 <span>Setup Guide</span>
-              </a>
+              </Link>
             </Button>
             <Button asChild variant="outline" className="justify-start">
-              <a href="/resources">
+              <Link href="/resources">
                 <span>Additional Resources</span>
-              </a>
+              </Link>
             </Button>
             <Button asChild variant="outline" className="justify-start">
               <a

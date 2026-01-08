@@ -3,7 +3,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { CheckCircle, ExternalLink, Download, Code, AlertCircle } from "lucide-react"
+import { CheckCircle, ExternalLink, Code, AlertCircle } from "lucide-react"
 
 const setupSteps = [
   {
@@ -290,39 +290,6 @@ export default function SetupPage() {
           ))}
         </div>
 
-        {/* Requirements File */}
-        <Card className="mt-8">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Download className="h-5 w-5" />
-              <span>Requirements File</span>
-            </CardTitle>
-            <CardDescription>Download the requirements.txt file with all necessary packages</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="bg-gray-900 text-gray-100 p-4 rounded-lg mb-4 text-sm font-mono">
-              <div className="space-y-1">
-                <div>torch&gt;=1.12.0</div>
-                <div>torchvision&gt;=0.13.0</div>
-                <div>tensorflow&gt;=2.9.0</div>
-                <div>numpy&gt;=1.21.0</div>
-                <div>pandas&gt;=1.4.0</div>
-                <div>matplotlib&gt;=3.5.0</div>
-                <div>seaborn&gt;=0.11.0</div>
-                <div>scikit-learn&gt;=1.1.0</div>
-                <div>jupyter&gt;=1.0.0</div>
-                <div>tqdm&gt;=4.64.0</div>
-              </div>
-            </div>
-            <Button asChild>
-              <a href="/requirements.txt" download>
-                <Download className="h-4 w-4 mr-2" />
-                Download requirements.txt
-              </a>
-            </Button>
-          </CardContent>
-        </Card>
-
         {/* Troubleshooting */}
         <div className="mt-12">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Common Issues & Solutions</h2>
@@ -366,9 +333,6 @@ export default function SetupPage() {
             </Button>
             <Button asChild variant="outline">
               <a href="mailto:instructor@university.edu">Email Instructor</a>
-            </Button>
-            <Button asChild variant="outline">
-              <a href="/office-hours">Office Hours Schedule</a>
             </Button>
           </div>
         </div>

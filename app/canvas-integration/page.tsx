@@ -3,6 +3,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { CheckCircle, Copy, Settings, LinkIcon } from "lucide-react"
+import Link from "next/link"
 
 const integrationSteps = [
   {
@@ -327,7 +328,7 @@ export default function CanvasIntegrationPage() {
             <li>• Institution-specific integration requirements</li>
           </ul>
           <Button asChild variant="outline">
-            <a href="/faq">View FAQ for Common Issues</a>
+            <Link href="/faq">View FAQ for Common Issues</Link>
           </Button>
         </div>
       </div>

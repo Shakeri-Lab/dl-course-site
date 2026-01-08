@@ -8,6 +8,7 @@ import Image from "next/image"
 import ShakeriLogo from "@/public/images/logo_transparent.png"
 import { useState } from "react"
 import { Menu, X } from "lucide-react"
+import { withBasePath } from "@/lib/base-path"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-body" })
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-heading" })
@@ -27,9 +28,9 @@ export default function RootLayout({
         <meta name="generator" content="Next.js" />
         <meta name="keywords" content="deep learning, neural networks, machine learning, AI, course, UVA, Shakeri Lab" />
         <meta name="author" content="Shakeri Lab - University of Virginia" />
-        <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png" />
-        <link rel="icon" type="image/png" sizes="256x256" href="/icon.png" />
-        <link rel="apple-touch-icon" href="/icon.png" />
+        <link rel="icon" type="image/png" sizes="64x64" href={withBasePath("/favicon.png")} />
+        <link rel="icon" type="image/png" sizes="256x256" href={withBasePath("/icon.png")} />
+        <link rel="apple-touch-icon" href={withBasePath("/icon.png")} />
       </head>
       <body className={`${inter.variable} ${spaceGrotesk.variable} antialiased`}>
         <nav className="sticky top-0 z-50 border-b border-white/30 bg-white/80 backdrop-blur-xl shadow-[0_12px_30px_-18px_rgba(35,45,75,0.45)]">
@@ -152,9 +153,6 @@ export default function RootLayout({
           <div className="container mx-auto px-4">
             <div className="text-center mb-8">
               <h3 className="text-2xl font-bold mb-2">Deep Learning</h3>
-              <p className="text-gray-300 text-lg max-w-3xl mx-auto mb-4">
-                Comprehensive course materials for learning deep learning from fundamentals to advanced applications.
-              </p>
               <div className="flex flex-wrap items-center justify-center gap-2 text-sm text-gray-400">
                 <span>Developed by</span>
                 <a
@@ -194,7 +192,8 @@ export default function RootLayout({
                 >
                   Shakeri Lab
                 </a>{" "}
-                • School of Data Science • University of Virginia. Course materials are open source and freely available.
+                • School of Data Science • University of Virginia. Course materials are proprietary. Redistribution,
+                reuse, or citation requires written permission.
               </p>
             </div>
           </div>
