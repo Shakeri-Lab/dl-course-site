@@ -6,6 +6,9 @@ const nextConfig = {
   trailingSlash: true,
   basePath: isProd ? '/dl-course-site' : '',
   assetPrefix: isProd ? '/dl-course-site/' : '',
+  env: {
+    NEXT_PUBLIC_BASE_PATH: isProd ? '/dl-course-site' : '',
+  },
   eslint: {
     ignoreDuringBuilds: true,
   },

@@ -1,8 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ExternalLink } from "lucide-react"
-import { ArrowLeft } from "lucide-react"
-import Link from "next/link"
 import { ModulePager } from "@/components/module-pager"
 
 export const metadata = {
@@ -14,13 +12,6 @@ export default function ModulePage() {
   return (
     <div className="relative min-h-screen bg-transparent pb-20">
       <div className="mx-auto w-full max-w-5xl px-6 py-12">
-        {/* Back */}
-        <div className="mb-8">
-          <Link href="/" className="inline-flex items-center text-slate-500 transition-colors hover:text-[#002862]">
-            <ArrowLeft className="h-4 w-4 mr-2" /> Back to Modules
-          </Link>
-        </div>
-
         {/* Lecture Video 5.1 */}
         <Card className="mb-12 border border-white/30 bg-white/70 backdrop-blur-xl shadow-[0_32px_60px_-38px_rgba(0,40,98,0.45)]">
           <CardHeader>
@@ -84,11 +75,6 @@ export default function ModulePage() {
         </Card>
         <ModulePager current={5} />
 
-        <div className="mt-8">
-          <Link href="/">
-            <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">⟵ Back to Modules Menu</button>
-          </Link>
-        </div>
       </div>
     </div>
   )

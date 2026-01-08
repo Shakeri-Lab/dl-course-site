@@ -333,11 +333,7 @@ export default function CoursePage() {
         <h1 className="text-4xl font-semibold tracking-tight text-slate-900 md:text-5xl">
           Deep Learning
         </h1>
-        <p className="mt-4 max-w-2xl text-lg text-slate-600">
-          Journey from first principles to cutting-edge transformer systems through curated lectures, guided notebooks,
-          and pragmatic engineering checklists.
-        </p>
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
           <Link
             href="/syllabus.pdf"
             target="_blank"

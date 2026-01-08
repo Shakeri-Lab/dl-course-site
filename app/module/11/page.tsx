@@ -1,8 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { ExternalLink, ArrowLeft } from "lucide-react"
-import Link from "next/link"
+import { ExternalLink } from "lucide-react"
 import { ModulePager } from "@/components/module-pager"
+import { withBasePath } from "@/lib/base-path"
 
 type Session = {
   id: string
@@ -15,7 +15,7 @@ const slides: Session[] = [
   {
     id: "11.1",
     title: "ICL, Prompt Engineering, and RAG",
-    pdf: "/dl-course-site/11.1-%20ICL-PromptEng-RAG.pdf",
+    pdf: withBasePath("/11.1-%20ICL-PromptEng-RAG.pdf"),
     readings: [
       { label: "Brown et al., GPT-3 Few-Shot Learning", url: "https://arxiv.org/abs/2005.14165" },
       { label: "Wei et al., Chain-of-Thought Prompting", url: "https://arxiv.org/abs/2201.11903" },
@@ -25,7 +25,7 @@ const slides: Session[] = [
   {
     id: "11.2",
     title: "Parameter-Efficient Fine-Tuning (PEFT)",
-    pdf: "/dl-course-site/11.2%20PEFT.pdf",
+    pdf: withBasePath("/11.2%20PEFT.pdf"),
     readings: [
       { label: "Hu et al., LoRA", url: "https://arxiv.org/abs/2106.09685" },
       { label: "Li & Liang, Prefix-Tuning", url: "https://arxiv.org/abs/2101.00190" },
@@ -35,7 +35,7 @@ const slides: Session[] = [
   {
     id: "11.3",
     title: "Quantization & QLoRA",
-    pdf: "/dl-course-site/11.3-%20Quantization-QLoRA.pdf",
+    pdf: withBasePath("/11.3-%20Quantization-QLoRA.pdf"),
     readings: [
       { label: "Dettmers et al., QLoRA", url: "https://arxiv.org/abs/2305.14314" },
       { label: "Frantar et al., GPTQ", url: "https://arxiv.org/abs/2210.17323" },
@@ -53,13 +53,6 @@ export default function ModulePage() {
   return (
     <div className="relative min-h-screen bg-transparent pb-20">
       <div className="mx-auto w-full max-w-5xl px-6 py-12">
-        {/* Back */}
-        <div className="mb-8">
-          <Link href="/" className="inline-flex items-center text-slate-500 transition-colors hover:text-[#002862]">
-            <ArrowLeft className="h-4 w-4 mr-2" /> Back to Modules
-          </Link>
-        </div>
-
         {slides.map((session) => (
           <Card key={session.id} className="mb-12 border border-white/30 bg-white/70 backdrop-blur-xl shadow-[0_32px_60px_-38px_rgba(0,40,98,0.45)]">
             <CardHeader>
@@ -142,11 +135,6 @@ export default function ModulePage() {
 
         <ModulePager current={11} />
 
-        <div className="mt-8">
-          <Link href="/">
-            <Button variant="outline">⟵ Back to Modules Menu</Button>
-          </Link>
-        </div>
       </div>
     </div>
   )

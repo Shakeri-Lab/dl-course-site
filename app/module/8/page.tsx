@@ -1,8 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { ExternalLink, ArrowLeft } from "lucide-react"
-import Link from "next/link"
+import { ExternalLink } from "lucide-react"
 import { ModulePager } from "@/components/module-pager"
+import { withBasePath } from "@/lib/base-path"
 
 export const metadata = {
   title: "Module 8 – Attention Mechanism",
@@ -13,13 +13,6 @@ export default function ModulePage() {
   return (
     <div className="relative min-h-screen bg-transparent pb-20">
       <div className="mx-auto w-full max-w-5xl px-6 py-12">
-        {/* Back */}
-        <div className="mb-8">
-          <Link href="/" className="inline-flex items-center text-slate-500 transition-colors hover:text-[#002862]">
-            <ArrowLeft className="h-4 w-4 mr-2" /> Back to Modules
-          </Link>
-        </div>
-
         
 
         {/* Lecture Video 8.1 */}
@@ -104,7 +97,7 @@ export default function ModulePage() {
               <p className="text-slate-600 font-medium mb-2">Cross-Attention diagram preview:</p>
               <div className="rounded-lg border overflow-hidden">
                 <iframe
-                  src="/dl-course-site/seq2seq_cross_attention.pdf"
+                  src={withBasePath("/seq2seq_cross_attention.pdf")}
                   title="Seq2Seq Cross-Attention Diagram"
                   className="w-full h-96"
                 />
@@ -127,11 +120,6 @@ export default function ModulePage() {
 
         <ModulePager current={8} />
 
-        <div className="mt-8">
-          <Link href="/">
-            <Button variant="outline">⟵ Back to Modules Menu</Button>
-          </Link>
-        </div>
       </div>
     </div>
   )
