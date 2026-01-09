@@ -192,8 +192,16 @@ export default function RootLayout({
                 >
                   Shakeri Lab
                 </a>{" "}
-                • School of Data Science • University of Virginia. Course materials are proprietary. Redistribution,
-                reuse, or citation requires written permission.
+                • School of Data Science • University of Virginia. Course materials © 2025 Shakeri Lab. Licensed under{" "}
+                <a
+                  href="https://creativecommons.org/licenses/by/4.0/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-300 underline underline-offset-2 hover:text-blue-200"
+                >
+                  CC BY 4.0
+                </a>
+                .
               </p>
             </div>
           </div>
