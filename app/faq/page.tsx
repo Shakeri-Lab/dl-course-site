@@ -62,7 +62,7 @@ const faqCategories = [
       {
         question: "What if I miss a deadline?",
         answer:
-          "Check the Canvas syllabus for late submission policies. Contact the instructor and TAs immediately if you have extenuating circumstances.",
+          "Check the Canvas syllabus for late submission policies. Contact the instructor immediately if you have extenuating circumstances.",
       },
     ],
   },
@@ -94,18 +94,6 @@ const contactInfo = {
     email: "hs9hd@virginia.edu",
     officeHours: "See Canvas for schedule.",
   },
-  tas: [
-    {
-      name: "Justin Lee",
-      email: "jgh2xh@virginia.edu",
-      officeHours: "See Canvas for schedule.",
-    },
-    {
-      name: "Tom Lever",
-      email: "tsl2b@virginia.edu",
-      officeHours: "See Canvas for schedule.",
-    },
-  ],
 }
 
 export default function FAQPage() {
@@ -193,30 +181,6 @@ export default function FAQPage() {
                 </Button>
               </CardContent>
             </Card>
-
-            {contactInfo.tas.map((ta, idx) => (
-              <Card key={idx}>
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <Mail className="h-5 w-5 text-green-600" />
-                    <span>Teaching Assistant</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <p className="font-semibold">{ta.name}</p>
-                    <p className="text-sm text-gray-600">{ta.email}</p>
-                    <div className="flex items-center space-x-2 text-sm text-gray-600">
-                      <Clock className="h-4 w-4" />
-                      <span>{ta.officeHours}</span>
-                    </div>
-                  </div>
-                  <Button asChild className="mt-4" size="sm" variant="outline">
-                    <a href={`mailto:${ta.email}`}>Send Email</a>
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
           </div>
         </div>
 
