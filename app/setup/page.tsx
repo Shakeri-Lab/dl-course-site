@@ -148,8 +148,8 @@ export default function SetupPage() {
             <div>
               <h3 className="font-semibold text-blue-900">Canvas Students</h3>
               <p className="text-blue-800 text-sm">
-                Complete this setup before Module 1. If you encounter issues, post in the Ed Discussion forum or
-                attend office hours for help.
+                Complete this setup before Module 1. If you encounter issues, contact the instructor or attend office
+                hours for help.
               </p>
             </div>
           </div>
@@ -321,16 +321,6 @@ export default function SetupPage() {
           <h3 className="font-semibold text-green-900 mb-2">Need Help?</h3>
           <p className="text-green-800 mb-4">If you're stuck with setup, don't worry! Here are ways to get help:</p>
           <div className="flex flex-wrap gap-3">
-            <Button asChild variant="outline">
-              <a
-                href="https://edstem.org/us/courses/83711/discussion"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Ed Discussion Forum
-                <ExternalLink className="h-4 w-4 ml-2" />
-              </a>
-            </Button>
             <Button asChild variant="outline">
               <a href="mailto:instructor@university.edu">Email Instructor</a>
             </Button>

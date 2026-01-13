@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { ExternalLink, MessageCircle, Mail, Clock } from "lucide-react"
+import { MessageCircle, Mail, Clock } from "lucide-react"
 import Link from "next/link"
 
 const faqCategories = [
@@ -42,7 +42,7 @@ const faqCategories = [
       {
         question: "What if I can't install the required software?",
         answer:
-          "Use Google Colab as a backup - it requires no installation. Check the setup guide for troubleshooting, or ask for help in Ed Discussion.",
+          "Use Google Colab as a backup - it requires no installation. Check the setup guide for troubleshooting, or email the instructor.",
       },
     ],
   },
@@ -72,7 +72,7 @@ const faqCategories = [
       {
         question: "Where should I ask questions?",
         answer:
-          "Use Ed Discussion for course-related questions so everyone can benefit. Email the instructor for private matters or urgent issues.",
+          "Use the Canvas discussion forums for course-related questions so everyone can benefit. Email the instructor for private matters or urgent issues.",
       },
       {
         question: "Are there office hours?",
@@ -104,8 +104,8 @@ export default function FAQPage() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Frequently Asked Questions</h1>
           <p className="text-lg text-gray-600">
-            Common questions about the Deep Learning Mastery course. Can't find what you're looking for? Ask in Ed Discussion
-            or contact us directly.
+            Common questions about the Deep Learning Mastery course. Can't find what you're looking for? Use the Canvas
+            discussion forums or contact us directly.
           </p>
         </div>
 
@@ -119,16 +119,6 @@ export default function FAQPage() {
                 For course-specific questions, use the Canvas discussion forums where classmates and instructors can
                 help.
               </p>
-              <Button asChild size="sm">
-                <a
-                  href="https://edstem.org/us/courses/83711/discussion"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Go to Ed Discussion
-                  <ExternalLink className="h-4 w-4 ml-2" />
-                </a>
-              </Button>
             </div>
           </div>
         </div>
@@ -188,7 +178,7 @@ export default function FAQPage() {
         <div className="mt-12 bg-green-50 border border-green-200 rounded-lg p-6">
           <h3 className="font-semibold text-green-900 mb-2">Quick Help Resources</h3>
           <p className="text-green-800 mb-4">Before reaching out, try these self-help resources:</p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Button asChild variant="outline" className="justify-start">
               <Link href="/setup">
                 <span>Setup Guide</span>
@@ -198,16 +188,6 @@ export default function FAQPage() {
               <Link href="/resources">
                 <span>Additional Resources</span>
               </Link>
-            </Button>
-            <Button asChild variant="outline" className="justify-start">
-              <a
-                href="https://edstem.org/us/courses/83711/discussion"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <span>Ed Discussion</span>
-                <ExternalLink className="h-4 w-4 ml-2" />
-              </a>
             </Button>
           </div>
         </div>
@@ -219,16 +199,6 @@ export default function FAQPage() {
             Don't hesitate to reach out! We're here to help you succeed in your deep learning journey.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild>
-              <a
-                href="https://edstem.org/us/courses/83711/discussion"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Ask in Ed Discussion
-                <ExternalLink className="h-4 w-4 ml-2" />
-              </a>
-            </Button>
             <Button asChild variant="outline">
               <a href={`mailto:hs9hd@virginia.edu,jgh2xh@virginia.edu,tsl2b@virginia.edu`}>
                 Email Teaching Team
