@@ -66,16 +66,17 @@ export default function ModuleOnePage() {
               Recommended reading: <a href="https://d2l.ai/index.html" target="_blank" rel="noopener noreferrer" className="text-[#002862] underline decoration-[#FFBA69]/70 underline-offset-4 hover:text-[#001a44]">Dive into Deep Learning</a> — D2L: <strong>2.3; 3.1.4; 4.1; 5.1; 12.4</strong>.
             </p>
             <p className="text-slate-600">
-              This Colab notebook contains the lecture code demonstrated in class. Read the instructions at the top and run the cells in order.
+              These Colab notebooks contain the lecture codes demonstrated in class and help you with the homework 1.
+              Read the instructions at the top and run the cells in order.
             </p>
             <div className="pt-2">
               <Button asChild>
                 <a
-                  href="https://colab.research.google.com/drive/1dXLaMnIOQtcBqCZ9LnPiSEpVYmtviRxB?usp=sharing"
+                  href="https://colab.research.google.com/drive/1zQoyTDKP37dFEzM8G5aACAcWlnI8Jfre?usp=sharing"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Open Colab Notebook
+                  Open Colab Notebook 1
                   <ExternalLink className="h-4 w-4 ml-2" />
                 </a>
               </Button>
@@ -84,11 +85,11 @@ export default function ModuleOnePage() {
             <div className="pt-2">
               <Button asChild variant="outline">
                 <a
-                  href="https://colab.research.google.com/drive/1JUuiHRj0CcYkMIBFVq6W9TKWm7AsvpiL?usp=sharing"
+                  href="https://colab.research.google.com/drive/1dXLaMnIOQtcBqCZ9LnPiSEpVYmtviRxB?usp=sharing"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Open Homework 1 on Colab
+                  Open Colab Notebook 2
                   <ExternalLink className="h-4 w-4 ml-2" />
                 </a>
               </Button>
