@@ -59,18 +59,6 @@ export default function ModulePage() {
               </Button>
             </div>
 
-            <div className="pt-2">
-              <Button asChild variant="outline">
-                <a
-                  href="https://colab.research.google.com/drive/1LtgCpD_nTTPsckJm_urw7wfeXXekVzQu?usp=sharing"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Open Homework 2 on Colab
-                  <ExternalLink className="h-4 w-4 ml-2" />
-                </a>
-              </Button>
-            </div>
           </CardContent>
         </Card>
         <ModulePager current={5} />
