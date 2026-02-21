@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { ArrowRight, ExternalLink } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
+import { useTheme } from "next-themes"
 
 type ModuleCategory =
   | "fundamentals"
@@ -25,18 +26,18 @@ type CourseModule = {
   category: ModuleCategory
 }
 
-const moduleThemes: Record<
-  ModuleCategory | "default",
-  {
-    badgeGradient: string
-    badgeShadow: string
-    tagBackground: string
-    tagColor: string
-    halo: string
-    cardShadow: string
-    accentText: string
-  }
-> = {
+type ThemeColors = {
+  badgeGradient: string
+  badgeShadow: string
+  tagBackground: string
+  tagColor: string
+  halo: string
+  cardShadow: string
+  accentText: string
+  labelBorder: string
+}
+
+const lightThemes: Record<ModuleCategory | "default", ThemeColors> = {
   fundamentals: {
     badgeGradient: "linear-gradient(135deg, #F9C27A 0%, #F09062 100%)",
     badgeShadow: "0 20px 45px -20px rgba(240, 144, 98, 0.55)",
@@ -45,6 +46,7 @@ const moduleThemes: Record<
     halo: "rgba(240, 144, 98, 0.22)",
     cardShadow: "0 30px 60px -35px rgba(240, 144, 98, 0.55)",
     accentText: "#9B4D20",
+    labelBorder: "1px solid rgba(255,255,255,0.4)",
   },
   cnn: {
     badgeGradient: "linear-gradient(135deg, #F09062 0%, #EA6C77 100%)",
@@ -54,6 +56,7 @@ const moduleThemes: Record<
     halo: "rgba(234, 108, 119, 0.22)",
     cardShadow: "0 30px 60px -35px rgba(234, 108, 119, 0.48)",
     accentText: "#8E3E4C",
+    labelBorder: "1px solid rgba(255,255,255,0.4)",
   },
   bridge: {
     badgeGradient: "linear-gradient(135deg, #EA6C77 0%, #C26D9F 100%)",
@@ -63,6 +66,7 @@ const moduleThemes: Record<
     halo: "rgba(194, 109, 159, 0.24)",
     cardShadow: "0 30px 60px -35px rgba(194, 109, 159, 0.45)",
     accentText: "#7C3E66",
+    labelBorder: "1px solid rgba(255,255,255,0.4)",
   },
   rnn: {
     badgeGradient: "linear-gradient(135deg, #C26D9F 0%, #7F7DD6 100%)",
@@ -72,6 +76,7 @@ const moduleThemes: Record<
     halo: "rgba(127, 125, 214, 0.24)",
     cardShadow: "0 30px 60px -35px rgba(127, 125, 214, 0.45)",
     accentText: "#4F3EA0",
+    labelBorder: "1px solid rgba(255,255,255,0.4)",
   },
   attention: {
     badgeGradient: "linear-gradient(135deg, #7F7DD6 0%, #546FE1 100%)",
@@ -81,6 +86,7 @@ const moduleThemes: Record<
     halo: "rgba(84, 111, 225, 0.22)",
     cardShadow: "0 30px 60px -35px rgba(84, 111, 225, 0.42)",
     accentText: "#2F3FA8",
+    labelBorder: "1px solid rgba(255,255,255,0.4)",
   },
   transformer: {
     badgeGradient: "linear-gradient(135deg, #546FE1 0%, #2E77D1 100%)",
@@ -90,6 +96,7 @@ const moduleThemes: Record<
     halo: "rgba(46, 119, 209, 0.2)",
     cardShadow: "0 30px 60px -35px rgba(46, 119, 209, 0.4)",
     accentText: "#225AA1",
+    labelBorder: "1px solid rgba(255,255,255,0.4)",
   },
   advanced: {
     badgeGradient: "linear-gradient(135deg, #2E77D1 0%, #1B6FA9 100%)",
@@ -99,6 +106,7 @@ const moduleThemes: Record<
     halo: "rgba(27, 111, 169, 0.22)",
     cardShadow: "0 30px 60px -35px rgba(27, 111, 169, 0.38)",
     accentText: "#0F4D63",
+    labelBorder: "1px solid rgba(255,255,255,0.4)",
   },
   upcoming: {
     badgeGradient: "linear-gradient(135deg, rgba(208, 213, 221, 0.95) 0%, rgba(148, 163, 184, 0.95) 100%)",
@@ -108,6 +116,7 @@ const moduleThemes: Record<
     halo: "rgba(148, 163, 184, 0.2)",
     cardShadow: "0 30px 60px -35px rgba(100, 116, 139, 0.32)",
     accentText: "#475569",
+    labelBorder: "1px solid rgba(255,255,255,0.4)",
   },
   default: {
     badgeGradient: "linear-gradient(135deg, #546FE1 0%, #2E77D1 100%)",
@@ -117,6 +126,100 @@ const moduleThemes: Record<
     halo: "rgba(46, 119, 209, 0.2)",
     cardShadow: "0 30px 60px -35px rgba(46, 119, 209, 0.4)",
     accentText: "#225AA1",
+    labelBorder: "1px solid rgba(255,255,255,0.4)",
+  },
+}
+
+const darkThemes: Record<ModuleCategory | "default", ThemeColors> = {
+  fundamentals: {
+    badgeGradient: "linear-gradient(135deg, #F9C27A 0%, #F09062 100%)",
+    badgeShadow: "0 20px 45px -20px rgba(240, 144, 98, 0.35)",
+    tagBackground: "rgba(240, 144, 98, 0.12)",
+    tagColor: "#F9C27A",
+    halo: "rgba(240, 144, 98, 0.15)",
+    cardShadow: "0 20px 50px -30px rgba(240, 144, 98, 0.25)",
+    accentText: "#F9C27A",
+    labelBorder: "1px solid rgba(255,255,255,0.12)",
+  },
+  cnn: {
+    badgeGradient: "linear-gradient(135deg, #F09062 0%, #EA6C77 100%)",
+    badgeShadow: "0 20px 45px -22px rgba(234, 108, 119, 0.35)",
+    tagBackground: "rgba(234, 108, 119, 0.12)",
+    tagColor: "#F5A0A9",
+    halo: "rgba(234, 108, 119, 0.15)",
+    cardShadow: "0 20px 50px -30px rgba(234, 108, 119, 0.2)",
+    accentText: "#F5A0A9",
+    labelBorder: "1px solid rgba(255,255,255,0.12)",
+  },
+  bridge: {
+    badgeGradient: "linear-gradient(135deg, #EA6C77 0%, #C26D9F 100%)",
+    badgeShadow: "0 20px 45px -22px rgba(194, 109, 159, 0.35)",
+    tagBackground: "rgba(194, 109, 159, 0.12)",
+    tagColor: "#D9A0C5",
+    halo: "rgba(194, 109, 159, 0.15)",
+    cardShadow: "0 20px 50px -30px rgba(194, 109, 159, 0.2)",
+    accentText: "#D9A0C5",
+    labelBorder: "1px solid rgba(255,255,255,0.12)",
+  },
+  rnn: {
+    badgeGradient: "linear-gradient(135deg, #C26D9F 0%, #7F7DD6 100%)",
+    badgeShadow: "0 20px 45px -22px rgba(127, 125, 214, 0.35)",
+    tagBackground: "rgba(127, 125, 214, 0.12)",
+    tagColor: "#B5B3E8",
+    halo: "rgba(127, 125, 214, 0.15)",
+    cardShadow: "0 20px 50px -30px rgba(127, 125, 214, 0.2)",
+    accentText: "#B5B3E8",
+    labelBorder: "1px solid rgba(255,255,255,0.12)",
+  },
+  attention: {
+    badgeGradient: "linear-gradient(135deg, #7F7DD6 0%, #546FE1 100%)",
+    badgeShadow: "0 20px 45px -22px rgba(84, 111, 225, 0.35)",
+    tagBackground: "rgba(84, 111, 225, 0.12)",
+    tagColor: "#9DADE8",
+    halo: "rgba(84, 111, 225, 0.15)",
+    cardShadow: "0 20px 50px -30px rgba(84, 111, 225, 0.2)",
+    accentText: "#9DADE8",
+    labelBorder: "1px solid rgba(255,255,255,0.12)",
+  },
+  transformer: {
+    badgeGradient: "linear-gradient(135deg, #546FE1 0%, #2E77D1 100%)",
+    badgeShadow: "0 20px 45px -22px rgba(46, 119, 209, 0.35)",
+    tagBackground: "rgba(46, 119, 209, 0.12)",
+    tagColor: "#7EB5F0",
+    halo: "rgba(46, 119, 209, 0.15)",
+    cardShadow: "0 20px 50px -30px rgba(46, 119, 209, 0.2)",
+    accentText: "#7EB5F0",
+    labelBorder: "1px solid rgba(255,255,255,0.12)",
+  },
+  advanced: {
+    badgeGradient: "linear-gradient(135deg, #2E77D1 0%, #1B6FA9 100%)",
+    badgeShadow: "0 20px 45px -22px rgba(27, 111, 169, 0.35)",
+    tagBackground: "rgba(27, 111, 169, 0.12)",
+    tagColor: "#7ECAE0",
+    halo: "rgba(27, 111, 169, 0.15)",
+    cardShadow: "0 20px 50px -30px rgba(27, 111, 169, 0.2)",
+    accentText: "#7ECAE0",
+    labelBorder: "1px solid rgba(255,255,255,0.12)",
+  },
+  upcoming: {
+    badgeGradient: "linear-gradient(135deg, rgba(148, 163, 184, 0.6) 0%, rgba(100, 116, 139, 0.6) 100%)",
+    badgeShadow: "0 18px 40px -24px rgba(148, 163, 184, 0.2)",
+    tagBackground: "rgba(148, 163, 184, 0.1)",
+    tagColor: "#94A3B8",
+    halo: "rgba(148, 163, 184, 0.1)",
+    cardShadow: "0 20px 50px -30px rgba(100, 116, 139, 0.15)",
+    accentText: "#94A3B8",
+    labelBorder: "1px solid rgba(255,255,255,0.12)",
+  },
+  default: {
+    badgeGradient: "linear-gradient(135deg, #546FE1 0%, #2E77D1 100%)",
+    badgeShadow: "0 20px 45px -22px rgba(46, 119, 209, 0.35)",
+    tagBackground: "rgba(46, 119, 209, 0.12)",
+    tagColor: "#7EB5F0",
+    halo: "rgba(46, 119, 209, 0.15)",
+    cardShadow: "0 20px 50px -30px rgba(46, 119, 209, 0.2)",
+    accentText: "#7EB5F0",
+    labelBorder: "1px solid rgba(255,255,255,0.12)",
   },
 }
 
@@ -149,8 +252,11 @@ const courseModules: CourseModule[] = [
 function ModuleCard({ module }: { module: CourseModule }) {
   const cardRef = useRef<HTMLDivElement | null>(null)
   const [isVisible, setIsVisible] = useState(false)
+  const [mounted, setMounted] = useState(false)
+  const { resolvedTheme } = useTheme()
 
   useEffect(() => {
+    setMounted(true)
     const element = cardRef.current
     if (!element) return
     const observer = new IntersectionObserver(
@@ -161,7 +267,9 @@ function ModuleCard({ module }: { module: CourseModule }) {
     return () => observer.disconnect()
   }, [])
 
-  const theme = moduleThemes[module.category] ?? moduleThemes.default
+  const isDark = mounted && resolvedTheme === "dark"
+  const themes = isDark ? darkThemes : lightThemes
+  const theme = themes[module.category] ?? themes.default
 
   return (
     <Card
@@ -184,7 +292,7 @@ function ModuleCard({ module }: { module: CourseModule }) {
             <div className="flex-1 space-y-2">
               <div className="flex flex-wrap items-center gap-3">
                 <h3 className="text-xl font-semibold text-slate-900 dark:text-white">{module.title}</h3>
-                <span className="rounded-full bg-white/60 dark:bg-white/10 px-2.5 py-0.5 text-[0.6rem] font-semibold uppercase tracking-[0.26em]" style={{ color: theme.accentText, border: "1px solid rgba(255,255,255,0.4)" }}>
+                <span className="rounded-full bg-white/60 dark:bg-white/10 px-2.5 py-0.5 text-[0.6rem] font-semibold uppercase tracking-[0.26em]" style={{ color: theme.accentText, border: theme.labelBorder }}>
                   {categoryLabels[module.category]}
                 </span>
               </div>
@@ -217,8 +325,8 @@ function ModuleCard({ module }: { module: CourseModule }) {
 export default function CoursePage() {
   return (
     <div className="relative min-h-screen overflow-hidden pb-24">
-      <div className="pointer-events-none absolute right-[5%] top-32 h-64 w-64 rounded-full bg-[radial-gradient(circle_at_center,rgba(255,186,105,0.28),rgba(255,186,105,0))] blur-3xl" />
-      <div className="pointer-events-none absolute left-[8%] top-[55%] h-72 w-72 rounded-full bg-[radial-gradient(circle_at_center,rgba(46,119,209,0.35),rgba(46,119,209,0))] blur-[90px]" />
+      <div className="pointer-events-none absolute right-[5%] top-32 h-64 w-64 rounded-full bg-[radial-gradient(circle_at_center,rgba(255,186,105,0.28),rgba(255,186,105,0))] dark:bg-[radial-gradient(circle_at_center,rgba(255,186,105,0.1),rgba(255,186,105,0))] blur-3xl" />
+      <div className="pointer-events-none absolute left-[8%] top-[55%] h-72 w-72 rounded-full bg-[radial-gradient(circle_at_center,rgba(46,119,209,0.35),rgba(46,119,209,0))] dark:bg-[radial-gradient(circle_at_center,rgba(46,119,209,0.15),rgba(46,119,209,0))] blur-[90px]" />
 
       <header className="relative mx-auto flex max-w-4xl flex-col items-center px-6 pb-10 pt-16 text-center">
         <h1 className="text-4xl font-semibold tracking-tight text-slate-900 dark:text-white md:text-5xl">Deep Learning</h1>
@@ -226,10 +334,6 @@ export default function CoursePage() {
           <Link href="/syllabus.pdf" target="_blank" rel="noopener noreferrer" className="group inline-flex items-center gap-2 rounded-full border border-slate-300/70 dark:border-slate-600/70 bg-white/60 dark:bg-white/10 px-5 py-2 text-sm font-semibold text-slate-800 dark:text-slate-200 transition-all duration-300 hover:border-transparent hover:bg-gradient-to-r hover:from-[#FFBA69]/80 hover:to-[#2E77D1]/80 hover:text-[#123C5A]">
             Course Syllabus (PDF)
             <ExternalLink className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-          </Link>
-          <Link href="https://canvas.virginia.edu/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full border border-transparent bg-gradient-to-r from-[#002862] to-[#0B4D63] px-5 py-2 text-sm font-semibold text-white shadow-[0_20px_40px_-24px_rgba(0,40,98,0.6)] transition-all duration-300 hover:shadow-[0_24px_45px_-20px_rgba(0,40,98,0.55)]">
-            Access Canvas
-            <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       </header>

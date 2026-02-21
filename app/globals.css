@@ -152,6 +152,10 @@
   box-shadow: 0 28px 60px -32px rgba(0, 40, 98, 0.55);
 }
 
+.dark .module-card:hover {
+  box-shadow: 0 28px 60px -32px rgba(0, 0, 0, 0.6);
+}
+
 .module-card.reveal-card {
   opacity: 0;
   transform: translateY(20px) scale(0.98);
