@@ -93,6 +93,10 @@
     overflow-x: hidden;
   }
 
+  .dark body {
+    background: linear-gradient(135deg, rgba(15, 15, 25, 1) 0%, rgba(20, 20, 35, 1) 45%, rgba(10, 15, 30, 1) 100%);
+  }
+
   body::before,
   body::after {
     content: "";
@@ -112,12 +116,20 @@
     background: radial-gradient(circle at center, rgba(255, 192, 120, 0.45) 0%, rgba(255, 192, 120, 0) 70%);
   }
 
+  .dark body::before {
+    background: radial-gradient(circle at center, rgba(255, 192, 120, 0.15) 0%, rgba(255, 192, 120, 0) 70%);
+  }
+
   body::after {
     bottom: -240px;
     left: -180px;
     width: 520px;
     height: 520px;
     background: radial-gradient(circle at center, rgba(0, 51, 102, 0.22) 0%, rgba(0, 51, 102, 0) 70%);
+  }
+
+  .dark body::after {
+    background: radial-gradient(circle at center, rgba(46, 119, 209, 0.12) 0%, rgba(46, 119, 209, 0) 70%);
   }
 
   h1,
