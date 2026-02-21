@@ -87,10 +87,10 @@ export default function RootLayout({
                   <Image
                     src={ShakeriLogo}
                     alt="Shakeri Lab logo"
-                    width={52}
-                    height={52}
+                    width={58}
+                    height={58}
                     priority
-                    className="h-12 w-12 rounded-full border border-white/60 dark:border-white/20 bg-white/80 dark:bg-gray-800/80 p-1 shadow-[0_10px_28px_-18px_rgba(0,40,98,0.45)]"
+                    className="h-[58px] w-[58px] object-contain"
                   />
                   <span className="text-left leading-tight">
                     Shakeri Lab
@@ -147,9 +147,9 @@ export default function RootLayout({
                       <Image
                         src={ShakeriLogo}
                         alt="Shakeri Lab logo"
-                        width={40}
-                        height={40}
-                        className="h-10 w-10 rounded-full border border-white/60 dark:border-white/20 bg-white/80 dark:bg-gray-800/80 p-1 shadow-sm"
+                        width={48}
+                        height={48}
+                        className="h-12 w-12 object-contain"
                       />
                       <span className="text-left leading-tight">
                         Shakeri Lab
