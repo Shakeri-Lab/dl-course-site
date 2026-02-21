@@ -106,11 +106,7 @@ dl-course-site/
 │   │   └── page.tsx             # Environment setup guide
 │   ├── faq/
 │   │   └── page.tsx             # Frequently asked questions
-│   ├── canvas-integration/
-│   │   └── page.tsx             # Canvas integration guide
-│   └── implementation/
-│       └── page.tsx             # Implementation checklist
-├── components/                   # Reusable UI components
+│   ├── components/                   # Reusable UI components
 │   └── ui/                      # shadcn/ui components
 ├── public/                      # Static assets
 │   ├── slides/                  # Course slide decks
@@ -293,7 +289,6 @@ npm run build
 
 ### Getting Help
 - Check the [FAQ page](./app/faq/page.tsx)
-- Review [Canvas Integration Guide](./app/canvas-integration/page.tsx)
 - Open GitHub issue for bugs
 - Contact course administrators for Canvas issues
 
@@ -363,8 +358,6 @@ This project is licensed under the Creative Commons Attribution 4.0 Internationa
 - Contact course instructors via Canvas messaging
 
 ### For Instructors
-- Review the [Implementation Guide](./app/implementation/page.tsx)
-- Check [Canvas Integration documentation](./app/canvas-integration/page.tsx)
 - Open GitHub issues for technical problems
 
 ### Contact Information
@@ -380,9 +373,6 @@ This project is licensed under the Creative Commons Attribution 4.0 Internationa
 - [Live Course Website](https://your-username.github.io/dl-course-materials)
 - [Canvas Course](https://canvas.instructure.com/courses/your-course)
 - [GitHub Repository](https://github.com/your-username/dl-course-materials)
-- [Implementation Checklist](./app/implementation/page.tsx)
-- [Canvas Integration Guide](./app/canvas-integration/page.tsx)
-
 **Happy Learning! 🎓**
 
 ## 🗂️ Module Page Standard
