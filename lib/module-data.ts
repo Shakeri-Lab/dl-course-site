@@ -217,7 +217,6 @@ export const modules: Record<number, ModuleData> = {
     colabLinks: [
       { label: "Open Colab Notebook", url: "https://colab.research.google.com/drive/1RizCNioTF-6u5F-BopXPBefOReV3rSgu?usp=sharing" },
       { label: "Useful decorators in PyTorch (Colab)", url: "https://colab.research.google.com/drive/102yn6vsljzZyx8ypgbqH1t-6EJZzKltK?usp=sharing", variant: "outline" },
-      { label: "Homework 3: seq2seq (Colab)", url: "https://colab.research.google.com/drive/1Nb4OuNQ3nrcUDNg-CZobMFmMWcf3zBGB?usp=sharing", variant: "outline" },
     ],
   },
 
