@@ -8,9 +8,10 @@ import Image from "next/image"
 import ShakeriLogo from "@/public/images/logo_square.jpeg"
 import { useState } from "react"
 import { Menu, X, Sun, Moon } from "lucide-react"
-import { withBasePath } from "@/lib/base-path"
+import { basePath, withBasePath } from "@/lib/base-path"
 import { ThemeProvider } from "@/components/theme-provider"
 import { useTheme } from "next-themes"
+import { usePathname } from "next/navigation"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-body" })
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-heading" })
@@ -47,6 +48,9 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const pathname = usePathname()
+  const isHomePage = pathname === "/" || pathname === basePath || pathname === `${basePath}/`
+  const logoSrc = isHomePage ? withBasePath("/images/logo_square.gif") : ShakeriLogo
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -85,11 +89,12 @@ export default function RootLayout({
                   className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400 transition-colors hover:text-[#002862] dark:hover:text-[#7EB5F0]"
                 >
                   <Image
-                    src={ShakeriLogo}
+                    src={logoSrc}
                     alt="Shakeri Lab logo"
                     width={52}
                     height={52}
                     priority
+                    unoptimized={isHomePage}
                     className="h-12 w-12 object-contain"
                   />
                   <span className="text-left leading-tight">
@@ -145,10 +150,11 @@ export default function RootLayout({
                       className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400 hover:text-[#002862] dark:hover:text-[#7EB5F0] transition-colors"
                     >
                       <Image
-                        src={ShakeriLogo}
+                        src={logoSrc}
                         alt="Shakeri Lab logo"
                         width={40}
                         height={40}
+                        unoptimized={isHomePage}
                         className="h-10 w-10 object-contain"
                       />
                       <span className="text-left leading-tight">
