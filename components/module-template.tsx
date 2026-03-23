@@ -1,14 +1,34 @@
+import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { ExternalLink } from "lucide-react"
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Check, ChevronDown, ExternalLink } from "lucide-react"
 import { ModulePager } from "@/components/module-pager"
-import type { ModuleData, ColabLink, Reading } from "@/lib/module-data"
+import { modules, type ModuleData, type ColabLink, type Reading } from "@/lib/module-data"
 
 const CARD_CLASSES =
   "mb-12 border border-white/30 dark:border-white/10 bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl shadow-[0_32px_60px_-38px_rgba(0,40,98,0.45)]"
 
 const LINK_CLASSES =
   "text-[#002862] dark:text-[#7EB5F0] underline decoration-[#FFBA69]/70 underline-offset-4 hover:text-[#001a44] dark:hover:text-[#a8d0ff]"
+
+const moduleOptions = Object.values(modules).sort((left, right) => left.moduleNumber - right.moduleNumber)
+
+function getModuleLabel(module: ModuleData) {
+  return module.metadata.title.replace(/^Module\s+/, "")
+}
 
 function ColabButtons({ links }: { links: ColabLink[] }) {
   return (
@@ -60,7 +80,59 @@ export function ModuleTemplate({ data }: { data: ModuleData }) {
 
   return (
     <div className="relative min-h-screen bg-transparent pb-20">
-      <div className="mx-auto w-full max-w-5xl px-6 py-12">
+      <div className="mx-auto w-full max-w-5xl px-6 pb-12 pt-5">
+        <div className="mb-8 border-b border-white/40 pb-3 dark:border-white/10">
+          <Breadcrumb className="text-sm">
+            <BreadcrumbList className="gap-2 text-slate-500 dark:text-slate-400">
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild className="font-medium text-slate-500 hover:text-[#002862] dark:text-slate-400 dark:hover:text-[#7EB5F0]">
+                  <Link href="/">Modules</Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator className="text-slate-300 dark:text-slate-600" />
+              <BreadcrumbItem>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button
+                      type="button"
+                      className="inline-flex items-center gap-1.5 rounded-full border border-white/60 bg-white/75 px-3 py-1 text-sm font-medium text-slate-700 transition-colors hover:text-[#002862] focus:outline-none focus:ring-2 focus:ring-[#FFBA69]/60 dark:border-white/10 dark:bg-gray-900/75 dark:text-slate-200 dark:hover:text-[#7EB5F0]"
+                      aria-label="Open module navigation"
+                    >
+                      <span>{getModuleLabel(data)}</span>
+                      <ChevronDown className="h-4 w-4 text-slate-400 dark:text-slate-500" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    align="start"
+                    className="max-h-[70vh] w-[20rem] overflow-y-auto border-white/50 bg-white/95 p-1.5 dark:border-white/10 dark:bg-gray-900/95"
+                  >
+                    {moduleOptions.map((module) => {
+                      const isCurrent = module.moduleNumber === data.moduleNumber
+
+                      return (
+                        <DropdownMenuItem
+                          key={module.moduleNumber}
+                          asChild
+                          className={isCurrent ? "bg-slate-100 text-slate-900 focus:bg-slate-100 dark:bg-white/10 dark:text-white dark:focus:bg-white/10" : ""}
+                        >
+                          <Link
+                            href={`/module/${module.moduleNumber}`}
+                            className="flex items-center justify-between gap-3"
+                            aria-current={isCurrent ? "page" : undefined}
+                          >
+                            <span>{getModuleLabel(module)}</span>
+                            {isCurrent && <Check className="h-4 w-4 text-[#002862] dark:text-[#7EB5F0]" />}
+                          </Link>
+                        </DropdownMenuItem>
+                      )
+                    })}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
+
         {/* Lectures */}
         {data.lectures.map((lecture, index) => (
           <Card key={index} className={CARD_CLASSES}>
