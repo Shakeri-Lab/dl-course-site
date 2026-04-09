@@ -313,7 +313,6 @@ export const modules: Record<number, ModuleData> = {
     colabLinks: [
       { label: "DeiT Playground (Colab)", url: "https://colab.research.google.com/drive/1qbTNmh_4_6CUiNCKpgvPndiID8RTxx3J?usp=sharing" },
       { label: "Hugging Face Transformer Tutorial (Colab)", url: "https://colab.research.google.com/drive/1kVDgeXvQX5HdsuhrnMAgreCxNtyE9M8d?usp=sharing" },
-      { label: "Homework 5: Transformer 2.0 (Colab)", url: "https://colab.research.google.com/drive/16IskVYK7IT8LoyUEegslr0hCUmvBtEpA?usp=sharing", variant: "outline" },
     ],
   },
 
