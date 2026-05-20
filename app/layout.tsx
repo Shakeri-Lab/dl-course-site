@@ -6,13 +6,14 @@ import "./globals.css"
 import Link from "next/link"
 import Image from "next/image"
 import { useState } from "react"
-import { Menu, X, Sun, Moon } from "lucide-react"
+import { Coffee, Menu, X, Sun, Moon } from "lucide-react"
 import { withBasePath } from "@/lib/base-path"
 import { ThemeProvider } from "@/components/theme-provider"
 import { useTheme } from "next-themes"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-body" })
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-heading" })
+const supportCourseUrl = "https://buymeacoffee.com/hshakeri"
 
 function ThemeToggle() {
   const { theme, setTheme } = useTheme()
@@ -79,10 +80,23 @@ export default function RootLayout({
               <div className="hidden items-center gap-3 md:flex">
                 <ThemeToggle />
                 <a
+                  href={supportCourseUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex h-9 items-center gap-2 rounded-full border border-slate-200/80 bg-white/55 px-3 text-xs font-semibold text-slate-600 shadow-sm shadow-slate-900/[0.03] transition-colors hover:border-[#FFBA69]/70 hover:bg-[#FFF7EE] hover:text-[#8B4B1E] focus:outline-none focus:ring-2 focus:ring-[#FFBA69]/50 dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:border-[#FFBA69]/50 dark:hover:bg-[#FFBA69]/10 dark:hover:text-[#FFD8A8]"
+                  title="Support the course"
+                  aria-label="Support the course on Buy Me a Coffee"
+                >
+                  <Coffee className="h-4 w-4" aria-hidden="true" />
+                  <span>Support the course</span>
+                </a>
+                <a
                   href="https://shakeri-lab.github.io/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400 transition-colors hover:text-[#002862] dark:hover:text-[#7EB5F0]"
+                  className="rounded-xl p-1 transition-colors hover:bg-white/60 focus:outline-none focus:ring-2 focus:ring-[#FFBA69]/50 dark:hover:bg-white/10"
+                  aria-label="Shakeri Lab"
+                  title="Shakeri Lab"
                 >
                   <Image
                     src={logoSrc}
@@ -93,12 +107,6 @@ export default function RootLayout({
                     unoptimized
                     className="h-12 w-12 object-contain"
                   />
-                  <span className="text-left leading-tight">
-                    Shakeri Lab
-                    <span className="block text-[0.7rem] tracking-[0.24em] text-slate-400 dark:text-slate-500">
-                      School of Data Science &bull; UVA
-                    </span>
-                  </span>
                 </a>
               </div>
               {/* Mobile menu button */}
@@ -140,10 +148,22 @@ export default function RootLayout({
                   </Link>
                   <div className="pt-3 border-t border-slate-200 dark:border-slate-700">
                     <a
+                      href={supportCourseUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mb-3 inline-flex w-full items-center justify-center gap-2 rounded-full border border-slate-200 bg-white/70 px-3 py-2 text-sm font-semibold text-slate-600 transition-colors hover:border-[#FFBA69]/70 hover:bg-[#FFF7EE] hover:text-[#8B4B1E] dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:border-[#FFBA69]/50 dark:hover:bg-[#FFBA69]/10 dark:hover:text-[#FFD8A8]"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <Coffee className="h-4 w-4" aria-hidden="true" />
+                      <span>Support the course</span>
+                    </a>
+                    <a
                       href="https://shakeri-lab.github.io/"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400 hover:text-[#002862] dark:hover:text-[#7EB5F0] transition-colors"
+                      className="inline-flex rounded-xl p-1 transition-colors hover:bg-white/60 dark:hover:bg-white/10"
+                      aria-label="Shakeri Lab"
+                      title="Shakeri Lab"
                     >
                       <Image
                         src={logoSrc}
@@ -153,12 +173,6 @@ export default function RootLayout({
                         unoptimized
                         className="h-10 w-10 object-contain"
                       />
-                      <span className="text-left leading-tight">
-                        Shakeri Lab
-                        <span className="block text-[0.65rem] tracking-[0.2em] text-slate-400 dark:text-slate-500">
-                          School of Data Science &bull; UVA
-                        </span>
-                      </span>
                     </a>
                   </div>
                 </div>
