@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -14,9 +15,15 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Check, ChevronDown, ExternalLink } from "lucide-react"
+import { Check, ChevronDown, Clock, ExternalLink, Target } from "lucide-react"
 import { ModulePager } from "@/components/module-pager"
+import { LiteYouTube } from "@/components/lite-youtube"
+import { SelfCheck } from "@/components/self-check"
+import { ModuleJsonLd } from "@/components/structured-data"
 import { modules, type ModuleData, type ColabLink, type Reading } from "@/lib/module-data"
+import { moduleExtras } from "@/lib/module-extras"
+import { selfChecks } from "@/lib/self-check-data"
+import { siteConfig } from "@/lib/site-config"
 
 const CARD_CLASSES =
   "mb-12 border border-white/30 dark:border-white/10 bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl shadow-[0_32px_60px_-38px_rgba(0,40,98,0.45)]"
@@ -70,7 +77,11 @@ function ReadingsList({ readings }: { readings: Reading[] }) {
 }
 
 export function ModuleTemplate({ data }: { data: ModuleData }) {
+  const extras = moduleExtras[data.moduleNumber]
+  const questions = selfChecks[data.moduleNumber]
+
   const hasSharedResources =
+    extras?.d2lLinks?.length ||
     data.d2lReference ||
     data.resourceDescription ||
     data.homeworkDescription ||
@@ -80,6 +91,7 @@ export function ModuleTemplate({ data }: { data: ModuleData }) {
 
   return (
     <div className="relative min-h-screen bg-transparent pb-20">
+      <ModuleJsonLd data={data} />
       <div className="mx-auto w-full max-w-5xl px-6 pb-12 pt-5">
         <div className="mb-8 border-b border-white/40 pb-3 dark:border-white/10">
           <Breadcrumb className="text-sm">
@@ -133,6 +145,38 @@ export function ModuleTemplate({ data }: { data: ModuleData }) {
           </Breadcrumb>
         </div>
 
+        {/* What you'll learn */}
+        {extras && (
+          <Card className={CARD_CLASSES}>
+            <CardHeader>
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <CardTitle className="text-xl dark:text-white flex items-center gap-2">
+                  <Target className="h-5 w-5 text-[#002862] dark:text-[#7EB5F0]" aria-hidden="true" />
+                  What you&apos;ll learn
+                </CardTitle>
+                <div className="flex flex-wrap items-center gap-2">
+                  {extras.prereq && (
+                    <Badge variant="secondary" className="font-normal">
+                      {extras.prereq}
+                    </Badge>
+                  )}
+                  <Badge variant="outline" className="gap-1 font-normal text-slate-600 dark:text-slate-300">
+                    <Clock className="h-3 w-3" aria-hidden="true" />
+                    {extras.estimatedTime}
+                  </Badge>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <ul className="list-disc space-y-1 pl-6 text-slate-600 dark:text-slate-300">
+                {extras.objectives.map((objective) => (
+                  <li key={objective}>{objective}</li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Lectures */}
         {data.lectures.map((lecture, index) => (
           <Card key={index} className={CARD_CLASSES}>
@@ -146,18 +190,10 @@ export function ModuleTemplate({ data }: { data: ModuleData }) {
                 <p className="text-slate-600 dark:text-slate-300">{lecture.description}</p>
               )}
 
-              {/* YouTube video */}
+              {/* YouTube video (lazy facade) */}
               {lecture.videoId && (
                 <div className="max-w-4xl mx-auto">
-                  <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
-                    <iframe
-                      src={`https://www.youtube.com/embed/${lecture.videoId}`}
-                      title={lecture.title}
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      allowFullScreen
-                      className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
-                    />
-                  </div>
+                  <LiteYouTube videoId={lecture.videoId} title={lecture.title} />
                 </div>
               )}
 
@@ -170,6 +206,7 @@ export function ModuleTemplate({ data }: { data: ModuleData }) {
                       <iframe
                         src={lecture.pdf}
                         title={`${lecture.title} slides`}
+                        loading="lazy"
                         className="h-96 w-full"
                       />
                     </div>
@@ -210,19 +247,45 @@ export function ModuleTemplate({ data }: { data: ModuleData }) {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {data.d2lReference && (
-                <p className="text-slate-600 dark:text-slate-300">
-                  Recommended reading:{" "}
-                  <a
-                    href="https://d2l.ai/index.html"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={LINK_CLASSES}
-                  >
-                    Dive into Deep Learning
-                  </a>{" "}
-                  — D2L: <strong>{data.d2lReference}</strong>.
-                </p>
+              {extras?.d2lLinks && extras.d2lLinks.length > 0 ? (
+                <div className="space-y-1 text-slate-600 dark:text-slate-300">
+                  <p>
+                    Recommended reading from{" "}
+                    <a
+                      href={siteConfig.textbook.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={LINK_CLASSES}
+                    >
+                      {siteConfig.textbook.name}
+                    </a>
+                    :
+                  </p>
+                  <ul className="list-disc pl-6 space-y-1">
+                    {extras.d2lLinks.map((link) => (
+                      <li key={link.url}>
+                        <a href={link.url} target="_blank" rel="noopener noreferrer" className={LINK_CLASSES}>
+                          {link.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : (
+                data.d2lReference && (
+                  <p className="text-slate-600 dark:text-slate-300">
+                    Recommended reading:{" "}
+                    <a
+                      href="https://d2l.ai/index.html"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={LINK_CLASSES}
+                    >
+                      Dive into Deep Learning
+                    </a>{" "}
+                    — D2L: <strong>{data.d2lReference}</strong>.
+                  </p>
+                )
               )}
 
               {data.resourceDescription && (
@@ -242,6 +305,7 @@ export function ModuleTemplate({ data }: { data: ModuleData }) {
                     <iframe
                       src={data.pdfPreview.src}
                       title={data.pdfPreview.title}
+                      loading="lazy"
                       className="w-full h-96"
                     />
                   </div>
@@ -300,6 +364,9 @@ export function ModuleTemplate({ data }: { data: ModuleData }) {
             </CardContent>
           </Card>
         ))}
+
+        {/* Self-check */}
+        {questions && <SelfCheck questions={questions} />}
 
         <ModulePager current={data.moduleNumber} />
       </div>

@@ -1,0 +1,39 @@
+name: Link Check
+
+# Weekly sweep of every external link the site ships (D2L sections, arXiv papers,
+# Colab notebooks, YouTube embeds). Opens/updates an issue when links rot.
+on:
+  schedule:
+    - cron: "0 6 * * 1" # Mondays 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  lychee:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check links in source data and pages
+        id: lychee
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --no-progress
+            --accept 200,201,202,204,206,301,302,303,307,308,403,429
+            --exclude 'colab\.research\.google\.com'
+            --exclude 'mailto:'
+            lib/ app/ components/ public/llms.txt README.md
+          fail: false
+
+      - name: Open issue on failures
+        if: steps.lychee.outputs.exit_code != 0
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: "Link checker found broken links"
+          content-filepath: ./lychee/out.md
+          labels: maintenance

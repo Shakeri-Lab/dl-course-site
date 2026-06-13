@@ -1,44 +1,51 @@
-"use client"
-
 import type React from "react"
+import type { Metadata } from "next"
 import { Inter, Space_Grotesk } from "next/font/google"
 import "./globals.css"
-import Link from "next/link"
-import Image from "next/image"
-import { useState } from "react"
-import { Coffee, Menu, X, Sun, Moon } from "lucide-react"
-import { withBasePath } from "@/lib/base-path"
+import "katex/dist/katex.min.css"
 import { ThemeProvider } from "@/components/theme-provider"
-import { useTheme } from "next-themes"
+import { SiteNav } from "@/components/site-nav"
+import { SiteFooter } from "@/components/site-footer"
+import { Analytics } from "@/components/analytics"
+import { siteConfig } from "@/lib/site-config"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-body" })
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-heading" })
-const supportCourseUrl = "https://buymeacoffee.com/hshakeri"
 
-function ThemeToggle() {
-  const { theme, setTheme } = useTheme()
-  return (
-    <button
-      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:text-[#002862] dark:hover:text-[#7EB5F0] hover:bg-white/60 dark:hover:bg-white/10 transition-colors"
-      aria-label="Toggle dark mode"
-    >
-      <Sun className="h-5 w-5 hidden dark:block" />
-      <Moon className="h-5 w-5 block dark:hidden" />
-    </button>
-  )
-}
-
-function NavLink({ href, children, onClick }: { href: string; children: React.ReactNode; onClick?: () => void }) {
-  return (
-    <Link
-      href={href}
-      className="relative transition-colors duration-200 hover:text-[#002862] dark:hover:text-[#7EB5F0] after:absolute after:-bottom-1 after:left-0 after:h-[2px] after:w-0 after:bg-gradient-to-r after:from-[#FFBA69] after:to-[#002862] after:transition-all after:duration-300 hover:after:w-full"
-      onClick={onClick}
-    >
-      {children}
-    </Link>
-  )
+export const metadata: Metadata = {
+  metadataBase: new URL(`${siteConfig.url}/`),
+  title: {
+    default: siteConfig.title,
+    template: siteConfig.titleTemplate,
+  },
+  description: siteConfig.description,
+  keywords: [
+    "deep learning",
+    "neural networks",
+    "machine learning",
+    "PyTorch",
+    "transformers",
+    "course",
+    "UVA",
+    "Shakeri Lab",
+  ],
+  authors: [{ name: siteConfig.instructor.name, url: siteConfig.instructor.url }],
+  openGraph: {
+    siteName: siteConfig.title,
+    title: siteConfig.title,
+    description: siteConfig.description,
+    url: "/",
+    type: "website",
+    locale: "en_US",
+    images: [{ url: "/images/og-card.png", width: 1200, height: 630, alt: siteConfig.title }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteConfig.title,
+    description: siteConfig.description,
+    images: ["/images/og-card.png"],
+  },
+  robots: { index: true, follow: true },
 }
 
 export default function RootLayout({
@@ -46,199 +53,21 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const logoSrc = withBasePath("/images/logo_square.gif")
-
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <title>Deep Learning - Shakeri Lab</title>
-        <meta name="description" content="Comprehensive deep learning course from Shakeri Lab at UVA's School of Data Science." />
-        <meta name="generator" content="Next.js" />
-        <meta name="keywords" content="deep learning, neural networks, machine learning, AI, course, UVA, Shakeri Lab" />
-        <meta name="author" content="Shakeri Lab - University of Virginia" />
-        <link rel="icon" type="image/png" sizes="64x64" href={withBasePath("/favicon.png")} />
-        <link rel="apple-touch-icon" href={withBasePath("/favicon.png")} />
-      </head>
       <body className={`${inter.variable} ${spaceGrotesk.variable} antialiased`}>
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
-          <nav className="sticky top-0 z-50 border-b border-white/30 dark:border-white/10 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl shadow-[0_12px_30px_-18px_rgba(35,45,75,0.45)]">
-            <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-6">
-              <div className="flex items-center space-x-10">
-                <Link
-                  href="/"
-                  className="text-xl font-semibold text-slate-900 dark:text-white transition-colors duration-200 hover:text-[#002862] dark:hover:text-[#7EB5F0]"
-                >
-                  Deep Learning
-                </Link>
-                <div className="hidden items-center space-x-6 text-sm font-medium text-slate-600 dark:text-slate-300 md:flex">
-                  <NavLink href="/resources">Resources</NavLink>
-                  <NavLink href="/setup">Setup</NavLink>
-                  <NavLink href="/faq">FAQ</NavLink>
-                </div>
-              </div>
-              <div className="hidden items-center gap-3 md:flex">
-                <ThemeToggle />
-                <a
-                  href={supportCourseUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex h-9 items-center gap-2 rounded-full border border-slate-200/80 bg-white/55 px-3 text-xs font-semibold text-slate-600 shadow-sm shadow-slate-900/[0.03] transition-colors hover:border-[#FFBA69]/70 hover:bg-[#FFF7EE] hover:text-[#8B4B1E] focus:outline-none focus:ring-2 focus:ring-[#FFBA69]/50 dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:border-[#FFBA69]/50 dark:hover:bg-[#FFBA69]/10 dark:hover:text-[#FFD8A8]"
-                  title="Support the course"
-                  aria-label="Support the course on Buy Me a Coffee"
-                >
-                  <Coffee className="h-4 w-4" aria-hidden="true" />
-                  <span>Support the course</span>
-                </a>
-                <a
-                  href="https://shakeri-lab.github.io/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="rounded-xl p-1 transition-colors hover:bg-white/60 focus:outline-none focus:ring-2 focus:ring-[#FFBA69]/50 dark:hover:bg-white/10"
-                  aria-label="Shakeri Lab"
-                  title="Shakeri Lab"
-                >
-                  <Image
-                    src={logoSrc}
-                    alt="Shakeri Lab logo"
-                    width={52}
-                    height={52}
-                    priority
-                    unoptimized
-                    className="h-12 w-12 object-contain"
-                  />
-                </a>
-              </div>
-              {/* Mobile menu button */}
-              <div className="flex items-center gap-2 md:hidden">
-                <ThemeToggle />
-                <button
-                  className="p-2 text-slate-600 dark:text-slate-300 hover:text-[#002862] dark:hover:text-[#7EB5F0] transition-colors"
-                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                  aria-label="Toggle mobile menu"
-                >
-                  {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-                </button>
-              </div>
-            </div>
-            {/* Mobile menu */}
-            {mobileMenuOpen && (
-              <div className="md:hidden border-t border-white/30 dark:border-white/10 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl">
-                <div className="px-6 py-4 space-y-3">
-                  <Link
-                    href="/resources"
-                    className="block text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-[#002862] dark:hover:text-[#7EB5F0] transition-colors"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Resources
-                  </Link>
-                  <Link
-                    href="/setup"
-                    className="block text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-[#002862] dark:hover:text-[#7EB5F0] transition-colors"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Setup
-                  </Link>
-                  <Link
-                    href="/faq"
-                    className="block text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-[#002862] dark:hover:text-[#7EB5F0] transition-colors"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    FAQ
-                  </Link>
-                  <div className="pt-3 border-t border-slate-200 dark:border-slate-700">
-                    <a
-                      href={supportCourseUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mb-3 inline-flex w-full items-center justify-center gap-2 rounded-full border border-slate-200 bg-white/70 px-3 py-2 text-sm font-semibold text-slate-600 transition-colors hover:border-[#FFBA69]/70 hover:bg-[#FFF7EE] hover:text-[#8B4B1E] dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:border-[#FFBA69]/50 dark:hover:bg-[#FFBA69]/10 dark:hover:text-[#FFD8A8]"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <Coffee className="h-4 w-4" aria-hidden="true" />
-                      <span>Support the course</span>
-                    </a>
-                    <a
-                      href="https://shakeri-lab.github.io/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex rounded-xl p-1 transition-colors hover:bg-white/60 dark:hover:bg-white/10"
-                      aria-label="Shakeri Lab"
-                      title="Shakeri Lab"
-                    >
-                      <Image
-                        src={logoSrc}
-                        alt="Shakeri Lab logo"
-                        width={40}
-                        height={40}
-                        unoptimized
-                        className="h-10 w-10 object-contain"
-                      />
-                    </a>
-                  </div>
-                </div>
-              </div>
-            )}
-          </nav>
-          {children}
-
-          {/* Footer */}
-          <footer className="bg-gray-900 dark:bg-black text-white py-12 mt-16">
-            <div className="container mx-auto px-4">
-              <div className="text-center mb-8">
-                <h3 className="text-2xl font-bold mb-2">Deep Learning</h3>
-                <div className="flex flex-wrap items-center justify-center gap-2 text-sm text-gray-400">
-                  <span>Developed by</span>
-                  <a
-                    href="https://shakeri-lab.github.io/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-400 hover:text-blue-300 font-semibold transition-colors duration-200"
-                  >
-                    Shakeri Lab
-                  </a>
-                  <span>&bull;</span>
-                  <span>School of Data Science</span>
-                  <span>&bull;</span>
-                  <span>University of Virginia</span>
-                </div>
-              </div>
-              <div className="flex justify-center space-x-6 text-sm">
-                <Link href="/resources" className="text-gray-300 hover:text-white transition-colors">
-                  Resources
-                </Link>
-                <Link href="/setup" className="text-gray-300 hover:text-white transition-colors">
-                  Setup Guide
-                </Link>
-                <Link href="/faq" className="text-gray-300 hover:text-white transition-colors">
-                  FAQ
-                </Link>
-              </div>
-              <div className="border-t border-gray-800 mt-8 pt-6 text-xs text-gray-400 text-center">
-                <p>
-                  &copy; 2025{" "}
-                  <a
-                    href="https://shakeri-lab.github.io/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-300 underline underline-offset-2 hover:text-blue-200"
-                  >
-                    Shakeri Lab
-                  </a>{" "}
-                  &bull; School of Data Science &bull; University of Virginia. Course materials &copy; 2025 Shakeri Lab. Licensed under{" "}
-                  <a
-                    href="https://creativecommons.org/licenses/by/4.0/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-300 underline underline-offset-2 hover:text-blue-200"
-                  >
-                    CC BY 4.0
-                  </a>
-                  .
-                </p>
-              </div>
-            </div>
-          </footer>
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-[#002862] focus:px-4 focus:py-2 focus:text-white"
+        >
+          Skip to main content
+        </a>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <SiteNav />
+          <main id="main-content">{children}</main>
+          <SiteFooter />
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   )
