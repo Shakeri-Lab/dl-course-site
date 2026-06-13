@@ -1,0 +1,32 @@
+# DS 6050: Deep Learning — University of Virginia, School of Data Science
+
+> A free, open graduate deep learning course by Heman Shakeri (Shakeri Lab, UVA):
+> video lectures, Dive into Deep Learning (D2L) readings, and hands-on PyTorch
+> Colab notebooks, from linear models to transformers and generative AI.
+
+Site: https://shakeri-lab.github.io/dl-course-site/
+YouTube playlist: https://www.youtube.com/playlist?list=PLwZv_wzaKu3vzW88m6ASKemCTb70ukycH
+Textbook: https://d2l.ai (Dive into Deep Learning — canonical reading for Modules 1–9)
+License: original materials CC BY 4.0; lecture videos © Heman Shakeri
+
+## Modules
+
+- [Module 1 – Introduction to Deep Learning](https://shakeri-lab.github.io/dl-course-site/module/1/)
+- [Module 2 – Backpropagation](https://shakeri-lab.github.io/dl-course-site/module/2/)
+- [Module 3 – Optimization Foundations & Ablation Methodology](https://shakeri-lab.github.io/dl-course-site/module/3/)
+- [Module 4 – Convolutional Neural Networks (CNNs)](https://shakeri-lab.github.io/dl-course-site/module/4/)
+- [Module 5 – Advanced CNN Architectures](https://shakeri-lab.github.io/dl-course-site/module/5/)
+- [Module 6 – Encoder Decoder Architectures](https://shakeri-lab.github.io/dl-course-site/module/6/)
+- [Module 7 – Recurrent Neural Networks](https://shakeri-lab.github.io/dl-course-site/module/7/)
+- [Module 8 – Attention Mechanism](https://shakeri-lab.github.io/dl-course-site/module/8/)
+- [Module 9 – Transformer](https://shakeri-lab.github.io/dl-course-site/module/9/)
+- [Module 10 – Transformer Models in Vision and Text](https://shakeri-lab.github.io/dl-course-site/module/10/)
+- [Module 11 – Prompting, PEFT, and Quantization (Gemma)](https://shakeri-lab.github.io/dl-course-site/module/11/)
+- [Module 12 – Multimodal Learning & GenAI](https://shakeri-lab.github.io/dl-course-site/module/12/)
+
+## Other pages
+
+- [Start Here](https://shakeri-lab.github.io/dl-course-site/start-here/): prerequisites, pacing, how to use the course
+- [Syllabus](https://shakeri-lab.github.io/dl-course-site/syllabus/): course structure and philosophy
+- [Resources](https://shakeri-lab.github.io/dl-course-site/resources/): curated external books, courses, tools
+- [Setup](https://shakeri-lab.github.io/dl-course-site/setup/): Python/PyTorch/Colab environment guide

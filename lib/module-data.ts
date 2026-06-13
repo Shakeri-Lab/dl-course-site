@@ -87,7 +87,7 @@ export const modules: Record<number, ModuleData> = {
     resourceDescription:
       "The Colab notebook contains the lecture code for Module 2 (backpropagation and PyTorch basics). Follow along by running the cells in order.",
     colabLinks: [
-      { label: "Open Colab Notebook", url: "https://colab.research.google.com/drive/1lNxYvpKIZDtZNdsrG5hq2558DE1voNMu?usp=sharing" },
+      { label: "Open Colab Notebook (shared for Modules 2–3)", url: "https://colab.research.google.com/drive/1lNxYvpKIZDtZNdsrG5hq2558DE1voNMu?usp=sharing" },
     ],
   },
 
@@ -117,7 +117,7 @@ export const modules: Record<number, ModuleData> = {
     resourceDescription:
       "The Colab notebook contains the lecture code for Module 3 (optimization and training MLPs). Run the cells sequentially as demonstrated in the lecture.",
     colabLinks: [
-      { label: "Open Colab Notebook", url: "https://colab.research.google.com/drive/1lNxYvpKIZDtZNdsrG5hq2558DE1voNMu?usp=sharing" },
+      { label: "Open Colab Notebook (shared for Modules 2–3)", url: "https://colab.research.google.com/drive/1lNxYvpKIZDtZNdsrG5hq2558DE1voNMu?usp=sharing" },
     ],
   },
 
@@ -141,7 +141,7 @@ export const modules: Record<number, ModuleData> = {
     resourceDescription:
       "The Colab notebook includes the lecture code for Module 4 (CNNs and a first PyTorch CNN). Use it to reproduce the code demos from lecture.",
     colabLinks: [
-      { label: "Open Colab Notebook", url: "https://colab.research.google.com/drive/1U487JBOOdJhIV72a9RZl0ASiSnkpX5KJ?usp=sharing" },
+      { label: "Open Colab Notebook (shared for Modules 4–5)", url: "https://colab.research.google.com/drive/1U487JBOOdJhIV72a9RZl0ASiSnkpX5KJ?usp=sharing" },
     ],
   },
 
@@ -161,7 +161,7 @@ export const modules: Record<number, ModuleData> = {
     resourceDescription:
       "The Colab notebook contains the lecture code for Module 5 (advanced CNN architectures and transfer learning). Use it to follow along the in-class demos.",
     colabLinks: [
-      { label: "Open Colab Notebook", url: "https://colab.research.google.com/drive/1U487JBOOdJhIV72a9RZl0ASiSnkpX5KJ?usp=sharing" },
+      { label: "Open Colab Notebook (shared for Modules 4–5)", url: "https://colab.research.google.com/drive/1U487JBOOdJhIV72a9RZl0ASiSnkpX5KJ?usp=sharing" },
     ],
   },
 

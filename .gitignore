@@ -38,3 +38,5 @@ next-env.d.ts
 
 # GitHub Pages
 out/
+# local editor/agent settings
+/.claude/

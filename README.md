@@ -1,429 +1,82 @@
-# Deep Learning Mastery - Course Website
+# DS 6050: Deep Learning — Course Website
 
-A modern, learner-centered course website built with Next.js and designed for seamless integration with Canvas LMS. This repository contains all course materials, resources, and documentation for the Deep Learning Mastery course.
+The public website for **DS 6050 Deep Learning** (School of Data Science, University of
+Virginia), taught by [Heman Shakeri](https://shakeri-lab.github.io/). Twelve modules take
+you from linear models and backpropagation to transformers, parameter-efficient
+fine-tuning, and generative AI — through video lectures, readings from the open
+[Dive into Deep Learning](https://d2l.ai) textbook, Colab notebooks, and self-check
+questions.
 
-## 🎯 Project Overview
+**Live site:** <https://shakeri-lab.github.io/dl-course-site/>
+**YouTube playlist:** <https://www.youtube.com/playlist?list=PLwZv_wzaKu3vzW88m6ASKemCTb70ukycH>
 
-This project implements a **hybrid approach** combining the best of GitHub Pages and Canvas LMS:
+The site is fully public and self-paced. For-credit logistics (deadlines, quizzes,
+submissions, grades) live in UVA's Canvas, not here.
 
-- **GitHub Pages**: Delivers beautiful, static course content (videos, readings, code examples)
-- **Canvas LMS**: Handles course management (authentication, progress tracking, quizzes, assignments)
+## Stack
 
-### Why This Approach?
+- [Next.js 15](https://nextjs.org) (App Router, static export) + React 19 + TypeScript
+- Tailwind CSS + a trimmed set of [shadcn/ui](https://ui.shadcn.com) components
+- [KaTeX](https://katex.org) for math in self-check questions (rendered at build time)
+- Deployed to GitHub Pages by `.github/workflows/deploy.yml` on every push to `main`
 
-- ✅ **Clean Separation**: Content delivery vs. course management
-- ✅ **Always Accessible**: Materials remain available after course completion
-- ✅ **Easy Maintenance**: Update content without breaking Canvas integration
-- ✅ **Professional Design**: Modern, responsive, and accessible interface
-- ✅ **SEO Friendly**: Course materials discoverable by search engines
+## Where content lives
 
-## 🏗️ Architecture
+All course content is data, not markup. To update content you almost never touch JSX:
 
-\`\`\`
-┌─────────────────┐    ┌─────────────────┐
-│   GitHub Pages  │    │   Canvas LMS    │
-│                 │    │                 │
-│ • Course Content│◄──►│ • Authentication│
-│ • Video Lectures│    │ • Progress Track│
-│ • Code Examples │    │ • Quizzes       │
-│ • Resources     │    │ • Assignments   │
-│ • Documentation │    │ • Gradebook     │
-└─────────────────┘    └─────────────────┘
-\`\`\`
+| File | Contents |
+|------|----------|
+| `lib/module-data.ts` | Per-module lectures (YouTube IDs, slide PDFs), Colab links, readings, descriptions |
+| `lib/module-extras.ts` | Per-module learning objectives, time estimates, prerequisites, D2L section links, homepage topics |
+| `lib/self-check-data.ts` | Per-module self-check questions (KaTeX `$...$` math supported) |
+| `lib/site-config.ts` | Site-wide facts: URLs, instructor, playlist, analytics code, "content current as of" |
+| `public/` | Slide PDFs (Modules 11–12), syllabus PDF, logo, social-share card, `llms.txt` |
 
-## 🚀 Quick Start
+Pages (`app/…/page.tsx`) render that data through `components/module-template.tsx` and
+friends. SEO infrastructure (sitemap, robots, JSON-LD, Open Graph) is generated from the
+same data — adding a module to `module-data.ts` updates everything automatically.
 
-### Prerequisites
+### Common edits
 
-- Node.js 18+ and npm
-- Git
-- GitHub account
-- Canvas LMS access (for course management)
+- **New lecture video:** add `{ title, videoId }` to the module's `lectures` array in
+  `lib/module-data.ts`.
+- **Change a reading:** edit `d2lLinks` in `lib/module-extras.ts` (each entry is a
+  verified `https://d2l.ai/...` section URL).
+- **Add a self-check question:** append to the module's array in `lib/self-check-data.ts`.
+- **Enable analytics:** create a free [GoatCounter](https://www.goatcounter.com) site and
+  put its code in `siteConfig.goatcounter`.
+- **New semester:** update `siteConfig.contentCurrentAsOf`, tag the release
+  (`git tag spring-2027`), adjust content as needed.
 
-### Local Development
+## Development
 
-1. **Clone the repository**
-   ```bash
-   # HTTPS
-   git clone https://github.com/Shakeri-Lab/dl-course-site.git
-   cd dl-course-site
-
-   # or SSH
-   git clone git@github.com:Shakeri-Lab/dl-course-site.git
-   cd dl-course-site
-   ```
-
-2. **Install dependencies**
-   \`\`\`bash
-   npm install
-   \`\`\`
-
-3. **Start development server**
-   \`\`\`bash
-   npm run dev
-   \`\`\`
-
-4. **Open in browser**
-   \`\`\`
-   http://localhost:3000
-   \`\`\`
-
-### Deployment to GitHub Pages
-
-1. **Enable GitHub Pages**
-   - Go to repository Settings → Pages
-   - Select "Deploy from a branch"
-   - Choose "main" branch and "/ (root)" folder
-
-2. **Configure custom domain (optional)**
-   \`\`\`bash
-   echo "your-domain.com" > public/CNAME
-   \`\`\`
-
-3. **Deploy**
-   \`\`\`bash
-   npm run build
-   npm run export
-   git add .
-   git commit -m "Deploy to GitHub Pages"
-   git push origin main
-   \`\`\`
-
-## 📁 Project Structure
-
-\`\`\`
-dl-course-site/
-├── app/                          # Next.js app directory
-│   ├── page.tsx                 # Homepage with course overview
-│   ├── layout.tsx               # Global layout and navigation
-│   ├── globals.css              # Global styles
-│   ├── module/
-│   │   └── [id]/
-│   │       └── page.tsx         # Individual module pages
-│   ├── resources/
-│   │   └── page.tsx             # Additional learning resources
-│   ├── setup/
-│   │   └── page.tsx             # Environment setup guide
-│   ├── faq/
-│   │   └── page.tsx             # Frequently asked questions
-│   ├── components/                   # Reusable UI components
-│   └── ui/                      # shadcn/ui components
-├── public/                      # Static assets
-│   ├── slides/                  # Course slide decks
-│   ├── images/                  # Course images
-│   └── requirements.txt         # Python requirements
-├── docs/                        # Documentation
-│   ├── canvas-setup.md          # Canvas configuration guide
-│   └── deployment.md            # Deployment instructions
-├── package.json                 # Node.js dependencies
-├── next.config.js               # Next.js configuration
-├── tailwind.config.js           # Tailwind CSS configuration
-└── README.md                    # This file
-\`\`\`
-
-## 🎓 Course Structure
-
-The course consists of 12 modules, each following a consistent structure:
-
-### Module Components
-- **Learning Objectives**: Clear goals for each module
-- **Lecture Materials**: Video lectures and slide presentations
-- **Required Readings**: Essential texts and research papers
-- **Code Examples**: Jupyter notebooks and Python scripts
-- **Additional Resources**: Supplementary materials and tools
-
-### Module Flow
-\`\`\`
-Pre-class Preparation → Lectures → Readings → Code Practice → Assessment
-\`\`\`
-
-## 🔧 Canvas Integration
-
-### Setup Overview
-
-1. **Create Canvas Modules**: One for each course module (1-12)
-2. **Configure External Tools**: Set up LTI integration with GitHub Pages
-3. **Link Content**: Point Canvas modules to GitHub Pages materials
-4. **Set Up Assessments**: Create quizzes and assignments in Canvas
-
-### Canvas Module Template
-
-Each Canvas module should include:
-- Overview page with link to GitHub materials
-- Knowledge check quiz (due before live session)
-- Assignment submission portal
-- Discussion forum for Q&A
-
-### Example Canvas Page HTML
-\`\`\`html
-<div style="background: #f8f9fa; padding: 15px; border-left: 4px solid #007bff;">
-  <h3>📚 Course Materials</h3>
-  <p>Review the materials before taking the quiz.</p>
-  <a href="https://your-username.github.io/dl-course-materials/module/1" 
-     target="_blank" class="btn btn-primary">
-    Open Module 1 Materials
-  </a>
-</div>
-\`\`\`
-
-## 🎨 Customization
-
-### Branding
-- Update colors in `tailwind.config.js`
-- Replace logo/branding in `app/layout.tsx`
-- Modify course title and description
-
-### Content Updates
-- Module content: Edit files in `app/module/[id]/page.tsx`
-- Course overview: Update `app/page.tsx`
-- Resources: Modify `app/resources/page.tsx`
-
-### Navigation
-- Add/remove navigation items in `app/layout.tsx`
-- Update footer links and information
-
-## 📚 Content Management
-
-### Adding New Modules
-1. Create new module data in the appropriate page component
-2. Add module to the main course modules array
-3. Create any associated resources (slides, notebooks, etc.)
-4. Update Canvas to link to the new module
-
-### Updating Existing Content
-1. Edit the relevant page component
-2. Update any linked resources
-3. Test changes locally before deploying
-4. Deploy to GitHub Pages
-
-### Managing Resources
-- **Videos**: Host on YouTube/Vimeo, embed links
-- **Slides/PDFs**: Place directly in `public/` (served at `/dl-course-site/<filename>.pdf` in production)
-- **Notebooks**: Host on Google Colab; include links on module pages
-- **Readings**: Link to external sources or PDFs in `public/`
-
-## 🔍 SEO and Analytics
-
-### Built-in SEO Features
-- Semantic HTML structure
-- Meta tags and descriptions
-- Open Graph tags for social sharing
-- Sitemap generation
-
-### Adding Analytics
-\`\`\`javascript
-// Add to app/layout.tsx
-import { GoogleAnalytics } from '@next/third-parties/google'
-
-export default function RootLayout({ children }) {
-  return (
-    <html>
-      <body>
-        {children}
-        <GoogleAnalytics gaId="GA_MEASUREMENT_ID" />
-      </body>
-    </html>
-  )
-}
-\`\`\`
-
-## 🧪 Testing
-
-### Local Testing
-\`\`\`bash
-# Run development server
-npm run dev
-
-# Build for production
-npm run build
-
-# Test production build locally
-npm start
-\`\`\`
-
-### Pre-deployment Checklist
-- [ ] All links work correctly
-- [ ] Mobile responsiveness verified
-- [ ] Canvas integration tested
-- [ ] Content accuracy reviewed
-- [ ] Performance optimized
-
-## 🚀 Deployment
-
-### GitHub Pages (Recommended)
-1. Push changes to main branch
-2. The site exports static files (Next.js `output: 'export'`) and serves under base path `/dl-course-site`
-3. Live URL: `https://shakeri-lab.github.io/dl-course-site/`
-
-### Custom Domain Setup
-1. Add CNAME file: `echo "yourdomain.com" > public/CNAME`
-2. Configure DNS records with your domain provider
-3. Enable HTTPS in GitHub Pages settings
-
-### Alternative Deployment Options
-- **Vercel**: Connect GitHub repo for automatic deployments
-- **Netlify**: Drag and drop build folder or connect repo
-- **AWS S3**: Upload build files to S3 bucket with static hosting
-
-## 🛠️ Troubleshooting
-
-### Common Issues
-
-**Build Errors**
-\`\`\`bash
-# Clear cache and reinstall
-rm -rf .next node_modules package-lock.json
+```bash
 npm install
-npm run build
-\`\`\`
-
-**Canvas Integration Issues**
-- Verify External Tool configuration
-- Check CORS settings
-- Test iframe embedding as fallback
-
-**Mobile Display Problems**
-- Test responsive breakpoints
-- Verify touch interactions
-- Check viewport meta tag
-
-### Getting Help
-- Check the [FAQ page](./app/faq/page.tsx)
-- Open GitHub issue for bugs
-- Contact course administrators for Canvas issues
-
-## 📈 Performance
-
-### Optimization Features
-- Static site generation (SSG)
-- Image optimization with Next.js
-- CSS and JavaScript minification
-- Lazy loading for images and components
-
-### Performance Monitoring
-\`\`\`bash
-# Analyze bundle size
-npm run build
-npm run analyze
-
-# Lighthouse audit
-npx lighthouse http://localhost:3000
-\`\`\`
-
-## 🔒 Security
-
-### Best Practices Implemented
-- No sensitive data in client-side code
-- External links open in new tabs
-- Content Security Policy headers
-- Regular dependency updates
-
-### Security Checklist
-- [ ] No API keys in public code
-- [ ] External links properly configured
-- [ ] Dependencies regularly updated
-- [ ] HTTPS enabled for production
-
-## 🤝 Contributing
-
-### For Course Instructors
-1. Fork the repository
-2. Create feature branch: `git checkout -b feature/new-module`
-3. Make changes and test locally
-4. Submit pull request with description
-
-### Content Guidelines
-- Follow existing module structure
-- Ensure mobile responsiveness
-- Test all external links
-- Include proper attribution for resources
-
-## 📄 License
-
-This project is licensed under the Creative Commons Attribution 4.0 International License (CC BY 4.0) - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- **Next.js**: React framework for production
-- **Tailwind CSS**: Utility-first CSS framework
-- **shadcn/ui**: Beautiful UI components
-- **Lucide React**: Icon library
-- **Canvas LMS**: Learning management system integration
-
-## 📞 Support
-
-### For Students
-- Use Canvas discussion forums for course questions
-- Check the [Setup Guide](./app/setup/page.tsx) for technical issues
-- Contact course instructors via Canvas messaging
-
-### For Instructors
-- Open GitHub issues for technical problems
-
-### Contact Information
-- **Course Website**: https://your-username.github.io/dl-course-materials
-- **Canvas Course**: https://canvas.instructure.com/courses/your-course
-- **GitHub Repository**: https://github.com/your-username/dl-course-materials
-- **Instructor Email**: instructor@university.edu
-
----
-
-## 🚀 Quick Links
-
-- [Live Course Website](https://your-username.github.io/dl-course-materials)
-- [Canvas Course](https://canvas.instructure.com/courses/your-course)
-- [GitHub Repository](https://github.com/your-username/dl-course-materials)
-**Happy Learning! 🎓**
-
-## 🗂️ Module Page Standard
-
-Each module page (`/module/[id]`) follows this structure *in order*:
-
-1. **Lecture Video** – Embedded YouTube iframe inside a responsive 16:9 container (`padding-bottom: 56.25%`) and wrapped in `max-w-4xl mx-auto`.  A right-aligned button in the header links to **"Lecture Notes & HW Notebook"** (GitHub).
-2. **Resources & Homework Card** – placed directly under the video and contains:
-     - A short paragraph with the recommended reading from *Dive into Deep Learning* (D2L), e.g. "read up to § 5.2".
-     - A second paragraph describing the homework notebook.
-   (No buttons here—the *Notes & Notebook* button is next to the lecture title, and Gradescope lives in the top navbar.)
-
-That's it—no separate "Lecture Notes" or "Homework" sections. The page remains minimal: video ➜ single card.
-
-### Notebook Repository Layout
-```text
-notebooks/ (kept only if you want rendered copies)  
-# Active development happens in the separate repo:
-https://github.com/Shakeri-Lab/dl-course
+npm run dev        # http://localhost:3000
+npm run build      # static export to out/ (what GitHub Pages serves)
 ```
 
-In each module folder of that repo you keep:
- * `notes.pdf` or `notes.ipynb`
- * `homework.ipynb`
+The production build serves under the `/dl-course-site` base path (see
+`next.config.mjs`); local dev runs at the root.
 
-### Creating a New Module
- 1. Duplicate `app/module/1/page.tsx` ➜ `app/module/2/page.tsx` (etc.).
- 2. Change:
-    • YouTube `src` and `title`  • D2L reading range  • Button links.
-3. Add the new materials under `https://github.com/Shakeri-Lab/dl-course/tree/main/module-X`.
+## Deployment
 
-## 🧰 Git Remote (SSH)
+Push to `main` → GitHub Actions builds the static export and publishes it to GitHub
+Pages. Nothing manual. A separate weekly workflow (`link-check.yml`) sweeps all external
+links (D2L, arXiv, YouTube) and opens an issue if any rot.
 
-If you prefer SSH, the remote for this repository is:
+## Design principles
 
-```text
-git@github.com:Shakeri-Lab/dl-course-site.git
-```
+- **One learning path per module** — watch → read → self-check → code, all on the module
+  page. D2L is the canonical text for Modules 1–9; for Modules 10–12 (ViT, PEFT,
+  quantization, multimodal, diffusion) the lecture slides and linked papers are the
+  readings, because the book doesn't cover them at course depth.
+- **No slide duplication** — lectures are board-first; slides are published only where
+  they substitute for not-yet-recorded videos (Modules 11–12). Keeping slides out of the
+  site elsewhere avoids drift against the LaTeX sources.
+- **Evergreen** — no dates on the public site; semester logistics stay in Canvas.
 
-To switch an existing clone to SSH:
+## License
 
-```bash
-git remote set-url origin git@github.com:Shakeri-Lab/dl-course-site.git
-git remote -v
-```
-
-## 🔐 Git Remote (HTTPS)
-
-To switch the remote to HTTPS and push:
-
-```bash
-git remote set-url origin https://github.com/Shakeri-Lab/dl-course-site.git
-git push origin main
-```
+Original course materials are licensed [CC BY 4.0](LICENSE). Lecture videos
+© Heman Shakeri. Linked readings (papers, D2L) remain under their own licenses.
