@@ -1,0 +1,1723 @@
+WEBVTT
+
+00:00:00.240 --> 00:00:05.839
+Okay, so let's continue our journey
+
+00:00:03.439 --> 00:00:08.639
+through transformers. We already
+
+00:00:05.839 --> 00:00:11.840
+discussed the use of transformer in the
+
+00:00:08.639 --> 00:00:14.799
+seek to seek model where we replace the
+
+00:00:11.840 --> 00:00:17.039
+RNN encoder with the self attention
+
+00:00:14.799 --> 00:00:19.520
+mechanism which we call transformer.
+
+00:00:17.039 --> 00:00:21.920
+Here we want to see if such
+
+00:00:19.520 --> 00:00:25.359
+representation learning can be used in a
+
+00:00:21.920 --> 00:00:28.560
+maybe more familiar domain of vision and
+
+00:00:25.359 --> 00:00:31.679
+image classification. something that we
+
+00:00:28.560 --> 00:00:35.600
+almost solved using our CNN's and we
+
+00:00:31.679 --> 00:00:37.990
+want to see if uh transformers can be as
+
+00:00:35.600 --> 00:00:39.280
+useful as the proven CNN or
+
+00:00:37.990 --> 00:00:41.680
+[clears throat] maybe they can beat
+
+00:00:39.280 --> 00:00:43.760
+CNN's then we will talk about an
+
+00:00:41.680 --> 00:00:46.239
+architecture that is known as vision
+
+00:00:43.760 --> 00:00:48.480
+transformer within this comparison there
+
+00:00:46.239 --> 00:00:51.600
+are some challenges within that that we
+
+00:00:48.480 --> 00:00:54.160
+will talk about with some solutions okay
+
+00:00:51.600 --> 00:00:56.239
+so like I said we replace RNN with
+
+00:00:54.160 --> 00:00:59.440
+transformers and the main reason that we
+
+00:00:56.239 --> 00:01:01.920
+did that it was because um RNN had this
+
+00:00:59.440 --> 00:01:04.799
+sequential processing that led to slow
+
+00:01:01.920 --> 00:01:07.360
+training and thus they could not be
+
+00:01:04.799 --> 00:01:10.000
+scaled. They also had this vanishing
+
+00:01:07.360 --> 00:01:13.439
+gradients that prevents us from going
+
+00:01:10.000 --> 00:01:15.520
+for a very long sentence or text during
+
+00:01:13.439 --> 00:01:17.759
+the encoding and decoding. We added
+
+00:01:15.520 --> 00:01:20.560
+attention across attention more
+
+00:01:17.759 --> 00:01:23.759
+specifically that allows the decoder to
+
+00:01:20.560 --> 00:01:26.400
+attend to all of these hidden states in
+
+00:01:23.759 --> 00:01:28.640
+the encoder. But still we are doing the
+
+00:01:26.400 --> 00:01:30.799
+encoding with the recurrent neural
+
+00:01:28.640 --> 00:01:33.040
+networks which is still a bottleneck.
+
+00:01:30.799 --> 00:01:36.400
+Adopting a transformer architecture
+
+00:01:33.040 --> 00:01:39.520
+basically dropping the RNN entirely led
+
+00:01:36.400 --> 00:01:42.400
+to a fully parallel architecture which
+
+00:01:39.520 --> 00:01:46.159
+is much faster and can be scaled while
+
+00:01:42.400 --> 00:01:48.640
+using all of our GPUs and also having a
+
+00:01:46.159 --> 00:01:52.479
+global context. really the the distance
+
+00:01:48.640 --> 00:01:55.200
+between words or token didn't matter for
+
+00:01:52.479 --> 00:01:57.600
+uh self attention. Every pair of tokens
+
+00:01:55.200 --> 00:02:00.479
+could attend to each other. We discussed
+
+00:01:57.600 --> 00:02:04.240
+the trans uh the design of transformers
+
+00:02:00.479 --> 00:02:06.640
+where the residual uh connections uh
+
+00:02:04.240 --> 00:02:08.560
+help the gradient flow and then we
+
+00:02:06.640 --> 00:02:12.319
+discussed this machine translation
+
+00:02:08.560 --> 00:02:14.800
+problem uh solved by transformer and how
+
+00:02:12.319 --> 00:02:17.680
+it became the state-of-the-art. So now
+
+00:02:14.800 --> 00:02:19.920
+the question is if transformers u beat
+
+00:02:17.680 --> 00:02:23.280
+RNN's for sequence can they also beat
+
+00:02:19.920 --> 00:02:25.840
+CNN's for images? Um well for images
+
+00:02:23.280 --> 00:02:29.040
+like I said we we had a good run with
+
+00:02:25.840 --> 00:02:31.760
+CNN's so let's see if the transformers
+
+00:02:29.040 --> 00:02:34.720
+are up for this challenge. So back in
+
+00:02:31.760 --> 00:02:37.519
+2020 CNN's were still the dominant par
+
+00:02:34.720 --> 00:02:40.400
+paradigm for vision. We had very
+
+00:02:37.519 --> 00:02:43.120
+efficient designs using ResNet and
+
+00:02:40.400 --> 00:02:45.599
+efficient net. We had a lot of uh
+
+00:02:43.120 --> 00:02:47.599
+excellent benchmarks like imageet and
+
+00:02:45.599 --> 00:02:50.560
+other data sets that allowed the
+
+00:02:47.599 --> 00:02:52.239
+community to do a lot of development and
+
+00:02:50.560 --> 00:02:55.280
+advancement
+
+00:02:52.239 --> 00:02:57.920
+uh and introducing different techniques
+
+00:02:55.280 --> 00:03:00.400
+to make CNN's really work well. The
+
+00:02:57.920 --> 00:03:03.920
+question is if we had more data can
+
+00:03:00.400 --> 00:03:06.159
+CNN's um still improve is there maybe
+
+00:03:03.920 --> 00:03:09.840
+that we can recast the question like
+
+00:03:06.159 --> 00:03:11.840
+this does CNN's with their philosophy
+
+00:03:09.840 --> 00:03:14.560
+their inductive bias have the
+
+00:03:11.840 --> 00:03:17.200
+flexibility to continue improvement with
+
+00:03:14.560 --> 00:03:20.319
+more data so then the experiment was
+
+00:03:17.200 --> 00:03:23.280
+okay so machine translation solved by
+
+00:03:20.319 --> 00:03:26.080
+transformers can we do the same for
+
+00:03:23.280 --> 00:03:28.000
+images the idea is transformers are very
+
+00:03:26.080 --> 00:03:29.920
+flexible so we don't need really do a
+
+00:03:28.000 --> 00:03:33.280
+lot of modification. We just need to
+
+00:03:29.920 --> 00:03:35.680
+find a way to represent the images as
+
+00:03:33.280 --> 00:03:37.440
+input or tokenize them in a way that we
+
+00:03:35.680 --> 00:03:39.599
+can feed it to the transformer and
+
+00:03:37.440 --> 00:03:42.159
+that's it. The rest will be just waiting
+
+00:03:39.599 --> 00:03:44.000
+for the result and the computation. If
+
+00:03:42.159 --> 00:03:47.040
+you remember back when we were working
+
+00:03:44.000 --> 00:03:50.640
+with MLPS, we flatten the image data
+
+00:03:47.040 --> 00:03:52.319
+like a vector and here we are somehow
+
+00:03:50.640 --> 00:03:55.760
+doing that again. So if we want to
+
+00:03:52.319 --> 00:03:59.040
+compare that with what we did in text.
+
+00:03:55.760 --> 00:04:00.720
+So in NLP we extract this word tokens
+
+00:03:59.040 --> 00:04:03.599
+and we discuss that we have different
+
+00:04:00.720 --> 00:04:05.680
+ways of doing this tokenization. Here in
+
+00:04:03.599 --> 00:04:08.159
+computer vision and image data we are
+
+00:04:05.680 --> 00:04:10.640
+working with patches within this images.
+
+00:04:08.159 --> 00:04:13.360
+In the NLP we work with the encoder
+
+00:04:10.640 --> 00:04:15.200
+transformer to find the representation
+
+00:04:13.360 --> 00:04:17.680
+of the sentence. We do the same here
+
+00:04:15.200 --> 00:04:20.239
+too. Output same. we have this token
+
+00:04:17.680 --> 00:04:22.400
+embeddings that is the output of the
+
+00:04:20.239 --> 00:04:25.440
+encoder transformer. We do the same and
+
+00:04:22.400 --> 00:04:28.639
+we encode this patch embeddings. So in
+
+00:04:25.440 --> 00:04:31.600
+the sik to seek uh architecture we we
+
+00:04:28.639 --> 00:04:34.080
+did translation and we really decode to
+
+00:04:31.600 --> 00:04:36.960
+another sequence but we could just use
+
+00:04:34.080 --> 00:04:39.280
+the encoder part and do text
+
+00:04:36.960 --> 00:04:41.360
+classification. Here we do the same and
+
+00:04:39.280 --> 00:04:43.520
+we use the encoder to find this
+
+00:04:41.360 --> 00:04:46.320
+representation of the image and send it
+
+00:04:43.520 --> 00:04:48.880
+to a classifier head. So this is a
+
+00:04:46.320 --> 00:04:50.880
+sketch of what I just described. So
+
+00:04:48.880 --> 00:04:52.639
+instead of using the complete
+
+00:04:50.880 --> 00:04:54.639
+transformer encoder decoder, we only
+
+00:04:52.639 --> 00:04:57.680
+want to use the encoder. We get this
+
+00:04:54.639 --> 00:05:00.240
+input tokens and we add another token
+
+00:04:57.680 --> 00:05:03.600
+that attends to all of these input
+
+00:05:00.240 --> 00:05:06.720
+tokens in the same self attention block.
+
+00:05:03.600 --> 00:05:09.360
+And since CLS token or classification
+
+00:05:06.720 --> 00:05:12.240
+token see all of these other tokens, we
+
+00:05:09.360 --> 00:05:14.560
+can just use it as a output of the
+
+00:05:12.240 --> 00:05:16.639
+encoder which will be a transformed
+
+00:05:14.560 --> 00:05:19.039
+token and send it to the classification
+
+00:05:16.639 --> 00:05:20.320
+head and get the logits. Okay. So
+
+00:05:19.039 --> 00:05:22.160
+basically we are not doing any
+
+00:05:20.320 --> 00:05:24.880
+translation. We just understand the
+
+00:05:22.160 --> 00:05:26.240
+input token and do classification just
+
+00:05:24.880 --> 00:05:28.720
+like what we did for image
+
+00:05:26.240 --> 00:05:31.039
+classification using our CNN. So you
+
+00:05:28.720 --> 00:05:33.840
+will see this classification token later
+
+00:05:31.039 --> 00:05:37.520
+in other architectures when we work with
+
+00:05:33.840 --> 00:05:39.520
+texts. But you could think of well what
+
+00:05:37.520 --> 00:05:42.639
+if we don't have this and we just take
+
+00:05:39.520 --> 00:05:45.120
+in the input token and transform them
+
+00:05:42.639 --> 00:05:47.600
+and get the output tokens and then just
+
+00:05:45.120 --> 00:05:49.440
+average them using some learnable fit
+
+00:05:47.600 --> 00:05:51.840
+for our neural network to get the
+
+00:05:49.440 --> 00:05:54.240
+average representation and then send it
+
+00:05:51.840 --> 00:05:56.800
+to the classification. Well, the idea is
+
+00:05:54.240 --> 00:05:59.440
+we are somehow doing that in the
+
+00:05:56.800 --> 00:06:02.080
+transformer encoder. So, we send the CLS
+
+00:05:59.440 --> 00:06:04.319
+embedding here and we are doing it in a
+
+00:06:02.080 --> 00:06:06.319
+more flexible way that the simple
+
+00:06:04.319 --> 00:06:08.960
+averaging cannot do it in a more
+
+00:06:06.319 --> 00:06:11.600
+flexible way through this self attention
+
+00:06:08.960 --> 00:06:13.840
+mechanism that the separated averaging
+
+00:06:11.600 --> 00:06:16.240
+is unable to do. So, that's really the
+
+00:06:13.840 --> 00:06:18.960
+idea of this CLS token. And you can also
+
+00:06:16.240 --> 00:06:20.639
+think of we basically don't touch the
+
+00:06:18.960 --> 00:06:22.960
+transformer encoder and the
+
+00:06:20.639 --> 00:06:25.919
+classification head by just adding a
+
+00:06:22.960 --> 00:06:28.080
+token here. So it's also more easy on
+
+00:06:25.919 --> 00:06:30.800
+the pipelines that we already have. So
+
+00:06:28.080 --> 00:06:33.840
+here is the vision transformer pipeline.
+
+00:06:30.800 --> 00:06:36.960
+We divide the image into this similar
+
+00:06:33.840 --> 00:06:40.639
+size patches and then we flatten them as
+
+00:06:36.960 --> 00:06:42.880
+vectors and we feed them uh to the patch
+
+00:06:40.639 --> 00:06:45.199
+embedding layer. So note that we have a
+
+00:06:42.880 --> 00:06:48.400
+positional embedding here and again the
+
+00:06:45.199 --> 00:06:50.880
+reason is uh self attention doesn't
+
+00:06:48.400 --> 00:06:54.080
+really care about the order and we know
+
+00:06:50.880 --> 00:06:56.400
+that approximity of this pixel values
+
+00:06:54.080 --> 00:06:59.520
+really has meaning that was one of the
+
+00:06:56.400 --> 00:07:02.720
+rules uh or induction biases that we
+
+00:06:59.520 --> 00:07:04.720
+infused to our CNN. Now how to do this
+
+00:07:02.720 --> 00:07:06.720
+positional embedding? We have different
+
+00:07:04.720 --> 00:07:09.599
+options and we will talk about some of
+
+00:07:06.720 --> 00:07:11.759
+them. Uh but the main point here is we
+
+00:07:09.599 --> 00:07:14.720
+basically add this positional embedding
+
+00:07:11.759 --> 00:07:17.199
+like a bias to our tokens and find this
+
+00:07:14.720 --> 00:07:19.199
+more oriented uh tokens and send it to
+
+00:07:17.199 --> 00:07:21.039
+the self attention mechanism which is
+
+00:07:19.199 --> 00:07:23.039
+similar to what we had in the
+
+00:07:21.039 --> 00:07:25.840
+transformer encoder and at the end we
+
+00:07:23.039 --> 00:07:28.319
+get this transformed representation for
+
+00:07:25.840 --> 00:07:31.919
+each one of these tokens and we only use
+
+00:07:28.319 --> 00:07:35.199
+the CLS updated representation for a
+
+00:07:31.919 --> 00:07:38.000
+classification. So some more details on
+
+00:07:35.199 --> 00:07:40.880
+how to do this patching for an image of
+
+00:07:38.000 --> 00:07:43.520
+heights and widths H and W. We divide it
+
+00:07:40.880 --> 00:07:46.479
+into P by P non-over overlapping
+
+00:07:43.520 --> 00:07:49.599
+patches. Which means we will have T
+
+00:07:46.479 --> 00:07:51.199
+patches. For example, for an image of
+
+00:07:49.599 --> 00:07:56.879
+224x
+
+00:07:51.199 --> 00:07:59.759
+224 3 channel RGB, a 16x6 patch will
+
+00:07:56.879 --> 00:08:02.479
+result into 196 patches. Note that we
+
+00:07:59.759 --> 00:08:06.240
+have three channels. So each patch will
+
+00:08:02.479 --> 00:08:08.720
+result in a vector of 768 values. This
+
+00:08:06.240 --> 00:08:11.759
+is similar to convolution where we had
+
+00:08:08.720 --> 00:08:13.759
+the kernel size and stride similar to
+
+00:08:11.759 --> 00:08:16.960
+this patch patch size. So this means
+
+00:08:13.759 --> 00:08:18.639
+basically the kernel is the patch and
+
+00:08:16.960 --> 00:08:20.560
+they're non-over overlapping on the
+
+00:08:18.639 --> 00:08:23.039
+positional embedding like I said self
+
+00:08:20.560 --> 00:08:26.400
+attention is permutation invariant. So
+
+00:08:23.039 --> 00:08:28.639
+we have to infuse some knowledge of the
+
+00:08:26.400 --> 00:08:30.879
+spatial location of these patches and
+
+00:08:28.639 --> 00:08:33.599
+this is how we do it. So after we
+
+00:08:30.879 --> 00:08:36.240
+getting this values let's call them x
+
+00:08:33.599 --> 00:08:38.959
+for each patch which proh is projected
+
+00:08:36.240 --> 00:08:41.120
+into this vector embeddings and then we
+
+00:08:38.959 --> 00:08:43.519
+add this the positional embedding into
+
+00:08:41.120 --> 00:08:46.399
+each one of these embedded patches
+
+00:08:43.519 --> 00:08:48.640
+including the cls. So you may think of
+
+00:08:46.399 --> 00:08:50.560
+why we are learning the the position
+
+00:08:48.640 --> 00:08:54.080
+again because like I said this is a
+
+00:08:50.560 --> 00:08:55.760
+learnable like lookup table and why we
+
+00:08:54.080 --> 00:08:57.680
+are wasting learning on something that
+
+00:08:55.760 --> 00:09:00.640
+is already there. we have we can have
+
+00:08:57.680 --> 00:09:02.560
+indexes indices for each patch. Firstly,
+
+00:09:00.640 --> 00:09:04.480
+the amount of learning or the number of
+
+00:09:02.560 --> 00:09:06.240
+parameters that we are spending on this
+
+00:09:04.480 --> 00:09:09.360
+uh positional
+
+00:09:06.240 --> 00:09:11.600
+uh learnable position embedding is
+
+00:09:09.360 --> 00:09:14.959
+peanut really compared to the entire
+
+00:09:11.600 --> 00:09:17.839
+parameter but also it's not really
+
+00:09:14.959 --> 00:09:20.640
+restricted to just looking at the
+
+00:09:17.839 --> 00:09:24.320
+surrounding patches anymore and it can
+
+00:09:20.640 --> 00:09:26.080
+learn richer geometry than the cartisian
+
+00:09:24.320 --> 00:09:28.160
+geometry. So basically it's more
+
+00:09:26.080 --> 00:09:33.279
+flexible. That's what I'm trying to say.
+
+00:09:28.160 --> 00:09:35.600
+Moreover, the uh authors of VIT paper
+
+00:09:33.279 --> 00:09:37.839
+they showed that replacing the learnable
+
+00:09:35.600 --> 00:09:42.320
+embedding with the indices of the
+
+00:09:37.839 --> 00:09:45.040
+patches um really um doesn't give us any
+
+00:09:42.320 --> 00:09:47.279
+gains and we are losing flexibility.
+
+00:09:45.040 --> 00:09:50.080
+Another important uh distinction from
+
+00:09:47.279 --> 00:09:52.800
+the original uh transformer is how where
+
+00:09:50.080 --> 00:09:55.279
+to place the layer norm. And if you
+
+00:09:52.800 --> 00:09:58.240
+remember the original transformer as the
+
+00:09:55.279 --> 00:10:01.120
+norm after the residual here in the vit
+
+00:09:58.240 --> 00:10:04.640
+and other modern architectures we have
+
+00:10:01.120 --> 00:10:07.519
+the layer norm before the layer. So we
+
+00:10:04.640 --> 00:10:09.760
+discussed that before that uh such a
+
+00:10:07.519 --> 00:10:12.080
+pre-orm setup that does the
+
+00:10:09.760 --> 00:10:15.440
+normalization before the addition of the
+
+00:10:12.080 --> 00:10:17.440
+residual path makes it easier really for
+
+00:10:15.440 --> 00:10:19.920
+the gradient flow and also during the
+
+00:10:17.440 --> 00:10:21.839
+training. we really don't need to be
+
+00:10:19.920 --> 00:10:24.800
+very careful at the beginning because of
+
+00:10:21.839 --> 00:10:28.079
+that those issues. So we can push the
+
+00:10:24.800 --> 00:10:31.839
+gas pedal and the training uh f sooner.
+
+00:10:28.079 --> 00:10:34.560
+Okay. So uh well we had lengthy
+
+00:10:31.839 --> 00:10:37.519
+discussion on why CNN
+
+00:10:34.560 --> 00:10:39.839
+u brings this inductive biases and all
+
+00:10:37.519 --> 00:10:42.320
+of those benefits of doing that. For
+
+00:10:39.839 --> 00:10:45.760
+example, the translation invariance
+
+00:10:42.320 --> 00:10:48.240
+looks at each uh looks for patterns no
+
+00:10:45.760 --> 00:10:50.640
+matter where is that pattern, right? So
+
+00:10:48.240 --> 00:10:52.720
+the same weights uh can be shared
+
+00:10:50.640 --> 00:10:55.279
+regardless of where we are looking at.
+
+00:10:52.720 --> 00:10:57.600
+And for a local feature only nearby
+
+00:10:55.279 --> 00:10:59.440
+pixel really matter if there there's an
+
+00:10:57.600 --> 00:11:01.920
+edge we really don't need to look
+
+00:10:59.440 --> 00:11:04.560
+elsewhere there is an edge right. So
+
+00:11:01.920 --> 00:11:07.920
+that means that we can use finite kernel
+
+00:11:04.560 --> 00:11:10.880
+size and then the hierarchical receptive
+
+00:11:07.920 --> 00:11:13.600
+field based on this small kernel size
+
+00:11:10.880 --> 00:11:16.560
+will give us the bird eye at the end.
+
+00:11:13.600 --> 00:11:20.160
+This leads to strong prior. So this
+
+00:11:16.560 --> 00:11:23.040
+strong prior helps us to train this CNN
+
+00:11:20.160 --> 00:11:26.399
+architectures using medium-sized data
+
+00:11:23.040 --> 00:11:28.959
+sets while generalizable on unseen
+
+00:11:26.399 --> 00:11:32.399
+images. But the question here is does
+
+00:11:28.959 --> 00:11:36.160
+that inductive bias limits the capacity
+
+00:11:32.399 --> 00:11:40.399
+of CNN's or basically creates a ceiling
+
+00:11:36.160 --> 00:11:43.760
+on what CNN's can do? I mean yes it they
+
+00:11:40.399 --> 00:11:45.600
+are very regularized uh because of that
+
+00:11:43.760 --> 00:11:48.000
+and very efficient in terms of the
+
+00:11:45.600 --> 00:11:51.519
+number of parameters but does that mean
+
+00:11:48.000 --> 00:11:53.839
+that they are less expressive and we may
+
+00:11:51.519 --> 00:11:56.160
+miss something in terms of the amount of
+
+00:11:53.839 --> 00:11:59.680
+learning? So that's the hope that we can
+
+00:11:56.160 --> 00:12:01.920
+fill in uh with transformers because
+
+00:11:59.680 --> 00:12:04.320
+transformers are really don't they don't
+
+00:12:01.920 --> 00:12:06.800
+have any of those biases. Uh there's no
+
+00:12:04.320 --> 00:12:09.760
+locality bias because self attentions
+
+00:12:06.800 --> 00:12:12.000
+look at all pairs. We are not enforce
+
+00:12:09.760 --> 00:12:13.920
+enforcing translation invariance and we
+
+00:12:12.000 --> 00:12:16.160
+let the position embedding to be
+
+00:12:13.920 --> 00:12:19.360
+learned. So that means that the content
+
+00:12:16.160 --> 00:12:22.720
+of the image is not really a
+
+00:12:19.360 --> 00:12:25.360
+hierarchical reasoning of this spatial
+
+00:12:22.720 --> 00:12:27.440
+proximities. For example, putting edges
+
+00:12:25.360 --> 00:12:29.600
+together. It's something more than that.
+
+00:12:27.440 --> 00:12:31.920
+So for example, an edge can be a
+
+00:12:29.600 --> 00:12:34.000
+different edge when we are looking at a
+
+00:12:31.920 --> 00:12:36.399
+somewhere else in the in the image which
+
+00:12:34.000 --> 00:12:38.560
+is not next to that edge. So we can
+
+00:12:36.399 --> 00:12:41.920
+interpret that edge differently because
+
+00:12:38.560 --> 00:12:45.040
+of that this so this lack of um
+
+00:12:41.920 --> 00:12:48.639
+geometric spatial proximity that we
+
+00:12:45.040 --> 00:12:51.839
+enforce in CNN uh but not here in the
+
+00:12:48.639 --> 00:12:53.760
+transformers allow the transformers to
+
+00:12:51.839 --> 00:12:56.959
+learn something else that we could not
+
+00:12:53.760 --> 00:12:59.680
+learn in CNN's okay so to summarize we
+
+00:12:56.959 --> 00:13:02.720
+are doing a trade-off CNN's we have
+
+00:12:59.680 --> 00:13:06.399
+strong handcrafted biases which led to
+
+00:13:02.720 --> 00:13:09.200
+sample efficiency But there might be a
+
+00:13:06.399 --> 00:13:12.160
+plateau in the performance in the vision
+
+00:13:09.200 --> 00:13:15.120
+transformers. We have minimal biases
+
+00:13:12.160 --> 00:13:17.360
+which requires much more training. So we
+
+00:13:15.120 --> 00:13:18.639
+need more data. But they are
+
+00:13:17.360 --> 00:13:21.200
+transformers and we know that
+
+00:13:18.639 --> 00:13:22.880
+transformers are scalable. And now when
+
+00:13:21.200 --> 00:13:25.920
+we give enough data to these
+
+00:13:22.880 --> 00:13:29.360
+transformers, this more capacity can
+
+00:13:25.920 --> 00:13:32.000
+lead for better learning. Okay. So let's
+
+00:13:29.360 --> 00:13:34.480
+see the empirical evidence for this
+
+00:13:32.000 --> 00:13:36.959
+hypothesis. So for that we go to the
+
+00:13:34.480 --> 00:13:39.680
+original paper for visual transformer.
+
+00:13:36.959 --> 00:13:43.680
+So here x-axis is basically the number
+
+00:13:39.680 --> 00:13:46.240
+of JFT pre-training samples and JFT data
+
+00:13:43.680 --> 00:13:49.040
+set from Google. So we look at the model
+
+00:13:46.240 --> 00:13:52.560
+pre-trained by this many number of
+
+00:13:49.040 --> 00:13:55.600
+samples. The y-axis is the accuracy of a
+
+00:13:52.560 --> 00:13:58.959
+linear probe trained with five label
+
+00:13:55.600 --> 00:14:02.399
+labeled examples per class on top of
+
+00:13:58.959 --> 00:14:05.920
+this frozen pre-trend model. We see that
+
+00:14:02.399 --> 00:14:08.639
+with small pre-training sets, resonance
+
+00:14:05.920 --> 00:14:12.720
+are still better, but they plateau while
+
+00:14:08.639 --> 00:14:16.240
+we give them more images. For example,
+
+00:14:12.720 --> 00:14:19.199
+um from the 30 million to 100 million,
+
+00:14:16.240 --> 00:14:21.839
+then we don't see any improvement for
+
+00:14:19.199 --> 00:14:25.279
+the resonance. However, if when we
+
+00:14:21.839 --> 00:14:28.880
+provide large training sets, the visual
+
+00:14:25.279 --> 00:14:32.000
+transformers overtake CNN and they
+
+00:14:28.880 --> 00:14:34.639
+continue improving. So the plateau may
+
+00:14:32.000 --> 00:14:37.760
+never happen and that's the idea that we
+
+00:14:34.639 --> 00:14:40.800
+will look at later. Here just to read
+
+00:14:37.760 --> 00:14:44.959
+the image the rest of these curves we
+
+00:14:40.800 --> 00:14:48.560
+only focus on this um light blue and the
+
+00:14:44.959 --> 00:14:52.079
+the black ones but the rest uh here L
+
+00:14:48.560 --> 00:14:55.760
+stands for large B for base. This uh
+
+00:14:52.079 --> 00:14:58.560
+lowerase B is a base model with uh half
+
+00:14:55.760 --> 00:15:01.760
+the hidden dimensions of the the
+
+00:14:58.560 --> 00:15:04.240
+original one. The number 16s and 32 is
+
+00:15:01.760 --> 00:15:06.639
+basically the the patch size and we see
+
+00:15:04.240 --> 00:15:10.880
+the large visual transformer with a
+
+00:15:06.639 --> 00:15:13.760
+patch size of 16 is surpassing the CNN
+
+00:15:10.880 --> 00:15:16.720
+and continue improving. So this G gives
+
+00:15:13.760 --> 00:15:20.639
+us a recipe. The modern machine learning
+
+00:15:16.720 --> 00:15:24.000
+paradigm is pre-train on massive data
+
+00:15:20.639 --> 00:15:27.440
+sets billions of examples and then
+
+00:15:24.000 --> 00:15:30.639
+fine-tune on downstream tasks with much
+
+00:15:27.440 --> 00:15:33.600
+less data. So the pre-training often is
+
+00:15:30.639 --> 00:15:37.440
+done with much larger resources and
+
+00:15:33.600 --> 00:15:41.920
+compute and the finetune can be done in
+
+00:15:37.440 --> 00:15:45.440
+commodity computers. So in such regime
+
+00:15:41.920 --> 00:15:48.399
+transformers really excels. We even have
+
+00:15:45.440 --> 00:15:51.360
+um scale that we know how much it
+
+00:15:48.399 --> 00:15:55.360
+improves. So we can even invest on it.
+
+00:15:51.360 --> 00:15:57.440
+We know that there is not a plateau and
+
+00:15:55.360 --> 00:16:00.480
+with the amount of resource that we are
+
+00:15:57.440 --> 00:16:03.040
+willing to invest we will get this much
+
+00:16:00.480 --> 00:16:05.360
+improvement and this result is really
+
+00:16:03.040 --> 00:16:07.279
+across all modalities not just images or
+
+00:16:05.360 --> 00:16:10.000
+text. So next we will talk about the
+
+00:16:07.279 --> 00:16:12.320
+scaling laws and then uh much larger
+
+00:16:10.000 --> 00:16:14.720
+pre-trained models in in natural
+
+00:16:12.320 --> 00:16:16.880
+language and then we discuss this idea
+
+00:16:14.720 --> 00:16:19.440
+of having these pre-trained models and
+
+00:16:16.880 --> 00:16:22.320
+use them as foundation models that can
+
+00:16:19.440 --> 00:16:23.759
+be fine-tuned for different tasks. But
+
+00:16:22.320 --> 00:16:26.959
+before doing that let's go back to
+
+00:16:23.759 --> 00:16:29.600
+visual transformer and discuss the the
+
+00:16:26.959 --> 00:16:33.279
+major problems that it had in this small
+
+00:16:29.600 --> 00:16:35.040
+medium data set regime. Like I said,
+
+00:16:33.279 --> 00:16:37.600
+we're dealing with this lack of
+
+00:16:35.040 --> 00:16:41.040
+inductive bias, which means that they
+
+00:16:37.600 --> 00:16:43.680
+can overfeit very easily in such regimes
+
+00:16:41.040 --> 00:16:47.759
+and they really need more data to be
+
+00:16:43.680 --> 00:16:50.880
+able to shine. And the other problem is
+
+00:16:47.759 --> 00:16:53.759
+we're dealing with u quadratic cost
+
+00:16:50.880 --> 00:16:56.800
+complexity with this number of um
+
+00:16:53.759 --> 00:16:59.360
+patches and we are not looking at u
+
+00:16:56.800 --> 00:17:01.680
+different scales like for example
+
+00:16:59.360 --> 00:17:04.959
+smaller to larger scale in a
+
+00:17:01.680 --> 00:17:08.319
+pyramid-like scheme like CNN. We
+
+00:17:04.959 --> 00:17:11.520
+basically look at every pair of hatches
+
+00:17:08.319 --> 00:17:15.199
+at once. So the idea is well maybe we
+
+00:17:11.520 --> 00:17:18.480
+can use some of the lessons that we
+
+00:17:15.199 --> 00:17:20.959
+learned from the CNN trainings and at
+
+00:17:18.480 --> 00:17:23.919
+the same time we can use this
+
+00:17:20.959 --> 00:17:26.400
+transformer scalability. In other words,
+
+00:17:23.919 --> 00:17:28.480
+can we inject some of these CNN priors
+
+00:17:26.400 --> 00:17:31.679
+in different points of this vision
+
+00:17:28.480 --> 00:17:34.400
+transformers? Well um I try to
+
+00:17:31.679 --> 00:17:37.600
+categorize them in three different
+
+00:17:34.400 --> 00:17:41.280
+categories. The first one u is basically
+
+00:17:37.600 --> 00:17:43.600
+we look at this front ending the feed to
+
+00:17:41.280 --> 00:17:47.600
+the transformers which basically we give
+
+00:17:43.600 --> 00:17:51.520
+a uh we do some pre-processing of the
+
+00:17:47.600 --> 00:17:54.799
+data using CNN stems and then feed that
+
+00:17:51.520 --> 00:17:58.000
+features learned by CNN CNN to the
+
+00:17:54.799 --> 00:18:02.240
+transformer. The other idea is to use
+
+00:17:58.000 --> 00:18:05.120
+this hierarchical way of learning in CNN
+
+00:18:02.240 --> 00:18:07.360
+uh but use that within transformer
+
+00:18:05.120 --> 00:18:12.080
+architectures. And then then the other
+
+00:18:07.360 --> 00:18:15.200
+idea is to bring a CNN that can teach
+
+00:18:12.080 --> 00:18:18.160
+our transformer. So at some point the
+
+00:18:15.200 --> 00:18:20.960
+student can be better than the teacher
+
+00:18:18.160 --> 00:18:23.520
+and that's the distillation idea. So
+
+00:18:20.960 --> 00:18:25.679
+this is the data efficient um
+
+00:18:23.520 --> 00:18:28.799
+transformers. So really there was
+
+00:18:25.679 --> 00:18:32.320
+another idea here that basically we can
+
+00:18:28.799 --> 00:18:35.440
+think of expanding or inflating the the
+
+00:18:32.320 --> 00:18:38.720
+data by different augmentations and this
+
+00:18:35.440 --> 00:18:41.840
+way we basically somehow artificially
+
+00:18:38.720 --> 00:18:44.720
+increase the number of data points and
+
+00:18:41.840 --> 00:18:47.200
+let the transformer believe that there
+
+00:18:44.720 --> 00:18:49.280
+are more data. So this way transformers
+
+00:18:47.200 --> 00:18:51.600
+start improving.
+
+00:18:49.280 --> 00:18:54.880
+So it's a combination of these two which
+
+00:18:51.600 --> 00:18:58.400
+somehow implicitly bring the CNN into
+
+00:18:54.880 --> 00:19:01.440
+the equation. The other two we really
+
+00:18:58.400 --> 00:19:03.919
+bring the CNN idea explicitly into the
+
+00:19:01.440 --> 00:19:08.400
+equation. For example, in this hybrid
+
+00:19:03.919 --> 00:19:11.919
+VIT we have a CNN at the front of the
+
+00:19:08.400 --> 00:19:15.600
+transformer. But in the third one we let
+
+00:19:11.919 --> 00:19:18.160
+a CNN to guide our transformer. So we
+
+00:19:15.600 --> 00:19:20.000
+will focus on the third one because of
+
+00:19:18.160 --> 00:19:22.480
+its flexibility.
+
+00:19:20.000 --> 00:19:26.320
+Basically we still have a transformer
+
+00:19:22.480 --> 00:19:29.440
+and we are not really limiting its
+
+00:19:26.320 --> 00:19:32.000
+architecture. We just train it using a
+
+00:19:29.440 --> 00:19:34.000
+CNN. So we are not losing any of that
+
+00:19:32.000 --> 00:19:36.880
+those flexibility and scalability
+
+00:19:34.000 --> 00:19:39.679
+properties and we keep the transformer
+
+00:19:36.880 --> 00:19:43.600
+pure. So the idea is coming from this
+
+00:19:39.679 --> 00:19:46.880
+paper by to run it all from Surbon and
+
+00:19:43.600 --> 00:19:50.240
+the goal was to make VIT competitive on
+
+00:19:46.880 --> 00:19:51.919
+a small scale data set an imageet more
+
+00:19:50.240 --> 00:19:54.320
+specifically
+
+00:19:51.919 --> 00:19:58.000
+like I said the insight is let's use a
+
+00:19:54.320 --> 00:20:00.880
+CNN and back then they used this
+
+00:19:58.000 --> 00:20:03.120
+uh CNN that was the state-of-the-art as
+
+00:20:00.880 --> 00:20:06.080
+a teacher that transfer its knowledge
+
+00:20:03.120 --> 00:20:09.840
+through this distillation process during
+
+00:20:06.080 --> 00:20:12.400
+training like I said they also consider
+
+00:20:09.840 --> 00:20:14.240
+augmentation, regularization
+
+00:20:12.400 --> 00:20:16.880
+and then some other techniques along the
+
+00:20:14.240 --> 00:20:18.320
+way. But really the main idea here that
+
+00:20:16.880 --> 00:20:21.120
+I want to talk about is this
+
+00:20:18.320 --> 00:20:24.480
+distillation idea because somehow we
+
+00:20:21.120 --> 00:20:28.400
+will talk about variance of this even in
+
+00:20:24.480 --> 00:20:30.720
+the language models. So here they add a
+
+00:20:28.400 --> 00:20:32.799
+distillation token just like the
+
+00:20:30.720 --> 00:20:37.039
+classification token that learns from
+
+00:20:32.799 --> 00:20:40.799
+the CNN teachers. the CNN teachers
+
+00:20:37.039 --> 00:20:44.480
+predictions and softly imports this
+
+00:20:40.799 --> 00:20:47.200
+prior the teacher has into the training.
+
+00:20:44.480 --> 00:20:48.799
+So here is a schematic from the paper.
+
+00:20:47.200 --> 00:20:52.320
+You see the class token and the
+
+00:20:48.799 --> 00:20:56.799
+dissolation token and here we have two
+
+00:20:52.320 --> 00:21:00.480
+laws. One loss is basically looking at
+
+00:20:56.799 --> 00:21:02.480
+the transformed class token and do the
+
+00:21:00.480 --> 00:21:06.320
+classification based on the real data
+
+00:21:02.480 --> 00:21:09.840
+and the other loss is to predict the
+
+00:21:06.320 --> 00:21:12.960
+prediction of the teacher and once we
+
+00:21:09.840 --> 00:21:15.520
+deploy the model we only look at the
+
+00:21:12.960 --> 00:21:17.200
+prediction the real prediction of the
+
+00:21:15.520 --> 00:21:21.360
+model
+
+00:21:17.200 --> 00:21:25.440
+but this will guide this other transform
+
+00:21:21.360 --> 00:21:28.080
+token. So you may think oh well how can
+
+00:21:25.440 --> 00:21:30.480
+the network can be better than the
+
+00:21:28.080 --> 00:21:32.240
+teacher? Well it's just like how you
+
+00:21:30.480 --> 00:21:33.919
+guys will be better than me. You will
+
+00:21:32.240 --> 00:21:36.080
+see other things and you will decide for
+
+00:21:33.919 --> 00:21:38.480
+yourself. Right? This is no enforcement.
+
+00:21:36.080 --> 00:21:41.520
+This is just a loss and a tradeoff that
+
+00:21:38.480 --> 00:21:44.720
+the model will do and eventually it is
+
+00:21:41.520 --> 00:21:48.400
+exposed to the real data and real labels
+
+00:21:44.720 --> 00:21:53.200
+and will learn what it can learn from
+
+00:21:48.400 --> 00:21:56.080
+the both classes. So this is a maybe a
+
+00:21:53.200 --> 00:21:58.240
+zoom in into the training where we get
+
+00:21:56.080 --> 00:22:01.120
+the patches and then we do the embedding
+
+00:21:58.240 --> 00:22:03.840
+along with the CLS and this tokens and
+
+00:22:01.120 --> 00:22:06.559
+then the same transformer encoder. We
+
+00:22:03.840 --> 00:22:10.559
+are not touching this and we only use
+
+00:22:06.559 --> 00:22:13.520
+two of the transform tokens out of the
+
+00:22:10.559 --> 00:22:15.200
+transformer and one will be fed to the
+
+00:22:13.520 --> 00:22:17.840
+distillation head and one to the
+
+00:22:15.200 --> 00:22:20.880
+classification head. The distillation
+
+00:22:17.840 --> 00:22:23.919
+head gets the labels from a frozen CNN
+
+00:22:20.880 --> 00:22:27.600
+teacher. The classification head gets
+
+00:22:23.919 --> 00:22:30.559
+the label from the data. Okay. So let's
+
+00:22:27.600 --> 00:22:33.919
+uh zoom into this last terms and how
+
+00:22:30.559 --> 00:22:37.760
+they are handled in this uh setup
+
+00:22:33.919 --> 00:22:40.080
+as this is a good exposure to knowledge
+
+00:22:37.760 --> 00:22:42.799
+distillation. um a technique that
+
+00:22:40.080 --> 00:22:45.280
+basically a smaller student network
+
+00:22:42.799 --> 00:22:48.880
+learns to mimic a larger or better
+
+00:22:45.280 --> 00:22:51.520
+teacher model here CNN and the student
+
+00:22:48.880 --> 00:22:54.880
+is the transformer. Okay, so to do that
+
+00:22:51.520 --> 00:22:58.320
+let's look at the paper. So here we only
+
+00:22:54.880 --> 00:23:01.919
+look at the class token. There's not yet
+
+00:22:58.320 --> 00:23:04.720
+a distillation token. And if we want to
+
+00:23:01.919 --> 00:23:08.159
+do the distillation only with the class
+
+00:23:04.720 --> 00:23:10.960
+token, first we compare the the
+
+00:23:08.159 --> 00:23:14.000
+prediction of the class token which is
+
+00:23:10.960 --> 00:23:17.280
+the soft max with the true ground truth
+
+00:23:14.000 --> 00:23:20.080
+label using a cross entropy loss and
+
+00:23:17.280 --> 00:23:24.240
+also we add a kale divergence that
+
+00:23:20.080 --> 00:23:28.559
+basically enforce the network to learn
+
+00:23:24.240 --> 00:23:31.200
+the same distribution for the logits as
+
+00:23:28.559 --> 00:23:33.679
+the teacher. Okay. So this is kind of
+
+00:23:31.200 --> 00:23:36.000
+soft label distillation meaning that we
+
+00:23:33.679 --> 00:23:37.840
+learn the distribution
+
+00:23:36.000 --> 00:23:41.440
+the prediction
+
+00:23:37.840 --> 00:23:44.400
+um so we learn the distribution of the
+
+00:23:41.440 --> 00:23:47.840
+uh the prediction of the teacher here.
+
+00:23:44.400 --> 00:23:50.480
+So this is a soft distillation but the
+
+00:23:47.840 --> 00:23:53.919
+authors uh discuss this hard label
+
+00:23:50.480 --> 00:23:56.240
+distillation meaning that we want to
+
+00:23:53.919 --> 00:23:59.760
+look at the prediction of the teacher as
+
+00:23:56.240 --> 00:24:03.039
+if that's the a label and in that case
+
+00:23:59.760 --> 00:24:06.080
+we go to the hard distillation which we
+
+00:24:03.039 --> 00:24:09.520
+want to not only predict the ground
+
+00:24:06.080 --> 00:24:12.240
+truth we also want to predict the the
+
+00:24:09.520 --> 00:24:14.400
+best guess of the teacher not the
+
+00:24:12.240 --> 00:24:17.200
+distribution of the guesses. And here is
+
+00:24:14.400 --> 00:24:20.559
+where the authors are discussing this
+
+00:24:17.200 --> 00:24:23.760
+new token, the distillation token to
+
+00:24:20.559 --> 00:24:26.799
+basically separate the two losses using
+
+00:24:23.760 --> 00:24:28.400
+two heads. So using the distillation
+
+00:24:26.799 --> 00:24:32.559
+token
+
+00:24:28.400 --> 00:24:36.559
+here from the distillation head and
+
+00:24:32.559 --> 00:24:39.360
+using the class token here in the class
+
+00:24:36.559 --> 00:24:43.760
+class head and they showed that uh this
+
+00:24:39.360 --> 00:24:46.720
+way the network actually learns more
+
+00:24:43.760 --> 00:24:49.760
+uh than no distillation. And also they
+
+00:24:46.720 --> 00:24:52.880
+showed that a CNN teacher works better
+
+00:24:49.760 --> 00:24:56.720
+than a VIT teacher. Although the VIT
+
+00:24:52.880 --> 00:24:59.440
+teacher does a better job by itself, but
+
+00:24:56.720 --> 00:25:01.600
+it's not a better teacher for our
+
+00:24:59.440 --> 00:25:04.240
+architecture. And the reason is
+
+00:25:01.600 --> 00:25:06.640
+basically CNN teacher brings something
+
+00:25:04.240 --> 00:25:09.279
+that is different. It's a different
+
+00:25:06.640 --> 00:25:12.400
+inductive bias that the transformer
+
+00:25:09.279 --> 00:25:16.159
+doesn't have. So the student while
+
+00:25:12.400 --> 00:25:20.320
+remaining flexible also learns what the
+
+00:25:16.159 --> 00:25:22.880
+teacher knows. So that's somehow
+
+00:25:20.320 --> 00:25:27.360
+uh reinforcing the assumption that
+
+00:25:22.880 --> 00:25:30.000
+diversity helps as that uh leads to a
+
+00:25:27.360 --> 00:25:31.919
+richer learning signal. So the teacher
+
+00:25:30.000 --> 00:25:34.880
+model is only active during the training
+
+00:25:31.919 --> 00:25:36.799
+and the model learns to use both tokens
+
+00:25:34.880 --> 00:25:38.640
+effectively and during the inference of
+
+00:25:36.799 --> 00:25:40.640
+course we don't need the teacher anymore
+
+00:25:38.640 --> 00:25:43.440
+and we can [clears throat] also skip the
+
+00:25:40.640 --> 00:25:46.880
+distillation head. Uh but the authors
+
+00:25:43.440 --> 00:25:50.000
+suggest to keep it and make an average
+
+00:25:46.880 --> 00:25:51.520
+of the two to basically do this kind of
+
+00:25:50.000 --> 00:25:54.720
+consensus
+
+00:25:51.520 --> 00:25:57.039
+uh to achieve a better performance. So
+
+00:25:54.720 --> 00:26:00.480
+this is the first figure of the same
+
+00:25:57.039 --> 00:26:03.600
+paper uh where they showed the distilled
+
+00:26:00.480 --> 00:26:06.640
+version of the network works better than
+
+00:26:03.600 --> 00:26:10.320
+the comparable normal network with
+
+00:26:06.640 --> 00:26:12.480
+similar um resources. So here that is
+
+00:26:10.320 --> 00:26:14.960
+efficient net and we al already
+
+00:26:12.480 --> 00:26:18.159
+discussed that in the previous lectures
+
+00:26:14.960 --> 00:26:21.760
+and we see that with the same amount of
+
+00:26:18.159 --> 00:26:25.840
+latency or compute during the inference
+
+00:26:21.760 --> 00:26:28.320
+the distilled uh model works the best.
+
+00:26:25.840 --> 00:26:31.200
+Note that this is the the same model
+
+00:26:28.320 --> 00:26:33.919
+without distillation. So we will see
+
+00:26:31.200 --> 00:26:36.720
+knowledge distillation later but note
+
+00:26:33.919 --> 00:26:39.679
+that here we basically transfer these
+
+00:26:36.720 --> 00:26:42.559
+biases across this architectures
+
+00:26:39.679 --> 00:26:46.240
+and instead of a mirror compression we
+
+00:26:42.559 --> 00:26:48.799
+instead bring an efficient learning that
+
+00:26:46.240 --> 00:26:50.640
+the smaller model is not really copying
+
+00:26:48.799 --> 00:26:54.000
+the teacher but it's learning from the
+
+00:26:50.640 --> 00:26:56.960
+teacher and eventually becomes better.
+
+00:26:54.000 --> 00:27:00.320
+So the teacher signal is not really
+
+00:26:56.960 --> 00:27:00.320
+replacing the ground truth.

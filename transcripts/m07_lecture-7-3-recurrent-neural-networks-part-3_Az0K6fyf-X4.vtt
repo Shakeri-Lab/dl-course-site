@@ -1,0 +1,1801 @@
+WEBVTT
+
+00:00:00.320 --> 00:00:06.480
+Okay. So let us implement our recurrent
+
+00:00:03.600 --> 00:00:09.760
+neural network and we are going to do it
+
+00:00:06.480 --> 00:00:12.559
+uh in this setup to analyze this data
+
+00:00:09.760 --> 00:00:15.759
+set of IMDb
+
+00:00:12.559 --> 00:00:18.480
+movie reviews. So it's a data set for
+
+00:00:15.759 --> 00:00:22.080
+sentiment classification. We are going
+
+00:00:18.480 --> 00:00:24.320
+to download this from Kaggle. And here I
+
+00:00:22.080 --> 00:00:27.119
+have the download download download page
+
+00:00:24.320 --> 00:00:29.519
+here. As you can see each review has a
+
+00:00:27.119 --> 00:00:31.679
+label positive and negative. So these
+
+00:00:29.519 --> 00:00:34.719
+reviews are collected to be a bit
+
+00:00:31.679 --> 00:00:37.600
+extreme uh to basically make it easier
+
+00:00:34.719 --> 00:00:40.000
+for our natural language processor to
+
+00:00:37.600 --> 00:00:45.040
+classify. So we are going to use this
+
+00:00:40.000 --> 00:00:47.680
+data set and uh we built first a vanilla
+
+00:00:45.040 --> 00:00:50.640
+recurrent neural network that takes in
+
+00:00:47.680 --> 00:00:52.800
+each review and predicts the label
+
+00:00:50.640 --> 00:00:55.840
+either positive or negative review. the
+
+00:00:52.800 --> 00:00:58.320
+problem fall into this class. We take in
+
+00:00:55.840 --> 00:01:02.879
+the sequence and at the end given the
+
+00:00:58.320 --> 00:01:05.040
+final hidden state we will classify the
+
+00:01:02.879 --> 00:01:08.799
+review as positive or negative. Things
+
+00:01:05.040 --> 00:01:12.400
+to consider is we are batching variable
+
+00:01:08.799 --> 00:01:16.960
+length sentences. So we have to pad them
+
+00:01:12.400 --> 00:01:20.159
+to all have the same size for the GPU.
+
+00:01:16.960 --> 00:01:22.720
+And also of course we need to translate
+
+00:01:20.159 --> 00:01:25.200
+the the natural language to numerical
+
+00:01:22.720 --> 00:01:28.560
+values because that's how computer
+
+00:01:25.200 --> 00:01:32.320
+understand. So to do that we are mapping
+
+00:01:28.560 --> 00:01:35.920
+each token to a to an ID and since we
+
+00:01:32.320 --> 00:01:38.880
+want the vocabulary size to be finite we
+
+00:01:35.920 --> 00:01:41.200
+choose a max vocabulary size which is
+
+00:01:38.880 --> 00:01:42.880
+less than the number of tokens and that
+
+00:01:41.200 --> 00:01:46.479
+means that there are some rare tokens
+
+00:01:42.880 --> 00:01:49.040
+that doesn't get any um ID and we are
+
+00:01:46.479 --> 00:01:51.520
+going to just assign unknown to them and
+
+00:01:49.040 --> 00:01:53.280
+they that will not affect the analysis a
+
+00:01:51.520 --> 00:01:56.320
+lot because they are not happen they are
+
+00:01:53.280 --> 00:01:58.560
+not occurring a lot. So we discussed the
+
+00:01:56.320 --> 00:02:02.079
+the basics of the recurrent neural
+
+00:01:58.560 --> 00:02:05.119
+network cell that uh takes in the input
+
+00:02:02.079 --> 00:02:07.520
+and out and the previous hidden um with
+
+00:02:05.119 --> 00:02:09.200
+the tangent hyperbolic activation. We
+
+00:02:07.520 --> 00:02:12.480
+will discuss this while we are coding
+
+00:02:09.200 --> 00:02:15.760
+the cell. So another note on why we need
+
+00:02:12.480 --> 00:02:18.720
+padding. We want to make this special
+
+00:02:15.760 --> 00:02:22.080
+token for the padded values and make
+
+00:02:18.720 --> 00:02:25.680
+sure that our recurren neural network
+
+00:02:22.080 --> 00:02:28.640
+knows that this is a padded value and
+
+00:02:25.680 --> 00:02:30.959
+while uh going forward if for example
+
+00:02:28.640 --> 00:02:33.120
+this last one is just a padded value we
+
+00:02:30.959 --> 00:02:36.400
+want to make sure the hidden state will
+
+00:02:33.120 --> 00:02:39.680
+be unaffected by this. So making sure
+
+00:02:36.400 --> 00:02:42.400
+that the RN knows this is a padded value
+
+00:02:39.680 --> 00:02:45.040
+and not updating the the hidden state.
+
+00:02:42.400 --> 00:02:47.840
+Um there are some utility functions here
+
+00:02:45.040 --> 00:02:50.879
+that I included for you and here
+
+00:02:47.840 --> 00:02:53.599
+basically how to download the data set
+
+00:02:50.879 --> 00:02:56.640
+and there is a possibility for having a
+
+00:02:53.599 --> 00:02:59.519
+toy uh data set that in case uh you want
+
+00:02:56.640 --> 00:03:02.080
+to do prototyping but I suggest working
+
+00:02:59.519 --> 00:03:04.959
+on the real data set if you have GPU
+
+00:03:02.080 --> 00:03:08.000
+from the get- go. So uh it's possible to
+
+00:03:04.959 --> 00:03:10.480
+use torch text for downloading the data
+
+00:03:08.000 --> 00:03:13.840
+set but sometimes uh because torch text
+
+00:03:10.480 --> 00:03:16.319
+is not maintained anymore uh at least
+
+00:03:13.840 --> 00:03:18.560
+updated uh so you can just manually
+
+00:03:16.319 --> 00:03:21.200
+download it and I provided the text here
+
+00:03:18.560 --> 00:03:23.920
+and the code. So like I said we have to
+
+00:03:21.200 --> 00:03:27.120
+uh handle the p padded values and making
+
+00:03:23.920 --> 00:03:30.159
+sure that they get the special tokens
+
+00:03:27.120 --> 00:03:32.560
+while we are handling them during the
+
+00:03:30.159 --> 00:03:34.959
+RNN architecture. So like I said, I'm
+
+00:03:32.560 --> 00:03:37.200
+going to skip this details and you can
+
+00:03:34.959 --> 00:03:39.760
+look at them. There are some helper
+
+00:03:37.200 --> 00:03:42.080
+functions later when we do the training
+
+00:03:39.760 --> 00:03:44.480
+for plotting the histories and and
+
+00:03:42.080 --> 00:03:46.239
+finalizing the presentation of the
+
+00:03:44.480 --> 00:03:47.920
+results like for example using a
+
+00:03:46.239 --> 00:03:50.000
+confusion matrix because this is a
+
+00:03:47.920 --> 00:03:52.640
+binary classification. Here I took the
+
+00:03:50.000 --> 00:03:55.519
+opportunity to introduce this decorators
+
+00:03:52.640 --> 00:03:58.480
+that can uh simplify our code. Uh, one
+
+00:03:55.519 --> 00:04:01.760
+of them is this data class that you will
+
+00:03:58.480 --> 00:04:05.040
+see how it can save some of our time and
+
+00:04:01.760 --> 00:04:07.519
+make our code cleaner. So, I added an
+
+00:04:05.040 --> 00:04:10.239
+explanation here and how uh what's what
+
+00:04:07.519 --> 00:04:13.040
+does this decorator do? Um, I'm planning
+
+00:04:10.239 --> 00:04:16.160
+to compile some of these most useful
+
+00:04:13.040 --> 00:04:19.759
+decorators in PyTorch and include that
+
+00:04:16.160 --> 00:04:22.400
+in the in the lecture as a Google collab
+
+00:04:19.759 --> 00:04:24.720
+notebook. Okay. So we are all set to
+
+00:04:22.400 --> 00:04:26.639
+start writing the our uh recurrent
+
+00:04:24.720 --> 00:04:29.199
+neural network. So as we discussed
+
+00:04:26.639 --> 00:04:32.880
+basically a recurrent neural network
+
+00:04:29.199 --> 00:04:35.360
+cell takes in the token of course the ID
+
+00:04:32.880 --> 00:04:37.840
+of the token we already did the
+
+00:04:35.360 --> 00:04:41.120
+embedding and then we have to write like
+
+00:04:37.840 --> 00:04:45.199
+a linear mapping here to map the the
+
+00:04:41.120 --> 00:04:47.919
+token ID to uh the hidden space. uh that
+
+00:04:45.199 --> 00:04:50.639
+um linear mapping is a is basically a a
+
+00:04:47.919 --> 00:04:53.520
+weight matrix and uh we discussed that
+
+00:04:50.639 --> 00:04:55.919
+we have to take in the previous age
+
+00:04:53.520 --> 00:04:58.320
+again with a weight matrix in the
+
+00:04:55.919 --> 00:05:01.280
+lecture I I said that uh we can combine
+
+00:04:58.320 --> 00:05:04.560
+them for the analysis and actually it
+
+00:05:01.280 --> 00:05:06.400
+helps if we do it in the GPU because we
+
+00:05:04.560 --> 00:05:08.560
+don't need to handle two different
+
+00:05:06.400 --> 00:05:13.280
+weight matrix. So here I'm calling this
+
+00:05:08.560 --> 00:05:15.199
+one we wh and this one w ih like I said
+
+00:05:13.280 --> 00:05:19.199
+in the lecture I said we can combine
+
+00:05:15.199 --> 00:05:21.039
+them and we have one larger w and these
+
+00:05:19.199 --> 00:05:22.960
+two inputs can be concatenated and
+
+00:05:21.039 --> 00:05:27.120
+inputed to that due to the issues that
+
+00:05:22.960 --> 00:05:30.000
+we have in vanilla RNN and the fact that
+
+00:05:27.120 --> 00:05:34.400
+when we compute this back propagation
+
+00:05:30.000 --> 00:05:37.199
+through time we said that this weight wh
+
+00:05:34.400 --> 00:05:40.080
+uh takes an important role because of uh
+
+00:05:37.199 --> 00:05:43.199
+exponentiation that they have. So to
+
+00:05:40.080 --> 00:05:48.000
+make our uh simple RNN works going to
+
+00:05:43.199 --> 00:05:50.400
+separate them to have WI uh here and WHh
+
+00:05:48.000 --> 00:05:53.120
+and mainly because of the importance of
+
+00:05:50.400 --> 00:05:55.759
+the weight initialization here. Um later
+
+00:05:53.120 --> 00:05:57.919
+when we go to LSDM we combine them. So
+
+00:05:55.759 --> 00:06:00.479
+you will see that uh that's not a big
+
+00:05:57.919 --> 00:06:04.000
+deal there. So for now going to separate
+
+00:06:00.479 --> 00:06:06.639
+WH and WHh and like I said mainly
+
+00:06:04.000 --> 00:06:09.600
+because of the initialization of the
+
+00:06:06.639 --> 00:06:12.639
+weight and I want to make sure this WH
+
+00:06:09.600 --> 00:06:15.840
+products will remain stable and uh
+
+00:06:12.639 --> 00:06:17.919
+initialization helps here. Okay. So with
+
+00:06:15.840 --> 00:06:21.039
+that caveat we start the code. We are
+
+00:06:17.919 --> 00:06:24.400
+writing a vanilla RN cell for now and
+
+00:06:21.039 --> 00:06:27.039
+then we need to have a linear layer for
+
+00:06:24.400 --> 00:06:30.800
+WH and WHh.
+
+00:06:27.039 --> 00:06:34.240
+Okay. So um just to familiarize you with
+
+00:06:30.800 --> 00:06:36.720
+the lingo here. So this linear layers we
+
+00:06:34.240 --> 00:06:39.840
+call them sometimes dense layer and
+
+00:06:36.720 --> 00:06:42.080
+sometimes an aphine uh layer. Basically
+
+00:06:39.840 --> 00:06:45.199
+it's a fine because it's a linear plus a
+
+00:06:42.080 --> 00:06:47.919
+bias right. Um so when I say this is an
+
+00:06:45.199 --> 00:06:50.000
+input hidden a fine it means that it's a
+
+00:06:47.919 --> 00:06:52.639
+linear layer. Okay. So one thing else
+
+00:06:50.000 --> 00:06:56.960
+actually this it's good to say here uh I
+
+00:06:52.639 --> 00:07:00.400
+don't want the wh to have a to have bias
+
+00:06:56.960 --> 00:07:03.199
+um this is a classic uh RNN
+
+00:07:00.400 --> 00:07:05.120
+parameterization you will see that um
+
+00:07:03.199 --> 00:07:07.440
+this will be helpful when we are dealing
+
+00:07:05.120 --> 00:07:09.360
+with the initialization tool like I said
+
+00:07:07.440 --> 00:07:12.319
+again it's about stability of this
+
+00:07:09.360 --> 00:07:15.280
+exponentiation of whh doing the the back
+
+00:07:12.319 --> 00:07:18.800
+propagation so let's state that that the
+
+00:07:15.280 --> 00:07:20.880
+bias is false and then introduce uh
+
+00:07:18.800 --> 00:07:23.520
+initialization here we are going to have
+
+00:07:20.880 --> 00:07:28.479
+a tangent hyperbolic so let's use
+
+00:07:23.520 --> 00:07:32.720
+heavier uh uniform for the w then for
+
+00:07:28.479 --> 00:07:36.000
+the whh which I like I said it's more uh
+
+00:07:32.720 --> 00:07:38.240
+sensitive so we want to use orthogonal
+
+00:07:36.000 --> 00:07:42.479
+but basically we want to preserve the
+
+00:07:38.240 --> 00:07:45.199
+norm across this time steps so uh if you
+
+00:07:42.479 --> 00:07:48.319
+remember uh as explained in the book
+
+00:07:45.199 --> 00:07:50.800
+also the largest value or the spectrum
+
+00:07:48.319 --> 00:07:53.280
+radius of this matrix takes an important
+
+00:07:50.800 --> 00:07:56.000
+role in this exponentiation. So we want
+
+00:07:53.280 --> 00:07:58.560
+to make sure it is scaled. So even
+
+00:07:56.000 --> 00:08:00.879
+taking an extra step to make sure this
+
+00:07:58.560 --> 00:08:03.759
+scaling is happening is advice here. I'm
+
+00:08:00.879 --> 00:08:06.639
+not going to do it here but scaling with
+
+00:08:03.759 --> 00:08:10.160
+spectral radius is also handy. Um and
+
+00:08:06.639 --> 00:08:12.479
+LSM is not as sensitive as uh this
+
+00:08:10.160 --> 00:08:14.720
+vanilla RNN. So most of these steps will
+
+00:08:12.479 --> 00:08:18.879
+be unnecessary really. We have to
+
+00:08:14.720 --> 00:08:21.520
+initialize the the bias term for the WH.
+
+00:08:18.879 --> 00:08:23.759
+So let's do it. Okay. And I think we're
+
+00:08:21.520 --> 00:08:25.599
+good. We can move on to the forward. And
+
+00:08:23.759 --> 00:08:29.120
+remember that we are just writing the
+
+00:08:25.599 --> 00:08:31.840
+cell here. So a torch tangent hyperbolic
+
+00:08:29.120 --> 00:08:36.080
+of the two. And that's it. So this is
+
+00:08:31.840 --> 00:08:38.800
+our vanilla RN cell. And then we unroll
+
+00:08:36.080 --> 00:08:41.599
+the the sequence of this uh cells. So
+
+00:08:38.800 --> 00:08:44.240
+let's write this. for the unrolling of
+
+00:08:41.599 --> 00:08:47.839
+the cells we write this class. So
+
+00:08:44.240 --> 00:08:50.000
+basically what it does is to takes the x
+
+00:08:47.839 --> 00:08:52.480
+uh of course a batch of them along with
+
+00:08:50.000 --> 00:08:55.120
+the length of them like uh we discussed
+
+00:08:52.480 --> 00:08:57.360
+in the processing of the data. So we
+
+00:08:55.120 --> 00:09:00.800
+need to know the length of them and the
+
+00:08:57.360 --> 00:09:03.920
+main reason is we want to mask those um
+
+00:09:00.800 --> 00:09:06.080
+padded values and we don't want our RNN
+
+00:09:03.920 --> 00:09:09.760
+to process them right so that's why we
+
+00:09:06.080 --> 00:09:12.320
+need the length of each sequence and uh
+
+00:09:09.760 --> 00:09:14.800
+we get a batch of these padded sequences
+
+00:09:12.320 --> 00:09:19.440
+and at the end we want to return the
+
+00:09:14.800 --> 00:09:21.279
+last hidden state to the classification
+
+00:09:19.440 --> 00:09:24.000
+head that we will write in a different
+
+00:09:21.279 --> 00:09:27.600
+class. Okay. So with that this is the
+
+00:09:24.000 --> 00:09:29.839
+the cell and um I mean uh we can have
+
+00:09:27.600 --> 00:09:32.720
+different type of cell right. So here
+
+00:09:29.839 --> 00:09:35.360
+here we have the vanilla RNN cell but we
+
+00:09:32.720 --> 00:09:38.000
+can also have the LSTM cell. The cell is
+
+00:09:35.360 --> 00:09:40.480
+defined. We already have a forward
+
+00:09:38.000 --> 00:09:44.240
+method within the cell. So we can use
+
+00:09:40.480 --> 00:09:46.480
+that and then the rest is basically to
+
+00:09:44.240 --> 00:09:49.040
+make sure we process this hidden state
+
+00:09:46.480 --> 00:09:50.959
+and update them along the sequence and
+
+00:09:49.040 --> 00:09:53.600
+making sure we are not doing it over the
+
+00:09:50.959 --> 00:09:56.800
+the padded values. Okay. So that happens
+
+00:09:53.600 --> 00:10:01.279
+all in the forward method. So the input
+
+00:09:56.800 --> 00:10:04.480
+will be let's say x and uh what is x is
+
+00:10:01.279 --> 00:10:08.640
+basically x is a a tensor of this shape.
+
+00:10:04.480 --> 00:10:12.240
+Let me just so x uh shape will be badge
+
+00:10:08.640 --> 00:10:14.720
+length of the time and the embedding the
+
+00:10:12.240 --> 00:10:18.079
+embedded tokens. Okay. So that's our
+
+00:10:14.720 --> 00:10:20.560
+shape. Yeah. So uh if we want this to
+
+00:10:18.079 --> 00:10:22.959
+work with uh different type of cell that
+
+00:10:20.560 --> 00:10:26.000
+may have different hidden size, right?
+
+00:10:22.959 --> 00:10:28.320
+In that case we need to take that uh
+
+00:10:26.000 --> 00:10:31.360
+properties from the cell itself. So in
+
+00:10:28.320 --> 00:10:34.959
+that case we have um basically features
+
+00:10:31.360 --> 00:10:37.760
+of the the cell and uh and using we will
+
+00:10:34.959 --> 00:10:40.480
+use that to to get the uh the hidden
+
+00:10:37.760 --> 00:10:44.560
+size. So for now to simplify the process
+
+00:10:40.480 --> 00:10:46.079
+we are going to do this uh by hand but
+
+00:10:44.560 --> 00:10:48.800
+uh
+
+00:10:46.079 --> 00:10:50.800
+I will make sure in the full code that I
+
+00:10:48.800 --> 00:10:53.360
+will share with you uh I will I will
+
+00:10:50.800 --> 00:10:56.240
+include that feature. So because now the
+
+00:10:53.360 --> 00:10:58.880
+hidden size is like I said determined.
+
+00:10:56.240 --> 00:11:02.079
+So let's just make sure we have it here
+
+00:10:58.880 --> 00:11:06.560
+too. Okay. So now uh the forward takes
+
+00:11:02.079 --> 00:11:10.079
+in x the length and we can think of so
+
+00:11:06.560 --> 00:11:12.959
+because we we only need the last age. Um
+
+00:11:10.079 --> 00:11:15.040
+we don't need to return the the rest of
+
+00:11:12.959 --> 00:11:17.680
+them. So let's just take in x and
+
+00:11:15.040 --> 00:11:20.000
+length. Oh because I want the most
+
+00:11:17.680 --> 00:11:21.839
+simple code here. Let's just write this.
+
+00:11:20.000 --> 00:11:24.000
+So if we write it this way, it basically
+
+00:11:21.839 --> 00:11:26.800
+makes sure that the device is also the
+
+00:11:24.000 --> 00:11:32.480
+same as x. So that's why it's handier.
+
+00:11:26.800 --> 00:11:35.200
+So for uh t in the range of t, we get
+
+00:11:32.480 --> 00:11:39.040
+the updated age from the cell. So let's
+
+00:11:35.200 --> 00:11:42.800
+call it h candidate that is given by the
+
+00:11:39.040 --> 00:11:46.000
+cell and the cell starts from x and h.
+
+00:11:42.800 --> 00:11:49.440
+So x and h and the first h we define it
+
+00:11:46.000 --> 00:11:52.399
+here. So starting with the first h here
+
+00:11:49.440 --> 00:11:55.120
+which is zeros. Okay. So that's the h
+
+00:11:52.399 --> 00:11:58.640
+candidate. We want to make sure that the
+
+00:11:55.120 --> 00:12:03.920
+mask is uh constructed. So going to call
+
+00:11:58.640 --> 00:12:06.480
+mask t we get the h we want h to be to
+
+00:12:03.920 --> 00:12:08.959
+handle mask. Okay. So basically what we
+
+00:12:06.480 --> 00:12:11.760
+are doing is we keep the this h
+
+00:12:08.959 --> 00:12:15.600
+candidate whenever it's not masked right
+
+00:12:11.760 --> 00:12:19.200
+so this is just like a 01 kind of mask
+
+00:12:15.600 --> 00:12:23.120
+vector. If it's mask it will be zero and
+
+00:12:19.200 --> 00:12:25.360
+it will keep the previous h. So when
+
+00:12:23.120 --> 00:12:27.600
+it's padded doesn't update and it keeps
+
+00:12:25.360 --> 00:12:30.079
+the previous age. Um I'm thinking even
+
+00:12:27.600 --> 00:12:32.959
+we don't need this. So we're just
+
+00:12:30.079 --> 00:12:36.399
+returning h right. So this is how we
+
+00:12:32.959 --> 00:12:38.880
+handle this padding and we make sure h
+
+00:12:36.399 --> 00:12:41.760
+is not corrupted by the by the padded
+
+00:12:38.880 --> 00:12:45.200
+value and we return h at the end. So now
+
+00:12:41.760 --> 00:12:49.440
+we can write the end to end uh class
+
+00:12:45.200 --> 00:12:52.480
+that um use the cell and um the sequence
+
+00:12:49.440 --> 00:12:54.480
+at the classification head at at the end
+
+00:12:52.480 --> 00:12:58.079
+and also embedding at the beginning.
+
+00:12:54.480 --> 00:13:03.040
+Okay. So with that let's write let's
+
+00:12:58.079 --> 00:13:06.320
+call it from scratch arn. So here uh we
+
+00:13:03.040 --> 00:13:09.360
+need to know the vocabulary size um the
+
+00:13:06.320 --> 00:13:12.240
+embedding dimension and the hidden size.
+
+00:13:09.360 --> 00:13:16.720
+uh the vocabulary size or the number of
+
+00:13:12.240 --> 00:13:19.360
+uh tokens that we ided and then here
+
+00:13:16.720 --> 00:13:21.839
+this is an important component basically
+
+00:13:19.360 --> 00:13:24.639
+determines the dimension of the
+
+00:13:21.839 --> 00:13:26.880
+embedding of this u each one of these
+
+00:13:24.639 --> 00:13:31.200
+tokens so we embed each one of these
+
+00:13:26.880 --> 00:13:34.320
+tokens so think of it like a a linear um
+
+00:13:31.200 --> 00:13:37.839
+layer so I write it this way the self
+
+00:13:34.320 --> 00:13:41.600
+embedding uh it's not within super so
+
+00:13:37.839 --> 00:13:45.360
+self dot embedding is a is a linear
+
+00:13:41.600 --> 00:13:49.200
+layer that takes in this um token ids
+
+00:13:45.360 --> 00:13:51.600
+and maps it to a e dimensional vector.
+
+00:13:49.200 --> 00:13:55.120
+Okay, one thing that is important here
+
+00:13:51.600 --> 00:13:58.399
+is we really don't want to learn
+
+00:13:55.120 --> 00:14:00.880
+anything for the padding uh tokens. So
+
+00:13:58.399 --> 00:14:04.079
+we want to ensure that even the
+
+00:14:00.880 --> 00:14:08.399
+embedding layer doesn't do anything for
+
+00:14:04.079 --> 00:14:13.040
+those pad values. So remember that first
+
+00:14:08.399 --> 00:14:15.360
+we made sure that the pads are not
+
+00:14:13.040 --> 00:14:18.240
+corrupting our edge and here I we want
+
+00:14:15.360 --> 00:14:22.079
+to also make sure it's not corrupting
+
+00:14:18.240 --> 00:14:26.880
+our embedding right so we want to force
+
+00:14:22.079 --> 00:14:31.760
+this uh embedding of the pads to be for
+
+00:14:26.880 --> 00:14:36.320
+example zero uh vector in this embedding
+
+00:14:31.760 --> 00:14:39.440
+space. So to do that uh we have to do
+
+00:14:36.320 --> 00:14:42.959
+some more treatment. So we want to start
+
+00:14:39.440 --> 00:14:46.720
+from some initial let's say embedding
+
+00:14:42.959 --> 00:14:50.079
+vectors. Uh initial it can be some
+
+00:14:46.720 --> 00:14:52.959
+noise. Uh for example let's initialize
+
+00:14:50.079 --> 00:14:56.079
+this embedding weight right let's just
+
+00:14:52.959 --> 00:14:58.399
+do with normal and then uh with some
+
+00:14:56.079 --> 00:15:02.800
+mean zero and very small standard
+
+00:14:58.399 --> 00:15:05.040
+deviation right. Um and then I want to
+
+00:15:02.800 --> 00:15:08.639
+say if self
+
+00:15:05.040 --> 00:15:13.440
+embedding is for the padding index which
+
+00:15:08.639 --> 00:15:16.720
+we uh determined. So if self embedding
+
+00:15:13.440 --> 00:15:19.760
+embedded padding index is not none. So
+
+00:15:16.720 --> 00:15:23.440
+we have a padding index we want to make
+
+00:15:19.760 --> 00:15:27.120
+sure that its weight is zero of this
+
+00:15:23.440 --> 00:15:30.000
+self is just zero absolute zero. That's
+
+00:15:27.120 --> 00:15:32.560
+that. uh we made sure we first mildly
+
+00:15:30.000 --> 00:15:34.959
+randomized the embedding right and then
+
+00:15:32.560 --> 00:15:38.000
+we forced the rows uh corresponding to
+
+00:15:34.959 --> 00:15:41.680
+this pads to be exactly zero. I think we
+
+00:15:38.000 --> 00:15:44.480
+have the components the embedding let's
+
+00:15:41.680 --> 00:15:46.880
+just call the sequence and we have the
+
+00:15:44.480 --> 00:15:50.000
+the fully connected head which is a
+
+00:15:46.880 --> 00:15:53.519
+linear and now we can write the forward
+
+00:15:50.000 --> 00:15:56.480
+method. Okay. Okay. So this gives us the
+
+00:15:53.519 --> 00:15:59.759
+the logits right. So if you want to
+
+00:15:56.480 --> 00:16:02.079
+visualize the embedding uh vectors um
+
+00:15:59.759 --> 00:16:05.199
+you can uh maybe rename this to
+
+00:16:02.079 --> 00:16:08.480
+something else and u directly return
+
+00:16:05.199 --> 00:16:10.800
+this for visualization purposes. Okay.
+
+00:16:08.480 --> 00:16:13.279
+So that's that we have the RNN. Let's
+
+00:16:10.800 --> 00:16:18.079
+put everything together here. This is
+
+00:16:13.279 --> 00:16:22.320
+our RNN code and that's basically it's
+
+00:16:18.079 --> 00:16:26.079
+ready for training. Okay. So um because
+
+00:16:22.320 --> 00:16:30.320
+uh it's expensive to train. Let me uh
+
+00:16:26.079 --> 00:16:31.759
+write the LSDM cell before training and
+
+00:16:30.320 --> 00:16:35.120
+seeing the result and then we can
+
+00:16:31.759 --> 00:16:38.880
+compare the two. Okay. So let's carry on
+
+00:16:35.120 --> 00:16:41.600
+uh with uh coding our um RNN from
+
+00:16:38.880 --> 00:16:44.720
+scratch. We did the vanilla RNN. Now we
+
+00:16:41.600 --> 00:16:46.959
+want to do the LSTM cell first and then
+
+00:16:44.720 --> 00:16:49.920
+doing the sequence just very similar to
+
+00:16:46.959 --> 00:16:53.600
+what we did with the RN. We learned that
+
+00:16:49.920 --> 00:16:57.759
+in LSTM we have a separate um memory
+
+00:16:53.600 --> 00:17:00.959
+that is the long memory and we keep this
+
+00:16:57.759 --> 00:17:05.280
+short-term memory that we call H. So
+
+00:17:00.959 --> 00:17:09.199
+here uh unlike in the RNN case we can
+
+00:17:05.280 --> 00:17:13.120
+catenate this four uh linear layers into
+
+00:17:09.199 --> 00:17:16.400
+one um I mean we instead of having one a
+
+00:17:13.120 --> 00:17:19.839
+fine for each one of this activation. We
+
+00:17:16.400 --> 00:17:23.439
+put one large linear layer here that uh
+
+00:17:19.839 --> 00:17:26.000
+takes in XT and HD concatenated, right?
+
+00:17:23.439 --> 00:17:29.840
+Remember that x is the embedding and we
+
+00:17:26.000 --> 00:17:34.480
+apply one large linear transformation
+
+00:17:29.840 --> 00:17:38.559
+and uh that basically maps the input to
+
+00:17:34.480 --> 00:17:41.360
+a four times hidden size because we
+
+00:17:38.559 --> 00:17:44.000
+split each one of them uh we basically
+
+00:17:41.360 --> 00:17:46.880
+learn each one of them separately for
+
+00:17:44.000 --> 00:17:49.440
+their respective gates or activation.
+
+00:17:46.880 --> 00:17:53.039
+Okay. So this is basically this. So this
+
+00:17:49.440 --> 00:17:55.919
+is a very nice uh blog post by Colola
+
+00:17:53.039 --> 00:17:59.840
+that um you can look at and I used the
+
+00:17:55.919 --> 00:18:02.240
+images here but uh just to recap we had
+
+00:17:59.840 --> 00:18:06.320
+the first gate and then the second gate
+
+00:18:02.240 --> 00:18:10.400
+that acts on this candidate lung memory
+
+00:18:06.320 --> 00:18:13.280
+and then the third one so FT and LT. So
+
+00:18:10.400 --> 00:18:17.840
+with that nomencle let's go back here we
+
+00:18:13.280 --> 00:18:20.960
+have FT it and uh OT. So CT at the end
+
+00:18:17.840 --> 00:18:24.000
+will be the FT here that gates the
+
+00:18:20.960 --> 00:18:28.160
+previous C the IT here that gates the
+
+00:18:24.000 --> 00:18:32.320
+candidate GT here. Okay. So this is GT
+
+00:18:28.160 --> 00:18:35.679
+and that gives the new correction on the
+
+00:18:32.320 --> 00:18:37.919
+long memory. Okay. So talking about this
+
+00:18:35.679 --> 00:18:40.880
+and then at the end we have this gate
+
+00:18:37.919 --> 00:18:44.400
+that takes in the the long memory the
+
+00:18:40.880 --> 00:18:46.320
+updated long memory and gates it for the
+
+00:18:44.400 --> 00:18:48.160
+new short memory. Okay. So that's what
+
+00:18:46.320 --> 00:18:51.919
+we are going to do with that. Let's
+
+00:18:48.160 --> 00:18:56.320
+write the class. Okay. LSTM cell and
+
+00:18:51.919 --> 00:19:00.080
+then module and class TM cell and
+
+00:18:56.320 --> 00:19:02.960
+module. Great. So let's self hidden and
+
+00:19:00.080 --> 00:19:05.600
+rest. Let's Okay. Like I said, we need
+
+00:19:02.960 --> 00:19:09.120
+uh one fused a fine for all of these
+
+00:19:05.600 --> 00:19:12.640
+gates. Um uh same discussion as before.
+
+00:19:09.120 --> 00:19:15.200
+It's much faster on GPU and uh the
+
+00:19:12.640 --> 00:19:18.160
+initialization is not sensitive. Now and
+
+00:19:15.200 --> 00:19:20.080
+we are going to use Javier here and uh
+
+00:19:18.160 --> 00:19:24.000
+so that's why we fuse all of them
+
+00:19:20.080 --> 00:19:29.120
+together. So let's write one w for all
+
+00:19:24.000 --> 00:19:32.720
+that takes in the concatenated input and
+
+00:19:29.120 --> 00:19:37.200
+return four times hidden size. So input
+
+00:19:32.720 --> 00:19:39.679
+size plus hidden size. Oh I see that uh
+
+00:19:37.200 --> 00:19:41.440
+the suggestion note the s suggestion
+
+00:19:39.679 --> 00:19:44.240
+separates them. We are not going to do
+
+00:19:41.440 --> 00:19:48.559
+it. Let's just simplify. So we have one
+
+00:19:44.240 --> 00:19:51.679
+W for all is not false. Let's keep that.
+
+00:19:48.559 --> 00:19:55.440
+So let's do the initialization. So with
+
+00:19:51.679 --> 00:20:00.400
+not or no grad. Okay. So recall the gate
+
+00:19:55.440 --> 00:20:04.240
+order is uh this. So okay. So um so when
+
+00:20:00.400 --> 00:20:07.679
+we initialize the the biases to be zero
+
+00:20:04.240 --> 00:20:11.440
+it means that initially the the
+
+00:20:07.679 --> 00:20:13.200
+forgetting gate will be the um so here
+
+00:20:11.440 --> 00:20:16.080
+initially because like I said the
+
+00:20:13.200 --> 00:20:18.799
+initial is zero weights are zero so we
+
+00:20:16.080 --> 00:20:24.960
+will get taking just the bias here and
+
+00:20:18.799 --> 00:20:28.480
+the um sigma of this zero is 0.5 and um
+
+00:20:24.960 --> 00:20:32.240
+so initially we have 0.5 we're
+
+00:20:28.480 --> 00:20:35.440
+which over k steps it will be very fast
+
+00:20:32.240 --> 00:20:39.360
+forgetting. So we are looking at 0.5 ra
+
+00:20:35.440 --> 00:20:41.679
+to k. So the cell forgets very quickly
+
+00:20:39.360 --> 00:20:43.520
+before learns anything. We really want
+
+00:20:41.679 --> 00:20:46.159
+to slow down the forgetting at the
+
+00:20:43.520 --> 00:20:48.400
+beginning. So be in the beginning I like
+
+00:20:46.159 --> 00:20:52.080
+this forget the bias for the forgetting
+
+00:20:48.400 --> 00:20:55.919
+to be rather large. So for example if
+
+00:20:52.080 --> 00:21:00.799
+the the value of the the bias here is
+
+00:20:55.919 --> 00:21:04.240
+one sigma of one will be uh 73 I think
+
+00:21:00.799 --> 00:21:08.000
+and that means that the forgetting is um
+
+00:21:04.240 --> 00:21:10.640
+is less or in other word the cell leaks
+
+00:21:08.000 --> 00:21:12.159
+less so information isn't erased
+
+00:21:10.640 --> 00:21:14.480
+immediately
+
+00:21:12.159 --> 00:21:17.360
+uh we want to make sure that's happening
+
+00:21:14.480 --> 00:21:21.120
+otherwise that doesn't really learn much
+
+00:21:17.360 --> 00:21:24.799
+okay so for that I'm going to first get
+
+00:21:21.120 --> 00:21:28.799
+the the view of this biases. So I'm
+
+00:21:24.799 --> 00:21:32.480
+going to reshape that to um four and
+
+00:21:28.799 --> 00:21:35.760
+eight. We have four of them. So now we
+
+00:21:32.480 --> 00:21:39.520
+have we address the for each gate row
+
+00:21:35.760 --> 00:21:44.000
+and we are going to make sure the first
+
+00:21:39.520 --> 00:21:46.720
+forgetting is not zero. Okay. So that's
+
+00:21:44.000 --> 00:21:50.000
+good. I think we are good to go with
+
+00:21:46.720 --> 00:21:53.200
+that. We can write the forward. Okay, so
+
+00:21:50.000 --> 00:21:57.280
+we're taking x at step t. Let's just
+
+00:21:53.200 --> 00:22:01.760
+specify that we take h of previous,
+
+00:21:57.280 --> 00:22:06.240
+right? And we take c of previous more
+
+00:22:01.760 --> 00:22:09.600
+clear. So x what what's x is the
+
+00:22:06.240 --> 00:22:14.880
+dimension is batch and embedding. H
+
+00:22:09.600 --> 00:22:17.760
+dimension is batch and h c dimension is
+
+00:22:14.880 --> 00:22:20.640
+b and h. Okay. So at the end what we
+
+00:22:17.760 --> 00:22:25.200
+want from this cell we want to give us
+
+00:22:20.640 --> 00:22:29.120
+the new hidden and the new cell state we
+
+00:22:25.200 --> 00:22:32.559
+just call it cell. Let's also return the
+
+00:22:29.120 --> 00:22:35.039
+the value of the gates for visualization
+
+00:22:32.559 --> 00:22:38.400
+right we want to know for example for a
+
+00:22:35.039 --> 00:22:41.280
+sequence how this gates are um opening
+
+00:22:38.400 --> 00:22:45.679
+and closing. Okay. So now let's do the
+
+00:22:41.280 --> 00:22:48.960
+the gate chunking. Um um so we have Z we
+
+00:22:45.679 --> 00:22:52.720
+um we have H that is the the hidden
+
+00:22:48.960 --> 00:22:55.679
+size. So this way we have the the value
+
+00:22:52.720 --> 00:22:58.880
+of Z corresponding to this chunks and
+
+00:22:55.679 --> 00:23:01.360
+then we can do the activation going to
+
+00:22:58.880 --> 00:23:04.559
+trust this suggestion and with that
+
+00:23:01.360 --> 00:23:08.000
+let's okay so with that fix some
+
+00:23:04.559 --> 00:23:11.919
+indentation error that I had and I have
+
+00:23:08.000 --> 00:23:14.400
+this gate setup we are making the
+
+00:23:11.919 --> 00:23:18.159
+gradient highway here with our additive
+
+00:23:14.400 --> 00:23:22.799
+path that keeps the previous C with the
+
+00:23:18.159 --> 00:23:25.280
+gate and then write this new G. Okay, so
+
+00:23:22.799 --> 00:23:30.880
+let's expose the shortterm memory with
+
+00:23:25.280 --> 00:23:34.000
+the output gate. Um that's that actually
+
+00:23:30.880 --> 00:23:36.640
+let's just want to make sure we are
+
+00:23:34.000 --> 00:23:39.440
+explicit enough. Okay, so now that's
+
+00:23:36.640 --> 00:23:42.159
+that and like I said we we want to do
+
+00:23:39.440 --> 00:23:43.840
+some plotting of this gate values. Let's
+
+00:23:42.159 --> 00:23:46.559
+do that.
+
+00:23:43.840 --> 00:23:49.679
+Okay, so that's our cell. Now we can
+
+00:23:46.559 --> 00:23:52.320
+write the the sequence of this that
+
+00:23:49.679 --> 00:23:57.280
+unrolls the cells for the for the batch
+
+00:23:52.320 --> 00:23:59.840
+sequences. Right? So LSTM sequence
+
+00:23:57.280 --> 00:24:02.559
+let's uh just make it similar to what we
+
+00:23:59.840 --> 00:24:05.520
+wrote before. Okay. So we will do the
+
+00:24:02.559 --> 00:24:09.200
+same here. So that's our cell. We want a
+
+00:24:05.520 --> 00:24:12.000
+bunch of them. So let's write the for.
+
+00:24:09.200 --> 00:24:16.240
+Don't know why the indentation is just
+
+00:24:12.000 --> 00:24:21.600
+not doing it. Okay. Let's just make this
+
+00:24:16.240 --> 00:24:25.200
+simpler. Okay. To call this H. Okay. So,
+
+00:24:21.600 --> 00:24:29.520
+and then um let's write a empty list for
+
+00:24:25.200 --> 00:24:33.279
+this H and C's. And then 14 range. We
+
+00:24:29.520 --> 00:24:38.960
+have this mask of T.
+
+00:24:33.279 --> 00:24:41.360
+Good. And then we have XT. Let's just
+
+00:24:38.960 --> 00:24:45.600
+Okay. So now we can apply the mask to
+
+00:24:41.360 --> 00:24:50.320
+both hidden and um and the cell states.
+
+00:24:45.600 --> 00:24:55.679
+Okay. So age will be mask
+
+00:24:50.320 --> 00:24:58.480
+and see that create and then we
+
+00:24:55.679 --> 00:25:02.240
+append all of them and then let's just
+
+00:24:58.480 --> 00:25:04.080
+return H separately. It will be easier
+
+00:25:02.240 --> 00:25:08.559
+and last time we didn't really return
+
+00:25:04.080 --> 00:25:11.279
+all of the H and C's, right? So let's we
+
+00:25:08.559 --> 00:25:15.440
+can avoid returning them right with that
+
+00:25:11.279 --> 00:25:20.559
+let's write uh the class from scratch
+
+00:25:15.440 --> 00:25:24.240
+lstm very similar right um self
+
+00:25:20.559 --> 00:25:28.559
+embedding it's the same the sequence now
+
+00:25:24.240 --> 00:25:33.120
+it's taking the LSTM sequence and FC is
+
+00:25:28.559 --> 00:25:36.080
+that we do the uh the embedding u uh in
+
+00:25:33.120 --> 00:25:40.080
+it just like before right and then write
+
+00:25:36.080 --> 00:25:43.840
+the F uh 4. Okay, so we have everything
+
+00:25:40.080 --> 00:25:47.200
+uh ready for training. So going to write
+
+00:25:43.840 --> 00:25:50.720
+a train config that is basically shows
+
+00:25:47.200 --> 00:25:53.440
+the training configuration for both RNN
+
+00:25:50.720 --> 00:25:58.159
+and LSTM. So I'm going to write a data
+
+00:25:53.440 --> 00:26:00.480
+class for that and the train config. So
+
+00:25:58.159 --> 00:26:02.400
+let's just write something we can update
+
+00:26:00.480 --> 00:26:04.799
+later. So the good the good thing good
+
+00:26:02.400 --> 00:26:08.159
+thing about this data class is we can
+
+00:26:04.799 --> 00:26:13.360
+later update it. um let's say three
+
+00:26:08.159 --> 00:26:15.919
+learning rate the float um 2 e minus I
+
+00:26:13.360 --> 00:26:19.520
+don't know three for example uh batch
+
+00:26:15.919 --> 00:26:22.799
+size can be how many sequences we load
+
+00:26:19.520 --> 00:26:25.120
+each time and let's say 128 um let's
+
+00:26:22.799 --> 00:26:29.440
+also define a clipping value for our
+
+00:26:25.120 --> 00:26:33.279
+gradient right let's say five I mean
+
+00:26:29.440 --> 00:26:35.600
+this is essential for RN even for LSTM
+
+00:26:33.279 --> 00:26:38.000
+it helps stabilizing the gates we can
+
+00:26:35.600 --> 00:26:41.200
+write the training. Uh so I'm going to
+
+00:26:38.000 --> 00:26:42.960
+skip this and just show you the code.
+
+00:26:41.200 --> 00:26:45.760
+Okay, so this is the training we are
+
+00:26:42.960 --> 00:26:49.520
+using Adam. Um Adam is very good for
+
+00:26:45.760 --> 00:26:52.000
+LSTM. Uh the cross entropy here is
+
+00:26:49.520 --> 00:26:55.520
+basically a soft max uh cross entropy
+
+00:26:52.000 --> 00:26:57.679
+for the two classes takes in the loits.
+
+00:26:55.520 --> 00:27:00.480
+Here we are tracking the total gradient
+
+00:26:57.679 --> 00:27:03.200
+and then we do the clipping and after
+
+00:27:00.480 --> 00:27:06.480
+that we do the the gradient step. Here
+
+00:27:03.200 --> 00:27:10.000
+we have the evaluation of course no grad
+
+00:27:06.480 --> 00:27:11.919
+and then we log uh we still need some
+
+00:27:10.000 --> 00:27:16.000
+utility functions for our confusion
+
+00:27:11.919 --> 00:27:18.799
+matrix and uh after that um I'd like to
+
+00:27:16.000 --> 00:27:22.480
+have a a function that basically looks
+
+00:27:18.799 --> 00:27:24.720
+at the gates of the LSTM and we want
+
+00:27:22.480 --> 00:27:27.760
+that to for visualization. So I'm going
+
+00:27:24.720 --> 00:27:31.279
+to write that offline. Okay. So here is
+
+00:27:27.760 --> 00:27:33.919
+what we have. Uh um so let's go with
+
+00:27:31.279 --> 00:27:38.000
+this embedding dimension and the hidden
+
+00:27:33.919 --> 00:27:41.120
+state uh size the learning rate we
+
+00:27:38.000 --> 00:27:43.760
+already defined um this is how we are
+
+00:27:41.120 --> 00:27:47.440
+loading the data and then we build the
+
+00:27:43.760 --> 00:27:50.640
+vocabulary data loaders and some
+
+00:27:47.440 --> 00:27:52.480
+printing uh so let's run them first so
+
+00:27:50.640 --> 00:27:55.440
+while it's running let's go to the
+
+00:27:52.480 --> 00:27:58.880
+training of the models uh we have the
+
+00:27:55.440 --> 00:28:02.559
+the RNN and LSTM both from scratch
+
+00:27:58.880 --> 00:28:06.159
+I'm out of CUDA here, so it may take
+
+00:28:02.559 --> 00:28:08.399
+some time. Uh the training script is
+
+00:28:06.159 --> 00:28:10.960
+very similar to what you already know.
+
+00:28:08.399 --> 00:28:14.159
+Uh and at the end, I want to take a look
+
+00:28:10.960 --> 00:28:18.880
+at this LSTM gates for a very obvious
+
+00:28:14.159 --> 00:28:22.159
+case of like what is this preview? Okay.
+
+00:28:18.880 --> 00:28:24.640
+Okay. We have an error embedded.
+
+00:28:22.159 --> 00:28:29.360
+Let's find this.
+
+00:28:24.640 --> 00:28:33.679
+Um okay. embedding.
+
+00:28:29.360 --> 00:28:37.679
+Okay, another typo. Let's go back. Oh, I
+
+00:28:33.679 --> 00:28:41.200
+see this is a self. Okay. Okay. So, here
+
+00:28:37.679 --> 00:28:44.000
+we didn't define this. Let's just define
+
+00:28:41.200 --> 00:28:47.360
+it. What else?
+
+00:28:44.000 --> 00:28:49.120
+Oh, yep. Of course, this is Yep. Let's
+
+00:28:47.360 --> 00:28:52.399
+fix this.
+
+00:28:49.120 --> 00:28:54.880
+Next error. Okay. Some indentation
+
+00:28:52.399 --> 00:28:58.640
+probably here. Okay. Okay. So after
+
+00:28:54.880 --> 00:29:02.559
+fixing a few indentation errors, it is
+
+00:28:58.640 --> 00:29:06.559
+running now. So if there is a error, I
+
+00:29:02.559 --> 00:29:09.120
+will let you know otherwise um this will
+
+00:29:06.559 --> 00:29:11.679
+take some time because of the I'm out of
+
+00:29:09.120 --> 00:29:13.919
+GPU. So it will take some time. Okay. So
+
+00:29:11.679 --> 00:29:18.159
+here is the result. Um we see that the
+
+00:29:13.919 --> 00:29:19.840
+loss is going down in training and um
+
+00:29:18.159 --> 00:29:23.600
+you see the accuracy which is pretty
+
+00:29:19.840 --> 00:29:26.399
+high uh compared to the simplicity of
+
+00:29:23.600 --> 00:29:29.919
+the architectures and the number of
+
+00:29:26.399 --> 00:29:31.679
+samples we are getting a good accuracy.
+
+00:29:29.919 --> 00:29:36.720
+Uh you see the gradient norm for the
+
+00:29:31.679 --> 00:29:39.840
+LSCM is keeping very low and for the RNN
+
+00:29:36.720 --> 00:29:41.279
+it goes beyond five the value that we do
+
+00:29:39.840 --> 00:29:44.880
+clipping. So there will be a lot of
+
+00:29:41.279 --> 00:29:47.919
+clipping in the RNN. Here is the uh
+
+00:29:44.880 --> 00:29:51.600
+confusion matrix. You see that in the
+
+00:29:47.919 --> 00:29:54.720
+RNN case we have a I would say good
+
+00:29:51.600 --> 00:29:56.960
+accuracy for uh both negative and
+
+00:29:54.720 --> 00:29:59.440
+positive. We have better performance for
+
+00:29:56.960 --> 00:30:02.880
+the LSDM. We see that uh we capture the
+
+00:29:59.440 --> 00:30:05.360
+positives reviews better. Uh so there
+
+00:30:02.880 --> 00:30:08.080
+will be less false positive and false
+
+00:30:05.360 --> 00:30:11.919
+negative in the LSTM case. And here are
+
+00:30:08.080 --> 00:30:14.240
+the gates for this specific example.
+
+00:30:11.919 --> 00:30:17.440
+Amazing, wonderful, perfect movie. Of
+
+00:30:14.240 --> 00:30:20.080
+course, everything is positive here. So
+
+00:30:17.440 --> 00:30:23.279
+the gate uh the forgetting gate is not
+
+00:30:20.080 --> 00:30:27.039
+really um doing a lot of forgetting.
+
+00:30:23.279 --> 00:30:30.399
+Apparently it's uh keeping the memory uh
+
+00:30:27.039 --> 00:30:35.760
+the long-term memory over the sequence.
+
+00:30:30.399 --> 00:30:39.840
+Okay. So with that uh uh we will look at
+
+00:30:35.760 --> 00:30:43.039
+more complex RNN tasks not just many to
+
+00:30:39.840 --> 00:30:45.600
+one. If you remember we said in the case
+
+00:30:43.039 --> 00:30:49.279
+of classification here we are giving the
+
+00:30:45.600 --> 00:30:51.840
+sequence or the review and classify it.
+
+00:30:49.279 --> 00:30:54.640
+In the case of translation for example
+
+00:30:51.840 --> 00:30:56.720
+translation from English to French which
+
+00:30:54.640 --> 00:31:01.600
+will be in the homework. uh we have this
+
+00:30:56.720 --> 00:31:03.919
+sequence and uh we are translating it to
+
+00:31:01.600 --> 00:31:08.559
+another sequence. So in the decoding
+
+00:31:03.919 --> 00:31:10.960
+part we have another RNN or LSTM. This
+
+00:31:08.559 --> 00:31:13.279
+will be in the homework and this
+
+00:31:10.960 --> 00:31:15.840
+architecture is known as sequence to
+
+00:31:13.279 --> 00:31:20.000
+sequence and it has been the driving
+
+00:31:15.840 --> 00:31:23.840
+force behind Google translate for many
+
+00:31:20.000 --> 00:31:27.679
+years and you will see uh and implement
+
+00:31:23.840 --> 00:31:27.679
+this in your homework. Heart.

@@ -1,0 +1,1396 @@
+WEBVTT
+
+00:00:00.719 --> 00:00:06.080
+Okay, so let's continue our discussion
+
+00:00:03.919 --> 00:00:09.679
+on using transformers
+
+00:00:06.080 --> 00:00:14.160
+in large data sets to obtain pre-trained
+
+00:00:09.679 --> 00:00:17.279
+models. And here we want to switch from
+
+00:00:14.160 --> 00:00:20.400
+the vision transformers to language
+
+00:00:17.279 --> 00:00:22.800
+models. So the vision transformer idea
+
+00:00:20.400 --> 00:00:25.840
+actually came after what we are going to
+
+00:00:22.800 --> 00:00:29.359
+talk about today. Transformers were
+
+00:00:25.840 --> 00:00:31.599
+initially developed to handle text data
+
+00:00:29.359 --> 00:00:35.760
+initially in machine translation which
+
+00:00:31.599 --> 00:00:39.840
+had an encoder and a decoder part to
+
+00:00:35.760 --> 00:00:42.399
+take in a sequence and output
+
+00:00:39.840 --> 00:00:44.879
+another sequence. But then later
+
+00:00:42.399 --> 00:00:49.280
+different parts of the transformer prove
+
+00:00:44.879 --> 00:00:53.120
+to be useful. And uh Bert here is a way
+
+00:00:49.280 --> 00:00:56.559
+of encoding text just what just like
+
+00:00:53.120 --> 00:01:00.320
+what we did for vision transformers
+
+00:00:56.559 --> 00:01:04.239
+to classify that text. But we first saw
+
+00:01:00.320 --> 00:01:06.960
+that idea in image classification and
+
+00:01:04.239 --> 00:01:10.159
+the main reason was we are very familiar
+
+00:01:06.960 --> 00:01:13.920
+with that since we developed the CNN's
+
+00:01:10.159 --> 00:01:16.880
+there and we already saw this potential
+
+00:01:13.920 --> 00:01:20.320
+for learning representations across
+
+00:01:16.880 --> 00:01:23.040
+images and text. So that basically help
+
+00:01:20.320 --> 00:01:25.520
+us to double down on this idea of
+
+00:01:23.040 --> 00:01:27.840
+transfer learning learning a pre-trained
+
+00:01:25.520 --> 00:01:31.439
+model and then use it for specific
+
+00:01:27.840 --> 00:01:34.400
+tasks. We want to try that idea in text
+
+00:01:31.439 --> 00:01:36.000
+and we look at three different
+
+00:01:34.400 --> 00:01:38.400
+architectures
+
+00:01:36.000 --> 00:01:40.640
+all transformerbased.
+
+00:01:38.400 --> 00:01:43.600
+BERT which is the encoder part of the
+
+00:01:40.640 --> 00:01:47.040
+trans transformer. GPT is only the
+
+00:01:43.600 --> 00:01:48.560
+decoder part and T5 is the entire
+
+00:01:47.040 --> 00:01:52.479
+architecture.
+
+00:01:48.560 --> 00:01:54.960
+So these names Bert, GPG and T5 are like
+
+00:01:52.479 --> 00:01:57.200
+the most famous person in this family
+
+00:01:54.960 --> 00:01:59.840
+basically that becomes like a last name
+
+00:01:57.200 --> 00:02:02.960
+really. But for example in the decoder
+
+00:01:59.840 --> 00:02:05.920
+part we have llama models that is still
+
+00:02:02.960 --> 00:02:08.239
+an auto reggressive type of model. Okay.
+
+00:02:05.920 --> 00:02:12.239
+So we discuss how to train these models
+
+00:02:08.239 --> 00:02:15.599
+and later we want to fine-tune them
+
+00:02:12.239 --> 00:02:18.400
+right and we discuss the the way that we
+
+00:02:15.599 --> 00:02:21.120
+are training them that we call self-s
+
+00:02:18.400 --> 00:02:23.520
+supervision that is somehow different
+
+00:02:21.120 --> 00:02:27.280
+than what we did for vision. So, back to
+
+00:02:23.520 --> 00:02:30.720
+computer vision. Let's say we want to
+
+00:02:27.280 --> 00:02:34.080
+classify flower types and we have let's
+
+00:02:30.720 --> 00:02:38.000
+say 5,000 label flower images and we
+
+00:02:34.080 --> 00:02:41.840
+want to train a CNN with 50 million par
+
+00:02:38.000 --> 00:02:44.640
+with 50 million parameters and we need a
+
+00:02:41.840 --> 00:02:47.120
+GPU and maybe a few days of compute or
+
+00:02:44.640 --> 00:02:49.840
+less depending on the resources that we
+
+00:02:47.120 --> 00:02:52.879
+have. The question is should we train
+
+00:02:49.840 --> 00:02:55.120
+from scratch? The answer
+
+00:02:52.879 --> 00:02:59.040
+back in 2012
+
+00:02:55.120 --> 00:03:01.440
+was no because we were going to be
+
+00:02:59.040 --> 00:03:03.680
+overfeit badly with this number of
+
+00:03:01.440 --> 00:03:07.840
+parameters with and this number of
+
+00:03:03.680 --> 00:03:12.239
+images we cannot get a good model. But
+
+00:03:07.840 --> 00:03:14.640
+now that we have a trained CNN possibly
+
+00:03:12.239 --> 00:03:18.879
+on a very large data set for example
+
+00:03:14.640 --> 00:03:21.440
+imageet we can use it and fine-tune for
+
+00:03:18.879 --> 00:03:23.920
+our specific problem. We have done this
+
+00:03:21.440 --> 00:03:25.920
+before and the idea is there are some
+
+00:03:23.920 --> 00:03:29.040
+universal features that the pre-trained
+
+00:03:25.920 --> 00:03:30.879
+model and the large data set learn and
+
+00:03:29.040 --> 00:03:33.680
+we don't need to learn that anymore and
+
+00:03:30.879 --> 00:03:36.959
+we can transfer them to the new task.
+
+00:03:33.680 --> 00:03:40.640
+Hence we can copy the pre-train CNN and
+
+00:03:36.959 --> 00:03:43.680
+freeze most of the layers and only train
+
+00:03:40.640 --> 00:03:46.480
+a few layers that corresponds mostly
+
+00:03:43.680 --> 00:03:49.360
+with the new head that is using the same
+
+00:03:46.480 --> 00:03:53.599
+features and predict uh different
+
+00:03:49.360 --> 00:03:56.400
+classes. So after 2012 once we had these
+
+00:03:53.599 --> 00:04:00.879
+pre-trained models we can fine-tune them
+
+00:03:56.400 --> 00:04:04.000
+on smaller task specific data sets data
+
+00:04:00.879 --> 00:04:06.400
+sets that sometimes is very difficult to
+
+00:04:04.000 --> 00:04:08.959
+collect for example medical imaging due
+
+00:04:06.400 --> 00:04:12.959
+to many reasons for example privacy
+
+00:04:08.959 --> 00:04:15.920
+related standards and compliances or
+
+00:04:12.959 --> 00:04:19.519
+getting good label data. But now that we
+
+00:04:15.920 --> 00:04:22.079
+have this set up, we can fine-tune our
+
+00:04:19.519 --> 00:04:26.639
+neural network for this finite data
+
+00:04:22.079 --> 00:04:29.520
+sets. Hence, this allows us to have
+
+00:04:26.639 --> 00:04:33.360
+specialized networks on different
+
+00:04:29.520 --> 00:04:35.520
+specialized domains. So by 2015,
+
+00:04:33.360 --> 00:04:37.840
+basically this idea was a standard
+
+00:04:35.520 --> 00:04:41.680
+practice in computer vision. Now the
+
+00:04:37.840 --> 00:04:44.560
+question is can we do the same for text?
+
+00:04:41.680 --> 00:04:47.759
+If images have edges, textures and
+
+00:04:44.560 --> 00:04:49.919
+shapes, well, text has grammar, syntax,
+
+00:04:47.759 --> 00:04:53.919
+and semantics too that are general
+
+00:04:49.919 --> 00:04:57.280
+features and we can learn. Well, to
+
+00:04:53.919 --> 00:04:59.280
+answer that, first we have to say, well,
+
+00:04:57.280 --> 00:05:03.360
+for the computer vision, we had this
+
+00:04:59.280 --> 00:05:07.680
+very nice data sets that are labeled and
+
+00:05:03.360 --> 00:05:10.560
+have this clear task for classification.
+
+00:05:07.680 --> 00:05:15.199
+Do we have the same for text?
+
+00:05:10.560 --> 00:05:18.639
+Well, not really because u comparable
+
+00:05:15.199 --> 00:05:20.240
+label data set for text is either
+
+00:05:18.639 --> 00:05:24.320
+non-existing
+
+00:05:20.240 --> 00:05:27.280
+due to the humongous effort that is
+
+00:05:24.320 --> 00:05:31.280
+required for labeling them or sometimes
+
+00:05:27.280 --> 00:05:35.440
+really the task is not set in stone and
+
+00:05:31.280 --> 00:05:37.759
+the task is often time fluid in text. So
+
+00:05:35.440 --> 00:05:40.639
+that's a problem and how can we solve
+
+00:05:37.759 --> 00:05:44.400
+that? Well, the answer is maybe we don't
+
+00:05:40.639 --> 00:05:46.560
+need that and that's how we get to
+
+00:05:44.400 --> 00:05:49.759
+self-supervised learning. So the idea is
+
+00:05:46.560 --> 00:05:52.320
+well text contains its own supervision.
+
+00:05:49.759 --> 00:05:55.600
+Yes, we may not have like cleanly
+
+00:05:52.320 --> 00:05:58.320
+labeled sentences but we have unlimited
+
+00:05:55.600 --> 00:06:00.800
+unlabeled text. For example, we have
+
+00:05:58.320 --> 00:06:04.319
+Wikipedia data set with billions of
+
+00:06:00.800 --> 00:06:06.479
+tokens, different book data sets again
+
+00:06:04.319 --> 00:06:09.440
+with billions of tokens. We have web
+
+00:06:06.479 --> 00:06:12.160
+pages that we can design crawlers and
+
+00:06:09.440 --> 00:06:14.880
+scrapers to collect data from. And
+
+00:06:12.160 --> 00:06:17.280
+within text, we have an inherent
+
+00:06:14.880 --> 00:06:19.680
+structure. For example, we can hide a
+
+00:06:17.280 --> 00:06:23.520
+word and the model can predict that. We
+
+00:06:19.680 --> 00:06:25.600
+can basically hide half of the sentence
+
+00:06:23.520 --> 00:06:27.520
+and the model can generate the other
+
+00:06:25.600 --> 00:06:31.360
+half. Basically, what I'm trying to say
+
+00:06:27.520 --> 00:06:34.240
+is text itself provides labels
+
+00:06:31.360 --> 00:06:37.600
+if we look differently. This is known as
+
+00:06:34.240 --> 00:06:40.160
+self-supervised learning which the model
+
+00:06:37.600 --> 00:06:42.720
+creates supervised task for itself from
+
+00:06:40.160 --> 00:06:46.400
+this unlabeled data. So some other
+
+00:06:42.720 --> 00:06:49.360
+question for example let's say we have a
+
+00:06:46.400 --> 00:06:52.560
+sentence like I love this red car and
+
+00:06:49.360 --> 00:06:55.840
+then we can mask a word here red for
+
+00:06:52.560 --> 00:06:58.800
+example and make up a task to predict
+
+00:06:55.840 --> 00:07:02.319
+that token so the model can do the
+
+00:06:58.800 --> 00:07:05.919
+entire steps no human label is needed.
+
+00:07:02.319 --> 00:07:08.479
+Another way of making up labels is to do
+
+00:07:05.919 --> 00:07:10.720
+next token prediction. So we have this
+
+00:07:08.479 --> 00:07:15.039
+sentence and then we hide the last word
+
+00:07:10.720 --> 00:07:18.800
+or last token and we ask to predict that
+
+00:07:15.039 --> 00:07:21.440
+this is known an auto reggressive task.
+
+00:07:18.800 --> 00:07:24.639
+You can think of other madeup super
+
+00:07:21.440 --> 00:07:27.360
+signal for shuffling sentences and uh
+
+00:07:24.639 --> 00:07:29.039
+asking to restore them where again we
+
+00:07:27.360 --> 00:07:32.639
+have the original document that tells us
+
+00:07:29.039 --> 00:07:36.319
+the the order. So great can do this for
+
+00:07:32.639 --> 00:07:38.479
+text but why we didn't do it for images
+
+00:07:36.319 --> 00:07:41.039
+at the first place. Well, the main
+
+00:07:38.479 --> 00:07:43.680
+reason was um for text we have a finite
+
+00:07:41.039 --> 00:07:46.880
+vocabulary and it's easy to design this
+
+00:07:43.680 --> 00:07:49.440
+self-supervised tasks and often it even
+
+00:07:46.880 --> 00:07:51.759
+seems natural to do it. For example,
+
+00:07:49.440 --> 00:07:54.960
+predict this war. I mean we do games
+
+00:07:51.759 --> 00:07:57.360
+like that given some context or answers
+
+00:07:54.960 --> 00:07:59.520
+for some question we ask the other
+
+00:07:57.360 --> 00:08:02.479
+player to predict the war and then we
+
+00:07:59.520 --> 00:08:04.800
+can use this very efficient crescent for
+
+00:08:02.479 --> 00:08:06.800
+example here.
+
+00:08:04.800 --> 00:08:09.199
+That's not the case for images and the
+
+00:08:06.800 --> 00:08:11.280
+main reason is there we're dealing with
+
+00:08:09.199 --> 00:08:13.280
+continuous data and there's not really a
+
+00:08:11.280 --> 00:08:15.759
+finite vocabulary. We're talking about
+
+00:08:13.280 --> 00:08:19.360
+pixel values and it's very hard because
+
+00:08:15.759 --> 00:08:22.639
+of that much larger degree of freedom to
+
+00:08:19.360 --> 00:08:25.280
+do the training. There are some modern
+
+00:08:22.639 --> 00:08:27.759
+way of uh doing self-supervised learning
+
+00:08:25.280 --> 00:08:31.199
+for vision now that I'm going to skip
+
+00:08:27.759 --> 00:08:33.760
+but back then that was not uh the main
+
+00:08:31.199 --> 00:08:37.519
+way of training computer vision models.
+
+00:08:33.760 --> 00:08:41.120
+Again, this new updates are available
+
+00:08:37.519 --> 00:08:44.159
+now because of the advances in the NLP
+
+00:08:41.120 --> 00:08:47.279
+field that trickled down to computer
+
+00:08:44.159 --> 00:08:50.160
+vision. Okay, so the transfer learning
+
+00:08:47.279 --> 00:08:52.399
+will look different now. And here we
+
+00:08:50.160 --> 00:08:55.279
+have this pre-training stage for text
+
+00:08:52.399 --> 00:08:57.760
+that is trained on this massive
+
+00:08:55.279 --> 00:09:00.959
+unlabeled corpus of text. We're talking
+
+00:08:57.760 --> 00:09:03.519
+about billions of tokens. And this is
+
+00:09:00.959 --> 00:09:06.560
+done in [snorts] a self-supervised
+
+00:09:03.519 --> 00:09:09.360
+manner. And this way the model learns
+
+00:09:06.560 --> 00:09:12.880
+the general features of the language.
+
+00:09:09.360 --> 00:09:16.240
+And then we can transfer that to more
+
+00:09:12.880 --> 00:09:19.279
+specialized tasks. For example,
+
+00:09:16.240 --> 00:09:22.080
+um with top with thousands of examples
+
+00:09:19.279 --> 00:09:24.959
+that has a specific task that we care
+
+00:09:22.080 --> 00:09:27.760
+about. Later we will see that even given
+
+00:09:24.959 --> 00:09:30.959
+if we have a bridge pre-training without
+
+00:09:27.760 --> 00:09:34.399
+any further training and just by giving
+
+00:09:30.959 --> 00:09:36.399
+some context within a prompt we get we
+
+00:09:34.399 --> 00:09:39.040
+can get the answers for our question and
+
+00:09:36.399 --> 00:09:41.040
+that's where things become very
+
+00:09:39.040 --> 00:09:44.880
+interesting. Okay. So let's not jump
+
+00:09:41.040 --> 00:09:46.399
+ahead and continue from the bird family
+
+00:09:44.880 --> 00:09:49.519
+that started this paradigm of
+
+00:09:46.399 --> 00:09:51.279
+self-supervised learning. So here we
+
+00:09:49.519 --> 00:09:54.160
+focus on bird which is the
+
+00:09:51.279 --> 00:09:56.880
+transformerbased version of them which
+
+00:09:54.160 --> 00:09:59.680
+is basically an encoder transformer
+
+00:09:56.880 --> 00:10:02.880
+trained in a self-supervised manner and
+
+00:09:59.680 --> 00:10:06.000
+language models and then fine-tune
+
+00:10:02.880 --> 00:10:08.800
+on different tasks. The original paper
+
+00:10:06.000 --> 00:10:12.000
+for bird showed that for all of these
+
+00:10:08.800 --> 00:10:14.320
+different NLP tasks achieved
+
+00:10:12.000 --> 00:10:17.360
+state-of-the-art performance. This
+
+00:10:14.320 --> 00:10:21.279
+fine-tuning on these tasks often needed
+
+00:10:17.360 --> 00:10:24.880
+only a few thousands of example. So this
+
+00:10:21.279 --> 00:10:27.279
+really changed the landscape of NLP
+
+00:10:24.880 --> 00:10:30.480
+because before bird if we wanted to
+
+00:10:27.279 --> 00:10:33.120
+train a model for a specific task we
+
+00:10:30.480 --> 00:10:36.320
+needed to design its own architecture
+
+00:10:33.120 --> 00:10:38.720
+and its own large label data set and
+
+00:10:36.320 --> 00:10:41.360
+eventually achieve a model that only
+
+00:10:38.720 --> 00:10:44.320
+does a specific task. But after this
+
+00:10:41.360 --> 00:10:46.880
+paradigm shift, one pre-trained model
+
+00:10:44.320 --> 00:10:50.000
+can be fine-tuned for different tasks
+
+00:10:46.880 --> 00:10:52.320
+often with small data sets and achieve
+
+00:10:50.000 --> 00:10:56.640
+strong performance. And that's how
+
+00:10:52.320 --> 00:10:58.880
+transfer learning became default in NLP.
+
+00:10:56.640 --> 00:11:01.920
+So we discussed transform transformer
+
+00:10:58.880 --> 00:11:05.200
+architecture and we said it's modular.
+
+00:11:01.920 --> 00:11:08.000
+It has this encoder decoder modules and
+
+00:11:05.200 --> 00:11:11.680
+for these three different families for
+
+00:11:08.000 --> 00:11:13.440
+example B only uses the encoder GPT only
+
+00:11:11.680 --> 00:11:16.640
+uses the decoder and this
+
+00:11:13.440 --> 00:11:18.720
+sequencetosequence models uh with this
+
+00:11:16.640 --> 00:11:22.160
+flagship T5
+
+00:11:18.720 --> 00:11:24.959
+model uses both. So if we want to use
+
+00:11:22.160 --> 00:11:26.640
+both we need a cross attention right
+
+00:11:24.959 --> 00:11:29.040
+otherwise self attention within the
+
+00:11:26.640 --> 00:11:33.120
+encoder or decoder is enough. So
+
+00:11:29.040 --> 00:11:36.079
+whenever we have only the encoder, we
+
+00:11:33.120 --> 00:11:39.360
+don't really need the causal masking. So
+
+00:11:36.079 --> 00:11:42.240
+we can look both ways and that's how the
+
+00:11:39.360 --> 00:11:44.880
+birectional way of training can be
+
+00:11:42.240 --> 00:11:47.600
+included in bird for example. And for
+
+00:11:44.880 --> 00:11:50.880
+some T5 or sequence to sequence models
+
+00:11:47.600 --> 00:11:53.200
+also as long as we're not decoding one
+
+00:11:50.880 --> 00:11:56.160
+token at a time, we can also train them
+
+00:11:53.200 --> 00:11:59.120
+in a birectional ways. Okay, so let's
+
+00:11:56.160 --> 00:12:02.320
+zoom in into Bert, which only uses the
+
+00:11:59.120 --> 00:12:04.480
+encoder transformer. Like I said, it's a
+
+00:12:02.320 --> 00:12:06.639
+birectional self attention, meaning that
+
+00:12:04.480 --> 00:12:09.360
+every token can attend to all other
+
+00:12:06.639 --> 00:12:11.760
+tokens, and there's no causal mask. We
+
+00:12:09.360 --> 00:12:14.160
+really don't need that. And the output
+
+00:12:11.760 --> 00:12:16.639
+can be a contextual representation,
+
+00:12:14.160 --> 00:12:19.120
+something like the CLS token that we
+
+00:12:16.639 --> 00:12:21.279
+discuss in vision transformer. Just like
+
+00:12:19.120 --> 00:12:23.279
+vision transformer, they can be great
+
+00:12:21.279 --> 00:12:26.160
+for classification, for example,
+
+00:12:23.279 --> 00:12:29.279
+sentiment analysis. They can feel or
+
+00:12:26.160 --> 00:12:32.079
+replace tokens and they can also
+
+00:12:29.279 --> 00:12:34.480
+understand tasks in case we want to use
+
+00:12:32.079 --> 00:12:36.480
+that for another reason than
+
+00:12:34.480 --> 00:12:38.720
+classification.
+
+00:12:36.480 --> 00:12:41.200
+Okay. So let's look at how we are doing
+
+00:12:38.720 --> 00:12:43.920
+this uh self-supervised learning in
+
+00:12:41.200 --> 00:12:47.279
+bird. So the procedure for that was to
+
+00:12:43.920 --> 00:12:51.760
+select 15% of token randomly
+
+00:12:47.279 --> 00:12:56.000
+and replace 80% of that 50 15% with mask
+
+00:12:51.760 --> 00:12:58.720
+tokens. 10% of that 15% with random
+
+00:12:56.000 --> 00:13:00.480
+token. Basically, we replace them with
+
+00:12:58.720 --> 00:13:03.519
+randomly chosen token from the
+
+00:13:00.480 --> 00:13:06.399
+vocabulary and then choose another 10%
+
+00:13:03.519 --> 00:13:11.519
+and keep it on change. So, let's zoom
+
+00:13:06.399 --> 00:13:14.959
+into uh why this uh 15% is spent like
+
+00:13:11.519 --> 00:13:17.040
+this. Note that we choose this tokens
+
+00:13:14.959 --> 00:13:18.800
+and we ask the model to predict them.
+
+00:13:17.040 --> 00:13:21.519
+When we replace the token with mask
+
+00:13:18.800 --> 00:13:23.519
+token, basically the mask token is not
+
+00:13:21.519 --> 00:13:26.160
+providing any information about the
+
+00:13:23.519 --> 00:13:29.519
+original token. So the model has to look
+
+00:13:26.160 --> 00:13:33.440
+around and seek context for that. The
+
+00:13:29.519 --> 00:13:36.399
+10% uh of tokens that are replaced with
+
+00:13:33.440 --> 00:13:39.360
+a random token is a way to reduce a
+
+00:13:36.399 --> 00:13:42.079
+train test mismatch. What I mean is
+
+00:13:39.360 --> 00:13:45.279
+basically during the pre-training if the
+
+00:13:42.079 --> 00:13:47.839
+model only sees the mask token, it may
+
+00:13:45.279 --> 00:13:49.600
+only worry about the tokens
+
+00:13:47.839 --> 00:13:53.200
+representation
+
+00:13:49.600 --> 00:13:55.360
+uh when it's a mask. So it gets lazy
+
+00:13:53.200 --> 00:13:59.120
+with the representation of the non-mask
+
+00:13:55.360 --> 00:14:01.680
+tokens. But by swapping in a random word
+
+00:13:59.120 --> 00:14:05.440
+chosen from the vocabulary, we force the
+
+00:14:01.680 --> 00:14:08.079
+model to learn that any word can be
+
+00:14:05.440 --> 00:14:12.000
+potentially wrong. So it has to rely on
+
+00:14:08.079 --> 00:14:14.240
+the rely on the context to verify or
+
+00:14:12.000 --> 00:14:17.440
+correct the token that he's looking at.
+
+00:14:14.240 --> 00:14:20.639
+So now the question is why we keep 10%
+
+00:14:17.440 --> 00:14:25.279
+unchange. The reason is this is a way of
+
+00:14:20.639 --> 00:14:27.920
+balancing out this 10% wrong tokens
+
+00:14:25.279 --> 00:14:31.040
+because otherwise if we don't have this
+
+00:14:27.920 --> 00:14:35.120
+and we have only this basically the
+
+00:14:31.040 --> 00:14:37.839
+model learns this bias that any non-mask
+
+00:14:35.120 --> 00:14:41.360
+token that I'm asked to predict is
+
+00:14:37.839 --> 00:14:44.160
+probably wrong but with keeping this
+
+00:14:41.360 --> 00:14:47.040
+unchanged tokens we force the model to
+
+00:14:44.160 --> 00:14:48.639
+use the context to confirm if the word
+
+00:14:47.040 --> 00:14:52.639
+is correct.
+
+00:14:48.639 --> 00:14:55.440
+So in summary, the mask tokens forces
+
+00:14:52.639 --> 00:14:59.839
+the model to use the context. The random
+
+00:14:55.440 --> 00:15:02.560
+tokens reduces this train test mismatch.
+
+00:14:59.839 --> 00:15:06.399
+And in conjunction with this unchanged
+
+00:15:02.560 --> 00:15:09.839
+tokens, the model is not sure if a token
+
+00:15:06.399 --> 00:15:11.839
+is correct or random. So it must always
+
+00:15:09.839 --> 00:15:15.519
+be cross-checking
+
+00:15:11.839 --> 00:15:18.320
+uh it against the context. So that's how
+
+00:15:15.519 --> 00:15:22.639
+we train the birth model. Note that this
+
+00:15:18.320 --> 00:15:25.600
+is an encoder model which means that we
+
+00:15:22.639 --> 00:15:28.800
+don't need to have a causal mask. So we
+
+00:15:25.600 --> 00:15:32.240
+can look from both direction
+
+00:15:28.800 --> 00:15:34.079
+which makes the the model uh more sample
+
+00:15:32.240 --> 00:15:37.199
+efficient compared to those that
+
+00:15:34.079 --> 00:15:40.079
+enforces the the causal masking like the
+
+00:15:37.199 --> 00:15:42.880
+auto reggressive models like GPT. Okay.
+
+00:15:40.079 --> 00:15:44.959
+So how to do fine-tuning? Well, if we
+
+00:15:42.880 --> 00:15:47.519
+have a classification task just like
+
+00:15:44.959 --> 00:15:50.560
+what we did for vision transformer, we
+
+00:15:47.519 --> 00:15:53.680
+use the CLS token um and send it to a
+
+00:15:50.560 --> 00:15:57.839
+softmax to get the logits and send it to
+
+00:15:53.680 --> 00:16:01.440
+a softmax to get the probabilities.
+
+00:15:57.839 --> 00:16:05.759
+So the token classification task is also
+
+00:16:01.440 --> 00:16:08.720
+called named entity recognition or ne.
+
+00:16:05.759 --> 00:16:10.880
+So the next uh task is really sentence
+
+00:16:08.720 --> 00:16:14.720
+pairing. So note uh there is a
+
+00:16:10.880 --> 00:16:17.120
+additional token here that basically
+
+00:16:14.720 --> 00:16:19.680
+separate the sentences and it's like a
+
+00:16:17.120 --> 00:16:23.120
+boundary for each sentence and you
+
+00:16:19.680 --> 00:16:28.560
+already know cls token. So this help us
+
+00:16:23.120 --> 00:16:32.000
+to now define uh tasks on the sentences
+
+00:16:28.560 --> 00:16:34.880
+and somehow do natural language
+
+00:16:32.000 --> 00:16:39.040
+inference which is basically a way of
+
+00:16:34.880 --> 00:16:42.240
+recognizing this textual entailment that
+
+00:16:39.040 --> 00:16:45.759
+involves logical relationship between uh
+
+00:16:42.240 --> 00:16:47.360
+pairs of sentences for example
+
+00:16:45.759 --> 00:16:51.839
+contradiction
+
+00:16:47.360 --> 00:16:55.360
+u and entailment. So the other family is
+
+00:16:51.839 --> 00:16:57.279
+T5. So T5 architectures are using both
+
+00:16:55.360 --> 00:17:00.720
+encoder and decoder very similar to
+
+00:16:57.279 --> 00:17:05.199
+sequence tosequence models. But here T5
+
+00:17:00.720 --> 00:17:09.520
+frames every NLP task as a texttoext
+
+00:17:05.199 --> 00:17:11.760
+problem. So the original um transformer
+
+00:17:09.520 --> 00:17:15.120
+uh from the paper attention is all you
+
+00:17:11.760 --> 00:17:17.760
+need. It introduced an architecture. It
+
+00:17:15.120 --> 00:17:21.439
+didn't really specify any pre-training
+
+00:17:17.760 --> 00:17:23.760
+task just like bird for example and it
+
+00:17:21.439 --> 00:17:26.720
+was designed for a single purpose a
+
+00:17:23.760 --> 00:17:29.120
+sequencetose sequence task and primarily
+
+00:17:26.720 --> 00:17:32.000
+for machine translation.
+
+00:17:29.120 --> 00:17:33.520
+T5 uses the same encoder decoder
+
+00:17:32.000 --> 00:17:36.320
+architecture
+
+00:17:33.520 --> 00:17:39.200
+so no modification in the architecture
+
+00:17:36.320 --> 00:17:41.520
+but reframes the input and output and
+
+00:17:39.200 --> 00:17:44.960
+it's trained differently from the
+
+00:17:41.520 --> 00:17:47.760
+transformer. So for example transformer
+
+00:17:44.960 --> 00:17:49.840
+really they didn't have a pre-training
+
+00:17:47.760 --> 00:17:52.640
+objective they were trained in a
+
+00:17:49.840 --> 00:17:55.280
+supervised manner for example
+
+00:17:52.640 --> 00:17:58.720
+the machine translation where we had
+
+00:17:55.280 --> 00:18:02.480
+pairs of uh sentences uh for example
+
+00:17:58.720 --> 00:18:05.919
+from English to German here in T5 we act
+
+00:18:02.480 --> 00:18:08.400
+we we have pre-training and the
+
+00:18:05.919 --> 00:18:11.840
+different here with uh for example bird
+
+00:18:08.400 --> 00:18:16.240
+is here we are not masking tokens we
+
+00:18:11.840 --> 00:18:19.039
+mask spans of tokens which makes a more
+
+00:18:16.240 --> 00:18:22.720
+difficult problem. So a span is a
+
+00:18:19.039 --> 00:18:24.400
+subsequence of tokens and here instead
+
+00:18:22.720 --> 00:18:26.960
+of the mask token we are using the
+
+00:18:24.400 --> 00:18:30.559
+sentinel tokens which can be a
+
+00:18:26.960 --> 00:18:34.000
+subsequence each one of them and the T5
+
+00:18:30.559 --> 00:18:36.720
+model is learned to generate them. For
+
+00:18:34.000 --> 00:18:40.160
+example, look at this. Uh we have this
+
+00:18:36.720 --> 00:18:42.480
+sentence that can have different way of
+
+00:18:40.160 --> 00:18:46.400
+u span corruption during the
+
+00:18:42.480 --> 00:18:48.720
+self-supervised stage. So the idea here
+
+00:18:46.400 --> 00:18:51.200
+is basically encoder learns to compress
+
+00:18:48.720 --> 00:18:53.360
+and decoder learns to generate. Now
+
+00:18:51.200 --> 00:18:56.880
+let's look at uh the decoder only
+
+00:18:53.360 --> 00:18:59.360
+architectures like GPT where they only
+
+00:18:56.880 --> 00:19:01.679
+use the decoder part or the decoder
+
+00:18:59.360 --> 00:19:05.440
+module and they use this causal self
+
+00:19:01.679 --> 00:19:09.120
+attention mask. There's a token at T
+
+00:19:05.440 --> 00:19:10.880
+only sees the previous tokens. Like I
+
+00:19:09.120 --> 00:19:14.559
+said they are designed for this auto
+
+00:19:10.880 --> 00:19:16.640
+reggressive generation tasks. The
+
+00:19:14.559 --> 00:19:18.720
+training is kind of simple because we
+
+00:19:16.640 --> 00:19:21.039
+only predict the next token given all
+
+00:19:18.720 --> 00:19:24.000
+the previous history. And this training
+
+00:19:21.039 --> 00:19:25.679
+is basically exactly the same as the
+
+00:19:24.000 --> 00:19:28.960
+inference. So there's not really a
+
+00:19:25.679 --> 00:19:32.000
+mismatch. And the nice thing about this
+
+00:19:28.960 --> 00:19:34.880
+type of training is we use everything.
+
+00:19:32.000 --> 00:19:38.480
+We are not masking or corrupting a span
+
+00:19:34.880 --> 00:19:41.039
+and then ask the model to predict them.
+
+00:19:38.480 --> 00:19:43.280
+Instead we ask the model to predict
+
+00:19:41.039 --> 00:19:45.760
+every token. So every token was a
+
+00:19:43.280 --> 00:19:48.400
+labeled question at some point in their
+
+00:19:45.760 --> 00:19:51.039
+life. This makes this uh decoder only
+
+00:19:48.400 --> 00:19:53.679
+families very scalable in terms of data
+
+00:19:51.039 --> 00:19:57.520
+efficiency and learning. For example, we
+
+00:19:53.679 --> 00:20:01.760
+have different GPD models from 2018 to
+
+00:19:57.520 --> 00:20:04.160
+2020. And in particular, the GPT3 model
+
+00:20:01.760 --> 00:20:06.880
+came up with this idea of in context
+
+00:20:04.160 --> 00:20:10.080
+learning. So you don't really need to do
+
+00:20:06.880 --> 00:20:13.280
+any fine-tuning. As long as you have a
+
+00:20:10.080 --> 00:20:16.720
+good prompt, the model can fill the
+
+00:20:13.280 --> 00:20:19.039
+answer for you. So this is by itself
+
+00:20:16.720 --> 00:20:20.880
+extremely interesting meaning that we
+
+00:20:19.039 --> 00:20:23.440
+really don't need to do any finetuning.
+
+00:20:20.880 --> 00:20:25.919
+We just train the model once and then
+
+00:20:23.440 --> 00:20:28.880
+use it. In other word no parameter
+
+00:20:25.919 --> 00:20:31.520
+updates is necessary. Instead we give a
+
+00:20:28.880 --> 00:20:34.720
+prompt for example a prompt like this
+
+00:20:31.520 --> 00:20:38.320
+that basically gives a few examples of
+
+00:20:34.720 --> 00:20:40.640
+what I want to do which here is
+
+00:20:38.320 --> 00:20:43.120
+translation from English to French and
+
+00:20:40.640 --> 00:20:45.840
+then ask the model to continue. So given
+
+00:20:43.120 --> 00:20:48.640
+this context, the model basically learns
+
+00:20:45.840 --> 00:20:51.760
+a new task without changing any
+
+00:20:48.640 --> 00:20:55.280
+parameters and that's where everything
+
+00:20:51.760 --> 00:20:58.159
+is basically can be squeezed into the
+
+00:20:55.280 --> 00:21:00.960
+prompt and the model already knows to
+
+00:20:58.159 --> 00:21:03.840
+extract the patterns within that context
+
+00:21:00.960 --> 00:21:07.280
+and match those patterns and continue
+
+00:21:03.840 --> 00:21:09.280
+like that. So now really the if you
+
+00:21:07.280 --> 00:21:11.600
+provide examples in the prompt each
+
+00:21:09.280 --> 00:21:14.000
+example is like a a shot of learning
+
+00:21:11.600 --> 00:21:16.720
+like one shot is one example for example
+
+00:21:14.000 --> 00:21:20.080
+here in this case we give two shots and
+
+00:21:16.720 --> 00:21:22.880
+then ask for our question so this really
+
+00:21:20.080 --> 00:21:26.080
+gives us a very efficient training for
+
+00:21:22.880 --> 00:21:29.440
+auto reggressive models or GPG models
+
+00:21:26.080 --> 00:21:32.240
+because it uses the entire data and it's
+
+00:21:29.440 --> 00:21:35.360
+great for generation. We discussed this
+
+00:21:32.240 --> 00:21:37.679
+masking way of super self-supervised
+
+00:21:35.360 --> 00:21:42.000
+learning. Uh in in bird for example we
+
+00:21:37.679 --> 00:21:44.799
+only use 15% of the data as supervision
+
+00:21:42.000 --> 00:21:46.880
+signal of course in a birectional way
+
+00:21:44.799 --> 00:21:49.840
+and this is great for understanding not
+
+00:21:46.880 --> 00:21:53.360
+really generating and then we discuss T5
+
+00:21:49.840 --> 00:21:57.200
+which is using both encoder and decoder
+
+00:21:53.360 --> 00:21:59.840
+very efficiently and gets benefit from
+
+00:21:57.200 --> 00:22:02.960
+the both work. Now there are ways to
+
+00:21:59.840 --> 00:22:06.720
+improve really the birth models. Uh for
+
+00:22:02.960 --> 00:22:09.840
+example there is this uh um electra
+
+00:22:06.720 --> 00:22:13.520
+solution that instead of uh doing this
+
+00:22:09.840 --> 00:22:16.000
+mask language modeling it does replacing
+
+00:22:13.520 --> 00:22:18.640
+this 15% of token with plausible
+
+00:22:16.000 --> 00:22:20.559
+alternatives and then discriminate if
+
+00:22:18.640 --> 00:22:23.600
+they are real or fake. So this way we
+
+00:22:20.559 --> 00:22:26.080
+basically provide more supervision
+
+00:22:23.600 --> 00:22:28.880
+signal from the same data. But
+
+00:22:26.080 --> 00:22:31.200
+eventually the decoder only models or at
+
+00:22:28.880 --> 00:22:33.039
+least for now they are winning and
+
+00:22:31.200 --> 00:22:35.280
+mainly because of their simple
+
+00:22:33.039 --> 00:22:38.159
+architecture they are scaling extremely
+
+00:22:35.280 --> 00:22:41.679
+well and the in context learning that
+
+00:22:38.159 --> 00:22:44.640
+emerges out of it gave rise to this chat
+
+00:22:41.679 --> 00:22:47.200
+application like chat GPT and they can
+
+00:22:44.640 --> 00:22:49.919
+do basically everything they can
+
+00:22:47.200 --> 00:22:52.159
+understand tasks they can generate tasks
+
+00:22:49.919 --> 00:22:55.039
+and they can also uh leave without
+
+00:22:52.159 --> 00:23:01.919
+fine-tuning and that's why all of this
+
+00:22:55.039 --> 00:23:01.919
+leading models GPT3, GPT4, llama, etc.

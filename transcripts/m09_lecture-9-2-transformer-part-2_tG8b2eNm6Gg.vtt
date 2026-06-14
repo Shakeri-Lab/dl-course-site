@@ -1,0 +1,1483 @@
+WEBVTT
+
+00:00:01.680 --> 00:00:06.480
+So in the course we discussed the
+
+00:00:03.919 --> 00:00:09.200
+attention mechanism and we coded the
+
+00:00:06.480 --> 00:00:12.400
+attention mechanism from scratch last
+
+00:00:09.200 --> 00:00:15.040
+time. Here we will focus on the
+
+00:00:12.400 --> 00:00:17.279
+transformer implementation
+
+00:00:15.040 --> 00:00:20.720
+and we are going to use PyTorch B
+
+00:00:17.279 --> 00:00:24.000
+belting mod modules and our focus will
+
+00:00:20.720 --> 00:00:27.439
+be on a a staple training of uh
+
+00:00:24.000 --> 00:00:31.359
+transformers. We will focus on a machine
+
+00:00:27.439 --> 00:00:34.239
+translation task uh on a small data set.
+
+00:00:31.359 --> 00:00:36.880
+Here I added an explanation.
+
+00:00:34.239 --> 00:00:39.920
+Um the focus will be on translating
+
+00:00:36.880 --> 00:00:43.280
+German to English. Like I said data set
+
+00:00:39.920 --> 00:00:45.600
+is a is a small data set uh compared to
+
+00:00:43.280 --> 00:00:48.399
+uh benchmark translation data sets like
+
+00:00:45.600 --> 00:00:50.320
+WMT that is used in the original
+
+00:00:48.399 --> 00:00:52.399
+transformer paper. We don't need to go
+
+00:00:50.320 --> 00:00:54.719
+for a very large transformer
+
+00:00:52.399 --> 00:00:57.520
+architecture and we are using a
+
+00:00:54.719 --> 00:01:01.280
+scaledown transformer. The embedding
+
+00:00:57.520 --> 00:01:05.040
+dimension will be 128 compared to the
+
+00:01:01.280 --> 00:01:07.520
+original 512 in the paper by Vasvanal.
+
+00:01:05.040 --> 00:01:12.000
+We are going to have only four heads uh
+
+00:01:07.520 --> 00:01:16.000
+two layers in each encoder and decoders.
+
+00:01:12.000 --> 00:01:18.320
+Um the feed forward dimension also uh we
+
+00:01:16.000 --> 00:01:21.680
+have 500. Basically it's [snorts] four
+
+00:01:18.320 --> 00:01:24.000
+times um wider than the model dimension.
+
+00:01:21.680 --> 00:01:26.560
+We'll have some dropouts too. So this
+
+00:01:24.000 --> 00:01:28.240
+will be a much smaller model like I said
+
+00:01:26.560 --> 00:01:30.159
+compared to the original paper. The
+
+00:01:28.240 --> 00:01:32.799
+positional encoding we will go with the
+
+00:01:30.159 --> 00:01:34.560
+default. A review of uh multi self
+
+00:01:32.799 --> 00:01:37.040
+attention. We will have this encoder
+
+00:01:34.560 --> 00:01:38.960
+that is purely self attention. The
+
+00:01:37.040 --> 00:01:42.000
+decoder has self attention of course
+
+00:01:38.960 --> 00:01:44.560
+with causal masking. We have to make
+
+00:01:42.000 --> 00:01:47.280
+sure uh we implement this correctly.
+
+00:01:44.560 --> 00:01:50.960
+There will be cross attention decoder
+
+00:01:47.280 --> 00:01:53.759
+will use for its target token to attend
+
+00:01:50.960 --> 00:01:56.640
+to all of the source tokens. Um the
+
+00:01:53.759 --> 00:01:59.680
+position wise feed for neural network is
+
+00:01:56.640 --> 00:02:02.159
+a two layer with ReLU. Uh we have the
+
+00:01:59.680 --> 00:02:04.960
+normalization after each sub layer. So
+
+00:02:02.159 --> 00:02:08.560
+these are the hyperparameters. uh for
+
+00:02:04.960 --> 00:02:11.280
+now of course this can be improved and
+
+00:02:08.560 --> 00:02:14.000
+uh the training loop is just what we did
+
+00:02:11.280 --> 00:02:16.959
+in in the past we will do the teacher
+
+00:02:14.000 --> 00:02:19.200
+forcing and the forward pass is
+
+00:02:16.959 --> 00:02:22.959
+basically computing the prediction for
+
+00:02:19.200 --> 00:02:28.000
+the sequence and the loss calculation
+
+00:02:22.959 --> 00:02:30.560
+uh is done with teacher forcing the uh
+
+00:02:28.000 --> 00:02:34.959
+backward and the gradient clipping we
+
+00:02:30.560 --> 00:02:37.360
+will have max norm of one and we will
+
+00:02:34.959 --> 00:02:39.519
+validate on the held out data and we
+
+00:02:37.360 --> 00:02:42.239
+will compute the blue score that is
+
+00:02:39.519 --> 00:02:45.840
+basically a measure of um translation
+
+00:02:42.239 --> 00:02:48.000
+quality. Okay, so with that let's
+
+00:02:45.840 --> 00:02:51.280
+uh get down to coding. So here are the
+
+00:02:48.000 --> 00:02:54.640
+imports and hyperparameters. Uh the
+
+00:02:51.280 --> 00:02:56.959
+learning rate here I uh I choose a very
+
+00:02:54.640 --> 00:03:00.080
+small fixed learning rate for for the
+
+00:02:56.959 --> 00:03:02.080
+Adam optimizer but uh as you will see
+
+00:03:00.080 --> 00:03:05.360
+for a stable training sometimes you need
+
+00:03:02.080 --> 00:03:07.840
+to have some form of scheduling [snorts]
+
+00:03:05.360 --> 00:03:10.800
+uh in particular warm-up scheduling. So
+
+00:03:07.840 --> 00:03:13.360
+there are examples like gnome scheduler
+
+00:03:10.800 --> 00:03:16.000
+that involves warm- up and decay. There
+
+00:03:13.360 --> 00:03:18.720
+are a lot of nuances with that. I mean,
+
+00:03:16.000 --> 00:03:21.120
+of course, training transformers are
+
+00:03:18.720 --> 00:03:22.879
+maybe the the most challenging part of
+
+00:03:21.120 --> 00:03:25.120
+it. Otherwise, everything else is
+
+00:03:22.879 --> 00:03:29.200
+parallelizable and very friendly with
+
+00:03:25.120 --> 00:03:31.519
+GPU and all of those uh goodies. But, uh
+
+00:03:29.200 --> 00:03:34.480
+training really sometimes we should be
+
+00:03:31.519 --> 00:03:37.920
+careful. So, here uh I don't have a lot
+
+00:03:34.480 --> 00:03:42.000
+of issues because of the the small size
+
+00:03:37.920 --> 00:03:45.200
+and the rather simple data set. Um but
+
+00:03:42.000 --> 00:03:48.239
+for more challenging larger architecture
+
+00:03:45.200 --> 00:03:52.799
+the learning rate uh scheduling is uh
+
+00:03:48.239 --> 00:03:55.440
+very important. Okay so we have this u
+
+00:03:52.799 --> 00:03:57.840
+gradient clipping and then we'll define
+
+00:03:55.440 --> 00:04:00.720
+the special tokens. Okay. So I'm going
+
+00:03:57.840 --> 00:04:05.360
+to set the seeds and then download the
+
+00:04:00.720 --> 00:04:09.360
+data set. I will uh provide the code and
+
+00:04:05.360 --> 00:04:12.560
+we'll be fast in this preamble parts.
+
+00:04:09.360 --> 00:04:16.079
+Okay. So I was trying to um get a direct
+
+00:04:12.560 --> 00:04:17.680
+link for the data set but um for some
+
+00:04:16.079 --> 00:04:22.079
+reason I couldn't. I'm going to just
+
+00:04:17.680 --> 00:04:25.040
+clone the repo and um and I will
+
+00:04:22.079 --> 00:04:28.400
+describe the the path as in within this
+
+00:04:25.040 --> 00:04:31.280
+ripple. So here is the the code on how
+
+00:04:28.400 --> 00:04:33.840
+to handle the data set alongside some
+
+00:04:31.280 --> 00:04:37.520
+very simple tokenization.
+
+00:04:33.840 --> 00:04:40.639
+um for production level coding we have
+
+00:04:37.520 --> 00:04:43.280
+to take on a better tokenization method
+
+00:04:40.639 --> 00:04:46.320
+like for example bite pair encoding but
+
+00:04:43.280 --> 00:04:49.040
+here we'll go with a very simple uh
+
+00:04:46.320 --> 00:04:52.639
+tokenization okay so now that we have
+
+00:04:49.040 --> 00:04:54.880
+the the NLP aspects aside and data is
+
+00:04:52.639 --> 00:04:58.240
+downloaded and tokenized uh let's look
+
+00:04:54.880 --> 00:05:00.080
+at the model architecture so first let's
+
+00:04:58.240 --> 00:05:02.240
+uh take a look at this positional
+
+00:05:00.080 --> 00:05:05.440
+encoding we basically fill out all of
+
+00:05:02.240 --> 00:05:08.000
+these positions for the max length of
+
+00:05:05.440 --> 00:05:11.759
+the sequence that we can encounter. Uh
+
+00:05:08.000 --> 00:05:14.720
+we never get to 5,000, but let's just
+
+00:05:11.759 --> 00:05:17.520
+make it for uh because it doesn't hurt
+
+00:05:14.720 --> 00:05:20.639
+really. And then we will fill this up
+
+00:05:17.520 --> 00:05:22.960
+with the sign and cosine. Uh so for now,
+
+00:05:20.639 --> 00:05:25.759
+let's just start with the indexing of
+
+00:05:22.960 --> 00:05:28.720
+the position. We are going to do a range
+
+00:05:25.759 --> 00:05:30.960
+from zero. We need this to be a float
+
+00:05:28.720 --> 00:05:33.120
+because I'm going to use it for
+
+00:05:30.960 --> 00:05:35.919
+calculating the encoding frequencies.
+
+00:05:33.120 --> 00:05:39.360
+The magic formula for
+
+00:05:35.919 --> 00:05:40.479
+uh calculating the frequencies is this.
+
+00:05:39.360 --> 00:05:43.280
+And [snorts]
+
+00:05:40.479 --> 00:05:45.840
+now for the even and odd positions we
+
+00:05:43.280 --> 00:05:48.720
+will so even will be will get sign and
+
+00:05:45.840 --> 00:05:52.320
+odds will get cosine. So we have to be
+
+00:05:48.720 --> 00:05:54.960
+careful for example if d model is um odd
+
+00:05:52.320 --> 00:05:58.240
+we have to take care of that. But here I
+
+00:05:54.960 --> 00:06:01.199
+mean it's very rare to have odd uh D
+
+00:05:58.240 --> 00:06:04.479
+model. So let's not do transpose for
+
+00:06:01.199 --> 00:06:06.960
+now. And then let's register this
+
+00:06:04.479 --> 00:06:08.880
+encoding as a buffer. So basically it's
+
+00:06:06.960 --> 00:06:12.000
+saved it will be saved with the model
+
+00:06:08.880 --> 00:06:14.000
+state and we are not going to treat it
+
+00:06:12.000 --> 00:06:16.000
+like a trainable parameter. So the
+
+00:06:14.000 --> 00:06:18.400
+optimizer is not going to train this.
+
+00:06:16.000 --> 00:06:20.000
+Okay. So that's it and let's write the
+
+00:06:18.400 --> 00:06:22.240
+forward.
+
+00:06:20.000 --> 00:06:24.479
+So what we did here is we basically add
+
+00:06:22.240 --> 00:06:28.240
+the positional encoding to the input
+
+00:06:24.479 --> 00:06:33.759
+tensor X and we sliced the encoding up
+
+00:06:28.240 --> 00:06:36.880
+to the um actual sequence length of X.
+
+00:06:33.759 --> 00:06:40.000
+If you remember we had this additional
+
+00:06:36.880 --> 00:06:43.199
+uh positions that is not uh necessary.
+
+00:06:40.000 --> 00:06:45.360
+So we only use as much as we want. Okay.
+
+00:06:43.199 --> 00:06:48.479
+So that's that and let's write the
+
+00:06:45.360 --> 00:06:51.360
+transformer model class. Okay. So let's
+
+00:06:48.479 --> 00:06:55.520
+give some default values just to maybe
+
+00:06:51.360 --> 00:07:00.240
+simplify our life. Um I said 21 28 and
+
+00:06:55.520 --> 00:07:02.560
+heads uh we chose four we chose four and
+
+00:07:00.240 --> 00:07:07.039
+layers two
+
+00:07:02.560 --> 00:07:09.440
+feet forward uh dimension 512
+
+00:07:07.039 --> 00:07:12.800
+and drop out was.1.
+
+00:07:09.440 --> 00:07:16.160
+Okay. So that's that and let's define a
+
+00:07:12.800 --> 00:07:18.880
+few things. Same for the decoder
+
+00:07:16.160 --> 00:07:22.639
+embedding. Okay, that's embedding and
+
+00:07:18.880 --> 00:07:26.560
+let's do the positional encoding and we
+
+00:07:22.639 --> 00:07:29.599
+are ready to define the structure of the
+
+00:07:26.560 --> 00:07:34.199
+um one single encoder layer, right? So
+
+00:07:29.599 --> 00:07:34.199
+I'm going to use the the native
+
+00:07:34.639 --> 00:07:41.280
+um pietorch uh function just for
+
+00:07:38.000 --> 00:07:43.039
+simplicity. We already uh did all of the
+
+00:07:41.280 --> 00:07:45.440
+coding of the attention from the
+
+00:07:43.039 --> 00:07:48.800
+scratch. So here we will focus on the
+
+00:07:45.440 --> 00:07:52.960
+training. So Dmodel and has the feed
+
+00:07:48.800 --> 00:07:56.479
+forward dimension drop out. And here I
+
+00:07:52.960 --> 00:07:59.919
+want to add this um batch first true
+
+00:07:56.479 --> 00:08:02.000
+since our data may be a form of batch
+
+00:07:59.919 --> 00:08:04.879
+and sequence length and embedding
+
+00:08:02.000 --> 00:08:07.520
+dimension. So doesn't hurt to have this.
+
+00:08:04.879 --> 00:08:10.240
+So we will set this to true. Okay. So
+
+00:08:07.520 --> 00:08:13.280
+that's that. And now we stack the layers
+
+00:08:10.240 --> 00:08:16.560
+using this. And then now we can look at
+
+00:08:13.280 --> 00:08:18.240
+the decoder stack. And as you see, we
+
+00:08:16.560 --> 00:08:20.639
+get all of these suggestions, which
+
+00:08:18.240 --> 00:08:24.960
+basically means how standard is this
+
+00:08:20.639 --> 00:08:27.280
+code. And that's pretty much for it for
+
+00:08:24.960 --> 00:08:30.080
+the stack of encoder and decoder. And
+
+00:08:27.280 --> 00:08:34.000
+now we can do the output projection for
+
+00:08:30.080 --> 00:08:36.240
+the generator of the tokens. I see the
+
+00:08:34.000 --> 00:08:40.399
+suggestion is pretty much what I want.
+
+00:08:36.240 --> 00:08:43.919
+Good. Um, let's just be more explicit
+
+00:08:40.399 --> 00:08:46.560
+here. I'll put projection.
+
+00:08:43.919 --> 00:08:49.600
+Okay, great. So now we need to
+
+00:08:46.560 --> 00:08:51.440
+initialize the parameters and to do that
+
+00:08:49.600 --> 00:08:55.120
+we have to write a function for it but
+
+00:08:51.440 --> 00:08:58.000
+let's just put a placeholder for now
+
+00:08:55.120 --> 00:09:00.720
+um init parameters which we don't have
+
+00:08:58.000 --> 00:09:03.760
+yet. So we have to write it. So diff
+
+00:09:00.720 --> 00:09:06.399
+init parameters which of course we know
+
+00:09:03.760 --> 00:09:09.040
+it's very important to initialize the
+
+00:09:06.399 --> 00:09:11.920
+parameters in a way that u help in the
+
+00:09:09.040 --> 00:09:13.600
+stability of the training. For here we
+
+00:09:11.920 --> 00:09:15.839
+are going to use heavier uh
+
+00:09:13.600 --> 00:09:19.360
+initialization to keep the variance of
+
+00:09:15.839 --> 00:09:21.839
+the outputs consistent across all of the
+
+00:09:19.360 --> 00:09:24.560
+layers. This prevents the signals from
+
+00:09:21.839 --> 00:09:27.279
+vanishing or exploding uh when they are
+
+00:09:24.560 --> 00:09:31.120
+propagating through the network. Okay.
+
+00:09:27.279 --> 00:09:34.320
+So for pin self.parameters parameters.
+
+00:09:31.120 --> 00:09:37.200
+Um we basically do in it have your
+
+00:09:34.320 --> 00:09:41.680
+uniform but it's always a good practice
+
+00:09:37.200 --> 00:09:44.399
+to say if P is more than a scalar do
+
+00:09:41.680 --> 00:09:47.839
+that otherwise it's not necessary so
+
+00:09:44.399 --> 00:09:49.920
+have your uniform is good. Okay. So what
+
+00:09:47.839 --> 00:09:52.800
+else we want? So we need to write a
+
+00:09:49.920 --> 00:09:55.440
+forward method of course and within the
+
+00:09:52.800 --> 00:09:57.839
+forward method we have the for metaphor
+
+00:09:55.440 --> 00:10:00.560
+um that goes through the encoder and
+
+00:09:57.839 --> 00:10:02.800
+decoder. one thing that we need to
+
+00:10:00.560 --> 00:10:05.600
+before so we need to write this for our
+
+00:10:02.800 --> 00:10:09.440
+method of course like I said but for now
+
+00:10:05.600 --> 00:10:14.399
+let's just go back here and uh uh we
+
+00:10:09.440 --> 00:10:16.800
+want um causal mask because we need that
+
+00:10:14.399 --> 00:10:18.959
+in the forward we need to basically we
+
+00:10:16.800 --> 00:10:23.279
+want to prevent decoder from looking
+
+00:10:18.959 --> 00:10:26.240
+ahead and not cheat so in pietorch uh
+
+00:10:23.279 --> 00:10:29.040
+and and transformer
+
+00:10:26.240 --> 00:10:32.320
+uh for any modules there For positions
+
+00:10:29.040 --> 00:10:35.920
+that we want to be ignored uh or masked
+
+00:10:32.320 --> 00:10:40.079
+out uh we will mark them as true or
+
+00:10:35.920 --> 00:10:43.839
+minus infinity. And uh let's do that. So
+
+00:10:40.079 --> 00:10:45.360
+generate a square subsequent mask. Yes.
+
+00:10:43.839 --> 00:10:49.120
+And
+
+00:10:45.360 --> 00:10:51.440
+yep we want to define a mask which is a
+
+00:10:49.120 --> 00:10:53.519
+upper triangular
+
+00:10:51.440 --> 00:10:57.200
+and
+
+00:10:53.519 --> 00:11:02.160
+the upper triangular elements gets one.
+
+00:10:57.200 --> 00:11:05.279
+We also give one to diagonals and we out
+
+00:11:02.160 --> 00:11:08.079
+a boolean. Okay. So we set the diagonals
+
+00:11:05.279 --> 00:11:10.959
+also to zero because we want to
+
+00:11:08.079 --> 00:11:13.959
+basically say everything above the
+
+00:11:10.959 --> 00:11:13.959
+triangle
+
+00:11:14.959 --> 00:11:21.200
+we want it to be one and then later we
+
+00:11:18.160 --> 00:11:24.480
+get the boolean which returns true for
+
+00:11:21.200 --> 00:11:26.720
+them. So the they will be masked right
+
+00:11:24.480 --> 00:11:30.240
+and then after that we can return the
+
+00:11:26.720 --> 00:11:32.560
+mask. Okay. So now we can go ahead and
+
+00:11:30.240 --> 00:11:34.720
+write the forward method. We already
+
+00:11:32.560 --> 00:11:38.079
+have the causal mask so we can use it.
+
+00:11:34.720 --> 00:11:41.200
+We don't we don't need a source mask. So
+
+00:11:38.079 --> 00:11:43.600
+let's just write the target mask. Okay.
+
+00:11:41.200 --> 00:11:46.480
+So note that this is the length of the
+
+00:11:43.600 --> 00:11:51.200
+the target. Maybe we can make it more
+
+00:11:46.480 --> 00:11:53.839
+explicit. And of course the the device.
+
+00:11:51.200 --> 00:11:57.279
+So this is basically the causal mask for
+
+00:11:53.839 --> 00:12:00.480
+the target sequence. And now let's uh
+
+00:11:57.279 --> 00:12:03.360
+work through the padding masks. Okay. So
+
+00:12:00.480 --> 00:12:06.000
+source padding mask
+
+00:12:03.360 --> 00:12:08.560
+what we have here. Let's just keep them
+
+00:12:06.000 --> 00:12:11.760
+as is for now. So basically we're
+
+00:12:08.560 --> 00:12:14.800
+telling the the PyTorch to ignore the
+
+00:12:11.760 --> 00:12:18.160
+paddings here. Okay. So now we can do
+
+00:12:14.800 --> 00:12:20.160
+the embedding. Um so source
+
+00:12:18.160 --> 00:12:22.800
+embed
+
+00:12:20.160 --> 00:12:27.040
+and that's that we have this positional
+
+00:12:22.800 --> 00:12:30.320
+encoding of the source and uh target. So
+
+00:12:27.040 --> 00:12:32.480
+in the original paper the authors
+
+00:12:30.320 --> 00:12:35.680
+recommend scaling the embedding by the
+
+00:12:32.480 --> 00:12:37.839
+square root of d model. Let's uh let's
+
+00:12:35.680 --> 00:12:40.959
+do that too just to stick with the
+
+00:12:37.839 --> 00:12:44.959
+original formulation. Okay. So that's
+
+00:12:40.959 --> 00:12:48.160
+that. And now we have the encoder
+
+00:12:44.959 --> 00:12:51.519
+uh that processes the source
+
+00:12:48.160 --> 00:12:54.720
+uh sentence. It only needs the source
+
+00:12:51.519 --> 00:12:56.720
+padding mask. So that's the output of
+
+00:12:54.720 --> 00:12:59.200
+the encoder. I'm going to call this
+
+00:12:56.720 --> 00:13:01.760
+memory
+
+00:12:59.200 --> 00:13:04.639
+which is the sequence that we encode uh
+
+00:13:01.760 --> 00:13:07.920
+the German sequence here.
+
+00:13:04.639 --> 00:13:10.320
+And now the output
+
+00:13:07.920 --> 00:13:13.600
+from the decoder that uses this target
+
+00:13:10.320 --> 00:13:16.880
+embedding takes in the encoder output or
+
+00:13:13.600 --> 00:13:18.880
+the memory and all of the masks that we
+
+00:13:16.880 --> 00:13:23.360
+made. So remember that this is the
+
+00:13:18.880 --> 00:13:27.760
+causal mask. Now we uh we can return the
+
+00:13:23.360 --> 00:13:30.800
+projected output. So um to evaluate the
+
+00:13:27.760 --> 00:13:34.639
+translation task we can add a function
+
+00:13:30.800 --> 00:13:36.959
+that can compute the blue score. So in
+
+00:13:34.639 --> 00:13:38.639
+the past we used the the standard torch
+
+00:13:36.959 --> 00:13:42.399
+text
+
+00:13:38.639 --> 00:13:44.800
+uh but that's uh duplicate that's now uh
+
+00:13:42.399 --> 00:13:48.240
+is not used anymore.
+
+00:13:44.800 --> 00:13:50.880
+Uh here we can just implement this uh
+
+00:13:48.240 --> 00:13:53.920
+manually. I'm going to do this quickly
+
+00:13:50.880 --> 00:13:56.560
+but I will provide the code for you. Oh,
+
+00:13:53.920 --> 00:14:00.839
+I see I made a mistake here. Let's go
+
+00:13:56.560 --> 00:14:00.839
+back. Yep.
+
+00:14:01.839 --> 00:14:09.680
+Oh, so let's give it a name to avoid
+
+00:14:04.720 --> 00:14:12.880
+that issue. See, we forgot a parenthesis
+
+00:14:09.680 --> 00:14:15.760
+here, here,
+
+00:14:12.880 --> 00:14:18.240
+and we're good. Okay, so here we have
+
+00:14:15.760 --> 00:14:20.320
+the blue score computation. Let's just
+
+00:14:18.240 --> 00:14:22.639
+separate them. Uh I will add more
+
+00:14:20.320 --> 00:14:26.079
+commentation for you. Okay, that's that.
+
+00:14:22.639 --> 00:14:28.480
+And let's move on to uh some functions
+
+00:14:26.079 --> 00:14:32.079
+for the inference and the evaluation
+
+00:14:28.480 --> 00:14:34.560
+functions. Okay. So the inference or the
+
+00:14:32.079 --> 00:14:37.360
+translate here takes in the model, the
+
+00:14:34.560 --> 00:14:40.240
+source sentence, the source vocabulary,
+
+00:14:37.360 --> 00:14:44.880
+the target vocabulary and the the source
+
+00:14:40.240 --> 00:14:48.240
+tokenizer. Remember that. Um and we need
+
+00:14:44.880 --> 00:14:51.120
+some form of like max length. Okay. So
+
+00:14:48.240 --> 00:14:52.880
+this will be during inference. So model
+
+00:14:51.120 --> 00:14:54.639
+val
+
+00:14:52.880 --> 00:14:56.639
+and
+
+00:14:54.639 --> 00:15:00.320
+here we have to prepare the source
+
+00:14:56.639 --> 00:15:04.560
+tensor which requires uh adding
+
+00:15:00.320 --> 00:15:09.120
+um um beginning of the sentence uh index
+
+00:15:04.560 --> 00:15:12.560
+and uh indices of the
+
+00:15:09.120 --> 00:15:16.800
+sentence tokens plus at the end we have
+
+00:15:12.560 --> 00:15:20.320
+to uh add a end of sentence uh token for
+
+00:15:16.800 --> 00:15:23.760
+the source uh sentence and then we need
+
+00:15:20.320 --> 00:15:28.760
+to convert it to a tensor and send it to
+
+00:15:23.760 --> 00:15:28.760
+the device. Okay. So source indices
+
+00:15:29.120 --> 00:15:33.680
+uh first the POS
+
+00:15:32.000 --> 00:15:37.199
+idx
+
+00:15:33.680 --> 00:15:40.240
+we see source vap numericalize source
+
+00:15:37.199 --> 00:15:43.279
+sentence source tokenizer plus end of
+
+00:15:40.240 --> 00:15:47.440
+sentence idx and then source tensor.
+
+00:15:43.279 --> 00:15:49.600
+Okay. So I went for more familiar
+
+00:15:47.440 --> 00:15:52.399
+version for the target sequence. We just
+
+00:15:49.600 --> 00:15:54.320
+need the first token to start with which
+
+00:15:52.399 --> 00:15:57.120
+is beginning of the sentence. It's like
+
+00:15:54.320 --> 00:16:00.480
+the initial point of generation of the
+
+00:15:57.120 --> 00:16:04.639
+sentence. So that's the target for now
+
+00:16:00.480 --> 00:16:07.680
+and the model will populate that. Okay.
+
+00:16:04.639 --> 00:16:09.920
+So with torsograph and for the max
+
+00:16:07.680 --> 00:16:12.959
+length of the sentence of course it will
+
+00:16:09.920 --> 00:16:16.000
+stop when we encounter the end of
+
+00:16:12.959 --> 00:16:19.680
+sentence. So we need to have an if next
+
+00:16:16.000 --> 00:16:23.279
+token is EOS idx we have to stop this
+
+00:16:19.680 --> 00:16:27.839
+for loop um so the target so let's just
+
+00:16:23.279 --> 00:16:30.720
+write now why not so if next token is
+
+00:16:27.839 --> 00:16:34.079
+end of send idx we want to break it so
+
+00:16:30.720 --> 00:16:36.240
+let's go back here
+
+00:16:34.079 --> 00:16:39.920
+um maybe we don't need that for now we
+
+00:16:36.240 --> 00:16:42.320
+will write it so output is that here it
+
+00:16:39.920 --> 00:16:44.639
+takes in the source and the current
+
+00:16:42.320 --> 00:16:47.440
+target at this step. So this is
+
+00:16:44.639 --> 00:16:50.480
+basically the the step of the auto
+
+00:16:47.440 --> 00:16:52.959
+reggressive generation. So we have this
+
+00:16:50.480 --> 00:16:55.360
+TGT tensor or the target tensor that we
+
+00:16:52.959 --> 00:16:57.440
+will append to each time we will append
+
+00:16:55.360 --> 00:17:00.000
+the next token. Okay. [clears throat] So
+
+00:16:57.440 --> 00:17:04.000
+let's um compute that next token which
+
+00:17:00.000 --> 00:17:07.039
+is the output uh arg max and that
+
+00:17:04.000 --> 00:17:10.480
+basically pops the item and we append
+
+00:17:07.039 --> 00:17:13.760
+the next token to the target indices.
+
+00:17:10.480 --> 00:17:16.959
+Okay. We check if it is EOS.
+
+00:17:13.760 --> 00:17:19.120
+If it is EOS, stop the auto reggressive
+
+00:17:16.959 --> 00:17:21.520
+generation. If not, continue doing this.
+
+00:17:19.120 --> 00:17:24.319
+And now we we have to convert these
+
+00:17:21.520 --> 00:17:26.480
+indices back to tokens because here the
+
+00:17:24.319 --> 00:17:28.640
+argmax looks at the priority
+
+00:17:26.480 --> 00:17:31.520
+distribution corresponding to each one
+
+00:17:28.640 --> 00:17:34.160
+of these indices and choose the one that
+
+00:17:31.520 --> 00:17:36.320
+uh is the maximum or the most probable.
+
+00:17:34.160 --> 00:17:39.200
+Uh there's no creativity here in this
+
+00:17:36.320 --> 00:17:41.679
+translation job. It's a greedy decoding.
+
+00:17:39.200 --> 00:17:44.400
+We may get a better translation if we do
+
+00:17:41.679 --> 00:17:47.440
+a beam search. Uh but let's uh just do
+
+00:17:44.400 --> 00:17:51.600
+the the vanilla greedy decoding. And
+
+00:17:47.440 --> 00:17:54.400
+here we convert the indices to tokens.
+
+00:17:51.600 --> 00:17:56.720
+So we are decoding the sequence of the
+
+00:17:54.400 --> 00:17:59.120
+target token indices into the strings.
+
+00:17:56.720 --> 00:18:02.080
+To do that we have to run it against the
+
+00:17:59.120 --> 00:18:04.160
+vocabulary of the target. And uh we have
+
+00:18:02.080 --> 00:18:06.480
+to skip the beginning of the sentence
+
+00:18:04.160 --> 00:18:08.240
+token and then look at each one of these
+
+00:18:06.480 --> 00:18:11.520
+indices to get the corresponding
+
+00:18:08.240 --> 00:18:13.760
+vocabulary. If we find it good if not we
+
+00:18:11.520 --> 00:18:16.000
+will just assign an unknown token to it.
+
+00:18:13.760 --> 00:18:18.799
+So this is how we are doing it. So
+
+00:18:16.000 --> 00:18:23.840
+target vocap index to string mapping
+
+00:18:18.799 --> 00:18:27.280
+which is index 2 string mapping get idx
+
+00:18:23.840 --> 00:18:30.720
+and if the index isn't found return uh
+
+00:18:27.280 --> 00:18:34.799
+unknown. So we need to do this for all
+
+00:18:30.720 --> 00:18:36.640
+of this idx in the target indices. We
+
+00:18:34.799 --> 00:18:38.720
+don't need to do it for the beginning of
+
+00:18:36.640 --> 00:18:42.160
+the sentence. So let's just skip that.
+
+00:18:38.720 --> 00:18:44.880
+And also we we may need to remove the
+
+00:18:42.160 --> 00:18:47.919
+end of sentence if we encountered it
+
+00:18:44.880 --> 00:18:51.440
+here. Okay. So for that we just check if
+
+00:18:47.919 --> 00:18:53.760
+the last token equals end of sentence
+
+00:18:51.440 --> 00:18:56.000
+and we slice the last one. Good. Okay.
+
+00:18:53.760 --> 00:18:58.000
+So then we can return the target
+
+00:18:56.000 --> 00:19:00.320
+sequence which we need to join all of
+
+00:18:58.000 --> 00:19:03.440
+these tokens. So to do that it's enough
+
+00:19:00.320 --> 00:19:05.600
+to do this to evaluate this uh sentence
+
+00:19:03.440 --> 00:19:08.320
+this translated sentence we will
+
+00:19:05.600 --> 00:19:10.400
+calculate the blue score and it is
+
+00:19:08.320 --> 00:19:12.480
+important of course to do it in an auto
+
+00:19:10.400 --> 00:19:15.280
+reggressive uh decoding way just like
+
+00:19:12.480 --> 00:19:17.280
+the translation function. So no teacher
+
+00:19:15.280 --> 00:19:18.799
+forcing here otherwise the evaluation
+
+00:19:17.280 --> 00:19:20.960
+will not be correct. So I'm going to
+
+00:19:18.799 --> 00:19:24.880
+write the the function here and then we
+
+00:19:20.960 --> 00:19:24.880
+can move on to the training loop.
+
+00:19:25.840 --> 00:19:31.600
+Okay. So here I started with uh
+
+00:19:29.280 --> 00:19:34.559
+preparing the data set first downloading
+
+00:19:31.600 --> 00:19:37.120
+the data and then doing the tokenization
+
+00:19:34.559 --> 00:19:40.240
+and building the vocabulary. Um I'm
+
+00:19:37.120 --> 00:19:42.880
+going to only build vocabulary for those
+
+00:19:40.240 --> 00:19:46.160
+um tokens that appear at least two
+
+00:19:42.880 --> 00:19:48.000
+times. So frequency threshold uh we are
+
+00:19:46.160 --> 00:19:50.400
+setting it to two. Then we can build
+
+00:19:48.000 --> 00:19:52.640
+this vocabulary. Same for the target.
+
+00:19:50.400 --> 00:19:55.919
+Okay. Now we can set the data set and
+
+00:19:52.640 --> 00:19:59.039
+data loader. Okay. So then the train
+
+00:19:55.919 --> 00:20:01.520
+loader and the validation loader going
+
+00:19:59.039 --> 00:20:04.000
+to accept the suggestion. Move on and
+
+00:20:01.520 --> 00:20:07.200
+then we can initialize the model. So
+
+00:20:04.000 --> 00:20:09.280
+model transformer.
+
+00:20:07.200 --> 00:20:12.960
+Okay. Let's see what we have. Number of
+
+00:20:09.280 --> 00:20:16.640
+heads and then have n layers dimension
+
+00:20:12.960 --> 00:20:19.840
+of bit forward and the dropout. That's
+
+00:20:16.640 --> 00:20:22.400
+it. uh we can send it to device looking
+
+00:20:19.840 --> 00:20:24.320
+good. And then what else we need? We
+
+00:20:22.400 --> 00:20:26.880
+need um let's print the number of
+
+00:20:24.320 --> 00:20:29.760
+parameters. It's always good. And then
+
+00:20:26.880 --> 00:20:32.159
+uh we will set the criterion uh which is
+
+00:20:29.760 --> 00:20:34.799
+a cross entropy which we need to ignore
+
+00:20:32.159 --> 00:20:38.240
+the padding indexes and then we can set
+
+00:20:34.799 --> 00:20:41.440
+up the atom. So cross entropy last that
+
+00:20:38.240 --> 00:20:44.159
+has to ignore padding indices. Now the
+
+00:20:41.440 --> 00:20:47.280
+optimizer which is Adam. So torch
+
+00:20:44.159 --> 00:20:50.799
+optimadam takes in the model parameters
+
+00:20:47.280 --> 00:20:53.120
+and the learning rate. Okay. So now we
+
+00:20:50.799 --> 00:20:56.080
+can write the forward loop. Uh let me
+
+00:20:53.120 --> 00:20:58.240
+just track the best blue score since so
+
+00:20:56.080 --> 00:21:02.080
+far during the forward loop starting
+
+00:20:58.240 --> 00:21:06.320
+from zero and then four epoch in range
+
+00:21:02.080 --> 00:21:09.120
+of n apoch. You already know this. I'm
+
+00:21:06.320 --> 00:21:12.960
+going to be fast. Uh we'll skip most of
+
+00:21:09.120 --> 00:21:16.240
+this. Okay. So this within an epoch we
+
+00:21:12.960 --> 00:21:17.840
+look at the batches of the sequences. Um
+
+00:21:16.240 --> 00:21:20.640
+during the training we are doing teacher
+
+00:21:17.840 --> 00:21:23.280
+forcing. So the input to the decoder is
+
+00:21:20.640 --> 00:21:26.080
+a target sequence shifted right. So
+
+00:21:23.280 --> 00:21:28.480
+starting with bos and then excludes the
+
+00:21:26.080 --> 00:21:31.120
+last token. So let's do that. So the
+
+00:21:28.480 --> 00:21:33.280
+target input and the expected output is
+
+00:21:31.120 --> 00:21:36.880
+the target sequence starting from the
+
+00:21:33.280 --> 00:21:41.280
+first real world. Uh so we exclude WS
+
+00:21:36.880 --> 00:21:44.080
+the target output DGT. Okay. So let's
+
+00:21:41.280 --> 00:21:46.480
+zero the optimizer
+
+00:21:44.080 --> 00:21:49.440
+and do a forward.
+
+00:21:46.480 --> 00:21:52.559
+So the output
+
+00:21:49.440 --> 00:21:54.159
+is the model source target loss
+
+00:21:52.559 --> 00:21:57.039
+criterion.
+
+00:21:54.159 --> 00:22:00.320
+Okay. So uh here notice that I did some
+
+00:21:57.039 --> 00:22:03.520
+reshaping. The output was of this shape
+
+00:22:00.320 --> 00:22:06.320
+and we are converting it to batch times
+
+00:22:03.520 --> 00:22:09.760
+sequence and vocabulary size and we also
+
+00:22:06.320 --> 00:22:12.080
+reshape the target to be so initially it
+
+00:22:09.760 --> 00:22:15.039
+is here is batch and sequence we are
+
+00:22:12.080 --> 00:22:17.120
+reshaping it to batch time sequence. So
+
+00:22:15.039 --> 00:22:19.120
+that's what we did and that's the last
+
+00:22:17.120 --> 00:22:22.400
+and now we can do the backward here the
+
+00:22:19.120 --> 00:22:25.200
+gradient clipping uh the optimizer step
+
+00:22:22.400 --> 00:22:28.559
+we can do the validation of that epoch
+
+00:22:25.200 --> 00:22:30.880
+for the evaluation I believe eval loss
+
+00:22:28.559 --> 00:22:33.120
+for now zero let's compute this
+
+00:22:30.880 --> 00:22:36.880
+validation loss within the validation
+
+00:22:33.120 --> 00:22:38.720
+data so with the torch no grad we
+
+00:22:36.880 --> 00:22:40.400
+basically want to calculate the
+
+00:22:38.720 --> 00:22:43.520
+validation loss we are going to use
+
+00:22:40.400 --> 00:22:46.240
+teacher forcing and then uh we will
+
+00:22:43.520 --> 00:22:48.159
+compute um at the blue score. So blue
+
+00:22:46.240 --> 00:22:50.720
+score computation is a bit heavy. We
+
+00:22:48.159 --> 00:22:52.640
+only do it uh at the end of the epoch
+
+00:22:50.720 --> 00:22:54.799
+and then we do some logging. We only
+
+00:22:52.640 --> 00:22:57.039
+save the model the best model based on
+
+00:22:54.799 --> 00:22:59.760
+the blue score. So that's what I'm going
+
+00:22:57.039 --> 00:23:02.080
+to write. I will skip that for the most
+
+00:22:59.760 --> 00:23:05.760
+part. We'll add some codes for the
+
+00:23:02.080 --> 00:23:08.559
+logging of the during the epoch also.
+
+00:23:05.760 --> 00:23:12.400
+Let's do it here. Okay. So I think we
+
+00:23:08.559 --> 00:23:15.360
+have uh most of the things in place and
+
+00:23:12.400 --> 00:23:18.400
+um here we do a qualitative check for
+
+00:23:15.360 --> 00:23:21.919
+just a few sample sentences randomly
+
+00:23:18.400 --> 00:23:25.679
+generated really. I did some error
+
+00:23:21.919 --> 00:23:30.960
+checking and now oh okay it looks like
+
+00:23:25.679 --> 00:23:33.760
+things are working. So now we can uh
+
+00:23:30.960 --> 00:23:36.760
+activate our
+
+00:23:33.760 --> 00:23:36.760
+CUDA.
+
+00:23:47.760 --> 00:23:53.280
+We we already get some interesting
+
+00:23:50.720 --> 00:23:56.799
+translation. The blue score is rather
+
+00:23:53.280 --> 00:24:00.400
+good here. I mean 21 is is good. Uh, of
+
+00:23:56.799 --> 00:24:06.000
+course the data set is easy. It's not a
+
+00:24:00.400 --> 00:24:08.720
+very complex data. Um, but we already we
+
+00:24:06.000 --> 00:24:11.360
+are on a good track and maybe we can
+
+00:24:08.720 --> 00:24:15.039
+kill this training after blue score of
+
+00:24:11.360 --> 00:24:19.120
+around 30 35. So another jump in blue
+
+00:24:15.039 --> 00:24:21.840
+score 29 which I'm pretty happy with.
+
+00:24:19.120 --> 00:24:27.360
+And uh almost all of the translations
+
+00:24:21.840 --> 00:24:29.919
+are looking good. And um yeah, so the
+
+00:24:27.360 --> 00:24:32.880
+training continues, but we can stop the
+
+00:24:29.919 --> 00:24:32.880
+video.

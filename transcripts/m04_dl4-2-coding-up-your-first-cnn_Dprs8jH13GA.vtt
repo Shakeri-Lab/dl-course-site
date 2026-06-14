@@ -1,0 +1,1636 @@
+WEBVTT
+
+00:00:00.320 --> 00:00:06.400
+In this script, we want to transition
+
+00:00:03.280 --> 00:00:09.360
+from MLP to convolutional neural
+
+00:00:06.400 --> 00:00:13.120
+network. We explain the components of uh
+
+00:00:09.360 --> 00:00:17.520
+CNN such as channels, paddings, strides,
+
+00:00:13.120 --> 00:00:20.720
+poolings and um build a standard
+
+00:00:17.520 --> 00:00:23.439
+architecture, a very small uh leanet
+
+00:00:20.720 --> 00:00:26.560
+architecture and then we compare it with
+
+00:00:23.439 --> 00:00:29.279
+MLP that we optimized from last time. So
+
+00:00:26.560 --> 00:00:32.079
+these are the codes from before. I just
+
+00:00:29.279 --> 00:00:35.200
+added a an functional um you will see
+
+00:00:32.079 --> 00:00:37.840
+that this basically gives me some like
+
+00:00:35.200 --> 00:00:41.600
+mathematical operation uh that I can do
+
+00:00:37.840 --> 00:00:45.040
+fine grained control within custom NN
+
+00:00:41.600 --> 00:00:48.640
+modules. So if you compare this uh F to
+
+00:00:45.040 --> 00:00:51.920
+NN is like appliances with knobs and
+
+00:00:48.640 --> 00:00:54.640
+memory and states that PyTorch has to
+
+00:00:51.920 --> 00:00:56.960
+remember and move it around and F is
+
+00:00:54.640 --> 00:01:00.399
+just recipes and it doesn't have a
+
+00:00:56.960 --> 00:01:02.960
+state. Okay. So that's that. Uh we are
+
+00:01:00.399 --> 00:01:06.640
+still in fashion amnest here. It's
+
+00:01:02.960 --> 00:01:09.360
+important to use CUDA or GPU when
+
+00:01:06.640 --> 00:01:14.080
+possible. Uh here for example I'm using
+
+00:01:09.360 --> 00:01:16.320
+the the default um free T4 GPU in Google
+
+00:01:14.080 --> 00:01:19.520
+Collab. We continue using the
+
+00:01:16.320 --> 00:01:22.320
+normalization and the data as it
+
+00:01:19.520 --> 00:01:26.159
+stabilizes the training. Here I noticed
+
+00:01:22.320 --> 00:01:29.920
+last time that I was using uh the train
+
+00:01:26.159 --> 00:01:33.200
+um for only the the train and uh test
+
+00:01:29.920 --> 00:01:36.479
+for my validation uh which is not a good
+
+00:01:33.200 --> 00:01:40.479
+practice because we want to leave uh the
+
+00:01:36.479 --> 00:01:43.600
+tests part um completely unseen during
+
+00:01:40.479 --> 00:01:46.799
+training and basically hold it out and
+
+00:01:43.600 --> 00:01:49.840
+use the the train for both training and
+
+00:01:46.799 --> 00:01:53.119
+validation. Uh here uh I fixed that and
+
+00:01:49.840 --> 00:01:55.439
+I'm just using um the train for both
+
+00:01:53.119 --> 00:01:57.840
+training and validation. So I I'm
+
+00:01:55.439 --> 00:02:00.960
+splitting that. So the rest is pretty
+
+00:01:57.840 --> 00:02:04.159
+much the same as before. And if you
+
+00:02:00.960 --> 00:02:07.439
+remember, we said in MLP uh the way that
+
+00:02:04.159 --> 00:02:10.800
+we flatten the image and destroy all the
+
+00:02:07.439 --> 00:02:13.120
+spatial information uh makes MLP to
+
+00:02:10.800 --> 00:02:16.239
+treat the image as a disorganized bag of
+
+00:02:13.120 --> 00:02:20.160
+pixels which is really we making it very
+
+00:02:16.239 --> 00:02:22.720
+hard and uh MLP has to um look at the
+
+00:02:20.160 --> 00:02:24.319
+image as its entirety instead of looking
+
+00:02:22.720 --> 00:02:26.239
+at different parts of the image
+
+00:02:24.319 --> 00:02:29.360
+separately. So this makes it very
+
+00:02:26.239 --> 00:02:32.640
+inefficient. There's no weight sharing
+
+00:02:29.360 --> 00:02:35.360
+as we will see and it will be brutal to
+
+00:02:32.640 --> 00:02:38.560
+translation once an object in the image
+
+00:02:35.360 --> 00:02:41.599
+moves around the MLP will fail. So with
+
+00:02:38.560 --> 00:02:44.400
+that let's go on and look at the
+
+00:02:41.599 --> 00:02:47.440
+convolution uh starting with some
+
+00:02:44.400 --> 00:02:51.040
+handcrafted kernels. So like I said we
+
+00:02:47.440 --> 00:02:53.040
+introduce this um architecture that uh
+
+00:02:51.040 --> 00:02:57.120
+it's based on this spatial inductive
+
+00:02:53.040 --> 00:02:59.760
+bias that we want to induce to basically
+
+00:02:57.120 --> 00:03:02.239
+has this properties of locality and
+
+00:02:59.760 --> 00:03:04.640
+translation equivalence pattern is the
+
+00:03:02.239 --> 00:03:06.720
+same regardless of where it is and the
+
+00:03:04.640 --> 00:03:09.599
+convolution operation we showed that it
+
+00:03:06.720 --> 00:03:12.640
+provides this bias and we we use this
+
+00:03:09.599 --> 00:03:15.599
+analogy that the the kernel the learned
+
+00:03:12.640 --> 00:03:17.599
+kernel or a filter is acting like a
+
+00:03:15.599 --> 00:03:20.159
+filter Feature detection takes a
+
+00:03:17.599 --> 00:03:22.400
+magnifying glass, a small magnifying
+
+00:03:20.159 --> 00:03:25.040
+glass and this glass is specialized in
+
+00:03:22.400 --> 00:03:26.800
+detecting one specific pattern. And the
+
+00:03:25.040 --> 00:03:28.800
+detector basically slides this
+
+00:03:26.800 --> 00:03:31.040
+magnifying glass across the image and
+
+00:03:28.800 --> 00:03:33.440
+same weights are used everywhere. It's
+
+00:03:31.040 --> 00:03:36.000
+the same magnifying glass which is the
+
+00:03:33.440 --> 00:03:37.920
+concept of parameter sharing. Let's
+
+00:03:36.000 --> 00:03:40.799
+first uh look at some handcrafted
+
+00:03:37.920 --> 00:03:43.760
+kernels. So we want to demo this
+
+00:03:40.799 --> 00:03:47.040
+handcrafted uh kernels. We need a data
+
+00:03:43.760 --> 00:03:51.280
+loader uh for that and let's just choose
+
+00:03:47.040 --> 00:03:54.000
+an image class um image index 7 probably
+
+00:03:51.280 --> 00:03:57.120
+it's the trouser. So we want a sample
+
+00:03:54.000 --> 00:03:59.280
+image to visualize this uh features that
+
+00:03:57.120 --> 00:04:01.040
+the kernels are extracting. So let's
+
+00:03:59.280 --> 00:04:03.760
+take a sample image from the data
+
+00:04:01.040 --> 00:04:05.680
+loader. So um the data loader normalizes
+
+00:04:03.760 --> 00:04:08.319
+the image if you remember and we have to
+
+00:04:05.680 --> 00:04:11.360
+reverse that for visualization and
+
+00:04:08.319 --> 00:04:15.760
+displaying um which brings the pixel
+
+00:04:11.360 --> 00:04:18.959
+values back and uh for the range that um
+
+00:04:15.760 --> 00:04:22.240
+is proper for visualization. Okay. So
+
+00:04:18.959 --> 00:04:25.680
+let's uh the sample image is a tensor
+
+00:04:22.240 --> 00:04:27.680
+right? So let's make a image numpy uh
+
+00:04:25.680 --> 00:04:31.120
+the array version of it and it's
+
+00:04:27.680 --> 00:04:34.320
+basically takes the sample image and we
+
+00:04:31.120 --> 00:04:37.440
+want to uh add the mean and standard
+
+00:04:34.320 --> 00:04:41.199
+deviation of u the data set that we
+
+00:04:37.440 --> 00:04:43.360
+normalized and with them. Okay. So it
+
+00:04:41.199 --> 00:04:46.160
+will be like this. So we need this image
+
+00:04:43.360 --> 00:04:48.560
+and p for for visualization of the
+
+00:04:46.160 --> 00:04:52.160
+image. But we have to do the convolution
+
+00:04:48.560 --> 00:04:55.440
+over the tensor and um a tensor of a
+
+00:04:52.160 --> 00:04:58.320
+standard size. And to do that we have to
+
+00:04:55.440 --> 00:05:01.199
+prepare the sample image for the
+
+00:04:58.320 --> 00:05:05.120
+convolution. And um so currently the
+
+00:05:01.199 --> 00:05:10.000
+sample image has a shape of uh channel H
+
+00:05:05.120 --> 00:05:14.160
+and W. Right? And the standard uh shape
+
+00:05:10.000 --> 00:05:17.039
+for convolution must have the batch size
+
+00:05:14.160 --> 00:05:19.759
+also. And to do that here the batch size
+
+00:05:17.039 --> 00:05:21.840
+is one. So we just need to unsqueeze
+
+00:05:19.759 --> 00:05:24.479
+that dimension and then send it to
+
+00:05:21.840 --> 00:05:29.600
+device. Okay. So the image tensor will
+
+00:05:24.479 --> 00:05:33.280
+be sample image unsqueeze and send to
+
+00:05:29.600 --> 00:05:35.360
+device. And let's just use some kernels
+
+00:05:33.280 --> 00:05:37.520
+that we discussed in the course. For
+
+00:05:35.360 --> 00:05:40.639
+example, the the averaging kernel,
+
+00:05:37.520 --> 00:05:43.639
+right? Which is a blur kernel wash
+
+00:05:40.639 --> 00:05:43.639
+tensor.
+
+00:05:44.720 --> 00:05:51.120
+of the same basically values on all the
+
+00:05:48.000 --> 00:05:55.919
+3x3. Let's work with a 3x3. So it's one
+
+00:05:51.120 --> 00:05:59.199
+over 9 multiply by 3 less. Um we can add
+
+00:05:55.919 --> 00:06:02.720
+more kernels. For example, the the
+
+00:05:59.199 --> 00:06:05.520
+famous edge detector kernels. And here
+
+00:06:02.720 --> 00:06:07.919
+for example, the soal operator uh has
+
+00:06:05.520 --> 00:06:11.520
+this form. Let's just hardcode this into
+
+00:06:07.919 --> 00:06:14.960
+the uh into our code. So we need soal
+
+00:06:11.520 --> 00:06:18.160
+also and so these are our kernels and
+
+00:06:14.960 --> 00:06:20.479
+let's do a uh convolution using them and
+
+00:06:18.160 --> 00:06:23.360
+visualize the features that they are
+
+00:06:20.479 --> 00:06:27.520
+extracting for us. Okay. So to visualize
+
+00:06:23.360 --> 00:06:30.479
+them let's just make a image uh we need
+
+00:06:27.520 --> 00:06:32.720
+a row for each kernel and then can
+
+00:06:30.479 --> 00:06:35.840
+adjust a fixed size. Let's give it a
+
+00:06:32.720 --> 00:06:39.600
+title. Okay. So I'm doing that. I'm
+
+00:06:35.840 --> 00:06:42.319
+going over all of these kernels and I
+
+00:06:39.600 --> 00:06:44.720
+have to first tensorize the kernel, send
+
+00:06:42.319 --> 00:06:47.759
+it to the device and do the convolution.
+
+00:06:44.720 --> 00:06:50.319
+So like I said um the kernel has this uh
+
+00:06:47.759 --> 00:06:52.639
+shape uh that is standard for the
+
+00:06:50.319 --> 00:06:56.960
+pytorch convolution. So we have to keep
+
+00:06:52.639 --> 00:06:59.680
+that in mind. Okay. So now with uh torch
+
+00:06:56.960 --> 00:07:01.680
+no grad we want to do the convolution.
+
+00:06:59.680 --> 00:07:05.919
+So the convolution will will be like
+
+00:07:01.680 --> 00:07:07.840
+this. we are not using any uh specific
+
+00:07:05.919 --> 00:07:11.120
+stride. So stride will be one and
+
+00:07:07.840 --> 00:07:14.639
+padding is will be one. It means that we
+
+00:07:11.120 --> 00:07:18.160
+just move this kernel one at a time, one
+
+00:07:14.639 --> 00:07:21.440
+pixel at a time. And here by keeping the
+
+00:07:18.160 --> 00:07:26.240
+padding one um the the image will stay
+
+00:07:21.440 --> 00:07:30.319
+the same size. And um to basically let's
+
+00:07:26.240 --> 00:07:34.000
+just call it output tensor. We want to
+
+00:07:30.319 --> 00:07:36.160
+transform this to a numpy because I want
+
+00:07:34.000 --> 00:07:38.560
+to visualize it. And you see that I
+
+00:07:36.160 --> 00:07:43.440
+squeeze CPU numpy. So now we can do the
+
+00:07:38.560 --> 00:07:46.960
+aim show and then I want to incorporate
+
+00:07:43.440 --> 00:07:49.840
+actually let's uh first show the the
+
+00:07:46.960 --> 00:07:52.960
+kernel which here I'm using seaborn heat
+
+00:07:49.840 --> 00:07:55.440
+map. So this will be zero. this will be
+
+00:07:52.960 --> 00:07:57.840
+one. Then we want to show the output
+
+00:07:55.440 --> 00:08:01.360
+basically the features that uh is
+
+00:07:57.840 --> 00:08:03.520
+learned and we can uh run this code and
+
+00:08:01.360 --> 00:08:06.960
+see the result. To do that I'm just
+
+00:08:03.520 --> 00:08:08.960
+running the the function.
+
+00:08:06.960 --> 00:08:11.840
+Okay,
+
+00:08:08.960 --> 00:08:17.599
+something went wrong here.
+
+00:08:11.840 --> 00:08:20.879
+Oh yeah, I want the kernel numpy.
+
+00:08:17.599 --> 00:08:24.240
+So the blur is basically uniform kernel.
+
+00:08:20.879 --> 00:08:26.639
+When convolving over an input of this
+
+00:08:24.240 --> 00:08:29.520
+shape gives us a blur shape. The
+
+00:08:26.639 --> 00:08:31.919
+vertical extracts the vertical edges and
+
+00:08:29.520 --> 00:08:35.599
+the horizontal extracts the horizontal
+
+00:08:31.919 --> 00:08:38.159
+edges. So with that let's move on to
+
+00:08:35.599 --> 00:08:40.719
+learning these kernels. Uh starting with
+
+00:08:38.159 --> 00:08:43.599
+the components of CNN padding and
+
+00:08:40.719 --> 00:08:45.680
+strides and then we will move on to
+
+00:08:43.599 --> 00:08:49.680
+pooling and then the concept of
+
+00:08:45.680 --> 00:08:53.120
+channels. So going to write a function
+
+00:08:49.680 --> 00:08:56.399
+adding no grad will demo the pulling the
+
+00:08:53.120 --> 00:08:59.519
+padding and stride for you.
+
+00:08:56.399 --> 00:09:02.160
+We want to show how padding and stride
+
+00:08:59.519 --> 00:09:06.880
+affect this the shape of an image.
+
+00:09:02.160 --> 00:09:08.959
+Right? So assume an image of a 8 by8
+
+00:09:06.880 --> 00:09:12.000
+shape. Let's just make it make make it
+
+00:09:08.959 --> 00:09:15.120
+with a random normal. So like I said I
+
+00:09:12.000 --> 00:09:17.600
+needed a standard format. So this is a
+
+00:09:15.120 --> 00:09:19.360
+8x8 image but the first dimension and
+
+00:09:17.600 --> 00:09:21.920
+second dimension are just the standard
+
+00:09:19.360 --> 00:09:24.560
+that we need the batch size and channel
+
+00:09:21.920 --> 00:09:27.360
+uh length. So we can print out the x
+
+00:09:24.560 --> 00:09:30.320
+shape. So we want to compare it with the
+
+00:09:27.360 --> 00:09:32.880
+conval versions and then um the default
+
+00:09:30.320 --> 00:09:36.800
+convolution has a padding zero and
+
+00:09:32.880 --> 00:09:39.839
+stride one. So let's imagine that KF
+
+00:09:36.800 --> 00:09:43.120
+size three padding of zero
+
+00:09:39.839 --> 00:09:47.120
+stride size of one and this is the the
+
+00:09:43.120 --> 00:09:50.080
+code. It's uh let's call it convolution
+
+00:09:47.120 --> 00:09:53.760
+doesn't have padding takes in one
+
+00:09:50.080 --> 00:09:56.080
+channel. It outputs one channel here. In
+
+00:09:53.760 --> 00:09:58.320
+this case, we can of course output more.
+
+00:09:56.080 --> 00:10:01.040
+For the time being, we can output one
+
+00:09:58.320 --> 00:10:03.920
+channel and the kernel size is three and
+
+00:10:01.040 --> 00:10:06.399
+the default is P 0 and S1. What will be
+
+00:10:03.920 --> 00:10:08.160
+the output? We know how to compute this,
+
+00:10:06.399 --> 00:10:10.800
+right? I mean, we can run this of
+
+00:10:08.160 --> 00:10:13.360
+course, but let's just talk about the
+
+00:10:10.800 --> 00:10:16.240
+formula because we don't need to test
+
+00:10:13.360 --> 00:10:18.480
+this out for now and we can compute it
+
+00:10:16.240 --> 00:10:21.360
+easily. uh I mean we can test it out for
+
+00:10:18.480 --> 00:10:24.000
+now but for a large network we want to
+
+00:10:21.360 --> 00:10:26.240
+know how to compute this simplest case
+
+00:10:24.000 --> 00:10:28.240
+is a one-dimensional where we have a
+
+00:10:26.240 --> 00:10:30.880
+kernel that is sliding over this
+
+00:10:28.240 --> 00:10:34.320
+one-dimensional what will be the length
+
+00:10:30.880 --> 00:10:36.720
+it will be input plus twice the padding
+
+00:10:34.320 --> 00:10:39.680
+here padding is zero but u but that's
+
+00:10:36.720 --> 00:10:42.560
+basically the length and what's the last
+
+00:10:39.680 --> 00:10:45.040
+index that we can take another k it's
+
+00:10:42.560 --> 00:10:47.839
+basically this minus k we have to divide
+
+00:10:45.040 --> 00:10:50.079
+this by the stride length And then uh
+
+00:10:47.839 --> 00:10:52.880
+this is the last index that we can put
+
+00:10:50.079 --> 00:10:56.079
+another one. So plus one. This is the
+
+00:10:52.880 --> 00:10:58.720
+number of output. But maybe sometimes we
+
+00:10:56.079 --> 00:11:01.839
+are getting a non- integer values. So we
+
+00:10:58.720 --> 00:11:05.120
+have to take the floor of this. So here
+
+00:11:01.839 --> 00:11:09.680
+in this case we have input of size
+
+00:11:05.120 --> 00:11:16.399
+eight. P is 0. S is 1. K is three. So 8
+
+00:11:09.680 --> 00:11:20.640
++ 0 - 3 is 5 over 1. 5 + 1 6. So that
+
+00:11:16.399 --> 00:11:23.279
+will be the output. So we expect a 6x6.
+
+00:11:20.640 --> 00:11:26.640
+So this is that uh let's look at uh
+
+00:11:23.279 --> 00:11:30.079
+let's play with this values of P and S.
+
+00:11:26.640 --> 00:11:33.920
+The second case we can add padding here.
+
+00:11:30.079 --> 00:11:37.680
+So what will be the the output? So 8 + 2
+
+00:11:33.920 --> 00:11:41.040
+- 3 + 1 will be 8 preserves the the
+
+00:11:37.680 --> 00:11:43.920
+shape. So let's run this. Uh let's uh
+
+00:11:41.040 --> 00:11:47.360
+look at the another version where we can
+
+00:11:43.920 --> 00:11:49.600
+play with the stride right so far we
+
+00:11:47.360 --> 00:11:52.640
+kept the stride to be one. So if we do
+
+00:11:49.600 --> 00:11:54.959
+the computation it will be so here
+
+00:11:52.640 --> 00:11:58.160
+stride two and let's keep everything the
+
+00:11:54.959 --> 00:12:04.959
+same. So P1 A3 okay so if we do the
+
+00:11:58.160 --> 00:12:07.680
+computation it will be 8 + 2 - 3 / 2 and
+
+00:12:04.959 --> 00:12:11.040
+if we take the floor of this guy it will
+
+00:12:07.680 --> 00:12:15.120
+be four. So we are expecting a 4x4 and
+
+00:12:11.040 --> 00:12:20.560
+let's do it. Okay. So let's try pooling.
+
+00:12:15.120 --> 00:12:22.320
+Let's create an an imaginary image and I
+
+00:12:20.560 --> 00:12:24.800
+want to make it deterministic because I
+
+00:12:22.320 --> 00:12:28.959
+want to talk about this pooling
+
+00:12:24.800 --> 00:12:33.120
+operation. So let's make a torch a range
+
+00:12:28.959 --> 00:12:35.279
+size 4x4. So we need 16. And um so
+
+00:12:33.120 --> 00:12:38.160
+remember we discussed two different
+
+00:12:35.279 --> 00:12:40.800
+pooling in the lecture. one was maximum
+
+00:12:38.160 --> 00:12:42.560
+and the other one was just averaging and
+
+00:12:40.800 --> 00:12:45.519
+um the reason is we want the
+
+00:12:42.560 --> 00:12:47.600
+convolutions uh to be invariant to
+
+00:12:45.519 --> 00:12:50.320
+translation. So if we don't do the
+
+00:12:47.600 --> 00:12:53.200
+pooling uh it is equivvariant meaning
+
+00:12:50.320 --> 00:12:56.000
+that the feature map shifts if the input
+
+00:12:53.200 --> 00:12:59.519
+shifts but if we only care if a feature
+
+00:12:56.000 --> 00:13:01.279
+is present not exactly where it is uh
+
+00:12:59.519 --> 00:13:03.440
+pooling can help here because it just
+
+00:13:01.279 --> 00:13:06.480
+summarizes a neighborhood and it makes
+
+00:13:03.440 --> 00:13:09.120
+the network less sensitive to the exact
+
+00:13:06.480 --> 00:13:13.360
+location of the feature. So let's do max
+
+00:13:09.120 --> 00:13:17.279
+pooling first which is a n max pool here
+
+00:13:13.360 --> 00:13:19.760
+a two dimension. So let's keep size two
+
+00:13:17.279 --> 00:13:22.240
+and let's keep this right two because
+
+00:13:19.760 --> 00:13:25.920
+this is more intuitive. It means we look
+
+00:13:22.240 --> 00:13:27.600
+at the 2x two parts of the image and we
+
+00:13:25.920 --> 00:13:31.040
+we don't have any overlap. So for
+
+00:13:27.600 --> 00:13:33.839
+example here um let's in this case of a
+
+00:13:31.040 --> 00:13:36.959
+range uh maybe I could print this out
+
+00:13:33.839 --> 00:13:40.079
+first. So let's do it. So here for
+
+00:13:36.959 --> 00:13:43.360
+example if uh we look at the first 2x
+
+00:13:40.079 --> 00:13:45.279
+two here on this part we expect five. So
+
+00:13:43.360 --> 00:13:48.800
+let's look at the value for example of
+
+00:13:45.279 --> 00:13:52.800
+that corner. So the output is a 2x two
+
+00:13:48.800 --> 00:13:55.920
+and the are the output like we expect.
+
+00:13:52.800 --> 00:13:58.639
+Uh let's add the average pooling here.
+
+00:13:55.920 --> 00:14:01.440
+So the average pooling same kernel size
+
+00:13:58.639 --> 00:14:03.839
+and stride and um then you see that
+
+00:14:01.440 --> 00:14:06.480
+these are the averages. So like we
+
+00:14:03.839 --> 00:14:10.079
+discussed max pooling detector gives out
+
+00:14:06.480 --> 00:14:11.920
+the strongest clue and this um K2S2 is
+
+00:14:10.079 --> 00:14:15.519
+very common. And it basically halves the
+
+00:14:11.920 --> 00:14:17.600
+dimension. It's nonover overlapping and
+
+00:14:15.519 --> 00:14:19.839
+we really prefer max pooling because of
+
+00:14:17.600 --> 00:14:22.720
+this uh preservation of the strongest
+
+00:14:19.839 --> 00:14:26.160
+feature. But average pooling is also
+
+00:14:22.720 --> 00:14:28.959
+possible. The detector is answering this
+
+00:14:26.160 --> 00:14:32.240
+question if u what is the general v of
+
+00:14:28.959 --> 00:14:35.440
+this neighborhood. That's how uh we
+
+00:14:32.240 --> 00:14:38.160
+handle uh the pooling. And then um let's
+
+00:14:35.440 --> 00:14:41.279
+talk about the the channels which is
+
+00:14:38.160 --> 00:14:44.800
+really the more nuanced part of this uh
+
+00:14:41.279 --> 00:14:47.760
+convolution neural networks. So far we
+
+00:14:44.800 --> 00:14:50.720
+discussed like one detector that uses
+
+00:14:47.760 --> 00:14:53.360
+one kernel but we can employ several
+
+00:14:50.720 --> 00:14:56.800
+detector that each one has a different
+
+00:14:53.360 --> 00:14:59.120
+expertise and they use different kernel
+
+00:14:56.800 --> 00:15:02.240
+and at the end they can report and maybe
+
+00:14:59.120 --> 00:15:07.399
+even talk to each other to combine their
+
+00:15:02.240 --> 00:15:07.399
+findings. Right? Let's demo that.
+
+00:15:11.920 --> 00:15:20.079
+Same deal. I'm going to make a a
+
+00:15:15.600 --> 00:15:23.199
+grayscale um random image, meaning that
+
+00:15:20.079 --> 00:15:26.000
+we have one channel and since we want it
+
+00:15:23.199 --> 00:15:28.720
+to be in a standard shape for our
+
+00:15:26.000 --> 00:15:30.959
+PyTorch convolution, uh it should have
+
+00:15:28.720 --> 00:15:34.160
+the batch size and the channel size and
+
+00:15:30.959 --> 00:15:37.839
+everything. So uh let's just stochastic
+
+00:15:34.160 --> 00:15:40.399
+rand uh we wanted to have one batch size
+
+00:15:37.839 --> 00:15:44.800
+say batch size of one uh one channel
+
+00:15:40.399 --> 00:15:47.600
+it's a grayscale and 28x 28 okay so now
+
+00:15:44.800 --> 00:15:51.440
+if I do the convolution over this guy
+
+00:15:47.600 --> 00:15:54.480
+and I instead of one detective I hire
+
+00:15:51.440 --> 00:15:58.000
+six detective right so in that case the
+
+00:15:54.480 --> 00:16:01.440
+in channel is one it's the raw grayscale
+
+00:15:58.000 --> 00:16:05.759
+now channel will be six let's use
+
+00:16:01.440 --> 00:16:07.920
+magnifying glass of size 5x5 and padding
+
+00:16:05.759 --> 00:16:11.360
+of two for example. So that's the
+
+00:16:07.920 --> 00:16:15.040
+convolution operation and we can apply
+
+00:16:11.360 --> 00:16:18.079
+this on the grayscale image now. So the
+
+00:16:15.040 --> 00:16:20.320
+y one will be kind of one over x gray
+
+00:16:18.079 --> 00:16:24.320
+and you see the output is a batch size
+
+00:16:20.320 --> 00:16:26.079
+of size one six channels of 28x 28 and
+
+00:16:24.320 --> 00:16:28.880
+these are basically the the features
+
+00:16:26.079 --> 00:16:31.040
+that this kernel basically will be
+
+00:16:28.880 --> 00:16:32.880
+applying on. So far this is of course
+
+00:16:31.040 --> 00:16:36.560
+unknown because we have to train this.
+
+00:16:32.880 --> 00:16:38.480
+We can also of course um change the the
+
+00:16:36.560 --> 00:16:40.800
+result of convolution and maybe we
+
+00:16:38.480 --> 00:16:44.800
+should do it actually in the second if
+
+00:16:40.800 --> 00:16:48.079
+we pass this result here that we have
+
+00:16:44.800 --> 00:16:51.120
+which is a six uh channel 28x 28 to the
+
+00:16:48.079 --> 00:16:55.759
+next layer of convolution. Let's say
+
+00:16:51.120 --> 00:16:59.120
+here I have inf size six right and out
+
+00:16:55.759 --> 00:17:02.160
+is 16. Basically we are asking each
+
+00:16:59.120 --> 00:17:05.199
+detector to to maybe cross talk for
+
+00:17:02.160 --> 00:17:07.919
+example if one of them finds a it's an
+
+00:17:05.199 --> 00:17:10.400
+expert in vertical edge finds a vertical
+
+00:17:07.919 --> 00:17:14.240
+edge in a like a neighborhood the other
+
+00:17:10.400 --> 00:17:16.959
+one who is a expert in horizontal edge
+
+00:17:14.240 --> 00:17:18.400
+and finds a horizontal edge in the same
+
+00:17:16.959 --> 00:17:20.400
+neighborhood when they talk to each
+
+00:17:18.400 --> 00:17:23.600
+other they can conclude that there is a
+
+00:17:20.400 --> 00:17:26.240
+corner here and that's a more complex
+
+00:17:23.600 --> 00:17:29.200
+feature. So that's why we are in a uh
+
+00:17:26.240 --> 00:17:32.320
+more complex kind of discussion here
+
+00:17:29.200 --> 00:17:34.559
+that now we can hire more experts uh
+
+00:17:32.320 --> 00:17:37.520
+with more complex expertise than before.
+
+00:17:34.559 --> 00:17:40.400
+So in this case for example we can add
+
+00:17:37.520 --> 00:17:42.960
+padding of size two. Let's just put it
+
+00:17:40.400 --> 00:17:45.360
+here. Let's see. And I kept this but of
+
+00:17:42.960 --> 00:17:48.000
+course you could change this also to
+
+00:17:45.360 --> 00:17:51.200
+reduce the size.
+
+00:17:48.000 --> 00:17:53.039
+Let's make a a lenet at some point was
+
+00:17:51.200 --> 00:17:55.600
+uh like a state-of-the-art really
+
+00:17:53.039 --> 00:17:58.640
+architecture. Here we will do with some
+
+00:17:55.600 --> 00:18:01.520
+modern flavor or batch normalization. I
+
+00:17:58.640 --> 00:18:04.960
+want to include the number of classes to
+
+00:18:01.520 --> 00:18:07.600
+make sure we have it for the output
+
+00:18:04.960 --> 00:18:10.880
+layers. Let's just simplify everything.
+
+00:18:07.600 --> 00:18:13.200
+So we need a base block. Let's just call
+
+00:18:10.880 --> 00:18:15.760
+it block one. That is a convolution
+
+00:18:13.200 --> 00:18:19.440
+block. uh it takes in the grayscale and
+
+00:18:15.760 --> 00:18:22.320
+output like six channels and in line
+
+00:18:19.440 --> 00:18:25.440
+kernel that was used here was a 5x5 and
+
+00:18:22.320 --> 00:18:28.720
+to keep the dimension we can choose
+
+00:18:25.440 --> 00:18:30.880
+padding of two okay so let's do it so
+
+00:18:28.720 --> 00:18:34.640
+conf one
+
+00:18:30.880 --> 00:18:37.440
+okay so this is uh ah I don't need this
+
+00:18:34.640 --> 00:18:41.760
+okay so uh the architecture here that we
+
+00:18:37.440 --> 00:18:44.640
+want to design have a first block of uh
+
+00:18:41.760 --> 00:18:47.840
+convolution then we We'll send this to a
+
+00:18:44.640 --> 00:18:50.799
+batch normalization and then of course
+
+00:18:47.840 --> 00:18:53.280
+uh activation here let relu for example
+
+00:18:50.799 --> 00:18:55.600
+and then we have to pull. So this is the
+
+00:18:53.280 --> 00:18:59.280
+first block and then let's make another
+
+00:18:55.600 --> 00:19:01.760
+block of this. So twice uh multiply by
+
+00:18:59.280 --> 00:19:04.320
+two. Then after that we're done with
+
+00:19:01.760 --> 00:19:08.000
+feature uh detection. We can flatten the
+
+00:19:04.320 --> 00:19:10.880
+output of this. So flatten and then
+
+00:19:08.000 --> 00:19:14.000
+three layers of uh MLP or fully
+
+00:19:10.880 --> 00:19:16.240
+connected MLP. So that's our plan. We
+
+00:19:14.000 --> 00:19:19.919
+want to do this. Okay. So that's the
+
+00:19:16.240 --> 00:19:24.080
+first block that returns six channels of
+
+00:19:19.919 --> 00:19:28.240
+the same image size. We need batch
+
+00:19:24.080 --> 00:19:32.640
+normalization this uh so uh you will see
+
+00:19:28.240 --> 00:19:34.480
+that uh I will have the relu
+
+00:19:32.640 --> 00:19:37.120
+later during the forward. So I don't
+
+00:19:34.480 --> 00:19:40.000
+need to specify it here. Okay. So we
+
+00:19:37.120 --> 00:19:43.360
+will keep the standard kernel size and
+
+00:19:40.000 --> 00:19:47.120
+stride and the second block takes in uh
+
+00:19:43.360 --> 00:19:50.799
+six channels output of this guy and
+
+00:19:47.120 --> 00:19:53.760
+returns 16 channels. Okay. So here uh
+
+00:19:50.799 --> 00:19:57.200
+padding if padding is zero uh this will
+
+00:19:53.760 --> 00:20:00.480
+shrink the the image. So um like I said
+
+00:19:57.200 --> 00:20:03.600
+this six channels now interact or cross
+
+00:20:00.480 --> 00:20:06.640
+talk meaning that in this uh layer the
+
+00:20:03.600 --> 00:20:10.240
+kernels are really three-dimensional a
+
+00:20:06.640 --> 00:20:12.799
+5x5 kernel and a six channel. So it's
+
+00:20:10.240 --> 00:20:14.880
+like a three-dimensional kernel. So we
+
+00:20:12.799 --> 00:20:17.039
+should be careful about how we are
+
+00:20:14.880 --> 00:20:20.960
+interpreting this. So they look across
+
+00:20:17.039 --> 00:20:23.360
+all six um input channels and
+
+00:20:20.960 --> 00:20:25.760
+simultaneously they're looking at all
+
+00:20:23.360 --> 00:20:27.840
+the six input channels and sum the
+
+00:20:25.760 --> 00:20:30.400
+result. This combines the simple feature
+
+00:20:27.840 --> 00:20:32.400
+from block one into a complex feature in
+
+00:20:30.400 --> 00:20:36.159
+this block two. Okay. Now let's do the
+
+00:20:32.400 --> 00:20:37.919
+max pooling. Same default. And then of
+
+00:20:36.159 --> 00:20:39.760
+course like I said I'm just making the
+
+00:20:37.919 --> 00:20:41.360
+blocks here. Later I will need them
+
+00:20:39.760 --> 00:20:46.080
+together in the forward. Then we need
+
+00:20:41.360 --> 00:20:48.320
+the MLP uh classifier head which will be
+
+00:20:46.080 --> 00:20:53.039
+three layers. So the first layer is
+
+00:20:48.320 --> 00:20:56.559
+basically flattening the 16x 5x5 size
+
+00:20:53.039 --> 00:21:00.080
+images and 120 hidden neuron. Then we
+
+00:20:56.559 --> 00:21:03.440
+pass this to the next 120 to 84 and then
+
+00:21:00.080 --> 00:21:05.840
+the last one which is 84 to the number
+
+00:21:03.440 --> 00:21:09.600
+of classes. So these are the logits that
+
+00:21:05.840 --> 00:21:12.320
+we want. Let's also call the
+
+00:21:09.600 --> 00:21:15.360
+initialization of the weight. We have to
+
+00:21:12.320 --> 00:21:17.760
+define the function. Of course, here we
+
+00:21:15.360 --> 00:21:21.600
+are using kiming normal. Uh we actually
+
+00:21:17.760 --> 00:21:24.320
+we can use uh this for both linear and
+
+00:21:21.600 --> 00:21:27.440
+nonlinear convolution. And here this is
+
+00:21:24.320 --> 00:21:30.080
+how we initialize the the weights. And
+
+00:21:27.440 --> 00:21:32.159
+um if bias is not initialized, we can do
+
+00:21:30.080 --> 00:21:34.320
+that too. Here I just put zero. Okay,
+
+00:21:32.159 --> 00:21:36.880
+let's write forward. The forward is
+
+00:21:34.320 --> 00:21:39.760
+basically taking in uh in the first
+
+00:21:36.880 --> 00:21:42.559
+block x and then bash norm and then
+
+00:21:39.760 --> 00:21:45.440
+notice that I'm using relu using f and
+
+00:21:42.559 --> 00:21:47.280
+then selfpool and then the next block
+
+00:21:45.440 --> 00:21:51.200
+basically same thing and then we can
+
+00:21:47.280 --> 00:21:54.240
+flatten we get a ufx that is flatten and
+
+00:21:51.200 --> 00:21:56.720
+then we can send it to the forward
+
+00:21:54.240 --> 00:22:00.919
+layers or the mlp head. This will return
+
+00:21:56.720 --> 00:22:00.919
+the logic. That's it.
+
+00:22:01.360 --> 00:22:08.240
+Okay. So uh I want to train uh both the
+
+00:22:04.880 --> 00:22:10.880
+MLP again and uh CNN and I want to
+
+00:22:08.240 --> 00:22:13.919
+compare them. So let's write a function
+
+00:22:10.880 --> 00:22:16.559
+that uh basically does the job for us.
+
+00:22:13.919 --> 00:22:18.159
+I'm still using the the same loader. So
+
+00:22:16.559 --> 00:22:20.960
+I need a train loader and validation
+
+00:22:18.159 --> 00:22:23.200
+loader. And I have to choose a epoch. Uh
+
+00:22:20.960 --> 00:22:26.320
+let's just go with 10. And then learning
+
+00:22:23.200 --> 00:22:29.039
+rate and the weight DK4 or optimizer
+
+00:22:26.320 --> 00:22:32.000
+which year I'm planning to use Adam. So
+
+00:22:29.039 --> 00:22:34.320
+with that uh let's do it. I want to
+
+00:22:32.000 --> 00:22:36.799
+specify my MLP config because if you
+
+00:22:34.320 --> 00:22:39.120
+remember we wrote it in a way that to
+
+00:22:36.799 --> 00:22:40.559
+come up with the best architecture here.
+
+00:22:39.120 --> 00:22:42.320
+Let's just pick up one of those
+
+00:22:40.559 --> 00:22:45.440
+architectures that work well. We don't
+
+00:22:42.320 --> 00:22:48.640
+need a configuration setup for the linet
+
+00:22:45.440 --> 00:22:51.600
+CNN. It's already there as default. Um
+
+00:22:48.640 --> 00:22:54.720
+but I'm going to make a config direct
+
+00:22:51.600 --> 00:22:56.640
+dictionary to basically iterate over it
+
+00:22:54.720 --> 00:22:59.840
+and train and then populate the
+
+00:22:56.640 --> 00:23:03.679
+histories. Okay. seller configs I need
+
+00:22:59.840 --> 00:23:06.240
+histories for both that later during the
+
+00:23:03.679 --> 00:23:09.280
+loop I will populate them with the
+
+00:23:06.240 --> 00:23:12.000
+history of each model and the criterion
+
+00:23:09.280 --> 00:23:16.480
+will be cross entropy for us and then
+
+00:23:12.000 --> 00:23:19.120
+here for each uh model let's just call
+
+00:23:16.480 --> 00:23:21.360
+this setup the model will uh will takes
+
+00:23:19.120 --> 00:23:24.000
+in the the name of the model and the
+
+00:23:21.360 --> 00:23:29.039
+setup we send it to the device here is
+
+00:23:24.000 --> 00:23:32.559
+the same optimizer for both and Then for
+
+00:23:29.039 --> 00:23:36.320
+each model let's just uh populate the
+
+00:23:32.559 --> 00:23:38.720
+accuracy and before training let's just
+
+00:23:36.320 --> 00:23:41.280
+return the number of parameters of each
+
+00:23:38.720 --> 00:23:43.280
+model. How can they fair depending on
+
+00:23:41.280 --> 00:23:47.760
+their size? So let's report the number
+
+00:23:43.280 --> 00:23:51.120
+of parameters. Okay. So we have MLP with
+
+00:23:47.760 --> 00:23:52.799
+135,000 parameters and uh CNN about
+
+00:23:51.120 --> 00:23:56.159
+62,000.
+
+00:23:52.799 --> 00:23:58.559
+CNN uh is using this weight sharing that
+
+00:23:56.159 --> 00:24:01.200
+we said the same kernel is reused across
+
+00:23:58.559 --> 00:24:03.120
+the entire image uh even despite that
+
+00:24:01.200 --> 00:24:05.600
+much less number of parameters it
+
+00:24:03.120 --> 00:24:08.080
+performs more complex spatial op
+
+00:24:05.600 --> 00:24:10.159
+operation as you will see. Okay, so
+
+00:24:08.080 --> 00:24:13.600
+let's go back to the training script.
+
+00:24:10.159 --> 00:24:15.440
+Um, so for epochs, so we want to train
+
+00:24:13.600 --> 00:24:17.600
+one epoch, uh, the function that we
+
+00:24:15.440 --> 00:24:19.760
+wrote from before and then evaluate and
+
+00:24:17.600 --> 00:24:21.679
+then append it to the history. And we
+
+00:24:19.760 --> 00:24:23.520
+can also print the progress. So we've
+
+00:24:21.679 --> 00:24:25.279
+done this before. I'm just going to
+
+00:24:23.520 --> 00:24:27.919
+repeat the same thing. So that's it.
+
+00:24:25.279 --> 00:24:30.960
+This is really the uh the script. I just
+
+00:24:27.919 --> 00:24:33.919
+need to fix this intention and that's uh
+
+00:24:30.960 --> 00:24:36.640
+otherwise uh all good. Okay, so this is
+
+00:24:33.919 --> 00:24:38.880
+the how we are running the training. So
+
+00:24:36.640 --> 00:24:42.080
+in the meantime, let's just write a few
+
+00:24:38.880 --> 00:24:44.640
+plotting scripts to investigate the
+
+00:24:42.080 --> 00:24:47.919
+learned features and do the comparison
+
+00:24:44.640 --> 00:24:50.720
+between the the training accuracy over
+
+00:24:47.919 --> 00:24:54.080
+the epoch. Um and then we can also check
+
+00:24:50.720 --> 00:24:56.240
+if the the networks are robust to uh
+
+00:24:54.080 --> 00:24:59.600
+translation meaning that if we move an
+
+00:24:56.240 --> 00:25:01.600
+object in an image uh we expect the
+
+00:24:59.600 --> 00:25:04.799
+model to give us the same classification
+
+00:25:01.600 --> 00:25:08.000
+result. Okay. So here is the result. As
+
+00:25:04.799 --> 00:25:11.440
+uh you can see we were expecting CNN to
+
+00:25:08.000 --> 00:25:14.480
+achieve a higher uh accuracy. But notice
+
+00:25:11.440 --> 00:25:17.440
+that it it can do it very very early on
+
+00:25:14.480 --> 00:25:20.799
+even though the number of uh parameters
+
+00:25:17.440 --> 00:25:23.760
+is much less. It has a higher capacity
+
+00:25:20.799 --> 00:25:26.000
+which is interesting and it's basically
+
+00:25:23.760 --> 00:25:28.799
+because of the fact that the inductive
+
+00:25:26.000 --> 00:25:32.080
+bias forces it to learn meaningful
+
+00:25:28.799 --> 00:25:34.720
+spatial features. Okay. And here is the
+
+00:25:32.080 --> 00:25:36.880
+next uh experiment where we are looking
+
+00:25:34.720 --> 00:25:38.640
+at this layer weights in the first
+
+00:25:36.880 --> 00:25:40.880
+layer. And as you can see and you've
+
+00:25:38.640 --> 00:25:42.960
+we've seen this before, the MLP first
+
+00:25:40.880 --> 00:25:46.159
+layer weights are really noisy global
+
+00:25:42.960 --> 00:25:49.039
+patterns. Uh but for CNN, we have the
+
+00:25:46.159 --> 00:25:51.279
+six structured local feature kernels
+
+00:25:49.039 --> 00:25:54.000
+that are finding this structured and
+
+00:25:51.279 --> 00:25:57.600
+local features. Here for example for
+
+00:25:54.000 --> 00:26:01.120
+this uh trouser image uh we see that how
+
+00:25:57.600 --> 00:26:03.679
+these features are um extracting what
+
+00:26:01.120 --> 00:26:06.240
+they are uh expert in which are really
+
+00:26:03.679 --> 00:26:09.279
+meaningful and shows clear structure
+
+00:26:06.240 --> 00:26:11.600
+like edges gradients corners uh while
+
+00:26:09.279 --> 00:26:14.400
+they are still local and here's a
+
+00:26:11.600 --> 00:26:16.880
+translation test where we are shifting
+
+00:26:14.400 --> 00:26:20.559
+the image a little bit and we see that
+
+00:26:16.880 --> 00:26:23.360
+here the MLP correctly identify this as
+
+00:26:20.559 --> 00:26:26.799
+shirt but with a small shift it
+
+00:26:23.360 --> 00:26:29.840
+misidentify it. Same with other examples
+
+00:26:26.799 --> 00:26:33.520
+too. That's that means that how brittle
+
+00:26:29.840 --> 00:26:36.480
+is MLP. Uh we are looking at uh CNN. We
+
+00:26:33.520 --> 00:26:40.000
+still see some uh misclassification but
+
+00:26:36.480 --> 00:26:43.200
+it's much rare. Uh and here for example
+
+00:26:40.000 --> 00:26:45.440
+you see that uh shifting the bag and
+
+00:26:43.200 --> 00:26:48.000
+trouser doesn't really break the CNN.
+
+00:26:45.440 --> 00:26:51.840
+Later we will see that uh we can do much
+
+00:26:48.000 --> 00:26:54.799
+more with CNN. We can improve the lenet
+
+00:26:51.840 --> 00:26:57.360
+architecture significantly with the
+
+00:26:54.799 --> 00:26:59.760
+updates that we will talk about and also
+
+00:26:57.360 --> 00:27:03.039
+we show that if we go for a deeper
+
+00:26:59.760 --> 00:27:05.919
+architecture we can achieve a very good
+
+00:27:03.039 --> 00:27:05.919
+performance. This

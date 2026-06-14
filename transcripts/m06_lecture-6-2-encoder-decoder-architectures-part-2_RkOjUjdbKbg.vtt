@@ -1,0 +1,1120 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:04.880
+Here
+
+00:00:01.600 --> 00:00:08.639
+we want to demonstrate three fundamental
+
+00:00:04.880 --> 00:00:12.880
+concept. First we show that PCA and
+
+00:00:08.639 --> 00:00:16.000
+linear autoenccoders are um equivalent
+
+00:00:12.880 --> 00:00:19.039
+and then we add the deep learning
+
+00:00:16.000 --> 00:00:21.840
+steroid to the linear autoenccoder and
+
+00:00:19.039 --> 00:00:24.000
+make a nonlinear version and see the
+
+00:00:21.840 --> 00:00:27.119
+improved performance.
+
+00:00:24.000 --> 00:00:28.800
+So let's start with the common way that
+
+00:00:27.119 --> 00:00:33.680
+we
+
+00:00:28.800 --> 00:00:37.840
+compute the principal components here. I
+
+00:00:33.680 --> 00:00:41.520
+assume that you remember this
+
+00:00:37.840 --> 00:00:44.079
+but as you know PCA finds the direction
+
+00:00:41.520 --> 00:00:47.760
+of maximum variance
+
+00:00:44.079 --> 00:00:50.879
+and projected data over these directions
+
+00:00:47.760 --> 00:00:52.559
+that are vectors of the coariance
+
+00:00:50.879 --> 00:00:55.920
+matrix.
+
+00:00:52.559 --> 00:00:58.079
+We use the top KG vectors and there are
+
+00:00:55.920 --> 00:01:00.480
+ways to
+
+00:00:58.079 --> 00:01:05.040
+choose K based on the amount of variance
+
+00:01:00.480 --> 00:01:07.840
+that the chosen components will explain.
+
+00:01:05.040 --> 00:01:12.960
+We discussed that PCA basically finds
+
+00:01:07.840 --> 00:01:16.560
+this projection W that has a rank of K
+
+00:01:12.960 --> 00:01:20.560
+and minimize this reconstruction error.
+
+00:01:16.560 --> 00:01:22.320
+Okay, so here is our PCA class
+
+00:01:20.560 --> 00:01:25.680
+basically
+
+00:01:22.320 --> 00:01:28.159
+centers the data to zero
+
+00:01:25.680 --> 00:01:29.840
+and then compute the singular value
+
+00:01:28.159 --> 00:01:33.759
+decomposition.
+
+00:01:29.840 --> 00:01:36.880
+If you don't remember SVD,
+
+00:01:33.759 --> 00:01:41.360
+please go ahead and review this. And
+
+00:01:36.880 --> 00:01:44.240
+then we extract the top K components
+
+00:01:41.360 --> 00:01:48.000
+or the vectors.
+
+00:01:44.240 --> 00:01:52.159
+So SVD basically rank all of these
+
+00:01:48.000 --> 00:01:55.200
+vectors based on the top again values.
+
+00:01:52.159 --> 00:01:58.479
+These already sorted. So it's enough to
+
+00:01:55.200 --> 00:02:00.960
+just choose the top K. Here I'm
+
+00:01:58.479 --> 00:02:04.079
+calculating the explained variance and
+
+00:02:00.960 --> 00:02:07.040
+later we want to compare it to the
+
+00:02:04.079 --> 00:02:10.080
+linear autoenccoder. And this is how we
+
+00:02:07.040 --> 00:02:14.160
+find the Z or the latent space. It's
+
+00:02:10.080 --> 00:02:17.840
+basically the projected X over these
+
+00:02:14.160 --> 00:02:19.840
+components and now it is in K dimension.
+
+00:02:17.840 --> 00:02:22.800
+We can decode it back using the
+
+00:02:19.840 --> 00:02:25.599
+transpose of the matrix that we found in
+
+00:02:22.800 --> 00:02:28.080
+the encoder. And as we discussed
+
+00:02:25.599 --> 00:02:31.040
+basically these are orthogonal vectors
+
+00:02:28.080 --> 00:02:32.879
+that correspond to a rotation and the
+
+00:02:31.040 --> 00:02:34.959
+inverse of a rotation matrix is
+
+00:02:32.879 --> 00:02:37.120
+basically the transpose of it. And
+
+00:02:34.959 --> 00:02:39.120
+finally we compute the reconstruction
+
+00:02:37.120 --> 00:02:42.319
+error which is the last that we
+
+00:02:39.120 --> 00:02:45.280
+minimize. Okay. So with that let's write
+
+00:02:42.319 --> 00:02:48.480
+the the linear autoenccoder.
+
+00:02:45.280 --> 00:02:50.640
+Basically instead of using SVD we'll use
+
+00:02:48.480 --> 00:02:52.400
+the gradient descent to find those
+
+00:02:50.640 --> 00:02:55.680
+subspaces.
+
+00:02:52.400 --> 00:02:59.840
+So I have class a linear autoenccoder
+
+00:02:55.680 --> 00:03:04.239
+and remember here we find the first set
+
+00:02:59.840 --> 00:03:06.800
+of weights that encodes the data to Z
+
+00:03:04.239 --> 00:03:08.959
+and the decoder is basically just a
+
+00:03:06.800 --> 00:03:11.519
+transpose of it. So we don't want to
+
+00:03:08.959 --> 00:03:13.280
+learn it twice. It's basically tied
+
+00:03:11.519 --> 00:03:17.120
+together. So let's call it a linear
+
+00:03:13.280 --> 00:03:19.040
+autoenccoder with tied weights. Okay. So
+
+00:03:17.120 --> 00:03:21.519
+we want to show that this linear out
+
+00:03:19.040 --> 00:03:25.040
+encoder with a MSE loss and this tide
+
+00:03:21.519 --> 00:03:28.239
+weights uh once converged it will span
+
+00:03:25.040 --> 00:03:30.799
+the same subspace as PCA. This is
+
+00:03:28.239 --> 00:03:33.920
+actually theoretically shown in this
+
+00:03:30.799 --> 00:03:37.040
+paper if you're interested by Baldi and
+
+00:03:33.920 --> 00:03:39.519
+Hornik back in 1989.
+
+00:03:37.040 --> 00:03:42.799
+But here we are doing it empirically to
+
+00:03:39.519 --> 00:03:46.480
+just show the results are the same. So
+
+00:03:42.799 --> 00:03:50.080
+the goal is to show that the span or the
+
+00:03:46.480 --> 00:03:52.959
+space of the Z is the same.
+
+00:03:50.080 --> 00:03:56.000
+So note that uh when I'm saying span
+
+00:03:52.959 --> 00:03:58.959
+means that that uh latent space can be
+
+00:03:56.000 --> 00:04:02.239
+can rotate. It is still the same space.
+
+00:03:58.959 --> 00:04:06.080
+Okay. So the weight can differ by
+
+00:04:02.239 --> 00:04:11.599
+rotation but the span stays the same.
+
+00:04:06.080 --> 00:04:15.840
+Okay. So let's define the init method.
+
+00:04:11.599 --> 00:04:18.400
+So let's uh define a weight matrix that
+
+00:04:15.840 --> 00:04:22.240
+basically works for both encoder and
+
+00:04:18.400 --> 00:04:26.720
+decoder. Here we are starting with a
+
+00:04:22.240 --> 00:04:28.880
+randomly initiated weight. Um ideally we
+
+00:04:26.720 --> 00:04:31.120
+want this to be
+
+00:04:28.880 --> 00:04:34.960
+small but let's just go start with this
+
+00:04:31.120 --> 00:04:37.520
+and then this the input dimension
+
+00:04:34.960 --> 00:04:40.080
+and the output dimension.
+
+00:04:37.520 --> 00:04:41.440
+Well the output is the same just latent
+
+00:04:40.080 --> 00:04:44.000
+dimension.
+
+00:04:41.440 --> 00:04:46.479
+Okay, so
+
+00:04:44.000 --> 00:04:49.040
+that's the initial parameters and
+
+00:04:46.479 --> 00:04:51.040
+dimensions. Let's write the encode
+
+00:04:49.040 --> 00:04:54.479
+method.
+
+00:04:51.040 --> 00:04:59.120
+Okay, so that's what we have. Encode is
+
+00:04:54.479 --> 00:05:01.919
+basically a linear projection of X by W.
+
+00:04:59.120 --> 00:05:05.840
+And then we have the decode which is
+
+00:05:01.919 --> 00:05:08.400
+basically the transpose or bring it back
+
+00:05:05.840 --> 00:05:12.400
+to the same angle. Then we have the
+
+00:05:08.400 --> 00:05:14.560
+forward which is the encode and
+
+00:05:12.400 --> 00:05:16.080
+the decode that gives us the
+
+00:05:14.560 --> 00:05:22.479
+reconstruction.
+
+00:05:16.080 --> 00:05:25.039
+Um let's also return Z. So
+
+00:05:22.479 --> 00:05:26.560
+in case we want to compare the the
+
+00:05:25.039 --> 00:05:28.240
+projection
+
+00:05:26.560 --> 00:05:31.199
+matrices
+
+00:05:28.240 --> 00:05:34.560
+that eventually deface
+
+00:05:31.199 --> 00:05:36.160
+spent by that encoder. Let's write this.
+
+00:05:34.560 --> 00:05:38.240
+Okay. Okay. So we need to do this with
+
+00:05:36.160 --> 00:05:40.960
+torch nugrad.
+
+00:05:38.240 --> 00:05:44.240
+Maybe we can
+
+00:05:40.960 --> 00:05:47.440
+add the decoder too. This way we can use
+
+00:05:44.240 --> 00:05:50.720
+this function for to reconstruction.
+
+00:05:47.440 --> 00:05:52.880
+Okay I think we should be good for now.
+
+00:05:50.720 --> 00:05:56.080
+So now what I want to do is to
+
+00:05:52.880 --> 00:05:59.919
+empirically show that PCA and this
+
+00:05:56.080 --> 00:06:03.520
+linear AE or autoenccoder learns learn
+
+00:05:59.919 --> 00:06:07.600
+the same subspace. So what we will do we
+
+00:06:03.520 --> 00:06:11.759
+will first create a dummy data set on a
+
+00:06:07.600 --> 00:06:13.680
+2D linear space that so maybe we can
+
+00:06:11.759 --> 00:06:17.199
+frame it this way we can create a data
+
+00:06:13.680 --> 00:06:21.280
+set that lives on a two two-dimensional
+
+00:06:17.199 --> 00:06:24.560
+linear manifold but this two-dimensional
+
+00:06:21.280 --> 00:06:27.600
+manifold lives in a 50dimensional space.
+
+00:06:24.560 --> 00:06:30.000
+So both PCA and linear AE should find
+
+00:06:27.600 --> 00:06:32.800
+this two two-dimensional manifold and
+
+00:06:30.000 --> 00:06:35.280
+then we will compare the learn subspaces
+
+00:06:32.800 --> 00:06:38.720
+between them. Okay. So let's generate
+
+00:06:35.280 --> 00:06:41.680
+this synthetic data like I said on 2D
+
+00:06:38.720 --> 00:06:46.080
+manifold but in a 50dimensional
+
+00:06:41.680 --> 00:06:47.919
+space. Okay. So the true dimension will
+
+00:06:46.080 --> 00:06:51.280
+be two
+
+00:06:47.919 --> 00:06:55.840
+and the dimension that they live in or
+
+00:06:51.280 --> 00:06:58.880
+the ambient dimension will be 50
+
+00:06:55.840 --> 00:07:04.479
+and let's define number of samples let's
+
+00:06:58.880 --> 00:07:06.800
+say th00and and then we will generate
+
+00:07:04.479 --> 00:07:12.160
+the data. So basically what I want to do
+
+00:07:06.800 --> 00:07:15.360
+is to generate X from a Z that we know
+
+00:07:12.160 --> 00:07:17.120
+the Z lives in this two dimension and
+
+00:07:15.360 --> 00:07:20.960
+then
+
+00:07:17.120 --> 00:07:23.199
+reject this to the to this 50 dimension.
+
+00:07:20.960 --> 00:07:26.560
+Then let's add some noise too. So that's
+
+00:07:23.199 --> 00:07:31.039
+what we will do. So for that we need to
+
+00:07:26.560 --> 00:07:33.199
+define this true W that we want to find.
+
+00:07:31.039 --> 00:07:35.759
+Let's see the suggestion.
+
+00:07:33.199 --> 00:07:38.720
+I mean we can go with this but I like to
+
+00:07:35.759 --> 00:07:45.199
+have this at the beginning. Then we have
+
+00:07:38.720 --> 00:07:48.880
+Z. So Z will so here. Yep. So Z lives in
+
+00:07:45.199 --> 00:07:50.720
+this true dimension right which is two
+
+00:07:48.880 --> 00:07:55.759
+here.
+
+00:07:50.720 --> 00:07:58.240
+Okay. So then X will be this and ambient
+
+00:07:55.759 --> 00:08:02.960
+dimension.
+
+00:07:58.240 --> 00:08:05.759
+It should work. Let's reduce this to
+
+00:08:02.960 --> 00:08:08.160
+make it easy for them to find. So that's
+
+00:08:05.759 --> 00:08:13.199
+the data
+
+00:08:08.160 --> 00:08:16.800
+and see. Okay. Now we can find the the
+
+00:08:13.199 --> 00:08:18.720
+reconstruction error with PCA and then
+
+00:08:16.800 --> 00:08:22.080
+compare we will compare it to the linear
+
+00:08:18.720 --> 00:08:24.800
+autoenccoder performance. Okay, for PCA
+
+00:08:22.080 --> 00:08:28.160
+it's enough to just call the class that
+
+00:08:24.800 --> 00:08:30.879
+we wrote. Um we need to define the
+
+00:08:28.160 --> 00:08:34.240
+components of course which here is the
+
+00:08:30.879 --> 00:08:37.839
+oh yeah it's the true dimension now it
+
+00:08:34.240 --> 00:08:40.320
+gets it okay so then we do the fit which
+
+00:08:37.839 --> 00:08:43.680
+is basically the SVD and picking the
+
+00:08:40.320 --> 00:08:48.240
+first two component then we can compute
+
+00:08:43.680 --> 00:08:50.800
+the PCA error right let's run this okay
+
+00:08:48.240 --> 00:08:52.959
+so and then let's do the linear
+
+00:08:50.800 --> 00:08:55.839
+autoenccoderm so we have a linear
+
+00:08:52.959 --> 00:08:58.000
+autoenccoder and
+
+00:08:55.839 --> 00:09:00.240
+Okay, then we need an optimizer of
+
+00:08:58.000 --> 00:09:04.880
+course to
+
+00:09:00.240 --> 00:09:08.000
+handle this. Let's just use Adam.
+
+00:09:04.880 --> 00:09:11.440
+What else? Oh, we need to center the
+
+00:09:08.000 --> 00:09:16.240
+data. So, let's just use the mean and
+
+00:09:11.440 --> 00:09:19.200
+remove this mean. Okay. And now we have
+
+00:09:16.240 --> 00:09:22.000
+we don't need to really normalize the
+
+00:09:19.200 --> 00:09:24.160
+variance. Let's just use this because we
+
+00:09:22.000 --> 00:09:27.200
+want to compare the variances and we
+
+00:09:24.160 --> 00:09:30.160
+didn't do it in PCA. So, so let's not
+
+00:09:27.200 --> 00:09:32.320
+call it centered normal dance. We are
+
+00:09:30.160 --> 00:09:36.240
+going to call it centered. Okay. So, now
+
+00:09:32.320 --> 00:09:39.760
+we have to train. So, the training loop
+
+00:09:36.240 --> 00:09:44.320
+will be first we need to initialize the
+
+00:09:39.760 --> 00:09:46.000
+losses then for epoch or old training
+
+00:09:44.320 --> 00:09:48.640
+loop.
+
+00:09:46.000 --> 00:09:52.480
+Then we append the loss. We can do a
+
+00:09:48.640 --> 00:09:55.760
+print and I want to plot the or print
+
+00:09:52.480 --> 00:09:59.279
+out the final last two.
+
+00:09:55.760 --> 00:10:03.040
+Okay. So let's run this.
+
+00:09:59.279 --> 00:10:06.320
+Okay. Something is wrong here. Um
+
+00:10:03.040 --> 00:10:09.360
+I think yeah the initialization that I
+
+00:10:06.320 --> 00:10:11.839
+discussed here this is too large. We
+
+00:10:09.360 --> 00:10:17.519
+have to reduce this. Okay. So let's try
+
+00:10:11.839 --> 00:10:20.480
+again. Yes. Now what's next?
+
+00:10:17.519 --> 00:10:24.399
+So we can also compare the the subspaces
+
+00:10:20.480 --> 00:10:27.839
+if they are the same. To do that we need
+
+00:10:24.399 --> 00:10:29.920
+to look at the projection matrices and
+
+00:10:27.839 --> 00:10:33.680
+then look at the distance between these
+
+00:10:29.920 --> 00:10:35.920
+two matrices. So a good distance here
+
+00:10:33.680 --> 00:10:38.640
+will be forbinous norm and I'm going to
+
+00:10:35.920 --> 00:10:41.680
+use that. So if you're not familiar with
+
+00:10:38.640 --> 00:10:43.920
+it you have to check it out.
+
+00:10:41.680 --> 00:10:46.880
+So to get the projection matrices we
+
+00:10:43.920 --> 00:10:50.640
+have to use the basis vectors that we
+
+00:10:46.880 --> 00:10:53.920
+found in PCA which was the components of
+
+00:10:50.640 --> 00:10:56.160
+the PCA and for the linear autoenccoder
+
+00:10:53.920 --> 00:10:58.800
+it was the weight matrix. So here for
+
+00:10:56.160 --> 00:11:02.560
+PCA for example we have the projection
+
+00:10:58.800 --> 00:11:05.839
+matrix this. So note that I didn't I'm
+
+00:11:02.560 --> 00:11:09.279
+not going to compare the bases in the
+
+00:11:05.839 --> 00:11:11.279
+latent in PCA and the linear rotic
+
+00:11:09.279 --> 00:11:14.160
+encoder. The reason is they are not
+
+00:11:11.279 --> 00:11:17.440
+unique and they can rotate. But here
+
+00:11:14.160 --> 00:11:18.800
+when we look at the projection matrix we
+
+00:11:17.440 --> 00:11:21.360
+don't have that problem and we can
+
+00:11:18.800 --> 00:11:26.399
+directly compare them. Okay. So with
+
+00:11:21.360 --> 00:11:28.800
+that this is the PC and for the AE
+
+00:11:26.399 --> 00:11:32.720
+we already wrote the method. So just
+
+00:11:28.800 --> 00:11:35.600
+going to call it and the distance or the
+
+00:11:32.720 --> 00:11:37.600
+subspace difference
+
+00:11:35.600 --> 00:11:41.360
+will be the
+
+00:11:37.600 --> 00:11:45.040
+norm of the difference. How large is the
+
+00:11:41.360 --> 00:11:48.000
+difference right and here note that yes
+
+00:11:45.040 --> 00:11:52.480
+we are getting the item and we can print
+
+00:11:48.000 --> 00:11:54.800
+this out. Okay let's compare this. Oh I
+
+00:11:52.480 --> 00:11:58.079
+forgot the transpose and note the
+
+00:11:54.800 --> 00:12:02.079
+difference is the is zero. So they're
+
+00:11:58.079 --> 00:12:06.800
+accurately the same. Okay, great. So we
+
+00:12:02.079 --> 00:12:10.160
+this is checked and we showed that um
+
+00:12:06.800 --> 00:12:13.440
+linear autoenccoder naturally discovers
+
+00:12:10.160 --> 00:12:17.360
+the PCA through this gradient descent
+
+00:12:13.440 --> 00:12:18.720
+and the training which is pretty
+
+00:12:17.360 --> 00:12:21.360
+important in the sense that the
+
+00:12:18.720 --> 00:12:25.279
+optimization finds the right
+
+00:12:21.360 --> 00:12:29.839
+representation in an automatic way or an
+
+00:12:25.279 --> 00:12:32.720
+end toend way. We didn't really use any
+
+00:12:29.839 --> 00:12:36.000
+math. we didn't use SVD or anything like
+
+00:12:32.720 --> 00:12:38.560
+that. Okay. So with that let us do the
+
+00:12:36.000 --> 00:12:40.480
+nonlinear autoenccoder and then we can
+
+00:12:38.560 --> 00:12:42.880
+compare the representation of the
+
+00:12:40.480 --> 00:12:44.399
+nonlinear autoenccoder with the linear
+
+00:12:42.880 --> 00:12:46.240
+autoenccoder
+
+00:12:44.399 --> 00:12:50.240
+and I want to show that this
+
+00:12:46.240 --> 00:12:54.320
+representation is much richer and we can
+
+00:12:50.240 --> 00:12:57.680
+find or represent much complicated
+
+00:12:54.320 --> 00:13:02.079
+manifolds. So to do that I'm going to
+
+00:12:57.680 --> 00:13:04.079
+use the data set uh Swiss roll data set
+
+00:13:02.079 --> 00:13:08.079
+from scalar.
+
+00:13:04.079 --> 00:13:11.200
+So if you haven't seen this is basically
+
+00:13:08.079 --> 00:13:13.760
+a data set that looks like this. It's a
+
+00:13:11.200 --> 00:13:16.959
+Swiss roll and it's difficult to find
+
+00:13:13.760 --> 00:13:21.120
+this with linear planes because of the
+
+00:13:16.959 --> 00:13:23.440
+shape. Also, we have points that are
+
+00:13:21.120 --> 00:13:26.000
+that may be close to each other but they
+
+00:13:23.440 --> 00:13:28.480
+are living very far from each other. For
+
+00:13:26.000 --> 00:13:31.519
+example, in this point and this point
+
+00:13:28.480 --> 00:13:33.760
+they may look close to each other but to
+
+00:13:31.519 --> 00:13:37.279
+get from here to here you have to
+
+00:13:33.760 --> 00:13:39.920
+traverse the whole manifold. Okay. So,
+
+00:13:37.279 --> 00:13:43.200
+it's important for us to separate them.
+
+00:13:39.920 --> 00:13:45.839
+So let's see how the auto includer can
+
+00:13:43.200 --> 00:13:48.880
+handle that. Okay, so that's the data
+
+00:13:45.839 --> 00:13:52.240
+set and I'm going to call the and I'm
+
+00:13:48.880 --> 00:13:54.079
+going to build the nonlinear
+
+00:13:52.240 --> 00:13:55.839
+encoder.
+
+00:13:54.079 --> 00:13:59.360
+Okay,
+
+00:13:55.839 --> 00:14:03.360
+so let's have the three layer hidden
+
+00:13:59.360 --> 00:14:06.720
+dimension that has 128, 64 and 32
+
+00:14:03.360 --> 00:14:10.480
+dimension and then with that we can
+
+00:14:06.720 --> 00:14:14.399
+build the encoder. So first want to
+
+00:14:10.480 --> 00:14:17.440
+specify the encoded layers can layers
+
+00:14:14.399 --> 00:14:21.120
+and the previous dimension is input
+
+00:14:17.440 --> 00:14:24.720
+dimension and now we can need the layers
+
+00:14:21.120 --> 00:14:29.440
+together. So for hidden in hidden
+
+00:14:24.720 --> 00:14:31.760
+dimensions we have we extend the coder
+
+00:14:29.440 --> 00:14:35.600
+layers.
+
+00:14:31.760 --> 00:14:39.519
+Okay. So then
+
+00:14:35.600 --> 00:14:39.519
+we have this we extend
+
+00:14:40.560 --> 00:14:48.240
+H linear with a rel we can add a let's
+
+00:14:44.800 --> 00:14:50.000
+just be fancy let's add a batch norm
+
+00:14:48.240 --> 00:14:55.440
+which requires heat and dimension of
+
+00:14:50.000 --> 00:14:58.240
+course okay so we still need to add one
+
+00:14:55.440 --> 00:15:00.320
+more right because we want to go to the
+
+00:14:58.240 --> 00:15:03.839
+latent so
+
+00:15:00.320 --> 00:15:07.279
+yes so for the decoder we just need to
+
+00:15:03.839 --> 00:15:09.920
+mirror the architecture Okay,
+
+00:15:07.279 --> 00:15:12.160
+just mirror the architecture that we
+
+00:15:09.920 --> 00:15:15.360
+built.
+
+00:15:12.160 --> 00:15:17.680
+Okay, let's see how we can do it. So
+
+00:15:15.360 --> 00:15:20.880
+decoder layers
+
+00:15:17.680 --> 00:15:25.199
+and priv
+
+00:15:20.880 --> 00:15:28.240
+is latent we start from latent
+
+00:15:25.199 --> 00:15:31.680
+and then for hidden
+
+00:15:28.240 --> 00:15:37.040
+dimension. Now we have to reverse
+
+00:15:31.680 --> 00:15:40.720
+right. So that's that extend
+
+00:15:37.040 --> 00:15:44.720
+stuff from pre hidden relu patch norm
+
+00:15:40.720 --> 00:15:47.040
+and then pre is hidden. Yes, good. And
+
+00:15:44.720 --> 00:15:50.000
+what's the reconstruction?
+
+00:15:47.040 --> 00:15:54.160
+So for the final reconstruction we have
+
+00:15:50.000 --> 00:15:56.959
+we have to append of course the n linear
+
+00:15:54.160 --> 00:15:59.040
+that will be our decoder. Now we still
+
+00:15:56.959 --> 00:16:03.600
+have to
+
+00:15:59.040 --> 00:16:06.480
+define the input and uh latent which is
+
+00:16:03.600 --> 00:16:08.000
+this that we defined at the beginning.
+
+00:16:06.480 --> 00:16:10.240
+Okay,
+
+00:16:08.000 --> 00:16:14.800
+latent
+
+00:16:10.240 --> 00:16:19.120
+good. So that's the construction. Now we
+
+00:16:14.800 --> 00:16:26.000
+can easily call encode
+
+00:16:19.120 --> 00:16:30.000
+takes in X and return Z self encoder.
+
+00:16:26.000 --> 00:16:33.519
+The decode will be similarly
+
+00:16:30.000 --> 00:16:36.160
+self but now it takes in C. We just need
+
+00:16:33.519 --> 00:16:39.759
+to do a forward.
+
+00:16:36.160 --> 00:16:41.360
+So reconstruction will be the decoded
+
+00:16:39.759 --> 00:16:43.360
+latent.
+
+00:16:41.360 --> 00:16:45.839
+And then we can return the
+
+00:16:43.360 --> 00:16:48.480
+reconstruction just like before and Z.
+
+00:16:45.839 --> 00:16:50.720
+That's our nonlinear autoenccoder. Now
+
+00:16:48.480 --> 00:16:54.399
+let's do the experiment. So we will
+
+00:16:50.720 --> 00:16:58.240
+generate a Swiss roll. We will sample
+
+00:16:54.399 --> 00:17:01.120
+like 2,000 times from the Swiss roll. Uh
+
+00:16:58.240 --> 00:17:03.600
+we have to inject some noise and the
+
+00:17:01.120 --> 00:17:05.839
+resultant will be a three-dimensional
+
+00:17:03.600 --> 00:17:07.919
+point cloud. Of course, we have to
+
+00:17:05.839 --> 00:17:10.559
+normalize the data for a stable
+
+00:17:07.919 --> 00:17:12.079
+training. In this case, because of the
+
+00:17:10.559 --> 00:17:15.600
+complexity of the data, we are looking
+
+00:17:12.079 --> 00:17:17.679
+at the spiral that is living in a three
+
+00:17:15.600 --> 00:17:20.400
+dimension. We are expecting a
+
+00:17:17.679 --> 00:17:25.280
+two-dimensional manifold to be found
+
+00:17:20.400 --> 00:17:27.679
+which is just a plane that is just
+
+00:17:25.280 --> 00:17:30.160
+spiraled. We will compare this
+
+00:17:27.679 --> 00:17:33.840
+nonlinearity encoder with PCA and the
+
+00:17:30.160 --> 00:17:36.000
+linear encoder that we wrote earlier.
+
+00:17:33.840 --> 00:17:38.640
+Okay, so I'm going to code this up
+
+00:17:36.000 --> 00:17:40.960
+because this is easy and I will show you
+
+00:17:38.640 --> 00:17:43.679
+the final result.
+
+00:17:40.960 --> 00:17:45.919
+So here is what I did. I have the
+
+00:17:43.679 --> 00:17:49.120
+samples taken from the Swiss roll
+
+00:17:45.919 --> 00:17:51.200
+normalization, some print statement. We
+
+00:17:49.120 --> 00:17:52.880
+do the PCA and then the linear
+
+00:17:51.200 --> 00:17:55.120
+autoenccoder. Of course, we have to
+
+00:17:52.880 --> 00:17:58.720
+train that and then the nonlinear
+
+00:17:55.120 --> 00:18:02.000
+autoenccoder. Here I reduce the
+
+00:17:58.720 --> 00:18:03.840
+dimension to somehow be fair because
+
+00:18:02.000 --> 00:18:06.559
+it's not really necessary to go that
+
+00:18:03.840 --> 00:18:10.640
+deep too. Okay. So we can visualize the
+
+00:18:06.559 --> 00:18:12.160
+Swiss roll both in 2D and 3D and the
+
+00:18:10.640 --> 00:18:14.240
+most important experiment is the
+
+00:18:12.160 --> 00:18:17.200
+reconstruction. We can also look at the
+
+00:18:14.240 --> 00:18:19.200
+training curves. Okay. So with that here
+
+00:18:17.200 --> 00:18:21.919
+is the result. Um so you see the
+
+00:18:19.200 --> 00:18:23.360
+reconstruction error of course for PCA
+
+00:18:21.919 --> 00:18:26.400
+and linear autoenccoder is the same
+
+00:18:23.360 --> 00:18:28.080
+because they are the same but here is
+
+00:18:26.400 --> 00:18:30.400
+the reconstruction error for the
+
+00:18:28.080 --> 00:18:32.320
+nonlinear autoenccoder which is
+
+00:18:30.400 --> 00:18:35.600
+extremely small compared to the other
+
+00:18:32.320 --> 00:18:38.480
+two and here is the result looking at 2D
+
+00:18:35.600 --> 00:18:40.640
+and then the 3D reconstruction you see
+
+00:18:38.480 --> 00:18:43.600
+that the PCA reconstruction is basically
+
+00:18:40.640 --> 00:18:45.840
+just giving us a much simplified
+
+00:18:43.600 --> 00:18:48.400
+reconstruction that's why it's very poor
+
+00:18:45.840 --> 00:18:51.520
+in the reconstruction error. As you see
+
+00:18:48.400 --> 00:18:53.280
+here and for the nonlinear autoenccoder
+
+00:18:51.520 --> 00:18:55.840
+you see the training is going down
+
+00:18:53.280 --> 00:18:58.320
+smoothly. That's how we show that the
+
+00:18:55.840 --> 00:19:02.640
+nonlinear autoenccoder
+
+00:18:58.320 --> 00:19:06.000
+can handle much more complicated
+
+00:19:02.640 --> 00:19:09.440
+data sets and then finds better
+
+00:19:06.000 --> 00:19:09.440
+representation of that.

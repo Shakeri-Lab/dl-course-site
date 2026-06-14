@@ -1,0 +1,2338 @@
+WEBVTT
+
+00:00:01.280 --> 00:00:09.519
+Okay, so let's continue from last time.
+
+00:00:04.720 --> 00:00:11.840
+Uh we discussed how we can minimize the
+
+00:00:09.519 --> 00:00:13.920
+loss function using the stochastic
+
+00:00:11.840 --> 00:00:15.599
+gradient descent algorithm. The
+
+00:00:13.920 --> 00:00:18.880
+algorithm
+
+00:00:15.599 --> 00:00:23.199
+uh gives updates for the weights or the
+
+00:00:18.880 --> 00:00:26.560
+parameters of our neural network. So to
+
+00:00:23.199 --> 00:00:29.920
+recap, given our previous or old
+
+00:00:26.560 --> 00:00:33.680
+parameters, the algorithm uh updates
+
+00:00:29.920 --> 00:00:38.480
+them using some learning rate. The
+
+00:00:33.680 --> 00:00:41.280
+steepest descent of um and or the
+
+00:00:38.480 --> 00:00:46.480
+fastest way that these parameters can be
+
+00:00:41.280 --> 00:00:49.440
+updated and give us for give us the next
+
+00:00:46.480 --> 00:00:53.680
+best parameters. So here we want to zoom
+
+00:00:49.440 --> 00:00:56.559
+in into this gradient term. Like I said,
+
+00:00:53.680 --> 00:00:59.600
+this gives us the
+
+00:00:56.559 --> 00:01:03.039
+uh the direction for the fastest
+
+00:00:59.600 --> 00:01:08.280
+decrease of our loss function.
+
+00:01:03.039 --> 00:01:08.280
+And to compute this, we need to compute
+
+00:01:09.280 --> 00:01:15.760
+how sensitive is L to changing each one
+
+00:01:13.680 --> 00:01:18.320
+of these parameters.
+
+00:01:15.760 --> 00:01:21.040
+So here I assumed I have 10 parameters
+
+00:01:18.320 --> 00:01:26.040
+in total which of course includes the
+
+00:01:21.040 --> 00:01:26.040
+weights and the bias parameters.
+
+00:01:26.080 --> 00:01:31.920
+So now the challenge is how to
+
+00:01:28.479 --> 00:01:33.840
+effectively compute these terms
+
+00:01:31.920 --> 00:01:36.880
+for potentially
+
+00:01:33.840 --> 00:01:39.759
+millions of parameters. Calculating this
+
+00:01:36.880 --> 00:01:42.880
+naively will be very expensive. Here we
+
+00:01:39.759 --> 00:01:45.520
+introduce back propagation that allows
+
+00:01:42.880 --> 00:01:48.399
+us to compute this weights very
+
+00:01:45.520 --> 00:01:52.720
+efficiently. So before going into the
+
+00:01:48.399 --> 00:01:56.399
+algorithm uh let's recall a basic rule
+
+00:01:52.720 --> 00:01:59.600
+in calculus the chain rule. So to do
+
+00:01:56.399 --> 00:02:03.040
+that let's consider with a very simple
+
+00:01:59.600 --> 00:02:08.239
+case of a single neuron that has an
+
+00:02:03.040 --> 00:02:12.560
+input u minus one or the activation from
+
+00:02:08.239 --> 00:02:16.640
+the previous layer that multiplies
+
+00:02:12.560 --> 00:02:21.840
+with the weight that connects that uh
+
+00:02:16.640 --> 00:02:25.440
+node to this. This will go through an
+
+00:02:21.840 --> 00:02:28.560
+activation function and
+
+00:02:25.440 --> 00:02:33.400
+uh after that that will give us the
+
+00:02:28.560 --> 00:02:33.400
+value of uh the neuron.
+
+00:02:33.680 --> 00:02:42.720
+Recall that we had the
+
+00:02:36.879 --> 00:02:47.840
+bias uh term here that I melted to uh to
+
+00:02:42.720 --> 00:02:51.280
+be inside this W's. So I'm going to uh
+
+00:02:47.840 --> 00:02:53.840
+just to simplify my notation I'm going
+
+00:02:51.280 --> 00:02:56.879
+to melt this into the weight which of
+
+00:02:53.840 --> 00:03:00.400
+course means that I'm adding a term one
+
+00:02:56.879 --> 00:03:04.000
+here to this vector. So with that uh
+
+00:03:00.400 --> 00:03:06.400
+setting aside now we have an input from
+
+00:03:04.000 --> 00:03:09.280
+the uh activation from the previous
+
+00:03:06.400 --> 00:03:11.440
+layer multiplied by the weight and then
+
+00:03:09.280 --> 00:03:14.319
+that goes through an activation
+
+00:03:11.440 --> 00:03:17.200
+function. Then after that we have the
+
+00:03:14.319 --> 00:03:20.159
+activation value for the neuron that we
+
+00:03:17.200 --> 00:03:23.360
+are focusing on. So to simplify the
+
+00:03:20.159 --> 00:03:26.400
+notation I'm going to introduce
+
+00:03:23.360 --> 00:03:29.680
+an intermediate
+
+00:03:26.400 --> 00:03:33.360
+variable here which is basically the
+
+00:03:29.680 --> 00:03:38.400
+value before the activation. So if I
+
+00:03:33.360 --> 00:03:41.920
+write it down, it's basically CL is the
+
+00:03:38.400 --> 00:03:44.879
+value of previous layer multiply by the
+
+00:03:41.920 --> 00:03:47.840
+weight
+
+00:03:44.879 --> 00:03:52.319
+and of course like I said the bias. So
+
+00:03:47.840 --> 00:03:54.560
+the value of my neuron is the value of
+
+00:03:52.319 --> 00:03:58.080
+ZL going through the activation
+
+00:03:54.560 --> 00:04:03.680
+function. So now let's assume this is
+
+00:03:58.080 --> 00:04:06.000
+the value uh of uh the output value of
+
+00:04:03.680 --> 00:04:09.040
+the neural network and uh we are
+
+00:04:06.000 --> 00:04:12.159
+comparing this against reference signal
+
+00:04:09.040 --> 00:04:17.519
+Y and we have a loss function. Let's
+
+00:04:12.159 --> 00:04:21.120
+assume that loss function is a simple um
+
+00:04:17.519 --> 00:04:23.919
+quadratic loss and we basically want to
+
+00:04:21.120 --> 00:04:28.120
+know how we can change the parameters of
+
+00:04:23.919 --> 00:04:28.120
+this neural network here
+
+00:04:28.880 --> 00:04:35.120
+in a way that minimizes the loss
+
+00:04:31.120 --> 00:04:36.800
+function. Right? So we want to compute
+
+00:04:35.120 --> 00:04:38.880
+the
+
+00:04:36.800 --> 00:04:41.600
+changes of the loss function with
+
+00:04:38.880 --> 00:04:46.240
+respect to changes of our parameter here
+
+00:04:41.600 --> 00:04:48.800
+which is W of L layer L.
+
+00:04:46.240 --> 00:04:50.400
+So let's write this down in a chain
+
+00:04:48.800 --> 00:04:54.080
+rule.
+
+00:04:50.400 --> 00:04:57.199
+So first we have the gradient of L. So
+
+00:04:54.080 --> 00:05:00.800
+first we are looking at the changes of L
+
+00:04:57.199 --> 00:05:05.199
+with respect to the changes of the value
+
+00:05:00.800 --> 00:05:09.280
+of neuron at the layer L
+
+00:05:05.199 --> 00:05:12.960
+and uh to write the the rest of the the
+
+00:05:09.280 --> 00:05:16.479
+chain I'm going to write the changes of
+
+00:05:12.960 --> 00:05:18.720
+the value of L with respect to the value
+
+00:05:16.479 --> 00:05:20.479
+of this intermediate variable that we
+
+00:05:18.720 --> 00:05:24.080
+introduced
+
+00:05:20.479 --> 00:05:28.080
+and then the val the changes of that
+
+00:05:24.080 --> 00:05:31.600
+intermediate variable with respect to
+
+00:05:28.080 --> 00:05:35.280
+the changes of W. So basically this
+
+00:05:31.600 --> 00:05:37.919
+means that if I change the knob if I
+
+00:05:35.280 --> 00:05:42.080
+have a knob here let's say if I change
+
+00:05:37.919 --> 00:05:45.360
+the knob for W how much it changes Z
+
+00:05:42.080 --> 00:05:48.479
+then with the changes in Z how much it
+
+00:05:45.360 --> 00:05:52.000
+changes A with the changes of A how much
+
+00:05:48.479 --> 00:05:54.400
+it changes L. So that's how we are
+
+00:05:52.000 --> 00:05:57.680
+basically changing turning the knob here
+
+00:05:54.400 --> 00:06:02.400
+for W and then that's how we are
+
+00:05:57.680 --> 00:06:07.199
+adjusting L and uh in this case our
+
+00:06:02.400 --> 00:06:10.319
+optimization want to of course reduce L
+
+00:06:07.199 --> 00:06:13.440
+and this basically give us the gradient.
+
+00:06:10.319 --> 00:06:17.039
+So at the end of the neural network when
+
+00:06:13.440 --> 00:06:18.800
+we are computing this loss um this error
+
+00:06:17.039 --> 00:06:20.960
+is obvious.
+
+00:06:18.800 --> 00:06:23.039
+So we want to tell the neural network
+
+00:06:20.960 --> 00:06:25.520
+and we want you to reduce this. So
+
+00:06:23.039 --> 00:06:27.440
+basically we want to blame the neural
+
+00:06:25.520 --> 00:06:29.919
+network in a way that the neural network
+
+00:06:27.440 --> 00:06:32.080
+does something to reduce this blame. So
+
+00:06:29.919 --> 00:06:34.639
+the blame is obvious. What's the blame
+
+00:06:32.080 --> 00:06:38.639
+at the end is basically zeror. But it's
+
+00:06:34.639 --> 00:06:41.280
+not that obvious what is the u amount of
+
+00:06:38.639 --> 00:06:43.840
+blame for different components of the
+
+00:06:41.280 --> 00:06:47.600
+neural network. For example, for a deep
+
+00:06:43.840 --> 00:06:50.800
+neural network, how much of the blame is
+
+00:06:47.600 --> 00:06:53.840
+uh for a weight at the early stages or
+
+00:06:50.800 --> 00:06:58.080
+early layers. So basically here what we
+
+00:06:53.840 --> 00:07:01.440
+are doing is to send or propagate this
+
+00:06:58.080 --> 00:07:03.039
+error or this blame backward when it's
+
+00:07:01.440 --> 00:07:06.240
+obvious
+
+00:07:03.039 --> 00:07:08.800
+to when it's not so obvious. And
+
+00:07:06.240 --> 00:07:12.479
+basically back propagation is doing
+
+00:07:08.800 --> 00:07:15.199
+this. it back propagates this error to
+
+00:07:12.479 --> 00:07:16.720
+the earlier components of the neural
+
+00:07:15.199 --> 00:07:21.520
+network.
+
+00:07:16.720 --> 00:07:23.039
+So let's formalize this game of play.
+
+00:07:21.520 --> 00:07:25.680
+Um
+
+00:07:23.039 --> 00:07:29.680
+let's start with defining um
+
+00:07:25.680 --> 00:07:35.599
+intermediate quantity and u this
+
+00:07:29.680 --> 00:07:38.479
+quantity delta for the layer L. So an
+
+00:07:35.599 --> 00:07:41.840
+arbitrary layer L is basically the blame
+
+00:07:38.479 --> 00:07:46.080
+signal for layer L. We define it
+
+00:07:41.840 --> 00:07:48.240
+basically to be to be this. This means
+
+00:07:46.080 --> 00:07:51.759
+how much
+
+00:07:48.240 --> 00:07:56.000
+did the pre-activation value of each
+
+00:07:51.759 --> 00:07:59.039
+neuron in layer L contribute to the
+
+00:07:56.000 --> 00:08:03.360
+final loss. So start let's start the
+
+00:07:59.039 --> 00:08:06.960
+game from the last layer. The last layer
+
+00:08:03.360 --> 00:08:10.800
+is L. Right? So the blame at that last
+
+00:08:06.960 --> 00:08:14.160
+layer is written this way. So for a
+
+00:08:10.800 --> 00:08:18.639
+simple squared error loss. So we can of
+
+00:08:14.160 --> 00:08:20.960
+course if you remember our notation here
+
+00:08:18.639 --> 00:08:25.440
+we can write this down using our chain
+
+00:08:20.960 --> 00:08:30.080
+rule and it will be like this multiply
+
+00:08:25.440 --> 00:08:34.159
+by the sensitivity of the um activation
+
+00:08:30.080 --> 00:08:37.279
+function. Right? So when we have vectors
+
+00:08:34.159 --> 00:08:39.279
+here so this will be a vector
+
+00:08:37.279 --> 00:08:42.159
+and this will be of course a vector
+
+00:08:39.279 --> 00:08:46.000
+because we have multiple weights that
+
+00:08:42.159 --> 00:08:50.160
+goes in uh I'm going to write this uh
+
+00:08:46.000 --> 00:08:52.800
+element wise um multiplication using
+
+00:08:50.160 --> 00:08:57.279
+this
+
+00:08:52.800 --> 00:09:00.720
+um notation which is known as
+
+00:08:57.279 --> 00:09:02.399
+uh multiplication. So we simplify
+
+00:09:00.720 --> 00:09:05.040
+because we know everything is vectors
+
+00:09:02.399 --> 00:09:09.040
+and matrices of course. So let's drop
+
+00:09:05.040 --> 00:09:12.959
+that arrows. In the case of the simple
+
+00:09:09.040 --> 00:09:15.680
+squared error loss if you remember this
+
+00:09:12.959 --> 00:09:18.720
+is basically
+
+00:09:15.680 --> 00:09:24.160
+this which is literally the the error
+
+00:09:18.720 --> 00:09:26.320
+right. So this blame at L is the error
+
+00:09:24.160 --> 00:09:28.800
+and um
+
+00:09:26.320 --> 00:09:32.480
+scale by the sensitivity of the
+
+00:09:28.800 --> 00:09:37.519
+activation function um to its input.
+
+00:09:32.480 --> 00:09:39.360
+Once we know the the blame layer L+1, we
+
+00:09:37.519 --> 00:09:43.440
+want to back propagate it to the
+
+00:09:39.360 --> 00:09:47.519
+previous layer layer L. So we have to
+
+00:09:43.440 --> 00:09:49.440
+multiply this blame by the weights that
+
+00:09:47.519 --> 00:09:51.519
+are connecting
+
+00:09:49.440 --> 00:09:54.240
+uh the two
+
+00:09:51.519 --> 00:09:58.720
+layers which is the weights at layer
+
+00:09:54.240 --> 00:10:01.920
+L+1. Like I said this is a vector. So uh
+
+00:09:58.720 --> 00:10:05.279
+we have to take care of this. Uh it's
+
+00:10:01.920 --> 00:10:09.440
+not a scalar anymore. So, so there is a
+
+00:10:05.279 --> 00:10:13.200
+a transpose here and of course there we
+
+00:10:09.440 --> 00:10:15.440
+are uh sending this to the our
+
+00:10:13.200 --> 00:10:18.720
+activation function.
+
+00:10:15.440 --> 00:10:21.920
+So what does this equation tell us?
+
+00:10:18.720 --> 00:10:26.399
+basically tell us that the blame at
+
+00:10:21.920 --> 00:10:28.880
+layer L is the blame from the next layer
+
+00:10:26.399 --> 00:10:33.760
+propagated backward through the
+
+00:10:28.880 --> 00:10:36.959
+transpose of the weight matrix WL + one
+
+00:10:33.760 --> 00:10:40.720
+and then scaled by the local gradient of
+
+00:10:36.959 --> 00:10:43.200
+the activation function at layer L. This
+
+00:10:40.720 --> 00:10:46.160
+allow allows us to move backward through
+
+00:10:43.200 --> 00:10:49.920
+the network from the last layer to the
+
+00:10:46.160 --> 00:10:52.800
+previous layer and so on so forth until
+
+00:10:49.920 --> 00:10:57.839
+the first layer. Okay. So now we have
+
+00:10:52.800 --> 00:11:00.800
+the blame signal for each layer.
+
+00:10:57.839 --> 00:11:02.959
+So the gradient for the weights of any
+
+00:11:00.800 --> 00:11:06.839
+layer L
+
+00:11:02.959 --> 00:11:06.839
+that we write this way
+
+00:11:07.680 --> 00:11:13.040
+uh can be found directly using this
+
+00:11:09.760 --> 00:11:16.560
+layers blame signal and the activation
+
+00:11:13.040 --> 00:11:20.320
+from the previous layer A L minus one
+
+00:11:16.560 --> 00:11:23.760
+and it's simply the product of these two
+
+00:11:20.320 --> 00:11:27.120
+and this basically gives us the update
+
+00:11:23.760 --> 00:11:29.440
+that is proportional to the blame signal
+
+00:11:27.120 --> 00:11:32.640
+and the signal that was flowing through
+
+00:11:29.440 --> 00:11:34.720
+the weights during the forward pass. So
+
+00:11:32.640 --> 00:11:38.959
+believe it or not, we are really done
+
+00:11:34.720 --> 00:11:41.519
+here because this uh recursion basically
+
+00:11:38.959 --> 00:11:44.800
+gives us the update for all the weights
+
+00:11:41.519 --> 00:11:48.079
+and of course biases.
+
+00:11:44.800 --> 00:11:53.200
+So that's the elegance of this matrix
+
+00:11:48.079 --> 00:11:55.839
+vector uh notation. For example, here I
+
+00:11:53.200 --> 00:12:00.320
+mean I could open this up and write it
+
+00:11:55.839 --> 00:12:04.880
+this way. Right? This is u uh component
+
+00:12:00.320 --> 00:12:10.480
+of this vector here is actually the uh
+
+00:12:04.880 --> 00:12:14.320
+blame signal for a neuron J in layer L.
+
+00:12:10.480 --> 00:12:17.600
+Right? that we could open this up in
+
+00:12:14.320 --> 00:12:20.800
+it's really summation form which is the
+
+00:12:17.600 --> 00:12:24.720
+equivalent form which gives us the
+
+00:12:20.800 --> 00:12:29.120
+weights uh the sum of the products of
+
+00:12:24.720 --> 00:12:32.320
+the weights and the
+
+00:12:29.120 --> 00:12:36.399
+lane from the future
+
+00:12:32.320 --> 00:12:38.880
+layer right so this is basically a sum
+
+00:12:36.399 --> 00:12:41.519
+multiplied by the sensitivity of the
+
+00:12:38.880 --> 00:12:44.079
+loss function so instead of writing this
+
+00:12:41.519 --> 00:12:47.200
+way, we wrote it this way. It's the
+
+00:12:44.079 --> 00:12:48.720
+same. So basically this matrix vector
+
+00:12:47.200 --> 00:12:51.839
+product
+
+00:12:48.720 --> 00:12:55.760
+um really performs all the necessary
+
+00:12:51.839 --> 00:12:58.959
+summations that we need. So let's um
+
+00:12:55.760 --> 00:13:02.240
+even we can look at another example. So
+
+00:12:58.959 --> 00:13:04.079
+I said that we compute the weight
+
+00:13:02.240 --> 00:13:08.240
+gradient
+
+00:13:04.079 --> 00:13:11.279
+and this here is an outer product that
+
+00:13:08.240 --> 00:13:14.560
+computes the entire gradient matrix in
+
+00:13:11.279 --> 00:13:16.160
+one step. How does it work? This is
+
+00:13:14.560 --> 00:13:20.160
+basically
+
+00:13:16.160 --> 00:13:23.920
+here this is a column vector let's say
+
+00:13:20.160 --> 00:13:28.240
+of shape m by one. I basically want to
+
+00:13:23.920 --> 00:13:29.760
+say that if I have a a layer with size
+
+00:13:28.240 --> 00:13:33.600
+N.
+
+00:13:29.760 --> 00:13:36.560
+So this is the layer L. If this one has
+
+00:13:33.600 --> 00:13:39.120
+M neuron, we want to back propagate the
+
+00:13:36.560 --> 00:13:40.399
+blame from this to the previous one,
+
+00:13:39.120 --> 00:13:43.839
+right?
+
+00:13:40.399 --> 00:13:46.320
+And we multiply by uh the blame signal
+
+00:13:43.839 --> 00:13:49.200
+from L
+
+00:13:46.320 --> 00:13:52.160
+by the activation
+
+00:13:49.200 --> 00:13:55.600
+uh vector from the previous layer L
+
+00:13:52.160 --> 00:14:00.480
+minus one. Uh that is also a column
+
+00:13:55.600 --> 00:14:04.000
+vector but of shape N by one
+
+00:14:00.480 --> 00:14:07.680
+and the transpose will be 1 by N. So
+
+00:14:04.000 --> 00:14:12.639
+this multiplication here gives us a
+
+00:14:07.680 --> 00:14:16.240
+matrix of m n which is uh basically
+
+00:14:12.639 --> 00:14:20.320
+matrix with entries like this. So this
+
+00:14:16.240 --> 00:14:24.079
+resultant m byn matrix is the exact same
+
+00:14:20.320 --> 00:14:25.920
+dimension as the weight matrix w l.
+
+00:14:24.079 --> 00:14:29.680
+Right?
+
+00:14:25.920 --> 00:14:32.639
+So the resultant m byn matrix
+
+00:14:29.680 --> 00:14:37.279
+has the exact same dimension as the
+
+00:14:32.639 --> 00:14:41.920
+weight matrix W at that layer. Right? So
+
+00:14:37.279 --> 00:14:46.160
+an element is basically the plane
+
+00:14:41.920 --> 00:14:48.800
+from neuron I multiplied by the
+
+00:14:46.160 --> 00:14:52.079
+activation
+
+00:14:48.800 --> 00:14:53.760
+from neuron J. So the beauty of this
+
+00:14:52.079 --> 00:14:56.959
+formulation
+
+00:14:53.760 --> 00:15:02.240
+is uh not just of course for cleaner
+
+00:14:56.959 --> 00:15:05.440
+rotation. Um it maps directly to how our
+
+00:15:02.240 --> 00:15:08.560
+modern harder like our GPUs perform
+
+00:15:05.440 --> 00:15:10.720
+computation. Matrix multiplications are
+
+00:15:08.560 --> 00:15:13.519
+highly parallelizable
+
+00:15:10.720 --> 00:15:17.040
+making this back propagation algorithm
+
+00:15:13.519 --> 00:15:19.519
+incredibly efficient on a large scale.
+
+00:15:17.040 --> 00:15:22.399
+This two equation
+
+00:15:19.519 --> 00:15:25.360
+describe the learning process for a
+
+00:15:22.399 --> 00:15:29.839
+simple network with a handful of neurons
+
+00:15:25.360 --> 00:15:32.560
+and also the same equations describe the
+
+00:15:29.839 --> 00:15:35.760
+learning for a massive foundation model
+
+00:15:32.560 --> 00:15:37.600
+with billions of parameters.
+
+00:15:35.760 --> 00:15:39.760
+Like I said, the logic of pro
+
+00:15:37.600 --> 00:15:42.720
+propagating this blame remains
+
+00:15:39.760 --> 00:15:46.720
+identical. Only the sizes of the
+
+00:15:42.720 --> 00:15:50.560
+matrices really change. So let's uh look
+
+00:15:46.720 --> 00:15:52.639
+at what does this algorithm do. It
+
+00:15:50.560 --> 00:15:58.000
+basically
+
+00:15:52.639 --> 00:16:01.120
+u just a g chain rule that compute the
+
+00:15:58.000 --> 00:16:04.079
+gradients efficiently. It works in two
+
+00:16:01.120 --> 00:16:09.680
+passes. There is a forward pass that
+
+00:16:04.079 --> 00:16:12.079
+computes the activations and uh store
+
+00:16:09.680 --> 00:16:16.720
+the intermediate values. There is a
+
+00:16:12.079 --> 00:16:19.519
+backward pass that compute gradients by
+
+00:16:16.720 --> 00:16:21.759
+propagating errors backward. That means
+
+00:16:19.519 --> 00:16:25.120
+that it computes all the gradients in
+
+00:16:21.759 --> 00:16:27.680
+one backward pass and it reuses the
+
+00:16:25.120 --> 00:16:30.399
+intermediate computation
+
+00:16:27.680 --> 00:16:34.680
+and also of course it exploits the
+
+00:16:30.399 --> 00:16:34.680
+structure of neural networks.
+
+00:16:35.440 --> 00:16:41.680
+The error signal delta L
+
+00:16:39.279 --> 00:16:45.360
+basically summarizes how much each
+
+00:16:41.680 --> 00:16:48.560
+neuron contributes to the overall loss
+
+00:16:45.360 --> 00:16:52.720
+and the whole process releasing
+
+00:16:48.560 --> 00:16:55.440
+uh uh the complexities in O of N. If you
+
+00:16:52.720 --> 00:16:59.199
+remember N is the number of parameters
+
+00:16:55.440 --> 00:17:01.920
+of the neural network. So it linearly
+
+00:16:59.199 --> 00:17:05.600
+scales with the number of parameters.
+
+00:17:01.920 --> 00:17:10.319
+Okay, so that's it really. we have
+
+00:17:05.600 --> 00:17:14.959
+everything uh we need. Um so now we can
+
+00:17:10.319 --> 00:17:18.880
+zoom in into techniques and how we can
+
+00:17:14.959 --> 00:17:21.520
+do this um training in a way that gives
+
+00:17:18.880 --> 00:17:23.039
+us the best result for our learning
+
+00:17:21.520 --> 00:17:25.600
+problem.
+
+00:17:23.039 --> 00:17:30.480
+So one obvious thing that maybe it's
+
+00:17:25.600 --> 00:17:34.000
+evident from here is uh the importance
+
+00:17:30.480 --> 00:17:40.240
+of the activation function right here
+
+00:17:34.000 --> 00:17:43.280
+this uh sigma prime of CL basically tell
+
+00:17:40.240 --> 00:17:46.400
+us the sensitivity of this activation
+
+00:17:43.280 --> 00:17:49.360
+function right how sensitive it is to
+
+00:17:46.400 --> 00:17:52.799
+the value and the changes of these
+
+00:17:49.360 --> 00:17:57.679
+values in intermediate layers
+
+00:17:52.799 --> 00:18:00.720
+In other word, it's like a gate that
+
+00:17:57.679 --> 00:18:03.840
+control how much gradient is allowed to
+
+00:18:00.720 --> 00:18:07.200
+flow backward through each neuron. So
+
+00:18:03.840 --> 00:18:10.080
+the value of this derivative
+
+00:18:07.200 --> 00:18:14.559
+um somehow determines if the gate is
+
+00:18:10.080 --> 00:18:16.720
+open, closed or somewhere in between.
+
+00:18:14.559 --> 00:18:19.440
+And this gating mechanism is critical
+
+00:18:16.720 --> 00:18:22.640
+for understanding why some activation
+
+00:18:19.440 --> 00:18:26.080
+functions are preferred over others in
+
+00:18:22.640 --> 00:18:28.880
+deep networks. For a long time, a common
+
+00:18:26.080 --> 00:18:31.919
+activation function was a sigmoid
+
+00:18:28.880 --> 00:18:36.160
+function that basically
+
+00:18:31.919 --> 00:18:41.760
+uh it squishes all real values into a
+
+00:18:36.160 --> 00:18:44.160
+range of 01. Uh you can imagine the the
+
+00:18:41.760 --> 00:18:45.679
+plot and it's fairly easy. It's
+
+00:18:44.160 --> 00:18:48.240
+basically
+
+00:18:45.679 --> 00:18:52.000
+a function like this that is between 0
+
+00:18:48.240 --> 00:18:54.559
+and one. And the important thing here is
+
+00:18:52.000 --> 00:18:58.799
+the derivative of this function takes
+
+00:18:54.559 --> 00:19:04.640
+its maximum value uh when it's uh when z
+
+00:18:58.799 --> 00:19:06.240
+is zero. And this maximum value at z0 is
+
+00:19:04.640 --> 00:19:09.679
+0.25.
+
+00:19:06.240 --> 00:19:14.160
+So it's always uh less than that in
+
+00:19:09.679 --> 00:19:18.720
+other points. And when the input uh is
+
+00:19:14.160 --> 00:19:21.200
+farther from zero uh to the h direction
+
+00:19:18.720 --> 00:19:23.919
+it actually the sensitivity becomes
+
+00:19:21.200 --> 00:19:27.919
+zero. So what does this mean? This means
+
+00:19:23.919 --> 00:19:31.360
+the sigmoid gate is at best only
+
+00:19:27.919 --> 00:19:35.760
+partially open and is often nearly
+
+00:19:31.360 --> 00:19:37.840
+closed. So in a deep network uh these
+
+00:19:35.760 --> 00:19:40.480
+small derivative
+
+00:19:37.840 --> 00:19:42.960
+um that are multiplied together each
+
+00:19:40.480 --> 00:19:45.120
+layer if you remember from the chain
+
+00:19:42.960 --> 00:19:47.200
+rule
+
+00:19:45.120 --> 00:19:50.400
+this causes the gradient to shrink
+
+00:19:47.200 --> 00:19:52.880
+exponentially as it flows backward
+
+00:19:50.400 --> 00:19:56.559
+a famous problem that is known as
+
+00:19:52.880 --> 00:19:59.360
+vanishing vanishing gradient.
+
+00:19:56.559 --> 00:20:03.679
+This makes the the signal the gradient
+
+00:19:59.360 --> 00:20:07.840
+signal that comes from the uh last layer
+
+00:20:03.679 --> 00:20:10.880
+to be very weak and it it cannot update
+
+00:20:07.840 --> 00:20:13.600
+basically the early layer efficiently.
+
+00:20:10.880 --> 00:20:16.480
+You already know the other option that
+
+00:20:13.600 --> 00:20:21.600
+we looked at and it's the rectified
+
+00:20:16.480 --> 00:20:25.039
+linear unit or in short relu. So railway
+
+00:20:21.600 --> 00:20:28.080
+is basically it takes the maximum of the
+
+00:20:25.039 --> 00:20:31.919
+signal or zero. It means that whenever
+
+00:20:28.080 --> 00:20:34.720
+the signal is negative it uh basically
+
+00:20:31.919 --> 00:20:39.760
+returns zero and when it's positive it
+
+00:20:34.720 --> 00:20:41.840
+will return the the value of the signal.
+
+00:20:39.760 --> 00:20:44.559
+This is basically
+
+00:20:41.840 --> 00:20:48.240
+so what will be the derivative of this
+
+00:20:44.559 --> 00:20:51.039
+function? We can write it this way.
+
+00:20:48.240 --> 00:20:54.960
+So notice that I said the derivative is
+
+00:20:51.039 --> 00:20:56.960
+zero at zero which is not really true
+
+00:20:54.960 --> 00:20:59.440
+because it's not uh differentiable at
+
+00:20:56.960 --> 00:21:03.120
+that point. But we really don't care
+
+00:20:59.440 --> 00:21:06.400
+because the probability of uh falling
+
+00:21:03.120 --> 00:21:10.320
+the value of Z falling at exactly zero
+
+00:21:06.400 --> 00:21:14.559
+is almost uh almost zero. So that's why
+
+00:21:10.320 --> 00:21:18.559
+we just uh correct that uh issue and we
+
+00:21:14.559 --> 00:21:20.400
+just put zero here. I mean if even if we
+
+00:21:18.559 --> 00:21:24.320
+had this
+
+00:21:20.400 --> 00:21:26.880
+if we u push that probability uh to be
+
+00:21:24.320 --> 00:21:30.559
+one at zero doesn't really matter like I
+
+00:21:26.880 --> 00:21:34.000
+said because it's very improbable to for
+
+00:21:30.559 --> 00:21:37.039
+Z to fall exactly at zero. So the
+
+00:21:34.000 --> 00:21:42.799
+behavior of this uh re gate is very
+
+00:21:37.039 --> 00:21:46.240
+simple. it's either fully open for value
+
+00:21:42.799 --> 00:21:50.240
+uh Z that is positive or it's fully
+
+00:21:46.240 --> 00:21:52.640
+closed. So the consequence is if a
+
+00:21:50.240 --> 00:21:54.400
+neuron was active during the forward
+
+00:21:52.640 --> 00:21:57.440
+pass
+
+00:21:54.400 --> 00:22:00.559
+in other word the value was positive
+
+00:21:57.440 --> 00:22:03.120
+the gradient pass through it unchanged
+
+00:22:00.559 --> 00:22:05.360
+during back propagation
+
+00:22:03.120 --> 00:22:06.880
+uh because of the multiplication by one
+
+00:22:05.360 --> 00:22:09.600
+right
+
+00:22:06.880 --> 00:22:11.919
+and this allows the error signal to
+
+00:22:09.600 --> 00:22:13.520
+travel back through many layers without
+
+00:22:11.919 --> 00:22:17.039
+diminishing
+
+00:22:13.520 --> 00:22:20.559
+it acts like a gradient superighway
+
+00:22:17.039 --> 00:22:23.120
+And um this is a reliable gradient flow
+
+00:22:20.559 --> 00:22:27.280
+and the reason is primary because of the
+
+00:22:23.120 --> 00:22:29.919
+relu and other variants of relu that
+
+00:22:27.280 --> 00:22:32.880
+basically defi is that are mostly
+
+00:22:29.919 --> 00:22:36.159
+default choice for most deep neural
+
+00:22:32.880 --> 00:22:37.840
+networks. So let's continue on this uh
+
+00:22:36.159 --> 00:22:40.799
+conversation.
+
+00:22:37.840 --> 00:22:42.880
+uh we discussed the importance of this
+
+00:22:40.799 --> 00:22:46.640
+activation function and its sensitivity
+
+00:22:42.880 --> 00:22:50.000
+in allowing for the gradients to go
+
+00:22:46.640 --> 00:22:54.000
+deeper in the neural network. And uh
+
+00:22:50.000 --> 00:22:57.520
+there are many other uh uh techniques
+
+00:22:54.000 --> 00:23:00.720
+that help us uh do a better training of
+
+00:22:57.520 --> 00:23:04.720
+neural network. And uh making sure this
+
+00:23:00.720 --> 00:23:08.480
+uh forward and backward pass uh will
+
+00:23:04.720 --> 00:23:11.600
+give us the best result for the specific
+
+00:23:08.480 --> 00:23:14.559
+data that we are dealing with. and the
+
+00:23:11.600 --> 00:23:17.679
+amount of information in that data that
+
+00:23:14.559 --> 00:23:20.480
+we want to pass forward and the amount
+
+00:23:17.679 --> 00:23:22.960
+of information of the error that we are
+
+00:23:20.480 --> 00:23:26.000
+receiving from the supervision signal
+
+00:23:22.960 --> 00:23:31.440
+backward. So this forward and backward
+
+00:23:26.000 --> 00:23:36.880
+passes we want to make sure that uh we
+
+00:23:31.440 --> 00:23:40.000
+uh are controlling this uh signals
+
+00:23:36.880 --> 00:23:43.120
+uh in both ways in a way that we can
+
+00:23:40.000 --> 00:23:46.480
+reach deeper in the network from both
+
+00:23:43.120 --> 00:23:48.960
+sides. So for example, one thing that we
+
+00:23:46.480 --> 00:23:51.280
+really didn't discuss much but we saw
+
+00:23:48.960 --> 00:23:54.080
+its importance
+
+00:23:51.280 --> 00:23:58.320
+uh in the stoastic gradient descent
+
+00:23:54.080 --> 00:24:00.960
+lecture is how to initialize the weight
+
+00:23:58.320 --> 00:24:04.000
+where to start our search in this
+
+00:24:00.960 --> 00:24:09.360
+gradient surface
+
+00:24:04.000 --> 00:24:11.679
+and how to find the uh optimum point
+
+00:24:09.360 --> 00:24:14.240
+from an initial point. how to set this
+
+00:24:11.679 --> 00:24:18.480
+initial point in a way that gives us the
+
+00:24:14.240 --> 00:24:22.320
+best uh basically promise for success.
+
+00:24:18.480 --> 00:24:26.000
+So, so far we just put an initial weight
+
+00:24:22.320 --> 00:24:30.000
+to be random, right? So, for example,
+
+00:24:26.000 --> 00:24:33.919
+some uh very small value scaled by a
+
+00:24:30.000 --> 00:24:37.760
+random scaling factor, right?
+
+00:24:33.919 --> 00:24:41.039
+So, this way we uh prevent the weights
+
+00:24:37.760 --> 00:24:43.919
+from being too large, right? So like I
+
+00:24:41.039 --> 00:24:46.799
+said a neural network is a pipeline of
+
+00:24:43.919 --> 00:24:48.880
+sequential computation
+
+00:24:46.799 --> 00:24:51.120
+uh signal
+
+00:24:48.880 --> 00:24:54.640
+which in the forward pass is the
+
+00:24:51.120 --> 00:24:56.480
+activations and in the backward pass are
+
+00:24:54.640 --> 00:24:58.720
+the gradients.
+
+00:24:56.480 --> 00:25:00.559
+Uh the signal travel through this
+
+00:24:58.720 --> 00:25:03.760
+pipeline.
+
+00:25:00.559 --> 00:25:07.600
+The variance of this signal uh we can
+
+00:25:03.760 --> 00:25:11.200
+think of it like the energy of it.
+
+00:25:07.600 --> 00:25:14.400
+It's important to control how it flows
+
+00:25:11.200 --> 00:25:16.640
+uh in this two direction.
+
+00:25:14.400 --> 00:25:19.600
+If the variance increases layer by
+
+00:25:16.640 --> 00:25:23.440
+layer, the signal can grow exponentially
+
+00:25:19.600 --> 00:25:26.320
+until it becomes uh enormous
+
+00:25:23.440 --> 00:25:29.360
+uh or in your Python languages uh it
+
+00:25:26.320 --> 00:25:31.919
+becomes nans.
+
+00:25:29.360 --> 00:25:35.120
+And this basically leads to exploding
+
+00:25:31.919 --> 00:25:39.120
+gradients. This exploding gradients uh
+
+00:25:35.120 --> 00:25:40.799
+renders a useless model.
+
+00:25:39.120 --> 00:25:43.760
+On the other hand, if the variance
+
+00:25:40.799 --> 00:25:46.320
+decreases layer by layer, the signal
+
+00:25:43.760 --> 00:25:49.039
+then shrinks exponentially until it
+
+00:25:46.320 --> 00:25:51.360
+becomes virtually zero.
+
+00:25:49.039 --> 00:25:54.480
+Uh this again leads to vanishing
+
+00:25:51.360 --> 00:25:58.080
+gradients where the early layers of the
+
+00:25:54.480 --> 00:26:01.279
+network receives no learning signal and
+
+00:25:58.080 --> 00:26:06.240
+their weights are never updated. So
+
+00:26:01.279 --> 00:26:10.000
+let's uh think about ways to start this
+
+00:26:06.240 --> 00:26:15.120
+strategy from a good point. So what is a
+
+00:26:10.000 --> 00:26:19.440
+good point? Um one measure is we want to
+
+00:26:15.120 --> 00:26:22.000
+um uh somehow keep the variance of both
+
+00:26:19.440 --> 00:26:23.520
+the activations and the back propagated
+
+00:26:22.000 --> 00:26:26.240
+gradients.
+
+00:26:23.520 --> 00:26:28.400
+So this is a good rule of thumb right we
+
+00:26:26.240 --> 00:26:31.679
+can at least initialize the the weights
+
+00:26:28.400 --> 00:26:35.200
+in a way that we ensure the variance at
+
+00:26:31.679 --> 00:26:39.159
+the beginning is constant. So let's zoom
+
+00:26:35.200 --> 00:26:39.159
+zoom in into this
+
+00:26:39.200 --> 00:26:46.720
+to uh analyze the variance of
+
+00:26:44.080 --> 00:26:50.559
+single neurons pre-activation
+
+00:26:46.720 --> 00:26:54.960
+value or z. We can basically write it
+
+00:26:50.559 --> 00:26:56.799
+this way. So Z as you remember is the
+
+00:26:54.960 --> 00:26:59.039
+sum of
+
+00:26:56.799 --> 00:27:04.960
+all of these
+
+00:26:59.039 --> 00:27:07.039
+U inputs X I weighted by uh WIS. So at
+
+00:27:04.960 --> 00:27:11.440
+the beginning we assume these two are
+
+00:27:07.039 --> 00:27:13.840
+independent and identically distributed.
+
+00:27:11.440 --> 00:27:15.679
+It's a reasonable assumption at the
+
+00:27:13.840 --> 00:27:18.720
+beginning because we haven't done
+
+00:27:15.679 --> 00:27:21.840
+anything yet. So we choose them in a way
+
+00:27:18.720 --> 00:27:25.360
+that for example this independence
+
+00:27:21.840 --> 00:27:29.679
+happen and this pure random will give us
+
+00:27:25.360 --> 00:27:32.880
+that and then we uh scale the input
+
+00:27:29.679 --> 00:27:36.559
+input data for example to be uh to have
+
+00:27:32.880 --> 00:27:39.440
+a mean zero and we can choose the the
+
+00:27:36.559 --> 00:27:43.200
+initial weight to have mean zero too.
+
+00:27:39.440 --> 00:27:46.000
+The scaled input data uh can also have
+
+00:27:43.200 --> 00:27:48.080
+variance zero because that's how we are
+
+00:27:46.000 --> 00:27:51.600
+dealing with our data prep-process our
+
+00:27:48.080 --> 00:27:54.559
+data before feeding to the network
+
+00:27:51.600 --> 00:27:57.600
+and here we want to choose the variance
+
+00:27:54.559 --> 00:28:01.200
+of W. So now let's look at the variance
+
+00:27:57.600 --> 00:28:03.840
+of Z given these two choice right. So
+
+00:28:01.200 --> 00:28:08.240
+the variance of Z can be written this
+
+00:28:03.840 --> 00:28:10.240
+way like I said because all of this
+
+00:28:08.240 --> 00:28:13.279
+nice independence
+
+00:28:10.240 --> 00:28:17.840
+the beginning which basically means that
+
+00:28:13.279 --> 00:28:20.720
+the variance of Z equals the number of
+
+00:28:17.840 --> 00:28:25.200
+uh weights or parameters
+
+00:28:20.720 --> 00:28:28.880
+and variance of W and variance of X. We
+
+00:28:25.200 --> 00:28:31.679
+know the variance of X is one. And this
+
+00:28:28.880 --> 00:28:37.200
+basically means that to have a variance
+
+00:28:31.679 --> 00:28:39.919
+of Z to be one, we it's enough to have a
+
+00:28:37.200 --> 00:28:43.200
+a weight distribution that has an
+
+00:28:39.919 --> 00:28:46.399
+variance of 1 N. Right?
+
+00:28:43.200 --> 00:28:50.399
+So this was for the input when we have
+
+00:28:46.399 --> 00:28:55.279
+an input with mean zero and V variance
+
+00:28:50.399 --> 00:28:58.559
+one. And this uh choice of w
+
+00:28:55.279 --> 00:29:02.559
+ensures that the energy of the input
+
+00:28:58.559 --> 00:29:06.799
+signal will remain the same uh when it
+
+00:29:02.559 --> 00:29:09.360
+goes in the forward pass. So so here in
+
+00:29:06.799 --> 00:29:12.799
+this forward pass by n I mean the number
+
+00:29:09.360 --> 00:29:17.919
+of inputs to the neuron. Sometimes we
+
+00:29:12.799 --> 00:29:20.399
+call this n uh subscript n or in other
+
+00:29:17.919 --> 00:29:24.399
+words on in some circles they call it a
+
+00:29:20.399 --> 00:29:26.799
+fan in of the layer. So this logic like
+
+00:29:24.399 --> 00:29:30.559
+I said will ensure the forward pass is
+
+00:29:26.799 --> 00:29:32.240
+stable. But how about the backward pass?
+
+00:29:30.559 --> 00:29:35.360
+So if we want to do the same thing for
+
+00:29:32.240 --> 00:29:40.880
+the backward pass, we want the variance
+
+00:29:35.360 --> 00:29:43.279
+of w to be one over n out. Right? And
+
+00:29:40.880 --> 00:29:46.960
+like I said for obvious reason we call
+
+00:29:43.279 --> 00:29:50.159
+this fan out. So how to make sure we
+
+00:29:46.960 --> 00:29:52.720
+satisfy these two.
+
+00:29:50.159 --> 00:29:55.919
+Uh one way to do it which is very common
+
+00:29:52.720 --> 00:29:58.559
+in the uh activation functions that are
+
+00:29:55.919 --> 00:30:00.480
+symmetric for example
+
+00:29:58.559 --> 00:30:04.640
+uh the sigmoid
+
+00:30:00.480 --> 00:30:08.080
+or um tangent hyperbolic
+
+00:30:04.640 --> 00:30:14.320
+uh uh we can easily
+
+00:30:08.080 --> 00:30:18.320
+use the variance of w to be 2 over one u
+
+00:30:14.320 --> 00:30:21.360
+uh fan in plus fan out. So um that's
+
+00:30:18.320 --> 00:30:23.520
+great. Um this is known as Javier
+
+00:30:21.360 --> 00:30:27.200
+initialization
+
+00:30:23.520 --> 00:30:29.120
+and this is actually very common in uh
+
+00:30:27.200 --> 00:30:32.240
+training neural network. This is a very
+
+00:30:29.120 --> 00:30:35.279
+common choice when we have this type of
+
+00:30:32.240 --> 00:30:37.279
+uh activation functions. But what if we
+
+00:30:35.279 --> 00:30:40.960
+we don't have a symmetric activation
+
+00:30:37.279 --> 00:30:44.320
+function and a very common and friendly
+
+00:30:40.960 --> 00:30:49.600
+example is ReLU. So in this case uh we
+
+00:30:44.320 --> 00:30:52.720
+only use a fan in for our choice.
+
+00:30:49.600 --> 00:30:56.960
+So uh notice that this is uh the
+
+00:30:52.720 --> 00:31:00.080
+variance is half um from the previous
+
+00:30:56.960 --> 00:31:02.720
+case and the reason is basically ReLU
+
+00:31:00.080 --> 00:31:05.279
+effectively discards half of the input
+
+00:31:02.720 --> 00:31:09.039
+distribution because of all the ne
+
+00:31:05.279 --> 00:31:11.840
+negative values are uh zero and this way
+
+00:31:09.039 --> 00:31:15.760
+the variance will be half. And then the
+
+00:31:11.840 --> 00:31:19.520
+other thing is uh we only used um fan in
+
+00:31:15.760 --> 00:31:22.799
+and the reason is uh because the relu
+
+00:31:19.520 --> 00:31:26.159
+networks uh are more sensitive to this
+
+00:31:22.799 --> 00:31:29.840
+value and it's enough to to consider
+
+00:31:26.159 --> 00:31:33.520
+that. So how we can choose weights to
+
+00:31:29.840 --> 00:31:36.159
+have uh weight distributions to have
+
+00:31:33.520 --> 00:31:37.919
+zero mean and this variance one way is
+
+00:31:36.159 --> 00:31:40.880
+to just use a normal distribution.
+
+00:31:37.919 --> 00:31:44.559
+Right? So a normal distribution
+
+00:31:40.880 --> 00:31:47.279
+for weights that follows uh mean zero
+
+00:31:44.559 --> 00:31:50.799
+and one of these variances right for
+
+00:31:47.279 --> 00:31:52.880
+example in this case uh we have this
+
+00:31:50.799 --> 00:31:56.559
+normal distribution.
+
+00:31:52.880 --> 00:31:59.519
+So to wrap up because ReLU uh activation
+
+00:31:56.559 --> 00:32:02.880
+functions are very common u it's often
+
+00:31:59.519 --> 00:32:07.200
+the default choice to go with this and
+
+00:32:02.880 --> 00:32:08.960
+this is also known as a uh strategy or
+
+00:32:07.200 --> 00:32:11.279
+initialization
+
+00:32:08.960 --> 00:32:16.080
+uh strategy.
+
+00:32:11.279 --> 00:32:19.279
+Um so to summarize um it's very
+
+00:32:16.080 --> 00:32:22.399
+important to ensure that the energy of
+
+00:32:19.279 --> 00:32:25.679
+the signal and its variance uh does not
+
+00:32:22.399 --> 00:32:27.840
+die out or explode as it travels through
+
+00:32:25.679 --> 00:32:30.960
+the network.
+
+00:32:27.840 --> 00:32:34.559
+Um you will see that uh PyTorch for
+
+00:32:30.960 --> 00:32:38.000
+example a modern framework will use uh
+
+00:32:34.559 --> 00:32:40.720
+this methods when it initialize the
+
+00:32:38.000 --> 00:32:43.120
+weights of the neural network. And the
+
+00:32:40.720 --> 00:32:46.320
+difference of doing this or not is the
+
+00:32:43.120 --> 00:32:50.480
+difference between a smooth or a stock
+
+00:32:46.320 --> 00:32:52.880
+uh training or an basically a gradient
+
+00:32:50.480 --> 00:32:55.760
+that flows nicely or vanishes or
+
+00:32:52.880 --> 00:33:02.519
+explodes and the conversions that can be
+
+00:32:55.760 --> 00:33:02.519
+fast or slow or even no learning.
+
+00:33:02.640 --> 00:33:06.720
+So uh we discussed this uh weight
+
+00:33:05.120 --> 00:33:10.960
+initialization.
+
+00:33:06.720 --> 00:33:13.840
+It can give us a good starting point uh
+
+00:33:10.960 --> 00:33:17.120
+point a starting point that is stable.
+
+00:33:13.840 --> 00:33:19.600
+But as the training progresses the
+
+00:33:17.120 --> 00:33:22.559
+weight will change. They are constantly
+
+00:33:19.600 --> 00:33:26.640
+updated and the distribution of each
+
+00:33:22.559 --> 00:33:31.600
+layer's input can shift and change. Um
+
+00:33:26.640 --> 00:33:34.159
+this is a a common problem and uh the
+
+00:33:31.600 --> 00:33:37.039
+issues that we discussed uh including
+
+00:33:34.159 --> 00:33:41.679
+vanishing and exploding uh exploding
+
+00:33:37.039 --> 00:33:45.279
+signals uh will and can repeat uh in
+
+00:33:41.679 --> 00:33:49.120
+this uh process of the training.
+
+00:33:45.279 --> 00:33:51.519
+Um this is a very common uh issue uh
+
+00:33:49.120 --> 00:33:54.000
+phenomenon that is known as the internal
+
+00:33:51.519 --> 00:33:56.159
+coariant shift and the idea is the
+
+00:33:54.000 --> 00:33:58.559
+distribution of each layer's input
+
+00:33:56.159 --> 00:34:01.200
+changes during the training and this
+
+00:33:58.559 --> 00:34:05.039
+complicates the learning of subsequent
+
+00:34:01.200 --> 00:34:08.079
+layers. Uh there are lots of techniques
+
+00:34:05.039 --> 00:34:12.639
+uh that are devised to deal with this
+
+00:34:08.079 --> 00:34:16.800
+issue. uh some uh that are more common
+
+00:34:12.639 --> 00:34:18.560
+we will discuss in this lecture but of
+
+00:34:16.800 --> 00:34:20.480
+course there are other techniques that
+
+00:34:18.560 --> 00:34:22.079
+can be tailored for different
+
+00:34:20.480 --> 00:34:23.599
+architectures.
+
+00:34:22.079 --> 00:34:25.520
+So
+
+00:34:23.599 --> 00:34:27.280
+we will start with a very common
+
+00:34:25.520 --> 00:34:29.679
+technique that is uh considered
+
+00:34:27.280 --> 00:34:32.159
+foundational when we are dealing with
+
+00:34:29.679 --> 00:34:35.599
+the mini batch uh training and the mini
+
+00:34:32.159 --> 00:34:40.320
+batch is rather not small and it's it
+
+00:34:35.599 --> 00:34:43.119
+can be reliably large and uh we can use
+
+00:34:40.320 --> 00:34:44.720
+a batch normalization. So bash
+
+00:34:43.119 --> 00:34:46.800
+normalization
+
+00:34:44.720 --> 00:34:49.679
+is basically
+
+00:34:46.800 --> 00:34:52.879
+u a way to normalize the pre-activation
+
+00:34:49.679 --> 00:34:56.240
+values in the network.
+
+00:34:52.879 --> 00:35:01.119
+So it is inserted at
+
+00:34:56.240 --> 00:35:03.760
+u uh before the linear layers and before
+
+00:35:01.119 --> 00:35:06.640
+the nonlinear activation functions.
+
+00:35:03.760 --> 00:35:08.880
+Hence the they are getting the value z.
+
+00:35:06.640 --> 00:35:11.359
+And how it works is basically for each
+
+00:35:08.880 --> 00:35:14.160
+mini batch during training batch
+
+00:35:11.359 --> 00:35:16.560
+normalization first calculates the mean
+
+00:35:14.160 --> 00:35:20.480
+and variance of these pre-activation
+
+00:35:16.560 --> 00:35:23.200
+values the Z's and then normalizes them
+
+00:35:20.480 --> 00:35:26.560
+to have a mean zero and a variance of
+
+00:35:23.200 --> 00:35:32.160
+one. The normalized Z can be written
+
+00:35:26.560 --> 00:35:36.480
+this way where mu b is the mean and
+
+00:35:32.160 --> 00:35:40.079
+sigma 2 uh b is the variance of the
+
+00:35:36.480 --> 00:35:42.960
+current mini batch b.
+
+00:35:40.079 --> 00:35:45.200
+So epsilon is a is a constant just for
+
+00:35:42.960 --> 00:35:49.200
+numerical stability.
+
+00:35:45.200 --> 00:35:51.760
+Uh this basically gives us um
+
+00:35:49.200 --> 00:35:55.359
+somehow counterintuitive
+
+00:35:51.760 --> 00:35:58.880
+uh uh point meaning that we are
+
+00:35:55.359 --> 00:36:02.079
+introducing new parameters, right? And
+
+00:35:58.880 --> 00:36:04.079
+why we should force the signal to be a
+
+00:36:02.079 --> 00:36:07.359
+standard normal
+
+00:36:04.079 --> 00:36:10.240
+only to immediately change it and the
+
+00:36:07.359 --> 00:36:13.359
+reason is a standard normal distribution
+
+00:36:10.240 --> 00:36:15.920
+may not be optimal for the next layer.
+
+00:36:13.359 --> 00:36:18.560
+So forcing all activations into this
+
+00:36:15.920 --> 00:36:22.400
+rigid structure might limit the
+
+00:36:18.560 --> 00:36:26.079
+network's representation power. So how
+
+00:36:22.400 --> 00:36:28.560
+can we resolve that? To solve this, this
+
+00:36:26.079 --> 00:36:33.200
+uh batch normalization layer basically
+
+00:36:28.560 --> 00:36:40.040
+learns two new parameters. A scale
+
+00:36:33.200 --> 00:36:40.040
+uh that we denote by gamma and a shifted
+
+00:36:40.400 --> 00:36:47.359
+by beta. So this parameters um gamma and
+
+00:36:45.359 --> 00:36:49.280
+beta
+
+00:36:47.359 --> 00:36:54.800
+basically
+
+00:36:49.280 --> 00:36:58.079
+shift and scale uh the z hat uh that we
+
+00:36:54.800 --> 00:37:01.440
+uh computed here
+
+00:36:58.079 --> 00:37:04.480
+and we are going to call it a bash norm
+
+00:37:01.440 --> 00:37:07.280
+output. So what does this mean?
+
+00:37:04.480 --> 00:37:10.960
+basically means that the network learns
+
+00:37:07.280 --> 00:37:13.760
+the ideal mean variance for the
+
+00:37:10.960 --> 00:37:15.680
+activation. So in the worst case when
+
+00:37:13.760 --> 00:37:18.560
+the original distribution was best the
+
+00:37:15.680 --> 00:37:22.160
+network can simply learn the uh to go to
+
+00:37:18.560 --> 00:37:24.960
+send the C uh hat to the previous point
+
+00:37:22.160 --> 00:37:29.119
+that it was.
+
+00:37:24.960 --> 00:37:32.480
+But this uh normalization method helped
+
+00:37:29.119 --> 00:37:35.920
+for a lot of uh good behavior during the
+
+00:37:32.480 --> 00:37:38.320
+training. It makes the optimization much
+
+00:37:35.920 --> 00:37:40.400
+smoother
+
+00:37:38.320 --> 00:37:43.680
+and the reason is because the last
+
+00:37:40.400 --> 00:37:47.119
+landscape will be smoother and the
+
+00:37:43.680 --> 00:37:48.880
+optimizer can converge more reliably. In
+
+00:37:47.119 --> 00:37:51.280
+that case
+
+00:37:48.880 --> 00:37:54.240
+the learning rates can be chosen to be
+
+00:37:51.280 --> 00:37:57.599
+higher which means that the training can
+
+00:37:54.240 --> 00:38:01.200
+be faster significantly faster in a lot
+
+00:37:57.599 --> 00:38:04.560
+of cases. And uh on the other hand this
+
+00:38:01.200 --> 00:38:07.520
+basically has a regularization effect.
+
+00:38:04.560 --> 00:38:10.640
+The noise the noise that we introduce
+
+00:38:07.520 --> 00:38:14.400
+with this mini batch statistics
+
+00:38:10.640 --> 00:38:17.760
+u has some regularization effect and uh
+
+00:38:14.400 --> 00:38:20.320
+it helps to reduce the need for uh
+
+00:38:17.760 --> 00:38:22.640
+techniques other techniques that uh does
+
+00:38:20.320 --> 00:38:26.560
+the same regularization like dropouts
+
+00:38:22.640 --> 00:38:31.280
+that you will see later also this u
+
+00:38:26.560 --> 00:38:34.400
+batch normalization um uh even make the
+
+00:38:31.280 --> 00:38:39.359
+dependence on the initial initial weight
+
+00:38:34.400 --> 00:38:42.560
+choice even uh less and uh this
+
+00:38:39.359 --> 00:38:44.240
+basically um
+
+00:38:42.560 --> 00:38:47.200
+um even if your choice of the
+
+00:38:44.240 --> 00:38:48.800
+initialization was not the best uh
+
+00:38:47.200 --> 00:38:52.320
+during the training the batch
+
+00:38:48.800 --> 00:38:56.000
+normalization will will somehow help to
+
+00:38:52.320 --> 00:38:58.160
+to fix that uh issue.
+
+00:38:56.000 --> 00:39:00.800
+So uh even with all of these
+
+00:38:58.160 --> 00:39:03.760
+normalization techniques
+
+00:39:00.800 --> 00:39:07.040
+uh as you will see during the course uh
+
+00:39:03.760 --> 00:39:10.400
+when we train very deep networks this
+
+00:39:07.040 --> 00:39:13.680
+issue of um vanishing gradients will
+
+00:39:10.400 --> 00:39:16.480
+eventually uh come at us especially if
+
+00:39:13.680 --> 00:39:20.320
+we want to go very deep uh training very
+
+00:39:16.480 --> 00:39:23.839
+deep neural networks. So one way to
+
+00:39:20.320 --> 00:39:25.599
+resolve that al together is just to add
+
+00:39:23.839 --> 00:39:30.480
+connections
+
+00:39:25.599 --> 00:39:34.320
+uh that basically passes the the layers
+
+00:39:30.480 --> 00:39:38.079
+and this way we basically provide the
+
+00:39:34.320 --> 00:39:42.000
+the signal from the before the layer to
+
+00:39:38.079 --> 00:39:44.640
+the after the layer. And uh this way it
+
+00:39:42.000 --> 00:39:48.400
+it's like not just a highway. It's a
+
+00:39:44.640 --> 00:39:52.640
+super highway basically. Uh that give us
+
+00:39:48.400 --> 00:39:56.320
+um uh that allows the input of a block
+
+00:39:52.640 --> 00:40:00.240
+of layers let's say x here to be added
+
+00:39:56.320 --> 00:40:03.520
+directly to its output. Um so if fx here
+
+00:40:00.240 --> 00:40:06.800
+this is the the layer that um acts like
+
+00:40:03.520 --> 00:40:09.520
+a function fx and then we have the
+
+00:40:06.800 --> 00:40:11.440
+output here will be
+
+00:40:09.520 --> 00:40:16.720
+fx
+
+00:40:11.440 --> 00:40:20.880
+plus x right and uh this basically
+
+00:40:16.720 --> 00:40:23.359
+is the an inter uninterrupted path for
+
+00:40:20.880 --> 00:40:26.560
+the gradients especially to flow
+
+00:40:23.359 --> 00:40:29.200
+through. Even if a particular block of
+
+00:40:26.560 --> 00:40:32.000
+layer uh like for example here in this
+
+00:40:29.200 --> 00:40:34.880
+case is not useful the network can
+
+00:40:32.000 --> 00:40:37.920
+easily learn to make uh its output fx
+
+00:40:34.880 --> 00:40:40.800
+close to zero right and it's basically
+
+00:40:37.920 --> 00:40:43.520
+bypass that layer altogether and the
+
+00:40:40.800 --> 00:40:46.960
+gradient flows backward through the
+
+00:40:43.520 --> 00:40:49.760
+identity connection uh without any de
+
+00:40:46.960 --> 00:40:52.240
+diminish in the value.
+
+00:40:49.760 --> 00:40:54.880
+This uh was the innovation in the
+
+00:40:52.240 --> 00:40:56.400
+residual network or in short ResNet
+
+00:40:54.880 --> 00:40:59.200
+architectures
+
+00:40:56.400 --> 00:41:01.839
+that allows for training very deep
+
+00:40:59.200 --> 00:41:04.880
+neural networks. One thing that we
+
+00:41:01.839 --> 00:41:09.359
+should be careful uh when we we want to
+
+00:41:04.880 --> 00:41:13.040
+use this u technique is to make sure the
+
+00:41:09.359 --> 00:41:16.720
+output of the layer and the input has
+
+00:41:13.040 --> 00:41:21.040
+the same shape. Otherwise we cannot use
+
+00:41:16.720 --> 00:41:23.359
+this uh technique. Another thing is uh
+
+00:41:21.040 --> 00:41:26.640
+this is designed for very deep neural
+
+00:41:23.359 --> 00:41:29.520
+networks. So for shallow uh networks
+
+00:41:26.640 --> 00:41:32.800
+this is not necessary and maybe even not
+
+00:41:29.520 --> 00:41:36.240
+helpful. So we conclude the lecture
+
+00:41:32.800 --> 00:41:39.200
+here. Uh but it doesn't mean that there
+
+00:41:36.240 --> 00:41:42.000
+are not other ways to make sure our
+
+00:41:39.200 --> 00:41:44.800
+training is not stable. And during the
+
+00:41:42.000 --> 00:41:47.119
+course you will see that uh we will
+
+00:41:44.800 --> 00:41:49.520
+choose multiple or combination of these
+
+00:41:47.119 --> 00:41:52.880
+techniques. And for different
+
+00:41:49.520 --> 00:41:54.480
+architectures we use different uh
+
+00:41:52.880 --> 00:41:58.880
+combinations.
+
+00:41:54.480 --> 00:42:02.800
+And uh these are uh this will be one of
+
+00:41:58.880 --> 00:42:05.200
+the uh tools in your disposal as a as an
+
+00:42:02.800 --> 00:42:09.359
+engineer who who does tradeoff for
+
+00:42:05.200 --> 00:42:12.319
+example in the design which one of this
+
+00:42:09.359 --> 00:42:15.359
+design for this specific architecture
+
+00:42:12.319 --> 00:42:17.680
+can give you the best result. And uh
+
+00:42:15.359 --> 00:42:20.880
+this will be one of the points that you
+
+00:42:17.680 --> 00:42:23.920
+have to even maybe try different
+
+00:42:20.880 --> 00:42:25.920
+techniques uh when you are training in
+
+00:42:23.920 --> 00:42:29.359
+neural network and at the end choose the
+
+00:42:25.920 --> 00:42:29.359
+one that give you the best soft.

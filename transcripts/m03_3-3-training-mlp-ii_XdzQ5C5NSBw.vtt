@@ -1,0 +1,745 @@
+WEBVTT
+
+00:00:00.160 --> 00:00:05.759
+In our last session, we built our first
+
+00:00:02.560 --> 00:00:08.400
+MLP. We saw that a simple shallow MLP
+
+00:00:05.759 --> 00:00:11.040
+works fine, but when we try to make it
+
+00:00:08.400 --> 00:00:13.840
+deeper, we run into the vanishing
+
+00:00:11.040 --> 00:00:15.920
+gradient problem and our model failed to
+
+00:00:13.840 --> 00:00:18.240
+learn. In this video, we're going to
+
+00:00:15.920 --> 00:00:21.359
+build on that knowledge. Our goal is to
+
+00:00:18.240 --> 00:00:23.359
+construct a robust, flexible, advanced
+
+00:00:21.359 --> 00:00:26.160
+MLP. We'll introduce several key
+
+00:00:23.359 --> 00:00:29.519
+techniques used in modern deep learning
+
+00:00:26.160 --> 00:00:31.599
+such as better weight initialization
+
+00:00:29.519 --> 00:00:33.920
+and normalization to make our deep
+
+00:00:31.599 --> 00:00:36.640
+models train efficiently. We'll treat
+
+00:00:33.920 --> 00:00:39.440
+this as a scientific experiment also
+
+00:00:36.640 --> 00:00:41.920
+known as an ablation study to see which
+
+00:00:39.440 --> 00:00:44.160
+components give us the biggest
+
+00:00:41.920 --> 00:00:47.039
+performance boost. Let's start by
+
+00:00:44.160 --> 00:00:49.680
+looking at our initial setup here. And
+
+00:00:47.039 --> 00:00:52.160
+if you notice there is a new one here
+
+00:00:49.680 --> 00:00:54.160
+utils which is a Python file that I
+
+00:00:52.160 --> 00:00:56.000
+created and it contains all of the
+
+00:00:54.160 --> 00:00:59.199
+helper functions that I'm going to use
+
+00:00:56.000 --> 00:01:01.600
+for plotting running diagnostics and
+
+00:00:59.199 --> 00:01:04.080
+visualization of the the weights of the
+
+00:01:01.600 --> 00:01:06.560
+learned weights. Uh this way uh I'm
+
+00:01:04.080 --> 00:01:08.960
+trying to keep the the main script clean
+
+00:01:06.560 --> 00:01:11.760
+and we want to focus on the core logic
+
+00:01:08.960 --> 00:01:15.200
+of the model and the experiment. Okay.
+
+00:01:11.760 --> 00:01:18.000
+So next uh in the data preparation I
+
+00:01:15.200 --> 00:01:20.159
+added another step that basically
+
+00:01:18.000 --> 00:01:22.400
+normalized the input data to have a mean
+
+00:01:20.159 --> 00:01:25.439
+of zero and a standard deviation of one.
+
+00:01:22.400 --> 00:01:27.759
+Uh this simple step makes the training
+
+00:01:25.439 --> 00:01:30.560
+process significantly more stable and
+
+00:01:27.759 --> 00:01:33.360
+often faster. Normalization creates a a
+
+00:01:30.560 --> 00:01:36.400
+much smoother optimization landscape and
+
+00:01:33.360 --> 00:01:38.400
+the optimizer uh can easily navigate
+
+00:01:36.400 --> 00:01:41.119
+through this well- behaved landscape
+
+00:01:38.400 --> 00:01:42.880
+compared to before. Moreover, it um
+
+00:01:41.119 --> 00:01:45.759
+basically ensures all of the input
+
+00:01:42.880 --> 00:01:49.119
+features are on a comparable scale.
+
+00:01:45.759 --> 00:01:51.759
+Prevents uh some weights from needing to
+
+00:01:49.119 --> 00:01:53.759
+learn extremely large or small values.
+
+00:01:51.759 --> 00:01:56.159
+So with that, let's go ahead and write
+
+00:01:53.759 --> 00:02:00.479
+our model class. We are going to call it
+
+00:01:56.159 --> 00:02:02.560
+advanced MLP. It's of course going to
+
+00:02:00.479 --> 00:02:05.119
+inherit all of the good goodies in an
+
+00:02:02.560 --> 00:02:08.399
+end module. So this is the init method
+
+00:02:05.119 --> 00:02:11.280
+that I wrote uh where I added a few
+
+00:02:08.399 --> 00:02:14.720
+knobs to turn including the choice of
+
+00:02:11.280 --> 00:02:17.520
+activation uh which allows for an string
+
+00:02:14.720 --> 00:02:20.400
+input and this string inputs are mapped
+
+00:02:17.520 --> 00:02:22.400
+to the PyTorch version of it. So
+
+00:02:20.400 --> 00:02:26.080
+basically for example if we have a
+
+00:02:22.400 --> 00:02:29.120
+function like get activation it maps the
+
+00:02:26.080 --> 00:02:31.840
+choice the string to the to the correct
+
+00:02:29.120 --> 00:02:35.519
+syntax. Here I have two additional
+
+00:02:31.840 --> 00:02:37.760
+activation that um briefly leaky relu is
+
+00:02:35.519 --> 00:02:40.000
+a has a small improvement over the
+
+00:02:37.760 --> 00:02:42.800
+standard relu. If you remember wall
+
+00:02:40.000 --> 00:02:45.599
+outputs uh are zero for any negative
+
+00:02:42.800 --> 00:02:48.239
+input. This can lead to uh the dying
+
+00:02:45.599 --> 00:02:51.040
+neuron phenomena. But leaky relu allows
+
+00:02:48.239 --> 00:02:53.680
+for a tiny nonzero gradient for negative
+
+00:02:51.040 --> 00:02:57.840
+inputs. In other word it leaks a little
+
+00:02:53.680 --> 00:03:00.480
+and helps the the neuron alive. The next
+
+00:02:57.840 --> 00:03:04.319
+one, Jello, is a basically a Gaussian
+
+00:03:00.480 --> 00:03:07.280
+error linear unit. Uh it's a smoother uh
+
+00:03:04.319 --> 00:03:09.760
+more modern alternative to ALU and it
+
+00:03:07.280 --> 00:03:12.400
+has been recently used in uh advanced
+
+00:03:09.760 --> 00:03:15.200
+architectures like GPT. Okay, like I
+
+00:03:12.400 --> 00:03:17.280
+said, I want to make the design
+
+00:03:15.200 --> 00:03:20.800
+flexible. The reason is we want to do
+
+00:03:17.280 --> 00:03:23.280
+ablation experiment but also learn
+
+00:03:20.800 --> 00:03:26.239
+something along the way. So let's uh
+
+00:03:23.280 --> 00:03:28.480
+introduce this deems list uh which is
+
+00:03:26.239 --> 00:03:30.879
+basically the components that we are
+
+00:03:28.480 --> 00:03:33.760
+going to use in each of this hidden
+
+00:03:30.879 --> 00:03:36.959
+layers. So uh if you notice we have
+
+00:03:33.760 --> 00:03:40.720
+layers, norms and drops and each one of
+
+00:03:36.959 --> 00:03:43.760
+them is a module and n module list and
+
+00:03:40.720 --> 00:03:46.000
+uh notice that I didn't use plain python
+
+00:03:43.760 --> 00:03:49.120
+list and the reason is this uh n and n
+
+00:03:46.000 --> 00:03:52.319
+module list is basically uh talks to
+
+00:03:49.120 --> 00:03:54.799
+pytor directly. If we use a Python list,
+
+00:03:52.319 --> 00:03:57.040
+it will be invisible to PyTorch. Uh you
+
+00:03:54.799 --> 00:03:58.959
+can think of it like the the Python list
+
+00:03:57.040 --> 00:04:01.439
+like a scratch piece of paper that you
+
+00:03:58.959 --> 00:04:03.840
+write the player name. But uh an and
+
+00:04:01.439 --> 00:04:07.200
+module list is like an official team
+
+00:04:03.840 --> 00:04:10.239
+roster for all of these layers, not
+
+00:04:07.200 --> 00:04:12.480
+players. So, PyTorch as a team manager
+
+00:04:10.239 --> 00:04:15.280
+uses this roster to correctly find all
+
+00:04:12.480 --> 00:04:19.440
+of these parameters for the optimizer
+
+00:04:15.280 --> 00:04:22.479
+and also move them to the correct device
+
+00:04:19.440 --> 00:04:24.960
+and switch the modes for the layers like
+
+00:04:22.479 --> 00:04:27.360
+for example dropout or batch norm during
+
+00:04:24.960 --> 00:04:31.040
+training or eval. So, basically this
+
+00:04:27.360 --> 00:04:33.919
+gives us a a bunch of tools that we can
+
+00:04:31.040 --> 00:04:37.120
+use when uh we are building the forward
+
+00:04:33.919 --> 00:04:40.639
+method. Let's build um uh the hidden
+
+00:04:37.120 --> 00:04:44.960
+layers. So for i in range of this number
+
+00:04:40.639 --> 00:04:48.720
+of hidden layers uh we first uh append
+
+00:04:44.960 --> 00:04:51.120
+the um for each uh index corresponds to
+
+00:04:48.720 --> 00:04:53.520
+the hidden layer we append the layer
+
+00:04:51.120 --> 00:04:56.400
+normalization and drops and then we have
+
+00:04:53.520 --> 00:04:58.639
+a special final layer that is not
+
+00:04:56.400 --> 00:05:00.320
+following the same logic. uh so we have
+
+00:04:58.639 --> 00:05:03.360
+to write it separately and this
+
+00:05:00.320 --> 00:05:05.840
+basically fra framework allows us to to
+
+00:05:03.360 --> 00:05:08.240
+do that maybe you ask yourself why I
+
+00:05:05.840 --> 00:05:10.880
+didn't use sequential like before
+
+00:05:08.240 --> 00:05:13.520
+because our forward pass as you will see
+
+00:05:10.880 --> 00:05:16.320
+is a is a custom pass and we are going
+
+00:05:13.520 --> 00:05:18.880
+to apply the layers from three different
+
+00:05:16.320 --> 00:05:22.400
+different lists of layers norms and
+
+00:05:18.880 --> 00:05:24.800
+drops in a specific order uh and then
+
+00:05:22.400 --> 00:05:28.000
+sequential is too simple and has a fixed
+
+00:05:24.800 --> 00:05:30.000
+data flow however this uh method gives
+
+00:05:28.000 --> 00:05:32.960
+us the flexibility that we need to build
+
+00:05:30.000 --> 00:05:36.320
+these custom pipelines and al also it
+
+00:05:32.960 --> 00:05:38.320
+allows us to to deal with the special
+
+00:05:36.320 --> 00:05:40.479
+cases like the output layer. So the
+
+00:05:38.320 --> 00:05:44.080
+output layer doesn't need the
+
+00:05:40.479 --> 00:05:45.840
+normalization and also dropouts because
+
+00:05:44.080 --> 00:05:48.160
+normalization will distort the output
+
+00:05:45.840 --> 00:05:50.320
+scale. Remember that the output is raw
+
+00:05:48.160 --> 00:05:52.960
+logits that goes to the cross entropy
+
+00:05:50.320 --> 00:05:55.360
+and the dropout will randomly suppress
+
+00:05:52.960 --> 00:05:58.160
+some of the prediction which uh we don't
+
+00:05:55.360 --> 00:05:59.520
+want. Here we initialize the weights
+
+00:05:58.160 --> 00:06:02.320
+following the choice of the
+
+00:05:59.520 --> 00:06:06.319
+initialization method. And here we can
+
+00:06:02.320 --> 00:06:08.720
+write uh two functions uh to map the uh
+
+00:06:06.319 --> 00:06:13.120
+the choice of initialization method to
+
+00:06:08.720 --> 00:06:15.600
+the correct syntax in PyTorch. And also
+
+00:06:13.120 --> 00:06:18.080
+similar thing for the normalization here
+
+00:06:15.600 --> 00:06:20.960
+if the choice is basically this for
+
+00:06:18.080 --> 00:06:23.600
+example batch or layer normalization we
+
+00:06:20.960 --> 00:06:26.800
+map them correctly. So let's write these
+
+00:06:23.600 --> 00:06:29.919
+two functions. Okay now we can write the
+
+00:06:26.800 --> 00:06:32.319
+forward method first flatten of course
+
+00:06:29.919 --> 00:06:35.120
+and then knitting the the toolbox
+
+00:06:32.319 --> 00:06:37.840
+together to make the pipeline and return
+
+00:06:35.120 --> 00:06:39.759
+the final there. Okay. So we are going
+
+00:06:37.840 --> 00:06:42.639
+to use some of some functions from
+
+00:06:39.759 --> 00:06:45.440
+before like the train one uh epoch and
+
+00:06:42.639 --> 00:06:49.600
+uh evaluate. Uh we already wrote this.
+
+00:06:45.440 --> 00:06:53.560
+We are going to just copy and paste and
+
+00:06:49.600 --> 00:06:53.560
+then we can write the experiments.
+
+00:06:54.720 --> 00:07:01.440
+So we have different configs here and
+
+00:06:58.319 --> 00:07:04.479
+for example the the control case control
+
+00:07:01.440 --> 00:07:07.599
+configuration is where we have the
+
+00:07:04.479 --> 00:07:10.639
+default initialization method no
+
+00:07:07.599 --> 00:07:13.840
+normalization and no dropout. The second
+
+00:07:10.639 --> 00:07:16.800
+will be just adding one type of initial
+
+00:07:13.840 --> 00:07:19.840
+in initialization here the heiming
+
+00:07:16.800 --> 00:07:22.800
+initialization and then next we add a
+
+00:07:19.840 --> 00:07:26.319
+batch norm over the previous one. So
+
+00:07:22.800 --> 00:07:30.800
+each time we change one setting. Next we
+
+00:07:26.319 --> 00:07:34.000
+do layer norm and lastly we use we add
+
+00:07:30.800 --> 00:07:36.160
+the dropout. Okay. So let's let's keep a
+
+00:07:34.000 --> 00:07:39.120
+tab on the histories. Adding the
+
+00:07:36.160 --> 00:07:41.840
+criterion and then for each one of these
+
+00:07:39.120 --> 00:07:44.880
+configuration setting up the model and
+
+00:07:41.840 --> 00:07:47.599
+the optimizer and zeroing the history
+
+00:07:44.880 --> 00:07:49.919
+and then we are writing the uh training
+
+00:07:47.599 --> 00:07:53.599
+loop. Okay.
+
+00:07:49.919 --> 00:07:57.759
+So populating the history and then print
+
+00:07:53.599 --> 00:08:00.479
+out some of the result every few apoch.
+
+00:07:57.759 --> 00:08:03.520
+Okay. So with that we're good to go. We
+
+00:08:00.479 --> 00:08:06.639
+can do the training. Uh while this is
+
+00:08:03.520 --> 00:08:09.599
+running um let's just do a fast review
+
+00:08:06.639 --> 00:08:12.639
+of what we did. We basically saw with
+
+00:08:09.599 --> 00:08:14.800
+this baseline and we add components one
+
+00:08:12.639 --> 00:08:16.720
+at a time. We measure the changes in the
+
+00:08:14.800 --> 00:08:19.039
+performance and at the end we will
+
+00:08:16.720 --> 00:08:23.120
+choose the best configuration. So while
+
+00:08:19.039 --> 00:08:26.240
+this is training uh let's uh write um a
+
+00:08:23.120 --> 00:08:30.240
+code that saves the best model and uh
+
+00:08:26.240 --> 00:08:32.719
+then we can load it. So first saving
+
+00:08:30.240 --> 00:08:35.919
+come up with a save path and then save
+
+00:08:32.719 --> 00:08:38.880
+the best model then of course we can
+
+00:08:35.919 --> 00:08:42.560
+load uh the model and check if that's
+
+00:08:38.880 --> 00:08:46.320
+the correct model. So I'm going to just
+
+00:08:42.560 --> 00:08:50.000
+uh write this with some verification
+
+00:08:46.320 --> 00:08:52.480
+checks and then after that we can um
+
+00:08:50.000 --> 00:08:54.800
+look at the uh visualize some of these
+
+00:08:52.480 --> 00:08:57.040
+tools that we had in to using some of
+
+00:08:54.800 --> 00:09:00.720
+these tools that we have in utils
+
+00:08:57.040 --> 00:09:04.399
+including the uh weight visualization uh
+
+00:09:00.720 --> 00:09:07.279
+like weight distribution and the initial
+
+00:09:04.399 --> 00:09:09.839
+uh layer weights that is learned uh
+
+00:09:07.279 --> 00:09:12.800
+basically the filters
+
+00:09:09.839 --> 00:09:15.600
+uh and uh see if they are telling us
+
+00:09:12.800 --> 00:09:19.440
+anything. So here is the result. We see
+
+00:09:15.600 --> 00:09:22.399
+that uh he plus batchnorm is overall the
+
+00:09:19.440 --> 00:09:25.360
+best model and here is the result of the
+
+00:09:22.399 --> 00:09:28.560
+visualization and if you notice what we
+
+00:09:25.360 --> 00:09:31.519
+see here is really random static and the
+
+00:09:28.560 --> 00:09:34.800
+reason is MLP flattened the image into a
+
+00:09:31.519 --> 00:09:37.519
+1D vector and basically destroys all
+
+00:09:34.800 --> 00:09:40.800
+spatial information. doesn't really know
+
+00:09:37.519 --> 00:09:44.800
+which pixels are next to each other and
+
+00:09:40.800 --> 00:09:47.680
+this is a clue for us that MLP is not
+
+00:09:44.800 --> 00:09:49.920
+naturally suited for images. Uh we can
+
+00:09:47.680 --> 00:09:53.839
+look at the weight distribution. I mean
+
+00:09:49.920 --> 00:09:55.839
+they look fine really well behaved. So
+
+00:09:53.839 --> 00:09:58.480
+uh what we did with the initialization
+
+00:09:55.839 --> 00:10:00.480
+normalization is okay and it's working
+
+00:09:58.480 --> 00:10:04.160
+but they really don't tell us anything
+
+00:10:00.480 --> 00:10:08.560
+about what they represent. So um this
+
+00:10:04.160 --> 00:10:11.120
+gives us this paradox about MLP. Why it
+
+00:10:08.560 --> 00:10:13.200
+performs well while it really doesn't
+
+00:10:11.120 --> 00:10:16.240
+seem to be learning anything. It treats
+
+00:10:13.200 --> 00:10:19.440
+the image as a as a shuffled list of
+
+00:10:16.240 --> 00:10:21.920
+stock prices. This basically is a hint
+
+00:10:19.440 --> 00:10:24.480
+for us that it's really not
+
+00:10:21.920 --> 00:10:27.440
+generalizable. If we for example have a
+
+00:10:24.480 --> 00:10:29.519
+image of a shirt that is moved in the uh
+
+00:10:27.440 --> 00:10:32.320
+it's not centered like what we had in
+
+00:10:29.519 --> 00:10:34.320
+the fashion emnest the entire framework
+
+00:10:32.320 --> 00:10:36.880
+will collapse in the sense that it
+
+00:10:34.320 --> 00:10:40.160
+cannot basically predicts that it's the
+
+00:10:36.880 --> 00:10:43.680
+same shirt. So we need something else
+
+00:10:40.160 --> 00:10:46.720
+and we can include some of the
+
+00:10:43.680 --> 00:10:49.920
+assumptions that we have as inductive
+
+00:10:46.720 --> 00:10:52.480
+bias in this new architecture. So for
+
+00:10:49.920 --> 00:10:55.120
+example there is an assumption of
+
+00:10:52.480 --> 00:10:57.600
+locality. The patterns that we found in
+
+00:10:55.120 --> 00:11:00.000
+an image for example the heel of a boot
+
+00:10:57.600 --> 00:11:02.800
+can be found in small local regions of
+
+00:11:00.000 --> 00:11:05.440
+the image. A very important assumption
+
+00:11:02.800 --> 00:11:08.079
+that the patterns is the same whether
+
+00:11:05.440 --> 00:11:12.000
+it's in the top left or bottom right of
+
+00:11:08.079 --> 00:11:14.480
+the image. We call this an translation
+
+00:11:12.000 --> 00:11:16.880
+invariance. MLP doesn't have either of
+
+00:11:14.480 --> 00:11:19.680
+them. It basically connects every input
+
+00:11:16.880 --> 00:11:22.079
+pixel to every neuron. And this way
+
+00:11:19.680 --> 00:11:24.240
+ignores localology. We will discuss a
+
+00:11:22.079 --> 00:11:27.600
+new architecture that we are designing
+
+00:11:24.240 --> 00:11:30.560
+from ground up with these two biases.
+
+00:11:27.600 --> 00:11:33.120
+And this way it allows the architecture
+
+00:11:30.560 --> 00:11:35.680
+to learn meaningful spatial features
+
+00:11:33.120 --> 00:11:39.600
+that look less like noise like what we
+
+00:11:35.680 --> 00:11:42.720
+saw here. And it can generalize and uh
+
+00:11:39.600 --> 00:11:45.720
+can be used even with less uh learn
+
+00:11:42.720 --> 00:11:45.720
+parameters.

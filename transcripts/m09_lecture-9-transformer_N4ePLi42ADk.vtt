@@ -1,0 +1,2140 @@
+WEBVTT
+
+00:00:00.480 --> 00:00:05.680
+Last lecture we solved the sequencetose
+
+00:00:03.040 --> 00:00:08.639
+sequence bottleneck problem using the
+
+00:00:05.680 --> 00:00:12.719
+cross attention mechanism where we built
+
+00:00:08.639 --> 00:00:16.000
+an attention augmented RNN where the
+
+00:00:12.719 --> 00:00:19.840
+encoder RNN here processes the source
+
+00:00:16.000 --> 00:00:23.439
+sequence to build a memory bank H1 to
+
+00:00:19.840 --> 00:00:26.240
+HT. The decoder RNN
+
+00:00:23.439 --> 00:00:29.599
+generates the target sequence
+
+00:00:26.240 --> 00:00:32.559
+step by step. For example, here we are
+
+00:00:29.599 --> 00:00:35.360
+looking at the step T of the decoding
+
+00:00:32.559 --> 00:00:38.559
+where this cross attention
+
+00:00:35.360 --> 00:00:41.840
+lets the decoder query the encoder
+
+00:00:38.559 --> 00:00:46.239
+memory to compute a dynamic context
+
+00:00:41.840 --> 00:00:49.360
+vector CT. This solved the information
+
+00:00:46.239 --> 00:00:50.960
+bottleneck and improved the quality of
+
+00:00:49.360 --> 00:00:54.079
+translation
+
+00:00:50.960 --> 00:00:57.680
+dramatically. models could handle longer
+
+00:00:54.079 --> 00:01:01.840
+sequences and this approach became the
+
+00:00:57.680 --> 00:01:04.239
+state-of-the-art from 2015 to 2017. But
+
+00:01:01.840 --> 00:01:08.240
+as you see here, still the encoding
+
+00:01:04.239 --> 00:01:12.000
+process is sequential. We cannot compute
+
+00:01:08.240 --> 00:01:15.280
+HT until we have computed HT minus V.
+
+00:01:12.000 --> 00:01:18.799
+This makes parallelization during
+
+00:01:15.280 --> 00:01:21.600
+forward pass impossible. And for
+
+00:01:18.799 --> 00:01:24.720
+sequences, it makes the training time
+
+00:01:21.600 --> 00:01:27.360
+very long. And for sequences of size,
+
+00:01:24.720 --> 00:01:29.840
+hundreds or thousands of tokens, the
+
+00:01:27.360 --> 00:01:32.240
+training time will be very long. And
+
+00:01:29.840 --> 00:01:36.240
+this sequential process means that uh we
+
+00:01:32.240 --> 00:01:39.520
+are not really utilizing our GPUs. and
+
+00:01:36.240 --> 00:01:41.759
+the GPUs are mostly sitting idle waiting
+
+00:01:39.520 --> 00:01:44.479
+for this sequential computation to
+
+00:01:41.759 --> 00:01:47.520
+complete. Why this is important? Because
+
+00:01:44.479 --> 00:01:50.079
+if you remember the CNN architectures,
+
+00:01:47.520 --> 00:01:53.840
+they are highly parallel and that's why
+
+00:01:50.079 --> 00:01:57.759
+we could scale it to handle very large
+
+00:01:53.840 --> 00:02:01.600
+data sets and that's what we want here
+
+00:01:57.759 --> 00:02:04.240
+also to be able to scale the learning.
+
+00:02:01.600 --> 00:02:07.840
+That's not possible here. As for example
+
+00:02:04.240 --> 00:02:11.680
+in the encoder uh if we want to process
+
+00:02:07.840 --> 00:02:15.440
+like let's say 100 uh token sequentially
+
+00:02:11.680 --> 00:02:20.000
+we need 100 serial steps and if we want
+
+00:02:15.440 --> 00:02:23.920
+to generate 80 tokens in the decoder we
+
+00:02:20.000 --> 00:02:27.040
+need 80 serial step
+
+00:02:23.920 --> 00:02:30.959
+which at total is
+
+00:02:27.040 --> 00:02:32.720
+180 serial step per training example of
+
+00:02:30.959 --> 00:02:35.519
+course
+
+00:02:32.720 --> 00:02:38.879
+Um I mean you can think of parallelizing
+
+00:02:35.519 --> 00:02:42.160
+on the batch size but a batch is of size
+
+00:02:38.879 --> 00:02:45.200
+let's say 32 but our GPU has thousands
+
+00:02:42.160 --> 00:02:47.040
+of cores that will that will be vastly
+
+00:02:45.200 --> 00:02:50.560
+underutilized.
+
+00:02:47.040 --> 00:02:53.360
+So I mentioned that CNN's are great for
+
+00:02:50.560 --> 00:02:55.840
+I mean they are highly parallelizable
+
+00:02:53.360 --> 00:02:58.239
+and they excel in image processing
+
+00:02:55.840 --> 00:02:59.920
+because nearby pixels are highly
+
+00:02:58.239 --> 00:03:02.159
+correlated.
+
+00:02:59.920 --> 00:03:04.640
+uh in other words they have uh strong
+
+00:03:02.159 --> 00:03:06.640
+local correlation
+
+00:03:04.640 --> 00:03:09.840
+uh but we know that text is difference
+
+00:03:06.640 --> 00:03:12.879
+and um the most critical relationship
+
+00:03:09.840 --> 00:03:15.760
+can span long distances
+
+00:03:12.879 --> 00:03:19.360
+so if we use a CNN for example for a
+
+00:03:15.760 --> 00:03:22.239
+sentence like the dog chase its tail and
+
+00:03:19.360 --> 00:03:26.319
+if we want to use let's say
+
+00:03:22.239 --> 00:03:28.879
+local filters like this and we know that
+
+00:03:26.319 --> 00:03:31.920
+eventually we can see all of this
+
+00:03:28.879 --> 00:03:34.720
+relationship ship like this. For an
+
+00:03:31.920 --> 00:03:39.120
+important relationship like dog and
+
+00:03:34.720 --> 00:03:42.159
+tail, we have to go up let's say like
+
+00:03:39.120 --> 00:03:45.040
+this to meet
+
+00:03:42.159 --> 00:03:47.840
+and information must pass pass through
+
+00:03:45.040 --> 00:03:51.440
+many layers and this degrades the signal
+
+00:03:47.840 --> 00:03:53.680
+of course and we want to come up with a
+
+00:03:51.440 --> 00:03:58.959
+different way of doing this encoding. So
+
+00:03:53.680 --> 00:04:01.120
+the idea that uh around 2017 was well we
+
+00:03:58.959 --> 00:04:03.760
+did the cross attention
+
+00:04:01.120 --> 00:04:06.080
+and we came up with this general uh
+
+00:04:03.760 --> 00:04:10.400
+attention formula that we discussed last
+
+00:04:06.080 --> 00:04:14.879
+time. So in this uh attention mechanism
+
+00:04:10.400 --> 00:04:18.479
+we get the queries from the decoder
+
+00:04:14.879 --> 00:04:21.759
+uh or the query side keys and values
+
+00:04:18.479 --> 00:04:24.160
+came from the encoder
+
+00:04:21.759 --> 00:04:28.800
+or the memory bank. But of course
+
+00:04:24.160 --> 00:04:31.440
+there's no requirement that Q K and V uh
+
+00:04:28.800 --> 00:04:34.880
+come from different places. I mean they
+
+00:04:31.440 --> 00:04:38.320
+can come from the same sequence.
+
+00:04:34.880 --> 00:04:40.000
+for example the sequence X that we want
+
+00:04:38.320 --> 00:04:43.919
+to encode.
+
+00:04:40.000 --> 00:04:47.600
+So the sequence is in R and D
+
+00:04:43.919 --> 00:04:49.759
+and we can form queries and keys and
+
+00:04:47.600 --> 00:04:54.800
+values from the same sequence. What I
+
+00:04:49.759 --> 00:04:58.960
+mean is basically Q is X WQ
+
+00:04:54.800 --> 00:05:01.440
+and each X is asking what am I looking
+
+00:04:58.960 --> 00:05:04.880
+for in my neighbors.
+
+00:05:01.440 --> 00:05:08.639
+So X for example X2 here looks at all of
+
+00:05:04.880 --> 00:05:12.479
+the neighbors and it's basically trying
+
+00:05:08.639 --> 00:05:16.000
+to see if there is a neighbor or
+
+00:05:12.479 --> 00:05:17.600
+neighbors that can improve its
+
+00:05:16.000 --> 00:05:21.520
+representation
+
+00:05:17.600 --> 00:05:26.560
+and add more context to it. Also the
+
+00:05:21.520 --> 00:05:29.199
+same X provides keys and here he
+
+00:05:26.560 --> 00:05:32.479
+basically means what
+
+00:05:29.199 --> 00:05:35.440
+do I offer to others and at the same
+
+00:05:32.479 --> 00:05:39.280
+time value?
+
+00:05:35.440 --> 00:05:41.759
+What information do I contain?
+
+00:05:39.280 --> 00:05:44.800
+So each position in the sequence can
+
+00:05:41.759 --> 00:05:49.120
+attend to every other position to gather
+
+00:05:44.800 --> 00:05:52.240
+context. Let's try this in a example. So
+
+00:05:49.120 --> 00:05:55.840
+consider a sentence. Let's say
+
+00:05:52.240 --> 00:05:58.479
+the bank by the river offers great views
+
+00:05:55.840 --> 00:06:03.919
+of the boats.
+
+00:05:58.479 --> 00:06:06.960
+And let's look at the bank position two
+
+00:06:03.919 --> 00:06:08.720
+and let's assume it acts like a query.
+
+00:06:06.960 --> 00:06:12.000
+What are my neighbors telling me about
+
+00:06:08.720 --> 00:06:14.080
+my meaning? It looks at the river and
+
+00:06:12.000 --> 00:06:15.919
+the key of river is basically unrelated
+
+00:06:14.080 --> 00:06:20.479
+to water.
+
+00:06:15.919 --> 00:06:23.440
+looks at offers and the keys I might be
+
+00:06:20.479 --> 00:06:25.280
+a financial institution
+
+00:06:23.440 --> 00:06:27.759
+and boats
+
+00:06:25.280 --> 00:06:30.560
+um which the keys again I'm related to
+
+00:06:27.759 --> 00:06:33.039
+water and the model computes attention
+
+00:06:30.560 --> 00:06:35.360
+weights and there's a high attention to
+
+00:06:33.039 --> 00:06:38.400
+river and boats and low attention to
+
+00:06:35.360 --> 00:06:40.960
+offers let's say and it combines this
+
+00:06:38.400 --> 00:06:45.919
+representations or values from these
+
+00:06:40.960 --> 00:06:49.360
+neighbors to basically add context to
+
+00:06:45.919 --> 00:06:53.039
+its meaning. So it realizes that oh this
+
+00:06:49.360 --> 00:06:56.319
+is a river bank not a financial bank and
+
+00:06:53.039 --> 00:06:59.120
+it's crucial to note that this all
+
+00:06:56.319 --> 00:07:01.919
+happens within this sentence itself.
+
+00:06:59.120 --> 00:07:05.280
+Each word refineses its presentation by
+
+00:07:01.919 --> 00:07:08.960
+attending to related words. So that's
+
+00:07:05.280 --> 00:07:12.400
+how we update the embedding of each of
+
+00:07:08.960 --> 00:07:16.560
+these words or tokens and uh we can
+
+00:07:12.400 --> 00:07:19.520
+encode them and when we want to do the
+
+00:07:16.560 --> 00:07:22.479
+decoding in an auto reggressive way
+
+00:07:19.520 --> 00:07:25.440
+we're looking at the previous so let's
+
+00:07:22.479 --> 00:07:28.880
+say we have a word here that we want to
+
+00:07:25.440 --> 00:07:32.560
+predict we look at the all previous
+
+00:07:28.880 --> 00:07:35.599
+words and query them to update it uh the
+
+00:07:32.560 --> 00:07:39.280
+meaning of that or predict that uh note
+
+00:07:35.599 --> 00:07:43.840
+that during the training we may have the
+
+00:07:39.280 --> 00:07:48.560
+future tokens also which we have to mask
+
+00:07:43.840 --> 00:07:51.199
+uh to not let the model cheat by
+
+00:07:48.560 --> 00:07:54.960
+querying them. So this is called causal
+
+00:07:51.199 --> 00:07:58.400
+masking which we will see in the code.
+
+00:07:54.960 --> 00:08:01.039
+Okay. So with that let's go uh back to
+
+00:07:58.400 --> 00:08:04.319
+this scale.
+
+00:08:01.039 --> 00:08:08.720
+uh attention and just review that one
+
+00:08:04.319 --> 00:08:11.120
+more time and then uh using that we can
+
+00:08:08.720 --> 00:08:14.479
+reddesign this encoder decoder
+
+00:08:11.120 --> 00:08:16.960
+architecture with self attention and
+
+00:08:14.479 --> 00:08:20.160
+cross attention fully and we drop we
+
+00:08:16.960 --> 00:08:25.599
+want to drop anything else that is for
+
+00:08:20.160 --> 00:08:29.680
+example uh related to RNN or CNN. So
+
+00:08:25.599 --> 00:08:35.360
+again given a input sequence X
+
+00:08:29.680 --> 00:08:37.919
+and this is in R let's say N by D
+
+00:08:35.360 --> 00:08:42.880
+each sequence has n tokens and each
+
+00:08:37.919 --> 00:08:46.399
+token has a D dimension. So this uh
+
+00:08:42.880 --> 00:08:49.279
+dimension here is important somehow
+
+00:08:46.399 --> 00:08:50.959
+tells us what is the dimension of the
+
+00:08:49.279 --> 00:08:52.560
+representation for each one of these
+
+00:08:50.959 --> 00:08:56.080
+tokens
+
+00:08:52.560 --> 00:08:59.839
+and uh we call this the model. We will
+
+00:08:56.080 --> 00:09:05.120
+project them to this q k and v spaces.
+
+00:08:59.839 --> 00:09:08.320
+So q is x wq which
+
+00:09:05.120 --> 00:09:11.360
+projects x to this query space.
+
+00:09:08.320 --> 00:09:14.800
+Same for keys and values.
+
+00:09:11.360 --> 00:09:18.000
+So note that uh the Q space Q and K are
+
+00:09:14.800 --> 00:09:20.640
+in the same size because they want to
+
+00:09:18.000 --> 00:09:22.959
+look for their similarity but the value
+
+00:09:20.640 --> 00:09:26.399
+space is not necessarily at the same
+
+00:09:22.959 --> 00:09:30.480
+dimension. So that's why we call it DV.
+
+00:09:26.399 --> 00:09:34.800
+That means that WQ and W K have the have
+
+00:09:30.480 --> 00:09:37.040
+similar dimension of D model
+
+00:09:34.800 --> 00:09:43.040
+by DK.
+
+00:09:37.040 --> 00:09:47.200
+WV has dimension of D model DV. Then we
+
+00:09:43.040 --> 00:09:50.320
+compute the attention scores
+
+00:09:47.200 --> 00:09:54.320
+using this scale dotproduct
+
+00:09:50.320 --> 00:09:57.279
+which is a square matrix.
+
+00:09:54.320 --> 00:10:00.720
+And the entry I of I and J of this
+
+00:09:57.279 --> 00:10:04.240
+matrix measures how much position I
+
+00:10:00.720 --> 00:10:06.959
+should attend to position J.
+
+00:10:04.240 --> 00:10:11.360
+And then we apply the soft max. So if
+
+00:10:06.959 --> 00:10:14.560
+this is step one, two, three, here we
+
+00:10:11.360 --> 00:10:17.279
+apply softmax to get attention weights
+
+00:10:14.560 --> 00:10:19.600
+which is the same size and each row sums
+
+00:10:17.279 --> 00:10:21.360
+to one uh giving a probability
+
+00:10:19.600 --> 00:10:25.040
+distribution over positions to attend
+
+00:10:21.360 --> 00:10:27.200
+to. And that basically led us to the
+
+00:10:25.040 --> 00:10:29.760
+weighted combination of all of these
+
+00:10:27.200 --> 00:10:33.760
+values or the output that we are looking
+
+00:10:29.760 --> 00:10:35.519
+for which is attention weights multiply
+
+00:10:33.760 --> 00:10:40.079
+by V.
+
+00:10:35.519 --> 00:10:44.640
+So given that what's the self attention
+
+00:10:40.079 --> 00:10:48.880
+of X? It's basically soft max of the
+
+00:10:44.640 --> 00:10:53.120
+dotproduct of X WQ
+
+00:10:48.880 --> 00:10:56.000
+and X W K. Here we have a transpose and
+
+00:10:53.120 --> 00:10:59.680
+then X WV.
+
+00:10:56.000 --> 00:11:04.720
+Okay. So let's look closely at this
+
+00:10:59.680 --> 00:11:07.519
+um few observation. We don't care about
+
+00:11:04.720 --> 00:11:10.079
+u the order. Everything attends to
+
+00:11:07.519 --> 00:11:12.720
+everything. So even if we shuffle the
+
+00:11:10.079 --> 00:11:16.240
+input, the output shuffles in the same
+
+00:11:12.720 --> 00:11:18.720
+way, right? So this is permutation
+
+00:11:16.240 --> 00:11:21.279
+equivariant.
+
+00:11:18.720 --> 00:11:24.320
+The entire computation is parallel,
+
+00:11:21.279 --> 00:11:27.920
+right? And all positions can compute
+
+00:11:24.320 --> 00:11:30.399
+their attention simultaneously.
+
+00:11:27.920 --> 00:11:32.560
+Uh this is all to all connection. every
+
+00:11:30.399 --> 00:11:35.760
+position can directly attend to every
+
+00:11:32.560 --> 00:11:38.880
+other position in one step. So, uh none
+
+00:11:35.760 --> 00:11:42.200
+of those matrices wk
+
+00:11:38.880 --> 00:11:42.200
+and w
+
+00:11:42.560 --> 00:11:48.800
+depend on the sequence lengths. That
+
+00:11:44.800 --> 00:11:51.200
+means that the same wq wk and wv works
+
+00:11:48.800 --> 00:11:54.800
+for any n.
+
+00:11:51.200 --> 00:11:58.000
+Okay, which is very significant.
+
+00:11:54.800 --> 00:12:01.040
+Okay, so the there are some nice
+
+00:11:58.000 --> 00:12:04.480
+computation aspects, right? But there is
+
+00:12:01.040 --> 00:12:06.959
+a problem here and
+
+00:12:04.480 --> 00:12:11.360
+the problem is where did the sequence
+
+00:12:06.959 --> 00:12:16.000
+order go? Previously we had uh
+
+00:12:11.360 --> 00:12:18.399
+RNN and order was inherent right here
+
+00:12:16.000 --> 00:12:21.760
+self attention is basically a bag of
+
+00:12:18.399 --> 00:12:23.600
+vectors for example let's say what's the
+
+00:12:21.760 --> 00:12:28.160
+output
+
+00:12:23.600 --> 00:12:30.560
+I the attention output for position I
+
+00:12:28.160 --> 00:12:32.320
+and that's basically the sum and we know
+
+00:12:30.560 --> 00:12:34.240
+that sum doesn't care it's just a
+
+00:12:32.320 --> 00:12:35.839
+weighted sum and it's permutation
+
+00:12:34.240 --> 00:12:39.120
+invariant
+
+00:12:35.839 --> 00:12:43.600
+so it's a back of vectors basically
+
+00:12:39.120 --> 00:12:48.160
+We lost the notion of order.
+
+00:12:43.600 --> 00:12:51.519
+That means that a sentence like the cat
+
+00:12:48.160 --> 00:12:55.519
+chase the mouse for self attention is
+
+00:12:51.519 --> 00:12:58.320
+the same as the mouse
+
+00:12:55.519 --> 00:13:00.800
+chased the cat. That means that the self
+
+00:12:58.320 --> 00:13:03.680
+attention basically produce identical
+
+00:13:00.800 --> 00:13:06.079
+representation for both sequences.
+
+00:13:03.680 --> 00:13:07.760
+But these sentences have opposite
+
+00:13:06.079 --> 00:13:11.519
+meanings.
+
+00:13:07.760 --> 00:13:13.760
+So we must explicitly provide positional
+
+00:13:11.519 --> 00:13:16.880
+information here. There are different
+
+00:13:13.760 --> 00:13:20.639
+ways of doing it and we will uh zoom
+
+00:13:16.880 --> 00:13:24.160
+into this positional encoding uh later
+
+00:13:20.639 --> 00:13:27.360
+but for now let's just
+
+00:13:24.160 --> 00:13:30.720
+say that the input to self attention so
+
+00:13:27.360 --> 00:13:35.279
+far was token embedding.
+
+00:13:30.720 --> 00:13:38.880
+Right? we have to update this with some
+
+00:13:35.279 --> 00:13:42.079
+positional encoding and this will be the
+
+00:13:38.880 --> 00:13:44.399
+input for self attention.
+
+00:13:42.079 --> 00:13:47.040
+So basically positional encoding will be
+
+00:13:44.399 --> 00:13:50.399
+a vector of the same dimension as the
+
+00:13:47.040 --> 00:13:54.079
+token embedding and it basically infuses
+
+00:13:50.399 --> 00:13:56.000
+the position to the embedding. But for
+
+00:13:54.079 --> 00:13:58.560
+now let's assume we're not really
+
+00:13:56.000 --> 00:14:02.320
+learning this and we can basically give
+
+00:13:58.560 --> 00:14:05.760
+this in a deterministic way and given
+
+00:14:02.320 --> 00:14:08.639
+that we know the relative uh position
+
+00:14:05.760 --> 00:14:11.199
+between words and the encoder will
+
+00:14:08.639 --> 00:14:15.040
+consider that in the update of the
+
+00:14:11.199 --> 00:14:17.360
+embeddings. Okay. So with that we know
+
+00:14:15.040 --> 00:14:19.600
+how to do self attention.
+
+00:14:17.360 --> 00:14:23.440
+Now let's design our encoder decoder
+
+00:14:19.600 --> 00:14:27.199
+architecture with this. So no more RNN
+
+00:14:23.440 --> 00:14:29.199
+we want to do everything with attention.
+
+00:14:27.199 --> 00:14:32.560
+So self attention within the sequence
+
+00:14:29.199 --> 00:14:35.600
+and cross attention between the encoded
+
+00:14:32.560 --> 00:14:40.160
+encoded and decoded sequences.
+
+00:14:35.600 --> 00:14:45.519
+Okay. So let's rewrite this. We have the
+
+00:14:40.160 --> 00:14:47.680
+input X here the embedding of X and then
+
+00:14:45.519 --> 00:14:51.440
+we are
+
+00:14:47.680 --> 00:14:54.480
+adding the positional encoding and now
+
+00:14:51.440 --> 00:14:57.680
+this is the new
+
+00:14:54.480 --> 00:15:00.240
+representation for each tokens. So now
+
+00:14:57.680 --> 00:15:03.920
+we want to do self attention from the
+
+00:15:00.240 --> 00:15:06.480
+same X here.
+
+00:15:03.920 --> 00:15:11.040
+Let's call this X.
+
+00:15:06.480 --> 00:15:15.360
+we have Q, K and V. So each sequence
+
+00:15:11.040 --> 00:15:17.279
+attends to itself. Okay. And then like
+
+00:15:15.360 --> 00:15:19.040
+we discussed before in the previous
+
+00:15:17.279 --> 00:15:21.279
+lecture, we need some form of
+
+00:15:19.040 --> 00:15:24.399
+nonlinearity. So the nonlinearity
+
+00:15:21.279 --> 00:15:27.120
+basically helps us to get these rich
+
+00:15:24.399 --> 00:15:30.320
+functions that allow for these linear
+
+00:15:27.120 --> 00:15:32.560
+spaces to work. We need a feed forward
+
+00:15:30.320 --> 00:15:35.839
+neural network. That's the output of
+
+00:15:32.560 --> 00:15:38.079
+this attention layer. This is one
+
+00:15:35.839 --> 00:15:41.440
+attention layer. So we can of course
+
+00:15:38.079 --> 00:15:43.920
+repeat and stack several of these layers
+
+00:15:41.440 --> 00:15:47.760
+uh stacking n times of them. And at the
+
+00:15:43.920 --> 00:15:50.240
+end we will have keys and value pairs
+
+00:15:47.760 --> 00:15:53.920
+that is the output of this encoder.
+
+00:15:50.240 --> 00:15:57.680
+Okay. So now we want to use this to
+
+00:15:53.920 --> 00:16:00.560
+decode or generate new sentences or
+
+00:15:57.680 --> 00:16:05.040
+sequences. Let's just repeat the same
+
+00:16:00.560 --> 00:16:08.160
+thing. Just copy this. So now the output
+
+00:16:05.040 --> 00:16:10.800
+follow the same thing the here we have
+
+00:16:08.160 --> 00:16:13.680
+output embedding and again positional
+
+00:16:10.800 --> 00:16:17.440
+encoding and then again self attention
+
+00:16:13.680 --> 00:16:20.320
+within this decoder sequence but we want
+
+00:16:17.440 --> 00:16:23.199
+this decoder to talk to the encoder
+
+00:16:20.320 --> 00:16:27.199
+state right so before sending it to the
+
+00:16:23.199 --> 00:16:29.360
+feed forward nor network we will add
+
+00:16:27.199 --> 00:16:32.320
+another attention but this time a cross
+
+00:16:29.360 --> 00:16:35.920
+attention like what we did before we
+
+00:16:32.320 --> 00:16:38.320
+allow this decoder sequence to query the
+
+00:16:35.920 --> 00:16:40.639
+encoder. So like I said this is
+
+00:16:38.320 --> 00:16:44.160
+basically a cross attention and then the
+
+00:16:40.639 --> 00:16:47.759
+output of this guy goes to the feed for
+
+00:16:44.160 --> 00:16:51.759
+a noral network and that's basically an
+
+00:16:47.759 --> 00:16:56.160
+decoder attention layer and we can have
+
+00:16:51.759 --> 00:17:00.800
+another bunch of this layers stacking on
+
+00:16:56.160 --> 00:17:06.079
+each other. Okay. And then we can send
+
+00:17:00.800 --> 00:17:08.640
+this updated representation to uh let's
+
+00:17:06.079 --> 00:17:11.679
+say a linear neural network and a
+
+00:17:08.640 --> 00:17:14.480
+softmax. So the linear gives us the
+
+00:17:11.679 --> 00:17:18.319
+logits, the softmax gives us the
+
+00:17:14.480 --> 00:17:19.919
+probabilities and this basically is the
+
+00:17:18.319 --> 00:17:22.240
+output
+
+00:17:19.919 --> 00:17:25.039
+probabilities which we sample from and
+
+00:17:22.240 --> 00:17:28.079
+we get the next token and we repeat
+
+00:17:25.039 --> 00:17:31.039
+this. Okay. And that's the auto
+
+00:17:28.079 --> 00:17:34.480
+reggression way of decoding. There are
+
+00:17:31.039 --> 00:17:36.880
+of course some architectural trick to
+
+00:17:34.480 --> 00:17:39.360
+make this stable and make sure it's
+
+00:17:36.880 --> 00:17:42.320
+learning. For example, if we want to
+
+00:17:39.360 --> 00:17:46.559
+stick with the original paper by Vasan
+
+00:17:42.320 --> 00:17:49.520
+Vwani at all. They added skip connection
+
+00:17:46.559 --> 00:17:54.559
+to all of these blocks to make sure we
+
+00:17:49.520 --> 00:17:58.480
+have this residual highways and then a
+
+00:17:54.559 --> 00:18:00.960
+form of normalization that makes sure
+
+00:17:58.480 --> 00:18:04.240
+the variance is controlled. So let's add
+
+00:18:00.960 --> 00:18:07.520
+the skip connections. We have one here
+
+00:18:04.240 --> 00:18:11.520
+and one here. Same on the other side.
+
+00:18:07.520 --> 00:18:14.559
+And as you remember in CNN, it's always
+
+00:18:11.520 --> 00:18:17.760
+good to do normalization to make sure
+
+00:18:14.559 --> 00:18:21.039
+things are scaled and there is no
+
+00:18:17.760 --> 00:18:23.440
+coariance shifts for example. And to do
+
+00:18:21.039 --> 00:18:25.360
+that here we're using layer
+
+00:18:23.440 --> 00:18:28.160
+normalization.
+
+00:18:25.360 --> 00:18:31.200
+And to do that here the original
+
+00:18:28.160 --> 00:18:33.679
+transformer paper proposed layer
+
+00:18:31.200 --> 00:18:35.760
+normalization in this form that I'm
+
+00:18:33.679 --> 00:18:38.640
+going to write here.
+
+00:18:35.760 --> 00:18:41.760
+So here here is the normalization and as
+
+00:18:38.640 --> 00:18:44.240
+you see it basically makes sure the
+
+00:18:41.760 --> 00:18:45.760
+signal that we are sending upward is
+
+00:18:44.240 --> 00:18:49.039
+always
+
+00:18:45.760 --> 00:18:52.080
+stable and scaled and of course the skip
+
+00:18:49.039 --> 00:18:56.400
+connections or the residual are making
+
+00:18:52.080 --> 00:18:58.080
+our gradients reachable to the deeper
+
+00:18:56.400 --> 00:19:00.720
+states.
+
+00:18:58.080 --> 00:19:02.960
+Okay. So let's again review. We have
+
+00:19:00.720 --> 00:19:05.760
+this input embedding. We add the
+
+00:19:02.960 --> 00:19:08.160
+positional encoding. We have this
+
+00:19:05.760 --> 00:19:10.640
+encoder self attention which each
+
+00:19:08.160 --> 00:19:14.320
+position attends to all positions in the
+
+00:19:10.640 --> 00:19:17.520
+input. And then we have the decoder
+
+00:19:14.320 --> 00:19:20.000
+which is masked self attention meaning
+
+00:19:17.520 --> 00:19:23.280
+that each position attends only to
+
+00:19:20.000 --> 00:19:25.919
+previous positions. This is the causal
+
+00:19:23.280 --> 00:19:28.400
+masking that I mentioned. Of course we
+
+00:19:25.919 --> 00:19:31.200
+have this cross attention uh where the
+
+00:19:28.400 --> 00:19:34.559
+decoder attends to encoder outputs. Same
+
+00:19:31.200 --> 00:19:36.960
+as last lecture, we have this feed
+
+00:19:34.559 --> 00:19:40.160
+forward neural networks that provides
+
+00:19:36.960 --> 00:19:43.200
+this expressiveness that we want. It
+
+00:19:40.160 --> 00:19:45.039
+also acts like a learned feature map
+
+00:19:43.200 --> 00:19:47.280
+that we discussed in the kernel
+
+00:19:45.039 --> 00:19:50.799
+discussion from last time. Most of the
+
+00:19:47.280 --> 00:19:53.520
+parameters uh are in this uh feed
+
+00:19:50.799 --> 00:19:57.440
+forward neural networks. So looking at
+
+00:19:53.520 --> 00:20:01.120
+them and uh it's good to zoom in into
+
+00:19:57.440 --> 00:20:03.440
+this uh sub layers and discuss the
+
+00:20:01.120 --> 00:20:06.480
+importance of them and why they are
+
+00:20:03.440 --> 00:20:10.320
+carrying the most number of parameters
+
+00:20:06.480 --> 00:20:13.039
+and we expect the and we expect them to
+
+00:20:10.320 --> 00:20:15.200
+carry most of the expressiveness of the
+
+00:20:13.039 --> 00:20:18.559
+neural network. So basically the self
+
+00:20:15.200 --> 00:20:20.559
+attention part it mixes the content and
+
+00:20:18.559 --> 00:20:23.520
+fit for a neural network provides this
+
+00:20:20.559 --> 00:20:26.000
+nonlinear transformations and why they
+
+00:20:23.520 --> 00:20:28.400
+provide this uh kind of separation of
+
+00:20:26.000 --> 00:20:30.480
+concern for us.
+
+00:20:28.400 --> 00:20:33.679
+So let's think of these transformers
+
+00:20:30.480 --> 00:20:35.200
+like a like a librarian. I mean after
+
+00:20:33.679 --> 00:20:37.760
+all
+
+00:20:35.200 --> 00:20:40.080
+large language models are following this
+
+00:20:37.760 --> 00:20:43.200
+transformer architectures
+
+00:20:40.080 --> 00:20:44.799
+and somehow we have this impression that
+
+00:20:43.200 --> 00:20:46.799
+they are memorizing the internet. Of
+
+00:20:44.799 --> 00:20:49.200
+course, it's a lossy compression, but
+
+00:20:46.799 --> 00:20:51.520
+it's a very very efficient compression.
+
+00:20:49.200 --> 00:20:54.559
+And that's why let's make this analogy.
+
+00:20:51.520 --> 00:20:57.360
+And it's like we can think of
+
+00:20:54.559 --> 00:20:59.120
+transformers like a library that reads
+
+00:20:57.360 --> 00:21:02.400
+and summarizes
+
+00:20:59.120 --> 00:21:04.640
+and organizes the the library and it
+
+00:21:02.400 --> 00:21:07.200
+comes up with this efficient shelving.
+
+00:21:04.640 --> 00:21:09.600
+Basically, the embedding space. It
+
+00:21:07.200 --> 00:21:12.799
+organizes the summaries by placing
+
+00:21:09.600 --> 00:21:15.520
+similar concepts next to each other. So
+
+00:21:12.799 --> 00:21:17.440
+again this organizational system is the
+
+00:21:15.520 --> 00:21:20.720
+model's highdimensional vector space
+
+00:21:17.440 --> 00:21:22.559
+that it learns via this gradient descent
+
+00:21:20.720 --> 00:21:25.280
+and then there is a knowledge store
+
+00:21:22.559 --> 00:21:28.799
+which like I said requires the most
+
+00:21:25.280 --> 00:21:31.039
+number of parameters and that's mostly
+
+00:21:28.799 --> 00:21:33.600
+carried by the feed forward neural
+
+00:21:31.039 --> 00:21:36.480
+networks. So you can think of this feed
+
+00:21:33.600 --> 00:21:39.120
+forward neural networks like like memory
+
+00:21:36.480 --> 00:21:41.200
+also. So they are like the specialized
+
+00:21:39.120 --> 00:21:43.440
+bookshelves where the compressed
+
+00:21:41.200 --> 00:21:46.080
+knowledge is stored. When we provide a
+
+00:21:43.440 --> 00:21:48.640
+prompt or a query, we're asking this
+
+00:21:46.080 --> 00:21:51.679
+librarian a question. And the attention
+
+00:21:48.640 --> 00:21:54.400
+mechanism acts like an efficient search
+
+00:21:51.679 --> 00:21:56.720
+that allows the librarian to instantly
+
+00:21:54.400 --> 00:21:59.200
+identifies the relevant sections because
+
+00:21:56.720 --> 00:22:01.600
+the library is organized by similarity
+
+00:21:59.200 --> 00:22:04.240
+and compares the query or the request
+
+00:22:01.600 --> 00:22:07.200
+against the keys or the indices let's
+
+00:22:04.240 --> 00:22:10.559
+say to find relevant concepts. So
+
+00:22:07.200 --> 00:22:13.440
+attention decides where to look and once
+
+00:22:10.559 --> 00:22:16.080
+the attention gathered the relevant
+
+00:22:13.440 --> 00:22:19.360
+context the feed for a neural networks
+
+00:22:16.080 --> 00:22:22.320
+accessing the specific knowledge or the
+
+00:22:19.360 --> 00:22:24.559
+values associated with the context to
+
+00:22:22.320 --> 00:22:29.039
+determine the next word for example here
+
+00:22:24.559 --> 00:22:31.440
+in LLMs. So the FFNS or the field for
+
+00:22:29.039 --> 00:22:35.360
+neural networks decides what information
+
+00:22:31.440 --> 00:22:37.919
+to apply. So we can think of it like
+
+00:22:35.360 --> 00:22:41.679
+attention is basically performing
+
+00:22:37.919 --> 00:22:43.520
+contentbased routing or mixing across
+
+00:22:41.679 --> 00:22:45.520
+all tokens
+
+00:22:43.520 --> 00:22:48.320
+which is like the librarian is finding
+
+00:22:45.520 --> 00:22:52.080
+the right aisles and the feed for neural
+
+00:22:48.320 --> 00:22:54.480
+networks perform this token local
+
+00:22:52.080 --> 00:22:57.440
+computation
+
+00:22:54.480 --> 00:23:00.080
+that acts like a dense associative
+
+00:22:57.440 --> 00:23:01.919
+memory
+
+00:23:00.080 --> 00:23:03.280
+which is like the content on the
+
+00:23:01.919 --> 00:23:06.240
+shelves.
+
+00:23:03.280 --> 00:23:08.720
+So even if you look at then FFN
+
+00:23:06.240 --> 00:23:11.919
+so let's write it like this a two layer
+
+00:23:08.720 --> 00:23:15.440
+FFN is like this right it so looking at
+
+00:23:11.919 --> 00:23:18.960
+this component wise let's assume we can
+
+00:23:15.440 --> 00:23:22.799
+rewrite this in a summation form
+
+00:23:18.960 --> 00:23:27.280
+J through F. So let's look at the one
+
+00:23:22.799 --> 00:23:29.840
+row of this computation. So one J which
+
+00:23:27.280 --> 00:23:29.919
+is J row of W W W W W W W W W W W W W W
+
+00:23:29.840 --> 00:23:33.120
+W W W W W W W W W W W W W W W W W W W W
+
+00:23:29.919 --> 00:23:35.679
+W W W W W W W 1 plus B1 J. So this is a
+
+00:23:33.120 --> 00:23:37.840
+row. It means that when it's when it's
+
+00:23:35.679 --> 00:23:41.280
+negative, it gives zero. So this is only
+
+00:23:37.840 --> 00:23:44.400
+positive or zero multiply by VJ. So VJ
+
+00:23:41.280 --> 00:23:48.480
+is the J column of W2. So let me write
+
+00:23:44.400 --> 00:23:52.640
+this out. J column W2
+
+00:23:48.480 --> 00:23:54.159
+and this is J row
+
+00:23:52.640 --> 00:23:57.360
+W1.
+
+00:23:54.159 --> 00:24:00.320
+So let's zoom into this. Uh this part is
+
+00:23:57.360 --> 00:24:02.960
+basically deciding if the neuron is
+
+00:24:00.320 --> 00:24:05.360
+activated or not
+
+00:24:02.960 --> 00:24:08.080
+corresponds to the first layer. Right?
+
+00:24:05.360 --> 00:24:11.279
+If it is activated
+
+00:24:08.080 --> 00:24:14.799
+a value VJ will be returned to the token
+
+00:24:11.279 --> 00:24:17.120
+string which corresponds to the W2. So
+
+00:24:14.799 --> 00:24:19.679
+you can think of it like uh this is like
+
+00:24:17.120 --> 00:24:22.000
+a key and this is like a value right
+
+00:24:19.679 --> 00:24:24.880
+just like what we did previously with
+
+00:24:22.000 --> 00:24:27.840
+kernel regression. So you can think of a
+
+00:24:24.880 --> 00:24:31.840
+dense fit for neural network as a large
+
+00:24:27.840 --> 00:24:36.720
+bank of key and value pairs
+
+00:24:31.840 --> 00:24:38.640
+softly selected by an input context.
+
+00:24:36.720 --> 00:24:41.679
+In other words, it's like really like a
+
+00:24:38.640 --> 00:24:46.720
+mixture of expert where an expert is
+
+00:24:41.679 --> 00:24:51.039
+invoked and the opinion will be seek. So
+
+00:24:46.720 --> 00:24:53.440
+during the training these W1JS
+
+00:24:51.039 --> 00:24:55.120
+push to activate the specific contextual
+
+00:24:53.440 --> 00:24:58.880
+patterns
+
+00:24:55.120 --> 00:25:02.080
+and the VJS or the values
+
+00:24:58.880 --> 00:25:05.440
+point toward directions that raise the
+
+00:25:02.080 --> 00:25:08.159
+correct next token logits.
+
+00:25:05.440 --> 00:25:10.720
+So we can think of this
+
+00:25:08.159 --> 00:25:13.200
+pairs of W1,
+
+00:25:10.720 --> 00:25:15.919
+J and VJS
+
+00:25:13.200 --> 00:25:20.720
+as storing the association
+
+00:25:15.919 --> 00:25:23.520
+for context and next token.
+
+00:25:20.720 --> 00:25:26.559
+Many such pairs superpose and yielding a
+
+00:25:23.520 --> 00:25:29.679
+sparse distributed memory. Remember that
+
+00:25:26.559 --> 00:25:32.320
+this also does interpolation between
+
+00:25:29.679 --> 00:25:35.200
+what it observe in the data. So the
+
+00:25:32.320 --> 00:25:39.520
+interpolation comes from the fact that
+
+00:25:35.200 --> 00:25:41.760
+this gate here varies smoothly with X.
+
+00:25:39.520 --> 00:25:47.279
+In mathematical language we basically
+
+00:25:41.760 --> 00:25:50.640
+say ReLU is lip sheets and this makes
+
+00:25:47.279 --> 00:25:54.080
+nearby context activating similar
+
+00:25:50.640 --> 00:25:57.520
+neurons. So it's like a peacewise linear
+
+00:25:54.080 --> 00:26:00.159
+kernel smoother really. Great. So that's
+
+00:25:57.520 --> 00:26:04.080
+the interplay between the attention and
+
+00:26:00.159 --> 00:26:07.600
+the fit for normal networks. Here the
+
+00:26:04.080 --> 00:26:10.640
+last point before moving on when we look
+
+00:26:07.600 --> 00:26:13.600
+at the attention head it basically
+
+00:26:10.640 --> 00:26:16.320
+computes the output as a weighted
+
+00:26:13.600 --> 00:26:19.679
+average of the value vectors across all
+
+00:26:16.320 --> 00:26:21.919
+positions. This averaging mechanism can
+
+00:26:19.679 --> 00:26:25.600
+dilute information
+
+00:26:21.919 --> 00:26:28.240
+and somehow prevent the models to focus
+
+00:26:25.600 --> 00:26:31.039
+sharply on different aspects of the
+
+00:26:28.240 --> 00:26:33.279
+sequence at the same time. For example,
+
+00:26:31.039 --> 00:26:35.840
+in language we have different
+
+00:26:33.279 --> 00:26:39.919
+relationship like for example semantic
+
+00:26:35.840 --> 00:26:43.279
+roles and positional context and so on.
+
+00:26:39.919 --> 00:26:47.360
+And if we want to compress all of them
+
+00:26:43.279 --> 00:26:50.640
+into one weighted sum, it reduces the
+
+00:26:47.360 --> 00:26:53.039
+effective resolution. So to counteract
+
+00:26:50.640 --> 00:26:55.840
+um this reduction in resolution, we use
+
+00:26:53.039 --> 00:26:59.600
+multiple attention head. So we have
+
+00:26:55.840 --> 00:27:03.039
+several of them. And looking at the
+
+00:26:59.600 --> 00:27:05.440
+figure two of the original paper here,
+
+00:27:03.039 --> 00:27:08.320
+for example, we have each attention
+
+00:27:05.440 --> 00:27:11.279
+head. Each attention head gets a subset
+
+00:27:08.320 --> 00:27:14.000
+of the embedding space. Right? So for
+
+00:27:11.279 --> 00:27:17.919
+example, if the embedding space is DV,
+
+00:27:14.000 --> 00:27:19.840
+we chop it into H and each attention
+
+00:27:17.919 --> 00:27:22.960
+head attends to one of the
+
+00:27:19.840 --> 00:27:25.520
+representation subspace. So at the end
+
+00:27:22.960 --> 00:27:28.720
+all of these outputs of this attention
+
+00:27:25.520 --> 00:27:31.440
+heads will be concatenated to obtain the
+
+00:27:28.720 --> 00:27:33.760
+updated QV.
+
+00:27:31.440 --> 00:27:35.520
+uh we can discuss the details of
+
+00:27:33.760 --> 00:27:38.000
+positional encoding and the
+
+00:27:35.520 --> 00:27:40.159
+normalization.
+
+00:27:38.000 --> 00:27:42.880
+Let's discuss the positional encoding in
+
+00:27:40.159 --> 00:27:47.039
+transformers and first we list a bunch
+
+00:27:42.880 --> 00:27:49.840
+of properties that we like an positional
+
+00:27:47.039 --> 00:27:51.039
+encoding scheme to satisfy. We like each
+
+00:27:49.840 --> 00:27:54.320
+position to have a distinct
+
+00:27:51.039 --> 00:27:57.279
+representation. So a uniqueness
+
+00:27:54.320 --> 00:28:01.440
+property. Ideally we want the encoding
+
+00:27:57.279 --> 00:28:03.200
+to be reproducible and not random. So
+
+00:28:01.440 --> 00:28:05.440
+determinism
+
+00:28:03.200 --> 00:28:08.080
+um we want this to have a bounded range.
+
+00:28:05.440 --> 00:28:12.159
+We don't want to uh mess up with the
+
+00:28:08.080 --> 00:28:17.120
+embedding that we are updating during
+
+00:28:12.159 --> 00:28:21.679
+the transformer layers. So bounded range
+
+00:28:17.120 --> 00:28:24.159
+and it should work for sequences longer
+
+00:28:21.679 --> 00:28:26.640
+than those we see during training. So
+
+00:28:24.159 --> 00:28:28.720
+generalizable the encoding must
+
+00:28:26.640 --> 00:28:31.919
+distinguish between near and far
+
+00:28:28.720 --> 00:28:35.039
+positions. at different scales, right?
+
+00:28:31.919 --> 00:28:36.559
+So somehow multiscale uh distance
+
+00:28:35.039 --> 00:28:38.159
+awareness,
+
+00:28:36.559 --> 00:28:41.120
+we don't want to mess up with the
+
+00:28:38.159 --> 00:28:43.039
+continuity for gradient descent. So the
+
+00:28:41.120 --> 00:28:46.240
+nearby positions should have similar
+
+00:28:43.039 --> 00:28:49.840
+encoding. So some kind of smooth
+
+00:28:46.240 --> 00:28:52.320
+transition. Also uh since we are dealing
+
+00:28:49.840 --> 00:28:55.679
+with linear transformation in the
+
+00:28:52.320 --> 00:29:00.399
+embedding space any shifting position
+
+00:28:55.679 --> 00:29:02.320
+let's say from i to i + delta should
+
+00:29:00.399 --> 00:29:05.520
+correspond to a simple linear
+
+00:29:02.320 --> 00:29:08.720
+transformation for example a rotation.
+
+00:29:05.520 --> 00:29:10.559
+about linear transor
+
+00:29:08.720 --> 00:29:14.480
+mobility.
+
+00:29:10.559 --> 00:29:19.039
+Okay. So let's uh start from the
+
+00:29:14.480 --> 00:29:22.640
+simplest ideas and build toward
+
+00:29:19.039 --> 00:29:28.159
+a scheme that satisfy all of these
+
+00:29:22.640 --> 00:29:32.559
+properties. So let's assume a sequence
+
+00:29:28.159 --> 00:29:36.240
+of size of length n.
+
+00:29:32.559 --> 00:29:38.640
+Um one simple encoding is to basically
+
+00:29:36.240 --> 00:29:40.880
+assign each position a normalized scalar
+
+00:29:38.640 --> 00:29:44.320
+value between zero and one. Right? So
+
+00:29:40.880 --> 00:29:46.080
+basically from zero to one. So the
+
+00:29:44.320 --> 00:29:49.520
+positional encoding will take a form
+
+00:29:46.080 --> 00:29:53.039
+like this. And then we can update the
+
+00:29:49.520 --> 00:29:57.600
+the embedding of input
+
+00:29:53.039 --> 00:29:59.679
+let's say at position i with ei + p i.
+
+00:29:57.600 --> 00:30:04.000
+And since we want this to be a vector of
+
+00:29:59.679 --> 00:30:06.320
+size um dimension, this should be a one
+
+00:30:04.000 --> 00:30:08.000
+vector. Okay, which is in dimension.
+
+00:30:06.320 --> 00:30:11.600
+Okay, so let's look at this simple
+
+00:30:08.000 --> 00:30:13.600
+encoding. So one issue here is this
+
+00:30:11.600 --> 00:30:16.960
+linear transformability. If you look at
+
+00:30:13.600 --> 00:30:20.720
+this, all of this encodings are this
+
+00:30:16.960 --> 00:30:23.760
+parallel vectors of direction one. So
+
+00:30:20.720 --> 00:30:26.399
+they are all point in the same direction
+
+00:30:23.760 --> 00:30:29.520
+and they only differ in magnitude. So if
+
+00:30:26.399 --> 00:30:33.440
+you write the score between let's say EI
+
+00:30:29.520 --> 00:30:36.080
+and EJ this will be like u adding the
+
+00:30:33.440 --> 00:30:39.039
+same global bias to everything. In other
+
+00:30:36.080 --> 00:30:42.080
+words if you have let's say a
+
+00:30:39.039 --> 00:30:46.080
+two-dimensional embedding let's say the
+
+00:30:42.080 --> 00:30:50.799
+embedding of cat is here the embedding
+
+00:30:46.080 --> 00:30:52.640
+of sat is here the embedding of Matt is
+
+00:30:50.799 --> 00:30:55.679
+here.
+
+00:30:52.640 --> 00:30:58.159
+This positional encoding will add just a
+
+00:30:55.679 --> 00:31:01.919
+vector like that and there's not really
+
+00:30:58.159 --> 00:31:04.240
+a distinguishing geometric structure. So
+
+00:31:01.919 --> 00:31:06.080
+what we can learn from here? First we
+
+00:31:04.240 --> 00:31:08.960
+need a multi-dimensional structure. This
+
+00:31:06.080 --> 00:31:11.360
+is not multi-dimensional. We need a rich
+
+00:31:08.960 --> 00:31:14.320
+geometric interaction.
+
+00:31:11.360 --> 00:31:16.480
+So we need some form of meaningful
+
+00:31:14.320 --> 00:31:19.600
+geometric relationship after this
+
+00:31:16.480 --> 00:31:21.360
+updates. And we need some form of
+
+00:31:19.600 --> 00:31:25.200
+directional
+
+00:31:21.360 --> 00:31:27.520
+divers diversity. So different positions
+
+00:31:25.200 --> 00:31:30.000
+should point in different direction not
+
+00:31:27.520 --> 00:31:31.600
+the same direction. So let's do another
+
+00:31:30.000 --> 00:31:34.880
+attempt
+
+00:31:31.600 --> 00:31:38.159
+and for that we will bring uh from our
+
+00:31:34.880 --> 00:31:41.039
+previous knowledge and we want to
+
+00:31:38.159 --> 00:31:45.279
+represent each position using this
+
+00:31:41.039 --> 00:31:48.640
+binary uh coding. So again this is the
+
+00:31:45.279 --> 00:31:54.720
+axis of position let's say 0 to I don't
+
+00:31:48.640 --> 00:31:57.120
+know like 0 to 7 and um we want to
+
+00:31:54.720 --> 00:32:00.000
+represent this with different beats
+
+00:31:57.120 --> 00:32:02.880
+right for example
+
+00:32:00.000 --> 00:32:05.600
+so we can go on and on but basically the
+
+00:32:02.880 --> 00:32:07.840
+idea here is we have the finest scale
+
+00:32:05.600 --> 00:32:09.679
+here we have a medium scale here and we
+
+00:32:07.840 --> 00:32:11.200
+have a coarse scale here with different
+
+00:32:09.679 --> 00:32:13.519
+periods.
+
+00:32:11.200 --> 00:32:15.120
+So this is this looks much better. Each
+
+00:32:13.519 --> 00:32:17.279
+bit provides a different level of
+
+00:32:15.120 --> 00:32:19.440
+positional information. We can
+
+00:32:17.279 --> 00:32:21.679
+distinguish nearby positions. We can
+
+00:32:19.440 --> 00:32:23.919
+also distinguish distant position. So
+
+00:32:21.679 --> 00:32:26.159
+previously if you remember previously it
+
+00:32:23.919 --> 00:32:29.360
+was easy to distinguish distant relation
+
+00:32:26.159 --> 00:32:32.080
+but not nearby relation. Okay. But here
+
+00:32:29.360 --> 00:32:36.960
+that's not the case. we can basically uh
+
+00:32:32.080 --> 00:32:40.720
+compare nearby relationships with the uh
+
+00:32:36.960 --> 00:32:44.159
+higher frequency and the distant
+
+00:32:40.720 --> 00:32:48.080
+relationships with lower frequency.
+
+00:32:44.159 --> 00:32:50.399
+So this works in terms of being
+
+00:32:48.080 --> 00:32:53.120
+multiscale uh different dimension
+
+00:32:50.399 --> 00:32:57.120
+captures different granularities of
+
+00:32:53.120 --> 00:33:00.640
+position. It is unique. Um it allows for
+
+00:32:57.120 --> 00:33:03.840
+easy distinguishing between local let's
+
+00:33:00.640 --> 00:33:06.720
+say here for example one and two and
+
+00:33:03.840 --> 00:33:09.120
+global 1 and 7 by using different
+
+00:33:06.720 --> 00:33:11.279
+periods and different scales. However
+
+00:33:09.120 --> 00:33:14.720
+the the main issue here is it's not
+
+00:33:11.279 --> 00:33:17.120
+smooth and we want really we want to
+
+00:33:14.720 --> 00:33:18.720
+deal with continuous functions and sharp
+
+00:33:17.120 --> 00:33:22.080
+discontinuities
+
+00:33:18.720 --> 00:33:25.039
+makes our optimization very difficult.
+
+00:33:22.080 --> 00:33:27.600
+So let's make it smooth instead of bits
+
+00:33:25.039 --> 00:33:30.080
+we will work with waves and the natural
+
+00:33:27.600 --> 00:33:32.799
+choice here for this oscillating
+
+00:33:30.080 --> 00:33:36.720
+functions are s and cosine waves. Okay.
+
+00:33:32.799 --> 00:33:40.000
+So basically instead of this we have
+
+00:33:36.720 --> 00:33:42.640
+like slow period or faster period or an
+
+00:33:40.000 --> 00:33:47.200
+even faster periods. These are bonded
+
+00:33:42.640 --> 00:33:52.159
+and but the nicest thing about this uh s
+
+00:33:47.200 --> 00:33:55.360
+and cosine pairs is um it is compatible
+
+00:33:52.159 --> 00:33:58.320
+with rotation and the rotation is
+
+00:33:55.360 --> 00:34:02.480
+naturally expressed using s and cosine.
+
+00:33:58.320 --> 00:34:05.360
+For example, rotation in 2D with a teta
+
+00:34:02.480 --> 00:34:07.919
+angle can be written like this. That's a
+
+00:34:05.360 --> 00:34:10.159
+rotation. And in the case of positional
+
+00:34:07.919 --> 00:34:12.399
+encoding using this sign and cosine, the
+
+00:34:10.159 --> 00:34:14.639
+positional encoding between two words
+
+00:34:12.399 --> 00:34:17.919
+like word one and word two with a
+
+00:34:14.639 --> 00:34:21.520
+distance delta corresponds to a rotation
+
+00:34:17.919 --> 00:34:23.599
+of delta. Now uh of course the choice of
+
+00:34:21.520 --> 00:34:27.599
+the frequency depends on the length of
+
+00:34:23.599 --> 00:34:30.480
+this dimension. Okay. So with this let's
+
+00:34:27.599 --> 00:34:33.839
+build the calculate formula. So for
+
+00:34:30.480 --> 00:34:36.720
+position I and dimension J, we are
+
+00:34:33.839 --> 00:34:40.079
+asking for a sign or a cosine. So
+
+00:34:36.720 --> 00:34:43.760
+depending if it's an uh odd dimension or
+
+00:34:40.079 --> 00:34:47.679
+an even dimension. So let's say 2 J or 2
+
+00:34:43.760 --> 00:34:52.399
+J + one. The formula for this guy is a
+
+00:34:47.679 --> 00:34:54.159
+sinus of I position I but with this
+
+00:34:52.399 --> 00:34:58.240
+frequencies.
+
+00:34:54.159 --> 00:35:01.839
+For the odd position we have cosine I
+
+00:34:58.240 --> 00:35:04.960
+same frequency. So if we want to plot
+
+00:35:01.839 --> 00:35:08.560
+this this is basically like faster
+
+00:35:04.960 --> 00:35:11.359
+frequencies. When you go down you have
+
+00:35:08.560 --> 00:35:14.880
+slower frequencies. Again it's easy to
+
+00:35:11.359 --> 00:35:18.000
+distinguish between long distances and
+
+00:35:14.880 --> 00:35:22.160
+small distances using this balance of
+
+00:35:18.000 --> 00:35:25.839
+scales. And this pairs of s and cosine
+
+00:35:22.160 --> 00:35:29.040
+help us to interpret this distances like
+
+00:35:25.839 --> 00:35:32.000
+rotation in this embedding space. So if
+
+00:35:29.040 --> 00:35:34.320
+you look at the h position. So looking
+
+00:35:32.000 --> 00:35:40.280
+at this will look like something like
+
+00:35:34.320 --> 00:35:40.280
+this. And if we want to
+
+00:35:41.280 --> 00:35:46.800
+relate this to this very common figure,
+
+00:35:44.640 --> 00:35:49.680
+it's basically
+
+00:35:46.800 --> 00:35:51.920
+faster frequencies here
+
+00:35:49.680 --> 00:35:55.520
+then slowing down
+
+00:35:51.920 --> 00:35:57.920
+here. For example, this is just some a
+
+00:35:55.520 --> 00:36:02.800
+deep like this
+
+00:35:57.920 --> 00:36:05.520
+and slower and slower. Okay. Um
+
+00:36:02.800 --> 00:36:08.160
+so this is the default. This is the
+
+00:36:05.520 --> 00:36:10.960
+first positional encoding that was
+
+00:36:08.160 --> 00:36:12.960
+proposed by uh the original transformer
+
+00:36:10.960 --> 00:36:15.520
+paper. But there are many other
+
+00:36:12.960 --> 00:36:17.680
+positional encodings. There are even
+
+00:36:15.520 --> 00:36:19.520
+learnable positional encodings that can
+
+00:36:17.680 --> 00:36:21.920
+be useful for some specific
+
+00:36:19.520 --> 00:36:25.520
+applications. Let's say like time series
+
+00:36:21.920 --> 00:36:28.480
+analysis. And um I encourage you to play
+
+00:36:25.520 --> 00:36:31.480
+with different types of positional
+
+00:36:28.480 --> 00:36:31.480
+encoding.

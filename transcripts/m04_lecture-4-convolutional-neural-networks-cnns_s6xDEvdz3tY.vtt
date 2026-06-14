@@ -1,0 +1,1642 @@
+WEBVTT
+
+00:00:00.719 --> 00:00:05.680
+Okay, so let's continue our discussion.
+
+00:00:03.919 --> 00:00:08.960
+So far we were talking about feed
+
+00:00:05.680 --> 00:00:13.920
+forward neural network that is basically
+
+00:00:08.960 --> 00:00:17.119
+a stack of u this layers of perceptrons
+
+00:00:13.920 --> 00:00:21.039
+which we called multi-layer perceptrons.
+
+00:00:17.119 --> 00:00:24.080
+So they uh have proven
+
+00:00:21.039 --> 00:00:27.119
+very efficient uh to be used in tabular
+
+00:00:24.080 --> 00:00:30.880
+data. For example, they are heavily used
+
+00:00:27.119 --> 00:00:34.239
+in tasks like fraud detection and
+
+00:00:30.880 --> 00:00:36.320
+recommener systems. So when trained on
+
+00:00:34.239 --> 00:00:39.040
+historical data, often they can
+
+00:00:36.320 --> 00:00:41.760
+outperform even human experts on the
+
+00:00:39.040 --> 00:00:45.280
+such tasks.
+
+00:00:41.760 --> 00:00:48.160
+However, one task that remained
+
+00:00:45.280 --> 00:00:51.760
+stubbornly difficult for uh such
+
+00:00:48.160 --> 00:00:55.360
+machines were image recognition. I mean
+
+00:00:51.760 --> 00:00:58.239
+even complex multi-layer perceptrons uh
+
+00:00:55.360 --> 00:01:01.039
+they fail to match performance that we
+
+00:00:58.239 --> 00:01:03.680
+we desire basically something close to
+
+00:01:01.039 --> 00:01:07.360
+the human level performance. So to
+
+00:01:03.680 --> 00:01:11.200
+understand that uh we need to look at uh
+
+00:01:07.360 --> 00:01:14.880
+the challenges that we have in uh image
+
+00:01:11.200 --> 00:01:17.600
+recognition. So recall that basically
+
+00:01:14.880 --> 00:01:20.960
+uh any neural network is basically a way
+
+00:01:17.600 --> 00:01:24.880
+of approximating a function
+
+00:01:20.960 --> 00:01:28.720
+and uh by approximating a function we
+
+00:01:24.880 --> 00:01:30.720
+said that is effectively fitting a curve
+
+00:01:28.720 --> 00:01:33.759
+in
+
+00:01:30.720 --> 00:01:36.000
+uh among the observed data points. So
+
+00:01:33.759 --> 00:01:38.240
+for example, let's assume a
+
+00:01:36.000 --> 00:01:42.479
+one-dimensional case where we have a
+
+00:01:38.240 --> 00:01:45.600
+one-dimensional X that is coming um to
+
+00:01:42.479 --> 00:01:50.000
+our neural network and we are asking our
+
+00:01:45.600 --> 00:01:54.240
+nor to return uh a decision maybe a 01
+
+00:01:50.000 --> 00:01:57.520
+decision. Uh so maybe X is uh just a
+
+00:01:54.240 --> 00:02:00.560
+classification problem uh that we have a
+
+00:01:57.520 --> 00:02:03.520
+bunch of images image of one maybe image
+
+00:02:00.560 --> 00:02:06.479
+of two or let's make it more interesting
+
+00:02:03.520 --> 00:02:09.360
+maybe image of zero and image of six
+
+00:02:06.479 --> 00:02:15.280
+because they are it can be kind of
+
+00:02:09.360 --> 00:02:17.840
+similar. So let's uh assume this uh
+
+00:02:15.280 --> 00:02:21.280
+train of data is coming and they get
+
+00:02:17.840 --> 00:02:24.800
+some values on x like this and our uh
+
+00:02:21.280 --> 00:02:28.000
+normal network uh is basically
+
+00:02:24.800 --> 00:02:31.520
+uh has to fit a curve between them.
+
+00:02:28.000 --> 00:02:34.160
+Basically when it gets six we want a
+
+00:02:31.520 --> 00:02:36.400
+decision six
+
+00:02:34.160 --> 00:02:39.440
+and when it gets zero we want the
+
+00:02:36.400 --> 00:02:44.400
+decision zero. So basically we have two
+
+00:02:39.440 --> 00:02:47.120
+decision here. Uh so here we are asking
+
+00:02:44.400 --> 00:02:49.760
+our neural network to basically
+
+00:02:47.120 --> 00:02:52.239
+fit a curve here right. So something
+
+00:02:49.760 --> 00:02:54.879
+like this. So if we had a a
+
+00:02:52.239 --> 00:02:58.000
+one-dimensional
+
+00:02:54.879 --> 00:03:01.360
+uh data space we could fill it up very
+
+00:02:58.000 --> 00:03:03.680
+quickly with uh observed data. Right? So
+
+00:03:01.360 --> 00:03:07.599
+for example, let's assume we have in our
+
+00:03:03.680 --> 00:03:10.400
+problem if if we had a 1D uh space, we
+
+00:03:07.599 --> 00:03:16.159
+could fill it up with non data points,
+
+00:03:10.400 --> 00:03:21.040
+right? So uh if this 1D goes to 2D, we
+
+00:03:16.159 --> 00:03:25.519
+need exponentially more data. So maybe 9
+
+00:03:21.040 --> 00:03:29.440
+to 2. And if we have ND, we are looking
+
+00:03:25.519 --> 00:03:31.840
+at 9 to n. So what does this mean when
+
+00:03:29.440 --> 00:03:36.000
+we are dealing with image? So for
+
+00:03:31.840 --> 00:03:39.680
+example if our image is a 32x 32 pixel
+
+00:03:36.000 --> 00:03:43.920
+right uh in this case and even if we
+
+00:03:39.680 --> 00:03:48.080
+have uh like RGB channel three channel
+
+00:03:43.920 --> 00:03:52.879
+here in this case we are looking at 372
+
+00:03:48.080 --> 00:03:54.400
+or um or in the same analogy here n is
+
+00:03:52.879 --> 00:03:59.439
+372
+
+00:03:54.400 --> 00:04:04.080
+so we want 3 9 raised to 372
+
+00:03:59.439 --> 00:04:08.400
+data points to have a sufficiently
+
+00:04:04.080 --> 00:04:10.959
+um filled up space for our no network to
+
+00:04:08.400 --> 00:04:13.920
+fit the curve.
+
+00:04:10.959 --> 00:04:17.120
+This is a large number I mean
+
+00:04:13.920 --> 00:04:20.479
+astronomically large.
+
+00:04:17.120 --> 00:04:24.560
+So there that's why no matter how smart
+
+00:04:20.479 --> 00:04:28.400
+we train our neural network or our MLP
+
+00:04:24.560 --> 00:04:31.040
+with a architecture like that uh and
+
+00:04:28.400 --> 00:04:33.040
+such inductive bias we will always
+
+00:04:31.040 --> 00:04:37.280
+struggle.
+
+00:04:33.040 --> 00:04:40.160
+So for example in a CR 10 data set the
+
+00:04:37.280 --> 00:04:44.160
+best that I've seen that we could we can
+
+00:04:40.160 --> 00:04:46.320
+do is an accuracy of 74%.
+
+00:04:44.160 --> 00:04:48.960
+And uh if you compare this to human
+
+00:04:46.320 --> 00:04:52.880
+level which is 99%
+
+00:04:48.960 --> 00:04:56.160
+it's very very far. So okay. So let me
+
+00:04:52.880 --> 00:05:00.960
+show you um another reason basically
+
+00:04:56.160 --> 00:05:03.600
+like I said if we uh what we have done
+
+00:05:00.960 --> 00:05:06.560
+so far with MLP
+
+00:05:03.600 --> 00:05:10.160
+uh and uh basically classification of
+
+00:05:06.560 --> 00:05:13.360
+images like the amnesa
+
+00:05:10.160 --> 00:05:17.919
+we flatten the the image or pixels into
+
+00:05:13.360 --> 00:05:21.360
+a vector for example in a 32x 32 image
+
+00:05:17.919 --> 00:05:25.199
+and um if you flatten this and we give
+
+00:05:21.360 --> 00:05:29.520
+it to the MLP, it can give us a pretty
+
+00:05:25.199 --> 00:05:32.080
+good result. Uh when we when we expect
+
+00:05:29.520 --> 00:05:34.960
+uh one to be here, it will be always
+
+00:05:32.080 --> 00:05:38.320
+here. It will not be here for example.
+
+00:05:34.960 --> 00:05:41.919
+So and uh the emata is basically
+
+00:05:38.320 --> 00:05:45.600
+prepared like that initially by Leon and
+
+00:05:41.919 --> 00:05:48.479
+his team to be like that. But what does
+
+00:05:45.600 --> 00:05:52.160
+this mean? This means basically if we
+
+00:05:48.479 --> 00:05:55.919
+shuffle the pixels and uh we send the
+
+00:05:52.160 --> 00:05:58.479
+same flattened vector to the MLP
+
+00:05:55.919 --> 00:06:01.840
+um it's just basically order has changed
+
+00:05:58.479 --> 00:06:03.520
+and the MLP can still uh do the
+
+00:06:01.840 --> 00:06:08.479
+classification
+
+00:06:03.520 --> 00:06:12.560
+and in other word if we send an an input
+
+00:06:08.479 --> 00:06:16.479
+which looks like completely noisy image
+
+00:06:12.560 --> 00:06:18.479
+and give it to the neural network it can
+
+00:06:16.479 --> 00:06:21.600
+uh tell you with high confidence that
+
+00:06:18.479 --> 00:06:25.440
+this is for example no number three mean
+
+00:06:21.600 --> 00:06:28.960
+let's ask uh ourselves what we are
+
+00:06:25.440 --> 00:06:32.800
+expecting nano to do and compare it to
+
+00:06:28.960 --> 00:06:35.600
+what we are doing as humans.
+
+00:06:32.800 --> 00:06:38.479
+So the reason humans are able to see
+
+00:06:35.600 --> 00:06:40.479
+it's because our brain have a lot of
+
+00:06:38.479 --> 00:06:43.840
+information and knowledge about the
+
+00:06:40.479 --> 00:06:45.360
+world. It has some expectation, some
+
+00:06:43.840 --> 00:06:49.680
+regularity
+
+00:06:45.360 --> 00:06:52.639
+uh that uh works like an structure. Uh
+
+00:06:49.680 --> 00:06:56.960
+and uh this structure basically makes it
+
+00:06:52.639 --> 00:06:59.759
+easy for us to look at an image and
+
+00:06:56.960 --> 00:07:03.599
+screen the image for features and then
+
+00:06:59.759 --> 00:07:08.400
+put together these features and then
+
+00:07:03.599 --> 00:07:12.160
+decide what is inside this image. So the
+
+00:07:08.400 --> 00:07:14.400
+idea here is let's give some insight
+
+00:07:12.160 --> 00:07:18.479
+some structure to the neural networks
+
+00:07:14.400 --> 00:07:21.759
+and make the job easier for it. So let's
+
+00:07:18.479 --> 00:07:24.160
+infuse some of this structure that we
+
+00:07:21.759 --> 00:07:27.360
+know and we can provide that to the
+
+00:07:24.160 --> 00:07:32.400
+neural network and then design a neural
+
+00:07:27.360 --> 00:07:37.039
+network with such inductive bias. So two
+
+00:07:32.400 --> 00:07:39.039
+principles that we can consider. So
+
+00:07:37.039 --> 00:07:43.280
+first principle
+
+00:07:39.039 --> 00:07:46.240
+spatial locality the neural network
+
+00:07:43.280 --> 00:07:49.039
+that when it's looking at a pixel it
+
+00:07:46.240 --> 00:07:52.960
+consider that this pixel is not alone
+
+00:07:49.039 --> 00:07:56.400
+and it has uh some local neighborhood
+
+00:07:52.960 --> 00:07:59.759
+and the pattern that comes from this
+
+00:07:56.400 --> 00:08:02.720
+neighborhood. We are not expecting that
+
+00:07:59.759 --> 00:08:06.080
+there is a relationship between this
+
+00:08:02.720 --> 00:08:08.400
+pixel and some very distant pixel. The
+
+00:08:06.080 --> 00:08:12.639
+second principle is if you see the same
+
+00:08:08.400 --> 00:08:17.120
+feature here or here for example, it's
+
+00:08:12.639 --> 00:08:20.639
+the same feature. So if there's an edge
+
+00:08:17.120 --> 00:08:24.000
+for example or a whisker of a cat, it's
+
+00:08:20.639 --> 00:08:27.599
+still whisker. So in your next level of
+
+00:08:24.000 --> 00:08:31.680
+reasoning you can use uh the same
+
+00:08:27.599 --> 00:08:34.159
+feature same way. So if we have a a
+
+00:08:31.680 --> 00:08:37.760
+feature extractor that is working over
+
+00:08:34.159 --> 00:08:40.560
+this local neighborhood the same feature
+
+00:08:37.760 --> 00:08:42.719
+extractor can work here. So what does
+
+00:08:40.560 --> 00:08:46.080
+that mean? That means that if I have a
+
+00:08:42.719 --> 00:08:49.680
+neural network that is looking at this
+
+00:08:46.080 --> 00:08:53.279
+uh and take this as an input and gives
+
+00:08:49.680 --> 00:08:56.160
+out the features the same neural network
+
+00:08:53.279 --> 00:08:57.920
+basically should work here too. So we
+
+00:08:56.160 --> 00:08:59.680
+don't want to train another one. It's
+
+00:08:57.920 --> 00:09:02.480
+basically the same neural network that
+
+00:08:59.680 --> 00:09:07.200
+we are moving or screening the the image
+
+00:09:02.480 --> 00:09:09.920
+with sweeping the image with and uh uh
+
+00:09:07.200 --> 00:09:12.800
+it works the same. It's the same with
+
+00:09:09.920 --> 00:09:15.920
+the same parameters that looks at this
+
+00:09:12.800 --> 00:09:19.040
+uh patches of image and gives out the
+
+00:09:15.920 --> 00:09:22.320
+features. So what did I say? I said
+
+00:09:19.040 --> 00:09:25.440
+basically this can give us a strategy
+
+00:09:22.320 --> 00:09:29.600
+instead of one very large massive
+
+00:09:25.440 --> 00:09:32.959
+network that is looking at the image at
+
+00:09:29.600 --> 00:09:37.519
+its entirety. What if we use a very
+
+00:09:32.959 --> 00:09:41.760
+small neural network that an analyze u
+
+00:09:37.519 --> 00:09:44.320
+one small patch of the image at a time
+
+00:09:41.760 --> 00:09:48.240
+and we slide it across the entire image
+
+00:09:44.320 --> 00:09:50.959
+to find uh those features everywhere.
+
+00:09:48.240 --> 00:09:52.800
+The idea is not really novel here.
+
+00:09:50.959 --> 00:09:54.880
+Basically what we are saying is
+
+00:09:52.800 --> 00:09:59.839
+something that we have done previously
+
+00:09:54.880 --> 00:10:03.760
+in computer vision and back then in uh
+
+00:09:59.839 --> 00:10:06.640
+before heavy use of neural network what
+
+00:10:03.760 --> 00:10:09.600
+did we do in computer vision was some
+
+00:10:06.640 --> 00:10:12.880
+form of filters that is looking at this
+
+00:10:09.600 --> 00:10:16.160
+patches and uh give us the feature.
+
+00:10:12.880 --> 00:10:20.000
+These filters were engineered. So the
+
+00:10:16.160 --> 00:10:23.279
+good thing about this um filters that
+
+00:10:20.000 --> 00:10:26.399
+also called kernels
+
+00:10:23.279 --> 00:10:29.600
+are basically they are interpretable
+
+00:10:26.399 --> 00:10:32.079
+right uh uh we know what they are doing
+
+00:10:29.600 --> 00:10:34.000
+what they are looking for
+
+00:10:32.079 --> 00:10:35.920
+however they have a limited
+
+00:10:34.000 --> 00:10:39.519
+expressiveness
+
+00:10:35.920 --> 00:10:42.560
+they can only detect a simple predefined
+
+00:10:39.519 --> 00:10:45.519
+pattern that they are designed for. we
+
+00:10:42.560 --> 00:10:48.320
+have to make a decision which filters or
+
+00:10:45.519 --> 00:10:51.920
+kernels to use. So we said we are
+
+00:10:48.320 --> 00:10:54.320
+looking at basically sweeping a function
+
+00:10:51.920 --> 00:10:59.120
+a filter a kernel
+
+00:10:54.320 --> 00:11:03.040
+uh across the data and this u kernel
+
+00:10:59.120 --> 00:11:07.680
+will give us some form of information
+
+00:11:03.040 --> 00:11:10.079
+that we can use as a feature. Right? So
+
+00:11:07.680 --> 00:11:13.360
+as we said we are looking at a function
+
+00:11:10.079 --> 00:11:16.160
+that slides over the values of data. I
+
+00:11:13.360 --> 00:11:19.120
+mean for example in the case of images
+
+00:11:16.160 --> 00:11:22.640
+we are sliding over the patches of data.
+
+00:11:19.120 --> 00:11:25.200
+Uh in a case of maybe much simpler
+
+00:11:22.640 --> 00:11:27.920
+situation when we have a train of um
+
+00:11:25.200 --> 00:11:31.760
+data points coming basically in a time
+
+00:11:27.920 --> 00:11:35.279
+series we can look at um some local
+
+00:11:31.760 --> 00:11:39.040
+windowing operation. For example, at
+
+00:11:35.279 --> 00:11:43.680
+each uh window of uh length three,
+
+00:11:39.040 --> 00:11:47.120
+we can uh get a value that is a smooth
+
+00:11:43.680 --> 00:11:51.760
+version of these three data points. And
+
+00:11:47.120 --> 00:11:54.399
+this is basically a kernel of the shape,
+
+00:11:51.760 --> 00:11:57.760
+right? Basically what it does, it um
+
+00:11:54.399 --> 00:12:00.720
+adds up all of these values within that
+
+00:11:57.760 --> 00:12:03.279
+window. So this was the moving average
+
+00:12:00.720 --> 00:12:05.839
+that we do.
+
+00:12:03.279 --> 00:12:08.959
+And probably in daily life if you are a
+
+00:12:05.839 --> 00:12:12.560
+time series analyst and this is a an
+
+00:12:08.959 --> 00:12:16.240
+example that uh is very common and it
+
+00:12:12.560 --> 00:12:19.360
+does what it does is a local operation
+
+00:12:16.240 --> 00:12:22.480
+and a kernel that slides through each
+
+00:12:19.360 --> 00:12:25.279
+one of these points. So for example next
+
+00:12:22.480 --> 00:12:28.800
+window will be
+
+00:12:25.279 --> 00:12:32.320
+here right and so on and so forth. We we
+
+00:12:28.800 --> 00:12:36.880
+can start from here for the first one
+
+00:12:32.320 --> 00:12:42.320
+and then window moves here then here
+
+00:12:36.880 --> 00:12:45.360
+then goes like this and um I mean if you
+
+00:12:42.320 --> 00:12:47.680
+heard of the the
+
+00:12:45.360 --> 00:12:50.160
+term crossorrelation this is some form
+
+00:12:47.680 --> 00:12:52.959
+of crossorrelation right basically we
+
+00:12:50.160 --> 00:12:56.000
+crossorrelate all of these windows uh
+
+00:12:52.959 --> 00:13:00.079
+with the kernel using this kernel. If we
+
+00:12:56.000 --> 00:13:02.240
+do the same thing from 1D to 2D, this
+
+00:13:00.079 --> 00:13:05.680
+corresponds to what we do as image
+
+00:13:02.240 --> 00:13:09.839
+blurring. So same process, we define a
+
+00:13:05.680 --> 00:13:12.639
+small window and a kernel
+
+00:13:09.839 --> 00:13:14.880
+and uh this kernel has some weights. So
+
+00:13:12.639 --> 00:13:17.600
+we have to choose this kernel. We can do
+
+00:13:14.880 --> 00:13:20.959
+the same uniform weight kernel for
+
+00:13:17.600 --> 00:13:23.120
+example. Uh they sum up to one and
+
+00:13:20.959 --> 00:13:25.519
+basically we place the kernel over each
+
+00:13:23.120 --> 00:13:28.000
+patch of this input image.
+
+00:13:25.519 --> 00:13:30.160
+perform an elementwise multiplication
+
+00:13:28.000 --> 00:13:32.399
+between the kernel's weights and the
+
+00:13:30.160 --> 00:13:36.240
+corresponding pixel values in that
+
+00:13:32.399 --> 00:13:39.519
+patch. Then we sum up all the values and
+
+00:13:36.240 --> 00:13:43.200
+all the results of that multiplication
+
+00:13:39.519 --> 00:13:45.200
+to get a single new pixel value. And
+
+00:13:43.200 --> 00:13:48.639
+then we slide the window across the
+
+00:13:45.200 --> 00:13:51.440
+entire image and repeat the same process
+
+00:13:48.639 --> 00:13:55.519
+for every location we create a new
+
+00:13:51.440 --> 00:13:58.320
+blurred image. Right? So we can do more
+
+00:13:55.519 --> 00:14:01.839
+than im image blurring. For example, we
+
+00:13:58.320 --> 00:14:04.720
+can do edge detection and even uh
+
+00:14:01.839 --> 00:14:08.160
+sharpening of those edges
+
+00:14:04.720 --> 00:14:12.240
+and um for example in the edge detection
+
+00:14:08.160 --> 00:14:14.720
+a famous filter is soil filter that has
+
+00:14:12.240 --> 00:14:18.720
+both positive and negative values again
+
+00:14:14.720 --> 00:14:21.199
+sums up to zero and it slides over a
+
+00:14:18.720 --> 00:14:23.600
+flat uniform region and the output will
+
+00:14:21.199 --> 00:14:26.160
+be zero in that case. But if it slides
+
+00:14:23.600 --> 00:14:28.880
+over an edge, a sharp change in pixel
+
+00:14:26.160 --> 00:14:32.639
+values, the sum of the products becomes
+
+00:14:28.880 --> 00:14:35.440
+larger u in positive or negative ways
+
+00:14:32.639 --> 00:14:38.399
+and this highlights the the edge right
+
+00:14:35.440 --> 00:14:40.880
+because the value will increase. So if
+
+00:14:38.399 --> 00:14:44.320
+we want to formalize this in a
+
+00:14:40.880 --> 00:14:52.720
+mathematical way basically for an um
+
+00:14:44.320 --> 00:14:56.480
+pixel of um uh in i and j we sum up
+
+00:14:52.720 --> 00:15:01.120
+um a pointwise
+
+00:14:56.480 --> 00:15:09.680
+uh operation between the filter at A and
+
+00:15:01.120 --> 00:15:12.079
+B and the pixel value at X and basically
+
+00:15:09.680 --> 00:15:16.000
+since we are sliding through the the
+
+00:15:12.079 --> 00:15:20.639
+pixel values uh here in 2D situation we
+
+00:15:16.000 --> 00:15:22.720
+have both axis X and Y which here I use
+
+00:15:20.639 --> 00:15:24.880
+the index a and So basically we have a
+
+00:15:22.720 --> 00:15:28.320
+sum
+
+00:15:24.880 --> 00:15:30.399
+this operation is known uh we call this
+
+00:15:28.320 --> 00:15:35.199
+crossorrelation
+
+00:15:30.399 --> 00:15:37.680
+and um and h is the output of this
+
+00:15:35.199 --> 00:15:40.720
+feature map. So like I said
+
+00:15:37.680 --> 00:15:43.680
+mathematically this is crossorrelation
+
+00:15:40.720 --> 00:15:46.800
+although because we are cool we are
+
+00:15:43.680 --> 00:15:50.000
+calling it convolution. In pure math,
+
+00:15:46.800 --> 00:15:53.199
+convolution really uh involves a
+
+00:15:50.000 --> 00:15:55.600
+flipping of the kernel first. Uh but
+
+00:15:53.199 --> 00:15:58.560
+since later we will discuss the case
+
+00:15:55.600 --> 00:16:01.600
+that uh what if we don't know V and we
+
+00:15:58.560 --> 00:16:04.480
+want to learn it uh really flipping the
+
+00:16:01.600 --> 00:16:08.639
+value uh doesn't really matter in that
+
+00:16:04.480 --> 00:16:11.839
+case because it's done by itself. So it
+
+00:16:08.639 --> 00:16:14.160
+will be convolution at the end.
+
+00:16:11.839 --> 00:16:17.199
+So basically what we are saying is
+
+00:16:14.160 --> 00:16:22.399
+instead of using this handcrafted
+
+00:16:17.199 --> 00:16:26.240
+kernels that computer visions uh expert
+
+00:16:22.399 --> 00:16:30.160
+uh design for us and each one of them
+
+00:16:26.240 --> 00:16:32.880
+works for a specific feature. We want to
+
+00:16:30.160 --> 00:16:34.880
+continue the the same paradigm in the c
+
+00:16:32.880 --> 00:16:38.160
+that we have in the course. We want to
+
+00:16:34.880 --> 00:16:41.440
+learn these features and uh like I said
+
+00:16:38.160 --> 00:16:43.759
+in an end toend way uh features that are
+
+00:16:41.440 --> 00:16:45.920
+working for the task that we want task
+
+00:16:43.759 --> 00:16:48.480
+that we want and they are optimal for
+
+00:16:45.920 --> 00:16:51.920
+that task. We don't want to go learn the
+
+00:16:48.480 --> 00:16:57.440
+domain of computer vision and all of
+
+00:16:51.920 --> 00:17:00.880
+these kernels and then uh develop u um
+
+00:16:57.440 --> 00:17:03.440
+skill on how to make this tradeoffs and
+
+00:17:00.880 --> 00:17:05.839
+make this decisions to basically use
+
+00:17:03.440 --> 00:17:08.240
+this dictionary of fixed kernel. And
+
+00:17:05.839 --> 00:17:11.199
+instead we want deep learning to do all
+
+00:17:08.240 --> 00:17:14.559
+of that for us. learn the kernels and
+
+00:17:11.199 --> 00:17:16.959
+these kernels are actually optimized for
+
+00:17:14.559 --> 00:17:20.880
+the specific task that we have.
+
+00:17:16.959 --> 00:17:24.079
+Crossorrelation or sweeping uh function
+
+00:17:20.880 --> 00:17:26.480
+that learns this features in each one of
+
+00:17:24.079 --> 00:17:28.559
+these patches of the window has a nice
+
+00:17:26.480 --> 00:17:31.200
+property that is called translation
+
+00:17:28.559 --> 00:17:34.320
+equivalence. If you shift the input, for
+
+00:17:31.200 --> 00:17:36.960
+example, if you have a image of a cat
+
+00:17:34.320 --> 00:17:40.160
+here, if you move this to somewhere else
+
+00:17:36.960 --> 00:17:43.679
+in the image, it's the same thing. And
+
+00:17:40.160 --> 00:17:46.160
+we want the neural network to uh not use
+
+00:17:43.679 --> 00:17:48.799
+uh extra learning
+
+00:17:46.160 --> 00:17:51.840
+capacity for that. In other word, we
+
+00:17:48.799 --> 00:17:56.559
+have the same neural network that learns
+
+00:17:51.840 --> 00:17:59.760
+this kernel works here and here. And
+
+00:17:56.559 --> 00:18:02.559
+that uh sharing of weights across all of
+
+00:17:59.760 --> 00:18:06.400
+this position give us a parameter
+
+00:18:02.559 --> 00:18:10.080
+efficiency that later help us in such
+
+00:18:06.400 --> 00:18:13.200
+high dimensional space because we really
+
+00:18:10.080 --> 00:18:16.880
+reduce the dimension significantly by
+
+00:18:13.200 --> 00:18:20.320
+doing this. So then uh next we will talk
+
+00:18:16.880 --> 00:18:22.000
+about how we can build such uh neural
+
+00:18:20.320 --> 00:18:25.280
+network that we are going to call
+
+00:18:22.000 --> 00:18:28.880
+convolutional neural network. So before
+
+00:18:25.280 --> 00:18:31.840
+applying this concepts uh to build our
+
+00:18:28.880 --> 00:18:36.000
+first convolutional neural network
+
+00:18:31.840 --> 00:18:39.840
+uh let's um review a couple of things.
+
+00:18:36.000 --> 00:18:43.039
+First how we are using this kernel on
+
+00:18:39.840 --> 00:18:46.160
+this image data and things that we
+
+00:18:43.039 --> 00:18:48.080
+should consider in the implementation.
+
+00:18:46.160 --> 00:18:51.120
+So for example here this is an image
+
+00:18:48.080 --> 00:18:56.960
+from the book. If we have a kernel like
+
+00:18:51.120 --> 00:18:59.600
+this and an image u here a 3x3 image or
+
+00:18:56.960 --> 00:19:02.720
+maybe a patch but let's assume the image
+
+00:18:59.600 --> 00:19:05.200
+is like this and now we want to do the
+
+00:19:02.720 --> 00:19:08.240
+convolution or the cross correlation
+
+00:19:05.200 --> 00:19:12.400
+operation using this kernel. So here we
+
+00:19:08.240 --> 00:19:15.039
+have this 2x2 kernel and we are going to
+
+00:19:12.400 --> 00:19:16.960
+start from this part of the image. we do
+
+00:19:15.039 --> 00:19:21.039
+the elementwise
+
+00:19:16.960 --> 00:19:24.320
+uh crossorrelation operation and this
+
+00:19:21.039 --> 00:19:26.880
+will give us the first output here which
+
+00:19:24.320 --> 00:19:29.919
+will be 19. If we continue doing this
+
+00:19:26.880 --> 00:19:34.320
+for the next part of the image we'll get
+
+00:19:29.919 --> 00:19:37.520
+25 and so on and so forth. So we will
+
+00:19:34.320 --> 00:19:40.000
+see the output of this operation
+
+00:19:37.520 --> 00:19:43.200
+here will be a 2x2
+
+00:19:40.000 --> 00:19:47.760
+uh output which is smaller uh in
+
+00:19:43.200 --> 00:19:51.600
+dimension than the the original input
+
+00:19:47.760 --> 00:19:53.360
+and if we continue doing this uh steps
+
+00:19:51.600 --> 00:19:56.000
+we will
+
+00:19:53.360 --> 00:19:59.760
+end up in the next step with only one
+
+00:19:56.000 --> 00:20:02.799
+out output. So what is the problem here
+
+00:19:59.760 --> 00:20:05.360
+is uh sometimes we need more layers in
+
+00:20:02.799 --> 00:20:09.360
+our operation in our convolutional
+
+00:20:05.360 --> 00:20:12.400
+neural network and this operation will
+
+00:20:09.360 --> 00:20:15.520
+reduce the size of uh the dimension of
+
+00:20:12.400 --> 00:20:19.360
+the the data.
+
+00:20:15.520 --> 00:20:25.760
+So to fix this uh very simple trick is
+
+00:20:19.360 --> 00:20:29.840
+to pad the uh the data with this
+
+00:20:25.760 --> 00:20:36.480
+zeros here. And basically what it does
+
+00:20:29.840 --> 00:20:39.200
+is to in this case of 2x two we can now
+
+00:20:36.480 --> 00:20:42.559
+uh have a output uh corresponding to
+
+00:20:39.200 --> 00:20:45.440
+this edge cases on the periphery of the
+
+00:20:42.559 --> 00:20:47.679
+the image. And this way we will retain
+
+00:20:45.440 --> 00:20:50.559
+the same dimension
+
+00:20:47.679 --> 00:20:54.400
+in the output. So keeping aside this
+
+00:20:50.559 --> 00:20:56.320
+problem of u reduction of uh dimension
+
+00:20:54.400 --> 00:20:59.200
+using padding
+
+00:20:56.320 --> 00:21:02.159
+sometimes we actually want to reduce the
+
+00:20:59.200 --> 00:21:04.320
+the dimension.
+
+00:21:02.159 --> 00:21:06.000
+And if we want to do it we will use
+
+00:21:04.320 --> 00:21:09.200
+strides
+
+00:21:06.000 --> 00:21:12.480
+but basically stride is uh the number of
+
+00:21:09.200 --> 00:21:14.799
+rows and columns that we traverse per
+
+00:21:12.480 --> 00:21:19.200
+slide.
+
+00:21:14.799 --> 00:21:22.559
+So so far uh we used the strides of one
+
+00:21:19.200 --> 00:21:26.640
+but we can change that and uh we can
+
+00:21:22.559 --> 00:21:30.559
+also change it for heights and weights.
+
+00:21:26.640 --> 00:21:34.000
+So for example here this is figure 7 33
+
+00:21:30.559 --> 00:21:37.440
+in the book. If we do the stride of uh
+
+00:21:34.000 --> 00:21:39.440
+three for height and two for the widths.
+
+00:21:37.440 --> 00:21:43.039
+For example, in the first one we have
+
+00:21:39.440 --> 00:21:48.240
+this and the component wise we will get
+
+00:21:43.039 --> 00:21:51.360
+that. But next uh stride will be two in
+
+00:21:48.240 --> 00:21:55.200
+the whites. So we have this multiply by
+
+00:21:51.360 --> 00:22:00.159
+this and we will get that. And the for
+
+00:21:55.200 --> 00:22:03.200
+the height we go uh three we slide this
+
+00:22:00.159 --> 00:22:05.679
+uh three times and we will get this
+
+00:22:03.200 --> 00:22:08.960
+which multiply by the kernel will give
+
+00:22:05.679 --> 00:22:11.679
+us six. And of course for the other
+
+00:22:08.960 --> 00:22:13.679
+component if you do it you will get
+
+00:22:11.679 --> 00:22:16.559
+eight.
+
+00:22:13.679 --> 00:22:20.640
+So this way we can reduce the the
+
+00:22:16.559 --> 00:22:22.960
+dimension uh if we desire and while we
+
+00:22:20.640 --> 00:22:25.440
+are controlling for it. The next
+
+00:22:22.960 --> 00:22:28.000
+component that we will use in
+
+00:22:25.440 --> 00:22:30.559
+constructing our CNN's
+
+00:22:28.000 --> 00:22:34.640
+are is uh pooling. Basically pooling
+
+00:22:30.559 --> 00:22:37.760
+means that we ask a question from the
+
+00:22:34.640 --> 00:22:41.200
+learned features and this question is a
+
+00:22:37.760 --> 00:22:43.440
+global question meaning that does it
+
+00:22:41.200 --> 00:22:46.400
+does this image contain a certain
+
+00:22:43.440 --> 00:22:49.520
+feature or a certain object.
+
+00:22:46.400 --> 00:22:52.880
+We want this question to be sensitive to
+
+00:22:49.520 --> 00:22:57.600
+the entire input.
+
+00:22:52.880 --> 00:23:01.919
+So we need to aggregate u this local
+
+00:22:57.600 --> 00:23:05.360
+information gradually and uh this way we
+
+00:23:01.919 --> 00:23:07.840
+can get coarser and coarser maps and
+
+00:23:05.360 --> 00:23:09.440
+ultimately learning a global
+
+00:23:07.840 --> 00:23:11.840
+representation.
+
+00:23:09.440 --> 00:23:14.320
+So we want to do this in a way that we
+
+00:23:11.840 --> 00:23:18.000
+keep all of these advantages that we
+
+00:23:14.320 --> 00:23:20.640
+collect in these intermediate layers and
+
+00:23:18.000 --> 00:23:24.559
+while we are going deeper in the network
+
+00:23:20.640 --> 00:23:27.919
+we see more and more uh of this local
+
+00:23:24.559 --> 00:23:30.559
+localities and our receptive field
+
+00:23:27.919 --> 00:23:34.559
+relative to this initial input will
+
+00:23:30.559 --> 00:23:36.640
+increase. So and also if you remember we
+
+00:23:34.559 --> 00:23:39.600
+wanted our representation to be
+
+00:23:36.640 --> 00:23:41.679
+invariant to translation
+
+00:23:39.600 --> 00:23:45.200
+and so far what we did with the cross
+
+00:23:41.679 --> 00:23:48.720
+correlation uh was pretty local. We were
+
+00:23:45.200 --> 00:23:50.799
+sliding that window and we performed
+
+00:23:48.720 --> 00:23:54.320
+cross cororrelation
+
+00:23:50.799 --> 00:23:57.440
+uh during each one of these strides. And
+
+00:23:54.320 --> 00:24:00.720
+now we want to come up with a another
+
+00:23:57.440 --> 00:24:03.679
+step that uh basically inject this
+
+00:24:00.720 --> 00:24:05.600
+invariance to translation and pooling is
+
+00:24:03.679 --> 00:24:08.720
+doing that for us.
+
+00:24:05.600 --> 00:24:13.760
+We have two ways of doing uh this
+
+00:24:08.720 --> 00:24:18.000
+process this pooling step step uh I mean
+
+00:24:13.760 --> 00:24:19.679
+most uh common way of pooling one is max
+
+00:24:18.000 --> 00:24:22.240
+pooling and the other one is average
+
+00:24:19.679 --> 00:24:25.600
+pooling and max pooling basically what
+
+00:24:22.240 --> 00:24:28.640
+it does is uh it finds the strongest
+
+00:24:25.600 --> 00:24:32.320
+clue and the intuition is basically each
+
+00:24:28.640 --> 00:24:34.799
+one of these uh smaller uh
+
+00:24:32.320 --> 00:24:37.760
+crossorrelation steps that we are doing
+
+00:24:34.799 --> 00:24:42.000
+is like a detective that is zooming in
+
+00:24:37.760 --> 00:24:45.039
+into this smaller patches and then after
+
+00:24:42.000 --> 00:24:48.159
+aggregating all of them it returns the
+
+00:24:45.039 --> 00:24:50.400
+strongest evidence that it finds. That's
+
+00:24:48.159 --> 00:24:52.559
+max pooling. Another way of doing this
+
+00:24:50.400 --> 00:24:54.960
+is doing average pulling which is
+
+00:24:52.559 --> 00:24:57.679
+basically to average out all of this uh
+
+00:24:54.960 --> 00:25:00.400
+evidence that it finds this detective
+
+00:24:57.679 --> 00:25:03.919
+that we have and at the end it gives us
+
+00:25:00.400 --> 00:25:07.279
+a smooth more general summary of those
+
+00:25:03.919 --> 00:25:10.799
+features that it finds. So usually you
+
+00:25:07.279 --> 00:25:13.760
+will see that we go with max pooling uh
+
+00:25:10.799 --> 00:25:15.679
+because of this sharper aggregation that
+
+00:25:13.760 --> 00:25:17.520
+it has.
+
+00:25:15.679 --> 00:25:20.320
+But of course all of these uh both of
+
+00:25:17.520 --> 00:25:23.039
+these methods are uh providing this
+
+00:25:20.320 --> 00:25:27.279
+translation invariance that is the key
+
+00:25:23.039 --> 00:25:29.600
+for us for the image data. So uh we are
+
+00:25:27.279 --> 00:25:33.600
+going to use all of uh this uh
+
+00:25:29.600 --> 00:25:38.559
+principles and these tools in building
+
+00:25:33.600 --> 00:25:41.919
+our CNNs. Well, uh we will review the uh
+
+00:25:38.559 --> 00:25:45.200
+history of this CNN architectures and
+
+00:25:41.919 --> 00:25:50.880
+the reason is as you saw basically C
+
+00:25:45.200 --> 00:25:54.080
+what CNN does is uh it starts from some
+
+00:25:50.880 --> 00:25:57.200
+early layers that learns uh features
+
+00:25:54.080 --> 00:26:00.320
+that can be generic and
+
+00:25:57.200 --> 00:26:03.520
+um with the intermediate layer we will
+
+00:26:00.320 --> 00:26:05.279
+aggregate this generic features to build
+
+00:26:03.520 --> 00:26:08.159
+up larger
+
+00:26:05.279 --> 00:26:12.640
+parts of the images for example
+
+00:26:08.159 --> 00:26:17.039
+textures, patterns, uh eyes, wheels and
+
+00:26:12.640 --> 00:26:21.360
+leaves. So you may ask yourself well can
+
+00:26:17.039 --> 00:26:25.440
+I uh use this uh features that I learn
+
+00:26:21.360 --> 00:26:29.600
+from some other network even uh in my
+
+00:26:25.440 --> 00:26:33.360
+own network without training those uh
+
+00:26:29.600 --> 00:26:36.720
+early layers for the task that I'm
+
+00:26:33.360 --> 00:26:40.000
+interested in. So for instance, if we
+
+00:26:36.720 --> 00:26:43.440
+have a network that is trained on a very
+
+00:26:40.000 --> 00:26:45.760
+very large data set which requires uh a
+
+00:26:43.440 --> 00:26:48.559
+lot of training and a lot of resources,
+
+00:26:45.760 --> 00:26:51.440
+for example, a data set like imageet
+
+00:26:48.559 --> 00:26:55.200
+that has a thousand classes like dog,
+
+00:26:51.440 --> 00:26:59.279
+car, chair and so on and so forth. uh
+
+00:26:55.200 --> 00:27:02.640
+the ability of this CNN to basically
+
+00:26:59.279 --> 00:27:06.480
+detect edges, textures, shapes and
+
+00:27:02.640 --> 00:27:09.279
+eventually objects can be reused in
+
+00:27:06.480 --> 00:27:12.000
+another neural network and we basically
+
+00:27:09.279 --> 00:27:15.279
+we can freeze that though that that
+
+00:27:12.000 --> 00:27:19.200
+early layers and we don't need to really
+
+00:27:15.279 --> 00:27:22.960
+train that part and then add more layer
+
+00:27:19.200 --> 00:27:25.360
+after that to process these features in
+
+00:27:22.960 --> 00:27:28.240
+a way that we want for the specific task
+
+00:27:25.360 --> 00:27:32.559
+that we are interested in. So this is
+
+00:27:28.240 --> 00:27:34.159
+known as transfer learning that uh
+
+00:27:32.559 --> 00:27:37.679
+justifies
+
+00:27:34.159 --> 00:27:40.720
+training a very very good architectures
+
+00:27:37.679 --> 00:27:44.400
+as some sort of pre-trained network that
+
+00:27:40.720 --> 00:27:48.880
+can be used elsewhere. So usually what
+
+00:27:44.400 --> 00:27:52.480
+we do is we uh split the model uh the
+
+00:27:48.880 --> 00:27:55.200
+CNN model in two parts. One is the
+
+00:27:52.480 --> 00:27:58.000
+convolutional base which is basically
+
+00:27:55.200 --> 00:28:00.720
+this early layers that we discussed that
+
+00:27:58.000 --> 00:28:02.880
+uh they do the feature extraction and
+
+00:28:00.720 --> 00:28:05.520
+then we have an we have a head at the
+
+00:28:02.880 --> 00:28:10.000
+end that aggregate the this final
+
+00:28:05.520 --> 00:28:14.399
+aggregated uh features that uh basically
+
+00:28:10.000 --> 00:28:16.480
+use them. It can be even a linear MLP
+
+00:28:14.399 --> 00:28:19.039
+that uses these features just like a
+
+00:28:16.480 --> 00:28:21.919
+regression that uses the feature and
+
+00:28:19.039 --> 00:28:25.760
+make a decision on for example if this
+
+00:28:21.919 --> 00:28:28.320
+is a cat or dog uh while we are using
+
+00:28:25.760 --> 00:28:31.279
+this convolutional base that can do much
+
+00:28:28.320 --> 00:28:32.720
+more than just detecting cat and dog.
+
+00:28:31.279 --> 00:28:35.200
+But for some reason you're only
+
+00:28:32.720 --> 00:28:37.360
+interested in this final task and you
+
+00:28:35.200 --> 00:28:39.679
+can use this overengineered
+
+00:28:37.360 --> 00:28:43.840
+convolutional base that can give you
+
+00:28:39.679 --> 00:28:46.320
+your cat and dog detection uh with very
+
+00:28:43.840 --> 00:28:48.320
+high confidence while you haven't really
+
+00:28:46.320 --> 00:28:51.520
+done any of that training and somebody
+
+00:28:48.320 --> 00:28:55.200
+else did it with a very ad advanced
+
+00:28:51.520 --> 00:28:58.080
+state-ofthe-art CNN base. So it's enough
+
+00:28:55.200 --> 00:29:01.200
+to just replace the head and with a few
+
+00:28:58.080 --> 00:29:04.799
+shot training in your own data set for
+
+00:29:01.200 --> 00:29:07.279
+example you can train that part this
+
+00:29:04.799 --> 00:29:10.320
+classification head while you're not
+
+00:29:07.279 --> 00:29:12.559
+touching the the base. This basically
+
+00:29:10.320 --> 00:29:16.320
+justifies training very good
+
+00:29:12.559 --> 00:29:20.080
+convolutional bases. And uh we will talk
+
+00:29:16.320 --> 00:29:24.320
+about some famous uh convolutional bases
+
+00:29:20.080 --> 00:29:28.640
+that we can use uh in our own tasks and
+
+00:29:24.320 --> 00:29:31.039
+we can just basically take them and
+
+00:29:28.640 --> 00:29:34.000
+uh without training. We just need to
+
+00:29:31.039 --> 00:29:36.399
+train some classification head at the
+
+00:29:34.000 --> 00:29:39.919
+end and that doesn't really require a
+
+00:29:36.399 --> 00:29:39.919
+lot of training and a lot of data.

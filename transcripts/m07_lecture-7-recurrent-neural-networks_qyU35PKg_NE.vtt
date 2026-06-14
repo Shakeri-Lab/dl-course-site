@@ -1,0 +1,802 @@
+WEBVTT
+
+00:00:00.400 --> 00:00:06.720
+So we learned the autoenccoders and we
+
+00:00:03.520 --> 00:00:09.760
+discussed how they can handle sequences.
+
+00:00:06.720 --> 00:00:13.440
+For example, a sentence like hello world
+
+00:00:09.760 --> 00:00:16.560
+can be encoded to a fixed size latent
+
+00:00:13.440 --> 00:00:19.039
+and then decoded to the translated let's
+
+00:00:16.560 --> 00:00:21.279
+say in French. So like we discussed this
+
+00:00:19.039 --> 00:00:24.080
+is a maybe a preliminary solution
+
+00:00:21.279 --> 00:00:26.960
+because it's not really the most
+
+00:00:24.080 --> 00:00:30.000
+efficient especially if we go to longer
+
+00:00:26.960 --> 00:00:33.200
+sentences or large text.
+
+00:00:30.000 --> 00:00:35.760
+So if we have varying lengths of u
+
+00:00:33.200 --> 00:00:38.399
+sequences we are encoding all of them to
+
+00:00:35.760 --> 00:00:40.399
+a fixed size latent.
+
+00:00:38.399 --> 00:00:44.320
+For example, if we have a fiveword
+
+00:00:40.399 --> 00:00:47.760
+tweet, we encode to the same Z as in a
+
+00:00:44.320 --> 00:00:50.960
+500word essay or a entire book. They all
+
+00:00:47.760 --> 00:00:52.960
+have the same Z. Which means that if the
+
+00:00:50.960 --> 00:00:56.239
+length of the sequence is getting
+
+00:00:52.960 --> 00:00:59.359
+larger, the amount of information that Z
+
+00:00:56.239 --> 00:01:02.399
+can share with each one of the tokens
+
+00:00:59.359 --> 00:01:05.439
+uh will be reduced. And at some point if
+
+00:01:02.399 --> 00:01:08.000
+the length of the sequence goes to a
+
+00:01:05.439 --> 00:01:10.159
+let's say very large value the
+
+00:01:08.000 --> 00:01:13.439
+information that Z can capture from each
+
+00:01:10.159 --> 00:01:15.920
+one of these tokens gets goes to zero.
+
+00:01:13.439 --> 00:01:20.400
+Second problem is the autoenccoders
+
+00:01:15.920 --> 00:01:22.799
+treat inputs as of as a bag of features.
+
+00:01:20.400 --> 00:01:24.720
+They don't really naturally preserve the
+
+00:01:22.799 --> 00:01:27.200
+order. For example, consider these two
+
+00:01:24.720 --> 00:01:30.479
+inputs and the encoder basically treat
+
+00:01:27.200 --> 00:01:32.640
+them similarly. There's no explicit
+
+00:01:30.479 --> 00:01:35.119
+positional encoding meaning that the
+
+00:01:32.640 --> 00:01:37.840
+order is not preserved but the order we
+
+00:01:35.119 --> 00:01:39.759
+know matter at least in language these
+
+00:01:37.840 --> 00:01:42.000
+two sentences are not the same. The
+
+00:01:39.759 --> 00:01:45.600
+third problem is we resolve the variable
+
+00:01:42.000 --> 00:01:48.799
+length uh issue with padding which then
+
+00:01:45.600 --> 00:01:51.680
+wastes a lot of computation and then
+
+00:01:48.799 --> 00:01:54.960
+model learns patterns about where the
+
+00:01:51.680 --> 00:01:58.159
+real data ends are not real and it's
+
+00:01:54.960 --> 00:02:00.640
+sparious. Moreover, we are really not
+
+00:01:58.159 --> 00:02:04.640
+capitalizing on batch efficiency because
+
+00:02:00.640 --> 00:02:07.280
+we are giving one sequence at a time and
+
+00:02:04.640 --> 00:02:10.080
+within the sequence we may have outliers
+
+00:02:07.280 --> 00:02:12.160
+that can destroy really the benefits of
+
+00:02:10.080 --> 00:02:14.640
+the averaging. We had another option
+
+00:02:12.160 --> 00:02:17.280
+which was truncating the sequence to a
+
+00:02:14.640 --> 00:02:19.840
+fixed length. But here again we will
+
+00:02:17.280 --> 00:02:24.080
+have some issues with the information uh
+
+00:02:19.840 --> 00:02:27.360
+that will be lost. And then also if some
+
+00:02:24.080 --> 00:02:30.879
+sequences are just naturally long uh we
+
+00:02:27.360 --> 00:02:32.720
+are not able to learn for them because
+
+00:02:30.879 --> 00:02:35.920
+the autoenccoder basically feed
+
+00:02:32.720 --> 00:02:38.560
+everything at once. One last issue is uh
+
+00:02:35.920 --> 00:02:41.120
+there is no natural chunking meaning
+
+00:02:38.560 --> 00:02:44.160
+that if the data comes in a se in a
+
+00:02:41.120 --> 00:02:46.879
+streaming sense uh we should wait until
+
+00:02:44.160 --> 00:02:48.959
+the entire sequence ends and then feed
+
+00:02:46.879 --> 00:02:51.280
+it to the auto autoenccoder. This is
+
+00:02:48.959 --> 00:02:54.560
+really undesirable because sometimes we
+
+00:02:51.280 --> 00:02:57.040
+want for example live translation and we
+
+00:02:54.560 --> 00:03:00.800
+want something that can handle it and
+
+00:02:57.040 --> 00:03:03.040
+give us the output so far for example
+
+00:03:00.800 --> 00:03:05.280
+until we have the sequence then when
+
+00:03:03.040 --> 00:03:08.480
+there is an addition to the sequence the
+
+00:03:05.280 --> 00:03:11.599
+the output can be uh updated. So here we
+
+00:03:08.480 --> 00:03:14.560
+introduce the RNN the recurrent neural
+
+00:03:11.599 --> 00:03:16.879
+network architectures that deals with
+
+00:03:14.560 --> 00:03:19.040
+all of these issues that we discussed.
+
+00:03:16.879 --> 00:03:20.879
+Let's start the design with this goal
+
+00:03:19.040 --> 00:03:23.280
+that we want to maintain an
+
+00:03:20.879 --> 00:03:26.400
+understanding of the sequence over time.
+
+00:03:23.280 --> 00:03:29.040
+Let's try to do it using a a naive
+
+00:03:26.400 --> 00:03:31.840
+approach where we are still using the
+
+00:03:29.040 --> 00:03:35.120
+the feed forward neural network. So we
+
+00:03:31.840 --> 00:03:37.840
+we give the first part or first chunk or
+
+00:03:35.120 --> 00:03:40.720
+first element of the sequence that is
+
+00:03:37.840 --> 00:03:43.440
+coming like this. Maybe this index can
+
+00:03:40.720 --> 00:03:46.159
+be time and then we feed this to each
+
+00:03:43.440 --> 00:03:48.879
+one of these element to fit forward nor
+
+00:03:46.159 --> 00:03:53.680
+our network and that gives us an a
+
+00:03:48.879 --> 00:03:56.080
+context or a latent of a length Z. So
+
+00:03:53.680 --> 00:03:58.959
+basically this means that uh there is a
+
+00:03:56.080 --> 00:04:01.760
+narrowing down of the size here. Okay.
+
+00:03:58.959 --> 00:04:04.400
+So we can do the same here and maybe we
+
+00:04:01.760 --> 00:04:07.360
+are using the a different encoder. So
+
+00:04:04.400 --> 00:04:10.239
+let's just for the sake of simplicity
+
+00:04:07.360 --> 00:04:14.640
+let's call this F1. This is f_sub_2.
+
+00:04:10.239 --> 00:04:18.079
+This gives us h2. And then uh we want to
+
+00:04:14.640 --> 00:04:20.560
+build a way to for these hes to carry
+
+00:04:18.079 --> 00:04:23.520
+over and we want to use that
+
+00:04:20.560 --> 00:04:27.040
+information. So let's just fit this to
+
+00:04:23.520 --> 00:04:29.120
+the next uh function. So here uh that
+
+00:04:27.040 --> 00:04:32.479
+means that there will be an input to
+
+00:04:29.120 --> 00:04:34.080
+f_sub_2. So these two are both inputs to
+
+00:04:32.479 --> 00:04:36.479
+f_sub_2 meaning that we are
+
+00:04:34.080 --> 00:04:39.280
+concatenating them. So that means that
+
+00:04:36.479 --> 00:04:42.880
+we uh we start from scratch here. This
+
+00:04:39.280 --> 00:04:46.080
+can be a bunch of zeros or null. Right?
+
+00:04:42.880 --> 00:04:48.960
+So this way we accumulate the context or
+
+00:04:46.080 --> 00:04:52.320
+information over time. We call this hes
+
+00:04:48.960 --> 00:04:54.639
+like a state that basically tells us if
+
+00:04:52.320 --> 00:04:57.919
+you have age and the input you have
+
+00:04:54.639 --> 00:05:00.320
+everything to approximate the next age.
+
+00:04:57.919 --> 00:05:04.400
+So we can write this down like this.
+
+00:05:00.320 --> 00:05:07.759
+Okay. So so far so good. Um what is the
+
+00:05:04.400 --> 00:05:10.560
+difficulty with this is ft is a time
+
+00:05:07.759 --> 00:05:13.280
+variant function and it's not easy to
+
+00:05:10.560 --> 00:05:15.520
+learn. Besides with the length of this
+
+00:05:13.280 --> 00:05:18.160
+sequence there will be more and more
+
+00:05:15.520 --> 00:05:20.800
+parameters with the additional fs. So
+
+00:05:18.160 --> 00:05:24.080
+there will be a parameter explosion and
+
+00:05:20.800 --> 00:05:25.440
+we are not dealing with a so in time
+
+00:05:24.080 --> 00:05:27.840
+series analysis we call it a
+
+00:05:25.440 --> 00:05:30.479
+non-stationerity which things are
+
+00:05:27.840 --> 00:05:32.880
+changing each time and that's not really
+
+00:05:30.479 --> 00:05:35.759
+what we want. we want uh to learn
+
+00:05:32.880 --> 00:05:38.960
+something that is valid in the entire
+
+00:05:35.759 --> 00:05:42.160
+time series. So let's simplify this and
+
+00:05:38.960 --> 00:05:45.919
+make ft constant. So now we have an f
+
+00:05:42.160 --> 00:05:48.639
+that once given ht minus one and an xt
+
+00:05:45.919 --> 00:05:51.280
+it will give us the next h. So that
+
+00:05:48.639 --> 00:05:53.520
+means that all of these fs are the same
+
+00:05:51.280 --> 00:05:56.400
+and besides we can do it. This is a
+
+00:05:53.520 --> 00:05:59.600
+neural network and a neural network can
+
+00:05:56.400 --> 00:06:01.919
+be rich enough that can learn the shared
+
+00:05:59.600 --> 00:06:05.520
+relationship here. So in dynamical
+
+00:06:01.919 --> 00:06:08.639
+system this uh structure is very common
+
+00:06:05.520 --> 00:06:11.280
+and if you notice this preserve this uh
+
+00:06:08.639 --> 00:06:14.080
+property that we have everything we need
+
+00:06:11.280 --> 00:06:18.080
+at this stage at this step right to
+
+00:06:14.080 --> 00:06:21.280
+predict H2. This is known as a marovian
+
+00:06:18.080 --> 00:06:24.000
+property. You can also think of age here
+
+00:06:21.280 --> 00:06:27.840
+as a memory, maybe a short-term memory,
+
+00:06:24.000 --> 00:06:30.560
+but it's enough memory to give us a good
+
+00:06:27.840 --> 00:06:32.880
+prediction for age or for the next
+
+00:06:30.560 --> 00:06:35.840
+updated memory that we are going to
+
+00:06:32.880 --> 00:06:38.240
+carry over for the next step. Again, we
+
+00:06:35.840 --> 00:06:40.960
+resolve all of those issues that we had
+
+00:06:38.240 --> 00:06:43.840
+in the uh autoenccoder. There is no
+
+00:06:40.960 --> 00:06:45.759
+one-time compression for Z. It's instead
+
+00:06:43.840 --> 00:06:47.759
+information accumulates here. Also, we
+
+00:06:45.759 --> 00:06:51.039
+have a natural ordering, right? There's
+
+00:06:47.759 --> 00:06:55.360
+no issues with temporal structures. We
+
+00:06:51.039 --> 00:06:57.840
+are able to handle any size, length of
+
+00:06:55.360 --> 00:07:01.520
+sequences as we are feeding it this way.
+
+00:06:57.840 --> 00:07:04.240
+We can also deal with streaming uh data
+
+00:07:01.520 --> 00:07:06.479
+because this is naturally handled here.
+
+00:07:04.240 --> 00:07:09.680
+The computation efficiency is also
+
+00:07:06.479 --> 00:07:13.440
+better as we only use memory uh as we
+
+00:07:09.680 --> 00:07:16.400
+want. There's no padding or sparious end
+
+00:07:13.440 --> 00:07:19.039
+of sequence learning and give us the
+
+00:07:16.400 --> 00:07:22.800
+updated memory for the next prediction.
+
+00:07:19.039 --> 00:07:25.039
+We can use this h and do the decoding to
+
+00:07:22.800 --> 00:07:28.479
+anything we want. For example, at each
+
+00:07:25.039 --> 00:07:31.440
+time point we can get an output or maybe
+
+00:07:28.479 --> 00:07:34.639
+we should we can wait until the end get
+
+00:07:31.440 --> 00:07:36.400
+an output. So that is depending on the
+
+00:07:34.639 --> 00:07:40.319
+design.
+
+00:07:36.400 --> 00:07:43.360
+Are we done here? Well, it's important
+
+00:07:40.319 --> 00:07:45.919
+to look at how this architecture can be
+
+00:07:43.360 --> 00:07:48.800
+trained. So when we do a forward pass
+
+00:07:45.919 --> 00:07:51.919
+like this until we get to the point that
+
+00:07:48.800 --> 00:07:54.000
+we are computing the loss and we want to
+
+00:07:51.919 --> 00:07:57.759
+back propagate this loss. The back
+
+00:07:54.000 --> 00:08:01.120
+propagation requires a product that is a
+
+00:07:57.759 --> 00:08:03.440
+function of parameters of whh
+
+00:08:01.120 --> 00:08:06.080
+and the activation which here is an
+
+00:08:03.440 --> 00:08:08.160
+activation that is between minus1 and
+
+00:08:06.080 --> 00:08:08.240
+one uh which is tang t t t t t t t t t t
+
+00:08:08.160 --> 00:08:10.000
+t t t t t t t t t t t t t t t t t t t t
+
+00:08:08.240 --> 00:08:12.560
+t t t t t t t t t tangent hyperbolic. So
+
+00:08:10.000 --> 00:08:15.520
+there will be a multiplication by a term
+
+00:08:12.560 --> 00:08:18.000
+here that is less than or equal than one
+
+00:08:15.520 --> 00:08:20.720
+or identity. Okay, this means that
+
+00:08:18.000 --> 00:08:24.639
+because we have a product there is an
+
+00:08:20.720 --> 00:08:26.960
+exponential either growth or decay or in
+
+00:08:24.639 --> 00:08:29.759
+other word we have either an explosion
+
+00:08:26.960 --> 00:08:32.640
+or a vanishing gradient. So in the book
+
+00:08:29.759 --> 00:08:35.839
+you can look at the derivations but the
+
+00:08:32.640 --> 00:08:39.039
+main point here is we have to deal with
+
+00:08:35.839 --> 00:08:40.880
+one of these two cases all the time and
+
+00:08:39.039 --> 00:08:43.680
+it's not easy to handle. For example,
+
+00:08:40.880 --> 00:08:45.920
+you may think of gradient clipping uh as
+
+00:08:43.680 --> 00:08:48.480
+a band-aid, but that's not really the
+
+00:08:45.920 --> 00:08:51.839
+the solution because basically you're
+
+00:08:48.480 --> 00:08:55.040
+reducing the convergence of the gradient
+
+00:08:51.839 --> 00:08:58.320
+descent significantly um by basically
+
+00:08:55.040 --> 00:09:01.760
+reducing the effect of large mistaken
+
+00:08:58.320 --> 00:09:05.279
+gradient steps. So this is known as back
+
+00:09:01.760 --> 00:09:07.040
+propagation through time. And the the
+
+00:09:05.279 --> 00:09:09.440
+biggest problem is when we are doing
+
+00:09:07.040 --> 00:09:12.160
+this back propagation for the entire
+
+00:09:09.440 --> 00:09:13.760
+sequence. But maybe we can reduce this
+
+00:09:12.160 --> 00:09:16.720
+problem because now that we have this
+
+00:09:13.760 --> 00:09:19.360
+nice architecture, maybe we can just
+
+00:09:16.720 --> 00:09:23.800
+chop the sequence into smaller part
+
+00:09:19.360 --> 00:09:23.800
+because after all foss
+
+00:09:23.839 --> 00:09:28.800
+right this is this marovian uh property
+
+00:09:26.640 --> 00:09:32.800
+that we can capitalize on. So what I
+
+00:09:28.800 --> 00:09:35.519
+mean is maybe we can just chop the the
+
+00:09:32.800 --> 00:09:37.680
+sequence into smaller part and give each
+
+00:09:35.519 --> 00:09:40.320
+one of these smaller part to the RNN to
+
+00:09:37.680 --> 00:09:43.200
+train on. So basically we can have a lot
+
+00:09:40.320 --> 00:09:46.000
+of these small sequences and do batch
+
+00:09:43.200 --> 00:09:49.279
+training because after all f should be
+
+00:09:46.000 --> 00:09:51.120
+able to deal with all of these sequences
+
+00:09:49.279 --> 00:09:52.480
+or subsequences.
+
+00:09:51.120 --> 00:09:54.720
+Of course how to choose these
+
+00:09:52.480 --> 00:09:57.680
+subsequences is important. Maybe we can
+
+00:09:54.720 --> 00:10:00.160
+just random uh choose random lengths
+
+00:09:57.680 --> 00:10:02.560
+subsequences in our batch and then in
+
+00:10:00.160 --> 00:10:06.720
+expectation basically we will get a
+
+00:10:02.560 --> 00:10:09.040
+unbiased f but in practice really it's
+
+00:10:06.720 --> 00:10:12.560
+not necessary to do with this random
+
+00:10:09.040 --> 00:10:15.360
+size segments and you can just pick uh
+
+00:10:12.560 --> 00:10:18.880
+segment size. So in that case we know
+
+00:10:15.360 --> 00:10:22.160
+that after a few steps maybe here for
+
+00:10:18.880 --> 00:10:24.640
+text 20 to 50 the influence of the past
+
+00:10:22.160 --> 00:10:26.240
+observation gets smaller and smaller on
+
+00:10:24.640 --> 00:10:29.120
+the current gradient. I mean after all
+
+00:10:26.240 --> 00:10:31.120
+the ingredient will will decay. So it's
+
+00:10:29.120 --> 00:10:34.000
+not really as important to have that
+
+00:10:31.120 --> 00:10:37.360
+long sequences and as we said the
+
+00:10:34.000 --> 00:10:39.680
+information also gets diluted as it pass
+
+00:10:37.360 --> 00:10:42.560
+through many of these nonlinearities
+
+00:10:39.680 --> 00:10:44.560
+that we have inside those steps. If you
+
+00:10:42.560 --> 00:10:47.200
+remember we had this tangent hyperbolic
+
+00:10:44.560 --> 00:10:50.000
+and then this variable length sequences
+
+00:10:47.200 --> 00:10:51.760
+also induce some variance into our
+
+00:10:50.000 --> 00:10:54.000
+gradient. So for example if each one of
+
+00:10:51.760 --> 00:10:56.640
+these many many batches has very
+
+00:10:54.000 --> 00:10:59.920
+different truncation lengths this brings
+
+00:10:56.640 --> 00:11:02.079
+some noise that uh somehow reduce the
+
+00:10:59.920 --> 00:11:05.920
+benefits that we get from this
+
+00:11:02.079 --> 00:11:07.680
+occasional longer uh segments in the
+
+00:11:05.920 --> 00:11:10.720
+randomized version. Also the
+
+00:11:07.680 --> 00:11:14.320
+optimization gets more difficult. Also
+
+00:11:10.720 --> 00:11:16.399
+when you have a disregular segment size
+
+00:11:14.320 --> 00:11:19.600
+uh it's like we are we have simpler
+
+00:11:16.399 --> 00:11:22.560
+model and that means simpler inductive
+
+00:11:19.600 --> 00:11:25.200
+bias training will be more stable and
+
+00:11:22.560 --> 00:11:27.760
+this uh regular truncation is like
+
+00:11:25.200 --> 00:11:30.320
+really like a mild regular razor and we
+
+00:11:27.760 --> 00:11:33.200
+are not overfeeding to long range
+
+00:11:30.320 --> 00:11:36.640
+correlation. So we learn a very good
+
+00:11:33.200 --> 00:11:40.160
+short per memory for our RNN that is
+
+00:11:36.640 --> 00:11:43.040
+remaining robust for out of distribution
+
+00:11:40.160 --> 00:11:45.680
+data. Okay. So before going on and code
+
+00:11:43.040 --> 00:11:48.399
+the RNN just a few practical
+
+00:11:45.680 --> 00:11:51.760
+recommendation after this discussion. So
+
+00:11:48.399 --> 00:11:55.680
+we can come up with a fixed chunk size
+
+00:11:51.760 --> 00:11:58.959
+maybe in the character level models 35
+
+00:11:55.680 --> 00:12:02.720
+has been a norm. We have to initialize
+
+00:11:58.959 --> 00:12:06.399
+the state and here we can initialize
+
+00:12:02.720 --> 00:12:08.240
+with zero to learn the initial state.
+
+00:12:06.399 --> 00:12:11.519
+We still need to do gradient clipping
+
+00:12:08.240 --> 00:12:14.240
+because the vanishing gradient and the
+
+00:12:11.519 --> 00:12:17.839
+exploding gradient is still an issue
+
+00:12:14.240 --> 00:12:21.440
+here. We haven't yet completely dealt
+
+00:12:17.839 --> 00:12:24.079
+with it. And then for longer sequences
+
+00:12:21.440 --> 00:12:26.959
+we have to we have to deal with uh
+
+00:12:24.079 --> 00:12:29.839
+bigger problems. So it's not really this
+
+00:12:26.959 --> 00:12:32.880
+vanilla RNN is not the real solution. So
+
+00:12:29.839 --> 00:12:34.639
+let's just go with what we have and then
+
+00:12:32.880 --> 00:12:39.279
+later we will come up with better
+
+00:12:34.639 --> 00:12:39.279
+solution for longer sequences.

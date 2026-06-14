@@ -1,0 +1,1207 @@
+WEBVTT
+
+00:00:00.240 --> 00:00:07.839
+Okay, so let us uh implement linear
+
+00:00:04.240 --> 00:00:10.480
+regression in a neural network form and
+
+00:00:07.839 --> 00:00:13.519
+um we are going to use PyTorch in our
+
+00:00:10.480 --> 00:00:17.279
+implementation because you already did
+
+00:00:13.519 --> 00:00:20.320
+uh linear regression in numpy and other
+
+00:00:17.279 --> 00:00:23.680
+frameworks. So we are going to use this
+
+00:00:20.320 --> 00:00:27.199
+as an excuse uh to work with PyTorch uh
+
+00:00:23.680 --> 00:00:30.080
+tensors. Uh however we are going to do
+
+00:00:27.199 --> 00:00:32.399
+other things mostly from scratch.
+
+00:00:30.080 --> 00:00:35.440
+Okay, so linear regression as you know
+
+00:00:32.399 --> 00:00:38.879
+is a model that assumes a linear
+
+00:00:35.440 --> 00:00:42.239
+relationship between the features X and
+
+00:00:38.879 --> 00:00:45.840
+target Y. Like I said for now we are
+
+00:00:42.239 --> 00:00:48.640
+assume scalar Y. This is the form that
+
+00:00:45.840 --> 00:00:52.000
+we are looking at and the last function
+
+00:00:48.640 --> 00:00:54.160
+is uh a mean square error. We already
+
+00:00:52.000 --> 00:00:57.920
+discussed that in the previous lecture
+
+00:00:54.160 --> 00:01:01.280
+and uh the gradient will be computed uh
+
+00:00:57.920 --> 00:01:03.760
+using this equations and here let's
+
+00:01:01.280 --> 00:01:07.280
+start with the code so like I said we
+
+00:01:03.760 --> 00:01:10.159
+are going to use torch and what else we
+
+00:01:07.280 --> 00:01:14.080
+want we may need some butting so let's
+
+00:01:10.159 --> 00:01:17.200
+use ML lip we want this to be
+
+00:01:14.080 --> 00:01:20.720
+reproducible let's fix the seating in
+
+00:01:17.200 --> 00:01:22.240
+our generators let's make a synthetic
+
+00:01:20.720 --> 00:01:25.600
+data
+
+00:01:22.240 --> 00:01:27.920
+Uh to do that I'm going to write a
+
+00:01:25.600 --> 00:01:31.520
+function here.
+
+00:01:27.920 --> 00:01:34.240
+So let's just leave this for now. Okay.
+
+00:01:31.520 --> 00:01:37.200
+So we want the to basically have the
+
+00:01:34.240 --> 00:01:41.439
+model. So the arguments of the function
+
+00:01:37.200 --> 00:01:43.280
+will be of course the the weights, the
+
+00:01:41.439 --> 00:01:45.680
+bias
+
+00:01:43.280 --> 00:01:48.159
+and the number of samples and uh
+
+00:01:45.680 --> 00:01:50.960
+basically some form of noise that will
+
+00:01:48.159 --> 00:01:54.079
+be added. And we are going to use just
+
+00:01:50.960 --> 00:01:56.560
+standard Gaussian noise. We want the
+
+00:01:54.079 --> 00:01:59.600
+function to return
+
+00:01:56.560 --> 00:02:02.960
+uh the feature matrix for us and uh the
+
+00:01:59.600 --> 00:02:04.960
+target uh vector looking at something
+
+00:02:02.960 --> 00:02:08.080
+like this.
+
+00:02:04.960 --> 00:02:13.360
+Okay. So basically we have the weights
+
+00:02:08.080 --> 00:02:14.879
+and we have the biases the n sample is
+
+00:02:13.360 --> 00:02:17.120
+simple
+
+00:02:14.879 --> 00:02:20.239
+small galsian noise and this will give
+
+00:02:17.120 --> 00:02:22.879
+us the the feature and return the
+
+00:02:20.239 --> 00:02:24.800
+features and of course the predictions
+
+00:02:22.879 --> 00:02:27.200
+or the target vector to make things
+
+00:02:24.800 --> 00:02:30.319
+maybe more obvious here. This is really
+
+00:02:27.200 --> 00:02:33.040
+a good practice in coding. Maybe not in
+
+00:02:30.319 --> 00:02:37.040
+Python. It's not critical for Python but
+
+00:02:33.040 --> 00:02:41.519
+uh just having the types that we are
+
+00:02:37.040 --> 00:02:43.519
+going to expect this variable to have uh
+
+00:02:41.519 --> 00:02:46.959
+and determining them here in the
+
+00:02:43.519 --> 00:02:48.879
+function will make it more readable and
+
+00:02:46.959 --> 00:02:51.920
+later you will see it will make your
+
+00:02:48.879 --> 00:02:54.319
+debugging much easier. So we have bias
+
+00:02:51.920 --> 00:02:57.360
+samples and noise.
+
+00:02:54.319 --> 00:03:01.120
+So bias will be
+
+00:02:57.360 --> 00:03:04.959
+Good. And like I said, we are expecting
+
+00:03:01.120 --> 00:03:07.959
+this to give us the features and
+
+00:03:04.959 --> 00:03:07.959
+prediction.
+
+00:03:09.599 --> 00:03:14.800
+The features will be a torch tensor and
+
+00:03:12.159 --> 00:03:17.280
+the prediction of course will be another
+
+00:03:14.800 --> 00:03:19.599
+torch tensor. Okay. Note that here it
+
+00:03:17.280 --> 00:03:22.239
+doesn't really recognize this. Uh what
+
+00:03:19.599 --> 00:03:25.360
+does that mean? It means that I haven't
+
+00:03:22.239 --> 00:03:29.640
+defined what's tupal. So I have to
+
+00:03:25.360 --> 00:03:29.640
+import this from the typing.
+
+00:03:29.920 --> 00:03:37.519
+So let's go back here. See everything
+
+00:03:33.120 --> 00:03:40.720
+looks okay for now. And now we can go on
+
+00:03:37.519 --> 00:03:43.280
+writing our function. Okay. As you see I
+
+00:03:40.720 --> 00:03:46.080
+already have a a suggestion here. I'm
+
+00:03:43.280 --> 00:03:48.879
+going to just use this because again I
+
+00:03:46.080 --> 00:03:53.280
+assume that you know most of this stuff.
+
+00:03:48.879 --> 00:03:57.120
+So d here is the the shape or the length
+
+00:03:53.280 --> 00:04:00.080
+of the uh weights. Uh you could use just
+
+00:03:57.120 --> 00:04:02.959
+len of weights. Like I said, weights is
+
+00:04:00.080 --> 00:04:05.280
+a it's a vector. So you could do that.
+
+00:04:02.959 --> 00:04:08.080
+Uh but this is more general in the sense
+
+00:04:05.280 --> 00:04:12.319
+that sometimes we have multiple
+
+00:04:08.080 --> 00:04:14.640
+uh y and y is not a scalar is a vector
+
+00:04:12.319 --> 00:04:17.680
+itself. So we have like for example two
+
+00:04:14.640 --> 00:04:21.440
+values for y not just one scale. And
+
+00:04:17.680 --> 00:04:24.400
+this is a more uh general case. So X is
+
+00:04:21.440 --> 00:04:26.639
+the feature matrix uh which is basically
+
+00:04:24.400 --> 00:04:30.639
+the value of T features in each one of
+
+00:04:26.639 --> 00:04:34.160
+these samples. And num samples is either
+
+00:04:30.639 --> 00:04:36.000
+the entire data set size or maybe the
+
+00:04:34.160 --> 00:04:39.440
+batch size later. We will talk about
+
+00:04:36.000 --> 00:04:43.280
+that. And noise here is just a randomly
+
+00:04:39.440 --> 00:04:47.120
+generated noise of course with for added
+
+00:04:43.280 --> 00:04:50.080
+for each one of these uh synthetic data
+
+00:04:47.120 --> 00:04:54.320
+samples. And then this is basically what
+
+00:04:50.080 --> 00:04:58.240
+we get uh as the ground truth for y.
+
+00:04:54.320 --> 00:05:02.000
+Remember this is synthetic data. Uh
+
+00:04:58.240 --> 00:05:05.280
+let's go on and write our linear
+
+00:05:02.000 --> 00:05:09.280
+regression. Okay. So let's write it as a
+
+00:05:05.280 --> 00:05:12.720
+class. Okay. So going to just describe
+
+00:05:09.280 --> 00:05:15.919
+what I want to do and for now like I
+
+00:05:12.720 --> 00:05:17.520
+said we are using our manually derived
+
+00:05:15.919 --> 00:05:19.919
+gradients
+
+00:05:17.520 --> 00:05:22.720
+and with that let me just write this
+
+00:05:19.919 --> 00:05:24.960
+down okay so just uh remember in
+
+00:05:22.720 --> 00:05:27.840
+practice we really we don't need this
+
+00:05:24.960 --> 00:05:31.600
+one these two cuz later on this will be
+
+00:05:27.840 --> 00:05:34.080
+multiplied by the uh learning rate so
+
+00:05:31.600 --> 00:05:37.360
+okay so this is the class that we want
+
+00:05:34.080 --> 00:05:41.520
+to write we need an init method of
+
+00:05:37.360 --> 00:05:44.880
+course and let's write that needs the
+
+00:05:41.520 --> 00:05:48.000
+input size. Okay, what do we have here?
+
+00:05:44.880 --> 00:05:50.960
+Uh we don't need num feature we have we
+
+00:05:48.000 --> 00:05:54.960
+need the learning rate of course. So
+
+00:05:50.960 --> 00:05:58.800
+let's just write input size which we
+
+00:05:54.960 --> 00:06:02.479
+have a integer and a learning rate right
+
+00:05:58.800 --> 00:06:05.919
+so I already see that here so and we
+
+00:06:02.479 --> 00:06:09.440
+have float and so let's even make it
+
+00:06:05.919 --> 00:06:13.280
+even uh the random weights I want them
+
+00:06:09.440 --> 00:06:17.280
+to be even smaller and this is learning
+
+00:06:13.280 --> 00:06:20.160
+rate and like I said since we don't have
+
+00:06:17.280 --> 00:06:22.800
+autocrat and that's the input
+
+00:06:20.160 --> 00:06:25.199
+Okay, so that's that. We have our init
+
+00:06:22.800 --> 00:06:28.639
+method. We could uh add some print
+
+00:06:25.199 --> 00:06:31.520
+statements. Uh maybe later, but for now,
+
+00:06:28.639 --> 00:06:35.520
+let's just go with this. Now, what we
+
+00:06:31.520 --> 00:06:38.000
+want? We want uh a forward pass, right?
+
+00:06:35.520 --> 00:06:40.720
+We want this to compute the the
+
+00:06:38.000 --> 00:06:45.440
+predictions given our current u
+
+00:06:40.720 --> 00:06:49.039
+features, right? And this will return
+
+00:06:45.440 --> 00:06:51.280
+our linear computation. You tab here.
+
+00:06:49.039 --> 00:06:55.680
+That's it. This is our forward pass.
+
+00:06:51.280 --> 00:06:57.919
+Basically computes the the values of y,
+
+00:06:55.680 --> 00:07:00.319
+the output of the neural network, right?
+
+00:06:57.919 --> 00:07:02.720
+Okay. What else we want? We want a
+
+00:07:00.319 --> 00:07:05.280
+function that computes lots, right? So,
+
+00:07:02.720 --> 00:07:08.319
+let's do that, too. Okay. I see the
+
+00:07:05.280 --> 00:07:10.800
+suggestion looks okay to me. I'm going
+
+00:07:08.319 --> 00:07:14.479
+to use that.
+
+00:07:10.800 --> 00:07:16.800
+And notice that uh this can be really a
+
+00:07:14.479 --> 00:07:19.520
+static method. I'm not sure if you
+
+00:07:16.800 --> 00:07:22.800
+recall that. So I could just use a
+
+00:07:19.520 --> 00:07:25.520
+static method here uh with a decorator
+
+00:07:22.800 --> 00:07:30.080
+but for now let's just go with this. Now
+
+00:07:25.520 --> 00:07:33.440
+we want to compute our gradient steps
+
+00:07:30.080 --> 00:07:36.800
+and let's see what we have. Um okay self
+
+00:07:33.440 --> 00:07:38.880
+x and this gives me yep this sounds
+
+00:07:36.800 --> 00:07:42.240
+good. Okay.
+
+00:07:38.880 --> 00:07:46.560
+Um so let's write this up. I'm going to
+
+00:07:42.240 --> 00:07:49.680
+just write an error here. um and make
+
+00:07:46.560 --> 00:07:52.880
+this more explicit, right? It will be
+
+00:07:49.680 --> 00:07:55.440
+easier for you guys to see. Okay, so
+
+00:07:52.880 --> 00:07:58.400
+that's how we compute the gradients and
+
+00:07:55.440 --> 00:08:01.759
+we have to compute the step sizes,
+
+00:07:58.400 --> 00:08:04.879
+right? Uh using this gradients. So we
+
+00:08:01.759 --> 00:08:07.039
+need another function here. Like I said,
+
+00:08:04.879 --> 00:08:10.879
+later we will see that your life will be
+
+00:08:07.039 --> 00:08:13.039
+much easier. So let's do this. uh we
+
+00:08:10.879 --> 00:08:15.120
+need the x
+
+00:08:13.039 --> 00:08:17.759
+and y
+
+00:08:15.120 --> 00:08:20.000
+and this uh will give us the step size
+
+00:08:17.759 --> 00:08:23.599
+which is a float right so let's just
+
+00:08:20.000 --> 00:08:26.400
+write so what we need for this one
+
+00:08:23.599 --> 00:08:29.440
+gradient distance decent update we need
+
+00:08:26.400 --> 00:08:31.840
+to compute the forward pass and then
+
+00:08:29.440 --> 00:08:35.039
+compute the loss and then compute the
+
+00:08:31.840 --> 00:08:39.440
+gradients and then update the parameters
+
+00:08:35.039 --> 00:08:42.640
+so these are the steps that we want okay
+
+00:08:39.440 --> 00:08:46.080
+good So let's write them. So like I said
+
+00:08:42.640 --> 00:08:48.640
+first let's do
+
+00:08:46.080 --> 00:08:51.040
+which is why I had
+
+00:08:48.640 --> 00:08:55.040
+and two loss
+
+00:08:51.040 --> 00:08:58.000
+and three the gradients of uh weights
+
+00:08:55.040 --> 00:09:00.320
+and biases. So something that I skipped
+
+00:08:58.000 --> 00:09:04.000
+here right maybe I should have
+
+00:09:00.320 --> 00:09:07.200
+explained. So remember that um the the
+
+00:09:04.000 --> 00:09:10.720
+gradient of the the bias is basically
+
+00:09:07.200 --> 00:09:14.160
+the average error and that's how we
+
+00:09:10.720 --> 00:09:16.880
+ground the error to zero to move it to
+
+00:09:14.160 --> 00:09:20.000
+the origin if you remember. Okay. So
+
+00:09:16.880 --> 00:09:24.720
+with that now we have the gradients the
+
+00:09:20.000 --> 00:09:28.880
+weights and biases and we need to use
+
+00:09:24.720 --> 00:09:32.800
+that for our updates right is a more com
+
+00:09:28.880 --> 00:09:37.200
+compact notation. So this is it. We
+
+00:09:32.800 --> 00:09:40.560
+update the weights and this also returns
+
+00:09:37.200 --> 00:09:46.000
+the the loss. Okay, this looks good,
+
+00:09:40.560 --> 00:09:48.399
+right? And now um next we can go toward
+
+00:09:46.000 --> 00:09:51.600
+our stoastic gradient descent which
+
+00:09:48.399 --> 00:09:54.480
+requires u to make mini patches. Right,
+
+00:09:51.600 --> 00:09:58.399
+that's the next step. Let's make some
+
+00:09:54.480 --> 00:10:02.480
+mini batches. Okay, so what we need? We
+
+00:09:58.399 --> 00:10:05.200
+need X and Y and some batch size to
+
+00:10:02.480 --> 00:10:07.440
+choose. And like I said, we need to
+
+00:10:05.200 --> 00:10:09.920
+shuffle them, right? Maybe not.
+
+00:10:07.440 --> 00:10:13.519
+Sometimes we don't need to necessarily,
+
+00:10:09.920 --> 00:10:17.519
+but let's uh keep it as an argument.
+
+00:10:13.519 --> 00:10:20.000
+Okay, so we have X, Y, B says, and
+
+00:10:17.519 --> 00:10:24.079
+shuffle. Okay, so what does this
+
+00:10:20.000 --> 00:10:26.399
+returns? It will return a generator if
+
+00:10:24.079 --> 00:10:28.160
+you remember. So basically
+
+00:10:26.399 --> 00:10:30.800
+uh actually maybe generator is not the
+
+00:10:28.160 --> 00:10:35.600
+best option maybe we can use iterator
+
+00:10:30.800 --> 00:10:39.600
+right uh generator is uh more common and
+
+00:10:35.600 --> 00:10:41.839
+the reason is uh you have more control
+
+00:10:39.600 --> 00:10:44.320
+uh but here the reason that I'm not
+
+00:10:41.839 --> 00:10:46.320
+writing generator is uh you have some
+
+00:10:44.320 --> 00:10:49.200
+extra arguments that I would want to
+
+00:10:46.320 --> 00:10:50.959
+talk about them for now uh so let's use
+
+00:10:49.200 --> 00:10:53.839
+an iterator
+
+00:10:50.959 --> 00:10:58.079
+and iterator basically returns uh the
+
+00:10:53.839 --> 00:11:02.160
+the two outputs. This basically yields
+
+00:10:58.079 --> 00:11:06.880
+all of these badges of X's and Y's.
+
+00:11:02.160 --> 00:11:08.720
+And uh here uh we have to shuffle them.
+
+00:11:06.880 --> 00:11:14.200
+If shuffle,
+
+00:11:08.720 --> 00:11:14.200
+we want to keep this torch.
+
+00:11:15.120 --> 00:11:21.120
+If not shuffle, we just stick with what
+
+00:11:18.399 --> 00:11:25.839
+you have. Okay.
+
+00:11:21.120 --> 00:11:28.000
+dx basically give the the x and y in
+
+00:11:25.839 --> 00:11:31.920
+each batches. So this is how we are
+
+00:11:28.000 --> 00:11:35.600
+doing this for start in the range of
+
+00:11:31.920 --> 00:11:39.120
+zero and n the step size of batch. Okay.
+
+00:11:35.600 --> 00:11:44.320
+So what will be the end and will be the
+
+00:11:39.120 --> 00:11:47.120
+start pro plus the batch size right and
+
+00:11:44.320 --> 00:11:52.640
+uh since sometime we may hit the button
+
+00:11:47.120 --> 00:11:54.880
+so uh we have to use the minimum of that
+
+00:11:52.640 --> 00:11:58.640
+or
+
+00:11:54.880 --> 00:12:03.440
+last we just need to enter the range of
+
+00:11:58.640 --> 00:12:08.720
+the the batches. So let's just use
+
+00:12:03.440 --> 00:12:12.800
+um the indices start to end, right?
+
+00:12:08.720 --> 00:12:17.920
+Okay. So with that we just need to
+
+00:12:12.800 --> 00:12:22.320
+uh our generator to yield XP and white.
+
+00:12:17.920 --> 00:12:25.680
+Okay, good. Um so this is uh how we are
+
+00:12:22.320 --> 00:12:29.440
+making the mini patches and now we can
+
+00:12:25.680 --> 00:12:31.600
+train the model. Okay, let's write this.
+
+00:12:29.440 --> 00:12:36.639
+So it takes in the the model which is
+
+00:12:31.600 --> 00:12:41.040
+the class that we have uh x and y and uh
+
+00:12:36.639 --> 00:12:43.279
+we still need to enter the batch size.
+
+00:12:41.040 --> 00:12:46.000
+So model
+
+00:12:43.279 --> 00:12:49.360
+x
+
+00:12:46.000 --> 00:12:51.360
+number of impacts and batch sizes. So we
+
+00:12:49.360 --> 00:12:55.440
+use 32.
+
+00:12:51.360 --> 00:12:59.760
+So let's return some form of average
+
+00:12:55.440 --> 00:13:03.120
+loss across the the apo which will be a
+
+00:12:59.760 --> 00:13:05.519
+float really decent and this is the
+
+00:13:03.120 --> 00:13:09.040
+training group
+
+00:13:05.519 --> 00:13:13.680
+and we are reporting the average loss
+
+00:13:09.040 --> 00:13:17.720
+right so in each one of these epochs so
+
+00:13:13.680 --> 00:13:17.720
+we have the epoch averages
+
+00:13:17.760 --> 00:13:21.760
+like I said it's a list of floats
+
+00:13:22.160 --> 00:13:29.440
+And for now it's empty. Um so for each
+
+00:13:26.320 --> 00:13:33.120
+uh we wait let's see what we have here.
+
+00:13:29.440 --> 00:13:35.040
+We for each epoch. So basically this uh
+
+00:13:33.120 --> 00:13:38.800
+this is the last that we get in each
+
+00:13:35.040 --> 00:13:43.200
+batch and and the model already took a
+
+00:13:38.800 --> 00:13:46.560
+step using this uh batches uh toward a
+
+00:13:43.200 --> 00:13:48.480
+better parameter. So the training is
+
+00:13:46.560 --> 00:13:51.760
+done but we promised here that we are
+
+00:13:48.480 --> 00:13:57.120
+going to return some average loss per
+
+00:13:51.760 --> 00:13:59.120
+epoch. So let's then add up
+
+00:13:57.120 --> 00:14:01.920
+uh all of these losses that we are
+
+00:13:59.120 --> 00:14:05.680
+collecting in each epoch. Let's change
+
+00:14:01.920 --> 00:14:10.240
+this name. So this is the total loss per
+
+00:14:05.680 --> 00:14:12.959
+that epoch. And we since we calculating
+
+00:14:10.240 --> 00:14:16.639
+the average um
+
+00:14:12.959 --> 00:14:19.199
+on fly we need to have an counter here.
+
+00:14:16.639 --> 00:14:23.040
+Let's just put a counter here. Maybe
+
+00:14:19.199 --> 00:14:26.399
+number of batches. So this is the okay
+
+00:14:23.040 --> 00:14:29.279
+that's it. Now for that debug we can
+
+00:14:26.399 --> 00:14:32.160
+compute the average.
+
+00:14:29.279 --> 00:14:36.079
+I I just I'm I'm just scared of this
+
+00:14:32.160 --> 00:14:39.920
+when it starts from zero. Let's just be
+
+00:14:36.079 --> 00:14:44.000
+careful. uh doesn't hurt. We don't want
+
+00:14:39.920 --> 00:14:47.360
+to have division by zero. So, uh we can
+
+00:14:44.000 --> 00:14:48.959
+add some verbose messaging here.
+
+00:14:47.360 --> 00:14:53.440
+Training
+
+00:14:48.959 --> 00:14:56.079
+and model. Yeah.
+
+00:14:53.440 --> 00:14:59.199
+Oops. So, you see that this is not
+
+00:14:56.079 --> 00:15:03.600
+defined. We have to define this too. So,
+
+00:14:59.199 --> 00:15:06.160
+verbose is just a boolean and let's say
+
+00:15:03.600 --> 00:15:10.959
+default is true. Okay. So what we want
+
+00:15:06.160 --> 00:15:14.639
+to print out um if variables
+
+00:15:10.959 --> 00:15:17.440
+we want to print out the maybe the model
+
+00:15:14.639 --> 00:15:21.040
+parameter and I see there are some
+
+00:15:17.440 --> 00:15:23.519
+suggestions uh but since we wanted to if
+
+00:15:21.040 --> 00:15:26.639
+you remember we are synthetic data we
+
+00:15:23.519 --> 00:15:29.120
+had some ground truth we can write that
+
+00:15:26.639 --> 00:15:34.240
+out too and maybe compare it with the
+
+00:15:29.120 --> 00:15:36.639
+ground truth so let's just add this here
+
+00:15:34.240 --> 00:15:40.000
+now we want to
+
+00:15:36.639 --> 00:15:41.519
+make uh some synthetic data using our
+
+00:15:40.000 --> 00:15:43.680
+function.
+
+00:15:41.519 --> 00:15:45.839
+Let's start with maybe a small
+
+00:15:43.680 --> 00:15:47.600
+two-dimensional
+
+00:15:45.839 --> 00:15:51.600
+uh
+
+00:15:47.600 --> 00:15:56.160
+weight. So the true weight and let's
+
+00:15:51.600 --> 00:16:01.120
+just choose two values. Okay,
+
+00:15:56.160 --> 00:16:04.399
+let's have a true list. Let's generate
+
+00:16:01.120 --> 00:16:07.120
+1,00 sample from this
+
+00:16:04.399 --> 00:16:12.480
+and then this way we can basically run
+
+00:16:07.120 --> 00:16:15.839
+the generate synthetic data.
+
+00:16:12.480 --> 00:16:18.800
+We have the model which is a linear
+
+00:16:15.839 --> 00:16:21.920
+and then we have the input size. Uh
+
+00:16:18.800 --> 00:16:24.800
+let's just not change the learning rate
+
+00:16:21.920 --> 00:16:28.480
+and we just need to train it. Right? So
+
+00:16:24.800 --> 00:16:32.240
+I want to separate these things out. So
+
+00:16:28.480 --> 00:16:34.000
+let's keep this here.
+
+00:16:32.240 --> 00:16:37.600
+And
+
+00:16:34.000 --> 00:16:39.759
+so I mean we really can
+
+00:16:37.600 --> 00:16:42.320
+title this off for now because we are
+
+00:16:39.759 --> 00:16:46.240
+doing it anyways here.
+
+00:16:42.320 --> 00:16:48.160
+Okay. So let's run our happy little
+
+00:16:46.240 --> 00:16:51.759
+code.
+
+00:16:48.160 --> 00:16:55.440
+What's happening here? Um currently here
+
+00:16:51.759 --> 00:16:59.920
+the learning rate which is a correctly a
+
+00:16:55.440 --> 00:17:03.440
+tensor of this shape is multiplying by
+
+00:16:59.920 --> 00:17:05.120
+a two by 1,000
+
+00:17:03.440 --> 00:17:08.319
+tensor.
+
+00:17:05.120 --> 00:17:12.000
+This is strange because if you remember
+
+00:17:08.319 --> 00:17:15.039
+1,00 is the number of total
+
+00:17:12.000 --> 00:17:17.600
+uh generated samples and then later we
+
+00:17:15.039 --> 00:17:21.039
+basically work with much smaller
+
+00:17:17.600 --> 00:17:24.240
+batches. So I didn't expect that um
+
+00:17:21.039 --> 00:17:27.520
+there might be an error somewhere that
+
+00:17:24.240 --> 00:17:30.240
+uh propagated and cascaded here. One
+
+00:17:27.520 --> 00:17:33.840
+thing that you should remember often
+
+00:17:30.240 --> 00:17:37.840
+when PyTorch is trying to align tensors
+
+00:17:33.840 --> 00:17:40.240
+uh together maybe during multiplication
+
+00:17:37.840 --> 00:17:43.280
+or even summation
+
+00:17:40.240 --> 00:17:46.400
+uh when we don't explicitly
+
+00:17:43.280 --> 00:17:48.960
+determine like the the dimensions we
+
+00:17:46.400 --> 00:17:53.120
+have to be careful so let's just take
+
+00:17:48.960 --> 00:17:56.400
+this here I want to compare it to the
+
+00:17:53.120 --> 00:18:00.240
+error here so okay so what do we expect
+
+00:17:56.400 --> 00:18:03.440
+Here weight is a column, right? So, and
+
+00:18:00.240 --> 00:18:08.960
+we multiply it by X. X is of course a
+
+00:18:03.440 --> 00:18:12.720
+1,00 by 2. We expect a 1,00
+
+00:18:08.960 --> 00:18:17.440
+2 matrix multiply by
+
+00:18:12.720 --> 00:18:21.039
+a column of size two. Uh
+
+00:18:17.440 --> 00:18:23.440
+so the answer will be a vector with this
+
+00:18:21.039 --> 00:18:27.840
+size.
+
+00:18:23.440 --> 00:18:34.240
+And then later when we add this to the
+
+00:18:27.840 --> 00:18:36.480
+bias or noise which is now a th00and one
+
+00:18:34.240 --> 00:18:41.360
+this is where
+
+00:18:36.480 --> 00:18:44.880
+uh pytorch must uh be creative
+
+00:18:41.360 --> 00:18:48.240
+to expand the dimension
+
+00:18:44.880 --> 00:18:52.880
+not necessarily reduce.
+
+00:18:48.240 --> 00:18:56.720
+So since it doesn't know how is this
+
+00:18:52.880 --> 00:18:59.919
+happening instead of adding a one here
+
+00:18:56.720 --> 00:19:03.919
+it actually does this which returns
+
+00:18:59.919 --> 00:19:07.039
+instead of what we expected right so we
+
+00:19:03.919 --> 00:19:10.320
+don't want that uh to let pytorch make
+
+00:19:07.039 --> 00:19:14.400
+this decisions for us so to avoid that
+
+00:19:10.320 --> 00:19:18.000
+we are going to cast this weights into
+
+00:19:14.400 --> 00:19:20.080
+the form that we know basically whatever
+
+00:19:18.000 --> 00:19:22.880
+is the first
+
+00:19:20.080 --> 00:19:25.520
+uh dimension. We want the second
+
+00:19:22.880 --> 00:19:27.600
+dimension to be one by I don't care
+
+00:19:25.520 --> 00:19:31.200
+what's the first dimension. I want this
+
+00:19:27.600 --> 00:19:35.120
+to be one. Okay, so instead of saying I
+
+00:19:31.200 --> 00:19:38.000
+don't care, put minus one. Okay, it's a
+
+00:19:35.120 --> 00:19:41.039
+placeholder really. It's not really
+
+00:19:38.000 --> 00:19:44.640
+literally minus one. Okay, so let's do
+
+00:19:41.039 --> 00:19:48.160
+this change and go back. See if our life
+
+00:19:44.640 --> 00:19:51.200
+gets any better. Okay. So that's that
+
+00:19:48.160 --> 00:19:54.480
+and went with that. Let's try everything
+
+00:19:51.200 --> 00:19:56.240
+again. Something else happened. Oh yeah,
+
+00:19:54.480 --> 00:19:58.799
+of course.
+
+00:19:56.240 --> 00:20:04.000
+So we we came till here. That's great.
+
+00:19:58.799 --> 00:20:07.520
+And the last line cannot print this.
+
+00:20:04.000 --> 00:20:11.440
+Why? Because basically we are saying
+
+00:20:07.520 --> 00:20:14.400
+that this should be fine because the
+
+00:20:11.440 --> 00:20:17.520
+tensor is now least and we can print
+
+00:20:14.400 --> 00:20:20.640
+this. But the tensor here is still a
+
+00:20:17.520 --> 00:20:23.520
+tensor and we are saying that printed in
+
+00:20:20.640 --> 00:20:28.640
+a float that's not happening. So let's
+
+00:20:23.520 --> 00:20:30.559
+just tell that we want this to be the
+
+00:20:28.640 --> 00:20:34.880
+item
+
+00:20:30.559 --> 00:20:39.280
+or the value of the tensor. Okay. So
+
+00:20:34.880 --> 00:20:42.880
+with that let's run again. We are good.
+
+00:20:39.280 --> 00:20:49.919
+So later we will do the same code but
+
+00:20:42.880 --> 00:20:52.559
+with uh backward and auto div and more
+
+00:20:49.919 --> 00:20:57.760
+uh tools instead of writing it from
+
+00:20:52.559 --> 00:21:01.679
+scratch. Okay. So uh let's um
+
+00:20:57.760 --> 00:21:05.440
+plot the uh the training loss and uh
+
+00:21:01.679 --> 00:21:09.120
+here I wrote a function for that uh that
+
+00:21:05.440 --> 00:21:13.280
+basically takes in the model and it
+
+00:21:09.120 --> 00:21:17.600
+plots the the loss history the amount of
+
+00:21:13.280 --> 00:21:20.320
+loss per each one of these batches. So
+
+00:21:17.600 --> 00:21:23.280
+let's make sure we have that uh we
+
+00:21:20.320 --> 00:21:26.799
+append all of these loss values here the
+
+00:21:23.280 --> 00:21:29.679
+step. So let's do that. So we need a
+
+00:21:26.799 --> 00:21:31.679
+self assessor, right? And I see that we
+
+00:21:29.679 --> 00:21:34.960
+don't have it. It means that we haven't
+
+00:21:31.679 --> 00:21:37.120
+initialize it. So we have to do that
+
+00:21:34.960 --> 00:21:40.320
+first.
+
+00:21:37.120 --> 00:21:45.799
+Let's keep that.
+
+00:21:40.320 --> 00:21:45.799
+And here subass history.
+
+00:21:46.559 --> 00:21:53.120
+And we want to append all of that. And
+
+00:21:49.280 --> 00:21:56.640
+good. And let's train everything again.
+
+00:21:53.120 --> 00:21:59.679
+And now we can plot and we are plotting
+
+00:21:56.640 --> 00:22:03.440
+the model right that's it and you see
+
+00:21:59.679 --> 00:22:05.679
+that the loss is going down with the
+
+00:22:03.440 --> 00:22:05.679
+training.

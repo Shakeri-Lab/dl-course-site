@@ -1,0 +1,550 @@
+WEBVTT
+
+00:00:00.320 --> 00:00:06.960
+We define an RNN cell that basically
+
+00:00:03.760 --> 00:00:09.760
+takes in the input and the working
+
+00:00:06.960 --> 00:00:13.599
+memory from the previous step,
+
+00:00:09.760 --> 00:00:16.880
+concatenate them and with a forward
+
+00:00:13.599 --> 00:00:20.720
+neural network with a tangent hyperbolic
+
+00:00:16.880 --> 00:00:23.359
+activation returns the HT or the hidden
+
+00:00:20.720 --> 00:00:26.240
+state for the next step. So this is the
+
+00:00:23.359 --> 00:00:29.920
+RNN cell with this input and output. So
+
+00:00:26.240 --> 00:00:32.480
+we discussed that this hidden state is
+
+00:00:29.920 --> 00:00:35.600
+more like a shortterm memory and there
+
+00:00:32.480 --> 00:00:39.360
+are many nonlinear repeated weight
+
+00:00:35.600 --> 00:00:42.640
+multiplication on its way that makes the
+
+00:00:39.360 --> 00:00:47.039
+back propagation really difficult. One
+
+00:00:42.640 --> 00:00:50.399
+idea here is to keep another state that
+
+00:00:47.039 --> 00:00:54.640
+is like the cell state that acts like a
+
+00:00:50.399 --> 00:00:57.039
+conveyor belt does not have any repeated
+
+00:00:54.640 --> 00:00:59.039
+nonlinear overrides
+
+00:00:57.039 --> 00:01:01.600
+uh and multiplication like the other
+
+00:00:59.039 --> 00:01:05.199
+one. So the cell state is like the
+
+00:01:01.600 --> 00:01:09.119
+longterm memory. So CT minus one will
+
+00:01:05.199 --> 00:01:11.280
+have some addition from the input data
+
+00:01:09.119 --> 00:01:14.720
+and the shortterm memory. Let's just for
+
+00:01:11.280 --> 00:01:17.680
+now call it delta at time t updates the
+
+00:01:14.720 --> 00:01:20.720
+ct minus one with this addition and that
+
+00:01:17.680 --> 00:01:24.640
+gives us ct. This allows the information
+
+00:01:20.720 --> 00:01:26.640
+and gradients to flow largely unchange
+
+00:01:24.640 --> 00:01:29.600
+as there are no weights directly
+
+00:01:26.640 --> 00:01:31.680
+modifying the ma main pathway. But if we
+
+00:01:29.600 --> 00:01:34.079
+think of long-term memory like a limited
+
+00:01:31.680 --> 00:01:37.439
+amount of memory that we want to use
+
+00:01:34.079 --> 00:01:39.439
+wisely in a way that complements the
+
+00:01:37.439 --> 00:01:42.400
+short-term memory or the the hidden
+
+00:01:39.439 --> 00:01:47.200
+state, we want another gate that
+
+00:01:42.400 --> 00:01:50.479
+basically forgets the past and updates
+
+00:01:47.200 --> 00:01:53.520
+it with the addition here. So think of
+
+00:01:50.479 --> 00:01:56.640
+that like a valve here that we can
+
+00:01:53.520 --> 00:01:59.840
+control its angle. the same information
+
+00:01:56.640 --> 00:02:02.560
+comes but we reduces that to allow for
+
+00:01:59.840 --> 00:02:06.240
+an addition or an update. So this is
+
+00:02:02.560 --> 00:02:09.599
+forgetting and this is addition. Okay.
+
+00:02:06.240 --> 00:02:12.480
+So we want to engineer an architecture
+
+00:02:09.599 --> 00:02:16.560
+that does this and allows for this
+
+00:02:12.480 --> 00:02:19.200
+direct line of memory while allowing for
+
+00:02:16.560 --> 00:02:21.440
+an update on the working memory or the
+
+00:02:19.200 --> 00:02:24.400
+short short-term memory. Let's do that.
+
+00:02:21.440 --> 00:02:28.480
+So let's replace let's replace this
+
+00:02:24.400 --> 00:02:31.360
+valve with a function that is changing
+
+00:02:28.480 --> 00:02:33.519
+between zero and one and it's like
+
+00:02:31.360 --> 00:02:37.040
+basically an app that allows the
+
+00:02:33.519 --> 00:02:39.680
+information to either completely flow or
+
+00:02:37.040 --> 00:02:42.720
+completely stop at something in between.
+
+00:02:39.680 --> 00:02:44.640
+And this is we know this is a we have a
+
+00:02:42.720 --> 00:02:48.319
+function like that we call it sigmoid
+
+00:02:44.640 --> 00:02:51.200
+that we will show with with sigma. So we
+
+00:02:48.319 --> 00:02:56.640
+want the sigmoid function to multiply
+
+00:02:51.200 --> 00:03:00.879
+here right and this is a it inputs the
+
+00:02:56.640 --> 00:03:05.200
+htus one and xt and of course it will
+
+00:03:00.879 --> 00:03:08.080
+have a set of weights for uh not uh
+
+00:03:05.200 --> 00:03:11.440
+making the picture very busy I'm going
+
+00:03:08.080 --> 00:03:13.760
+to remove this weights and I assume that
+
+00:03:11.440 --> 00:03:16.319
+you guys know before any of this
+
+00:03:13.760 --> 00:03:18.640
+activations any of these activations I'm
+
+00:03:16.319 --> 00:03:20.959
+going to have a rate like this and we
+
+00:03:18.640 --> 00:03:25.200
+will see that in the code. So now let's
+
+00:03:20.959 --> 00:03:28.480
+focus on how to update the uh long-term
+
+00:03:25.200 --> 00:03:31.040
+memory. So again we want to uh bring the
+
+00:03:28.480 --> 00:03:33.040
+information here and this information
+
+00:03:31.040 --> 00:03:36.239
+will go through a neural network a feed
+
+00:03:33.040 --> 00:03:39.599
+for a neural network and it will give us
+
+00:03:36.239 --> 00:03:41.680
+another state right. So it will be a fit
+
+00:03:39.599 --> 00:03:44.879
+for a neural network with a tangent
+
+00:03:41.680 --> 00:03:48.159
+hyperbolic and that will be the the new
+
+00:03:44.879 --> 00:03:51.680
+state that we want to add to the uh to
+
+00:03:48.159 --> 00:03:54.319
+the cell state. Let's call it CT hat or
+
+00:03:51.680 --> 00:03:57.519
+that delta here. But we should be
+
+00:03:54.319 --> 00:04:00.000
+careful also gate this. We want to put a
+
+00:03:57.519 --> 00:04:02.560
+valve here too. And the valve also will
+
+00:04:00.000 --> 00:04:06.560
+be a sigmoid. The flow is also gated
+
+00:04:02.560 --> 00:04:10.480
+here. What else? Um here we can complete
+
+00:04:06.560 --> 00:04:13.040
+the updates here. It's a bit more nuance
+
+00:04:10.480 --> 00:04:16.239
+because we want to use this long-term
+
+00:04:13.040 --> 00:04:19.359
+memory, right? And also of course this
+
+00:04:16.239 --> 00:04:21.759
+new information. So basically here I'm I
+
+00:04:19.359 --> 00:04:25.919
+I want to think about something here
+
+00:04:21.759 --> 00:04:28.720
+that give us the input uh of XT and HD
+
+00:04:25.919 --> 00:04:31.680
+minus one. use that input and also use
+
+00:04:28.720 --> 00:04:34.639
+this long-term memory to make an update
+
+00:04:31.680 --> 00:04:39.199
+and give us the HD that of course we can
+
+00:04:34.639 --> 00:04:42.160
+use for let's say predicting Y here.
+
+00:04:39.199 --> 00:04:44.960
+Okay, so let's do that. I'm not going to
+
+00:04:42.160 --> 00:04:48.479
+make another neural network here that
+
+00:04:44.960 --> 00:04:51.360
+use tangent hyperbolic, right? I already
+
+00:04:48.479 --> 00:04:53.360
+did this here and this information goes
+
+00:04:51.360 --> 00:04:55.600
+inside with this addition. So I'm going
+
+00:04:53.360 --> 00:04:58.080
+to just use this uh from here. We are
+
+00:04:55.600 --> 00:05:01.919
+not going to do this again. I just want
+
+00:04:58.080 --> 00:05:05.199
+to put a gate from here. So just want to
+
+00:05:01.919 --> 00:05:08.639
+use a gate to control this information
+
+00:05:05.199 --> 00:05:11.199
+which comes from here. Right? So tangent
+
+00:05:08.639 --> 00:05:14.080
+hyperbolic again that calculates the
+
+00:05:11.199 --> 00:05:17.039
+state and it's gated by the input and
+
+00:05:14.080 --> 00:05:20.000
+then we send this for the new HD. So if
+
+00:05:17.039 --> 00:05:23.360
+I want to write this in equation, you
+
+00:05:20.000 --> 00:05:26.240
+can think of this part here first which
+
+00:05:23.360 --> 00:05:29.039
+takes in the inputs and there is a
+
+00:05:26.240 --> 00:05:31.440
+normal network with a sigmoid that
+
+00:05:29.039 --> 00:05:33.759
+scales the forgetting here. Right? So
+
+00:05:31.440 --> 00:05:37.120
+let's write this down. If I call this
+
+00:05:33.759 --> 00:05:40.160
+f_t, f_t will be sigma some neural
+
+00:05:37.120 --> 00:05:43.280
+network takes in concatenation of hg
+
+00:05:40.160 --> 00:05:45.840
+minus1 and xt and maybe some bias. Now
+
+00:05:43.280 --> 00:05:48.080
+let's go to the next step that writes to
+
+00:05:45.840 --> 00:05:50.000
+the memory here. And of course we have a
+
+00:05:48.080 --> 00:05:52.400
+scaling of that writing that controls
+
+00:05:50.000 --> 00:05:59.360
+the amount that we are writing. So if I
+
+00:05:52.400 --> 00:06:02.560
+call this IT that's CT we will have it.
+
+00:05:59.360 --> 00:06:05.120
+So this is the input gate that chooses
+
+00:06:02.560 --> 00:06:07.680
+the amount of the candidate to be added
+
+00:06:05.120 --> 00:06:11.759
+and of course the candidate before that
+
+00:06:07.680 --> 00:06:15.120
+which is a tangent h some wc again the
+
+00:06:11.759 --> 00:06:18.000
+concatenation and some bias. So then
+
+00:06:15.120 --> 00:06:20.720
+after the applying the gate we have the
+
+00:06:18.000 --> 00:06:23.680
+addition here. So let's write this down
+
+00:06:20.720 --> 00:06:26.800
+which gives the CT right. So this is the
+
+00:06:23.680 --> 00:06:29.680
+final CT which is of course the gate
+
+00:06:26.800 --> 00:06:32.720
+that we applied element wise on CT minus
+
+00:06:29.680 --> 00:06:35.600
+one and then the addition of the gated
+
+00:06:32.720 --> 00:06:39.039
+candidate right again element wise so
+
+00:06:35.600 --> 00:06:42.639
+everything is element wise okay great so
+
+00:06:39.039 --> 00:06:45.600
+let's go back here we want to output the
+
+00:06:42.639 --> 00:06:48.080
+new hidden state let's write this down
+
+00:06:45.600 --> 00:06:52.479
+maybe I I I'm going to call the gate
+
+00:06:48.080 --> 00:06:55.840
+here OT so we have a gate okay and then
+
+00:06:52.479 --> 00:06:59.199
+HT will be the element wise tangent
+
+00:06:55.840 --> 00:07:03.280
+hyperbolic of CT. That's how we build
+
+00:06:59.199 --> 00:07:05.840
+LSTM. So as you saw LSTM first is
+
+00:07:03.280 --> 00:07:09.199
+relying on this two activation function
+
+00:07:05.840 --> 00:07:11.440
+the sigmoid that acts like a controller
+
+00:07:09.199 --> 00:07:14.319
+that controls the amount of flow and
+
+00:07:11.440 --> 00:07:16.800
+squashes the input into this range of 0
+
+00:07:14.319 --> 00:07:19.280
+to one. You can interpret the output
+
+00:07:16.800 --> 00:07:21.599
+like a percentage on how much
+
+00:07:19.280 --> 00:07:24.639
+information to let through like that
+
+00:07:21.599 --> 00:07:27.199
+ball valve that I initially showed. And
+
+00:07:24.639 --> 00:07:30.080
+then the next uh activation function
+
+00:07:27.199 --> 00:07:33.759
+just like what we had in RNN it's the
+
+00:07:30.080 --> 00:07:36.720
+content shaper. So this helps to
+
+00:07:33.759 --> 00:07:39.280
+regulate the values that is flowing
+
+00:07:36.720 --> 00:07:41.840
+through the network keeps the content
+
+00:07:39.280 --> 00:07:44.800
+bounded and of course centered around
+
+00:07:41.840 --> 00:07:48.000
+zero. So assume that the forgetting gate
+
+00:07:44.800 --> 00:07:50.880
+is basically not blocking anything and
+
+00:07:48.000 --> 00:07:53.360
+it's like close to one value and
+
+00:07:50.880 --> 00:07:56.000
+actually that's a good value to start
+
+00:07:53.360 --> 00:07:58.800
+the training because this allowed the
+
+00:07:56.000 --> 00:08:02.080
+information to flow and the gradient can
+
+00:07:58.800 --> 00:08:05.440
+have long range values. So as you see
+
+00:08:02.080 --> 00:08:08.800
+LSTM architecture is a bit complex. Uh
+
+00:08:05.440 --> 00:08:12.000
+later there was another uh architecture
+
+00:08:08.800 --> 00:08:14.960
+that was introduced that is known as GRU
+
+00:08:12.000 --> 00:08:18.800
+or gated recurrent unit that simplifies
+
+00:08:14.960 --> 00:08:22.240
+this cell here and it merges the cell
+
+00:08:18.800 --> 00:08:25.520
+state and the hidden state again and it
+
+00:08:22.240 --> 00:08:28.639
+also merges the forgetting and the input
+
+00:08:25.520 --> 00:08:32.159
+gates. So there's like two valves here
+
+00:08:28.639 --> 00:08:34.719
+that in GRU they will be merged. But in
+
+00:08:32.159 --> 00:08:38.880
+GRU there will be a a different gate
+
+00:08:34.719 --> 00:08:41.279
+that is known as resetting gate and it
+
+00:08:38.880 --> 00:08:43.680
+controls how much of the previous hidden
+
+00:08:41.279 --> 00:08:46.640
+state is considered when calculating the
+
+00:08:43.680 --> 00:08:50.320
+candidate. So for example if RT like I
+
+00:08:46.640 --> 00:08:53.040
+said the reset gate is near zero it
+
+00:08:50.320 --> 00:08:56.640
+basically forgets all of the previous
+
+00:08:53.040 --> 00:09:00.160
+hidden state or ignores it. and this way
+
+00:08:56.640 --> 00:09:03.680
+resets and treat the current input XT as
+
+00:09:00.160 --> 00:09:06.640
+the start of a new relevant sequence. So
+
+00:09:03.680 --> 00:09:09.440
+I'm going to skip GRU here. But of
+
+00:09:06.640 --> 00:09:11.839
+course it's a very useful architecture
+
+00:09:09.440 --> 00:09:14.160
+with fewer parameters. So it basically
+
+00:09:11.839 --> 00:09:17.519
+it has two gates versus the three gates
+
+00:09:14.160 --> 00:09:21.120
+here in the LSTM. It has only two gates
+
+00:09:17.519 --> 00:09:26.240
+the RT and the measured FNI. Okay. So
+
+00:09:21.120 --> 00:09:26.240
+with that we can go ahead and code LSTM.
