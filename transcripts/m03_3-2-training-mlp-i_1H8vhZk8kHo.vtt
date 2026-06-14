@@ -1,0 +1,1216 @@
+WEBVTT
+
+00:00:00.240 --> 00:00:05.359
+So let us add a couple of layers to our
+
+00:00:03.120 --> 00:00:07.680
+linear model. Make a multi-layer neural
+
+00:00:05.359 --> 00:00:10.000
+network uh or a multi-layer perceptron.
+
+00:00:07.680 --> 00:00:12.960
+We are going to practice a few coding
+
+00:00:10.000 --> 00:00:17.199
+hygiene while doing that u such as
+
+00:00:12.960 --> 00:00:19.680
+device placement patch shapes and uh the
+
+00:00:17.199 --> 00:00:22.240
+use of write last function. Uh we'll
+
+00:00:19.680 --> 00:00:25.119
+keep it simple. So that means that we
+
+00:00:22.240 --> 00:00:27.519
+will move some of the monitoring and
+
+00:00:25.119 --> 00:00:30.480
+visualization parts of the code to a
+
+00:00:27.519 --> 00:00:33.440
+companion notebook. Okay. So let's
+
+00:00:30.480 --> 00:00:35.920
+import a few modules. We are already
+
+00:00:33.440 --> 00:00:38.879
+familiar with this. We are going to use
+
+00:00:35.920 --> 00:00:44.399
+a data set here fashion emnest. And if
+
+00:00:38.879 --> 00:00:46.480
+you go to chapter 4.2 in the book uh
+
+00:00:44.399 --> 00:00:49.200
+there is an explanation on this uh
+
+00:00:46.480 --> 00:00:51.039
+benchmark data sets that we can try our
+
+00:00:49.200 --> 00:00:53.360
+machine learning algorithms and compare
+
+00:00:51.039 --> 00:00:56.399
+them. One of the most famous one is the
+
+00:00:53.360 --> 00:00:59.520
+amnes data set. And as you can see here
+
+00:00:56.399 --> 00:01:01.920
+even simple models are now achieving a
+
+00:00:59.520 --> 00:01:03.840
+very good accuracy. So to make it more
+
+00:01:01.920 --> 00:01:07.119
+challenging for oursel we are going to
+
+00:01:03.840 --> 00:01:11.200
+use the fashion data set and this data
+
+00:01:07.119 --> 00:01:14.000
+set is in the torch vision um library of
+
+00:01:11.200 --> 00:01:16.799
+value pytor. So we are going to use that
+
+00:01:14.000 --> 00:01:19.840
+and to try our methods on it. With that
+
+00:01:16.799 --> 00:01:22.960
+we need to import the torch vision and
+
+00:01:19.840 --> 00:01:27.360
+some tools within it including data set.
+
+00:01:22.960 --> 00:01:30.720
+So notice that I included transforms uh
+
+00:01:27.360 --> 00:01:33.119
+to use the image transformations uh
+
+00:01:30.720 --> 00:01:35.439
+tools within torch vision such as
+
+00:01:33.119 --> 00:01:40.560
+conversion to tensor, normalizing the
+
+00:01:35.439 --> 00:01:44.000
+images and so on. Here we want to uh
+
+00:01:40.560 --> 00:01:46.640
+work with or specify the device
+
+00:01:44.000 --> 00:01:50.079
+and the reason is first we will make a
+
+00:01:46.640 --> 00:01:52.880
+small tiny MLP but then later we will
+
+00:01:50.079 --> 00:01:57.360
+add more layers. So we may need to use
+
+00:01:52.880 --> 00:02:00.880
+CUDA or GPU. So for now we will continue
+
+00:01:57.360 --> 00:02:03.759
+with CPU but in any case if we want to
+
+00:02:00.880 --> 00:02:06.079
+use the code later we have to uh
+
+00:02:03.759 --> 00:02:08.000
+determine the device and when we change
+
+00:02:06.079 --> 00:02:11.200
+it uh we don't want to change the code
+
+00:02:08.000 --> 00:02:12.959
+accordingly. Okay. So now let us uh
+
+00:02:11.200 --> 00:02:16.800
+download the fashion of this data.
+
+00:02:12.959 --> 00:02:20.160
+Downloading the data to uh a data folder
+
+00:02:16.800 --> 00:02:23.200
+in my root. And here notice that there
+
+00:02:20.160 --> 00:02:25.680
+is a transformation that basically
+
+00:02:23.200 --> 00:02:29.920
+converts the numpy
+
+00:02:25.680 --> 00:02:34.720
+or pil image data to torsch tensor. It
+
+00:02:29.920 --> 00:02:39.360
+also scales the pixel values from 0 to25
+
+00:02:34.720 --> 00:02:42.080
+to 0 to1 reorders uh the channel widths
+
+00:02:39.360 --> 00:02:44.560
+and heights uh transforms it to a
+
+00:02:42.080 --> 00:02:46.959
+standard format of channel as the first
+
+00:02:44.560 --> 00:02:49.360
+uh dimension and then height and widths.
+
+00:02:46.959 --> 00:02:51.519
+In the case of fashion amnest image, it
+
+00:02:49.360 --> 00:02:55.440
+will become it's a one channel
+
+00:02:51.519 --> 00:02:59.840
+grayscale. So it will be uh channel one
+
+00:02:55.440 --> 00:03:02.720
+channel and a 28x 28 square image. Okay.
+
+00:02:59.840 --> 00:03:05.040
+So let's download the data. So if you go
+
+00:03:02.720 --> 00:03:08.319
+to the uh root directory, you see that
+
+00:03:05.040 --> 00:03:12.560
+the data is now available. So the the
+
+00:03:08.319 --> 00:03:16.400
+train validation split will be we will
+
+00:03:12.560 --> 00:03:18.959
+uh leave uh about 10,000 uh images for
+
+00:03:16.400 --> 00:03:22.159
+our validation set and the rest which
+
+00:03:18.959 --> 00:03:24.800
+will be 50,000 would remain for our
+
+00:03:22.159 --> 00:03:28.159
+training set. Okay. So we are going to
+
+00:03:24.800 --> 00:03:32.560
+use random split um and we are going to
+
+00:03:28.159 --> 00:03:35.840
+use this as a uh generator basically
+
+00:03:32.560 --> 00:03:39.280
+only uh load data when we need. Okay.
+
+00:03:35.840 --> 00:03:41.920
+And let's simplify this is the train and
+
+00:03:39.280 --> 00:03:45.040
+validation data set. And if you remember
+
+00:03:41.920 --> 00:03:48.480
+the random split comes from the utils
+
+00:03:45.040 --> 00:03:51.360
+data. Okay. So now we can make our train
+
+00:03:48.480 --> 00:03:54.080
+loader and the validation loader. So
+
+00:03:51.360 --> 00:03:57.439
+train loader uh is basically a data
+
+00:03:54.080 --> 00:04:00.879
+loader. I mean let's look at this um uh
+
+00:03:57.439 --> 00:04:03.360
+that gets the batches uh here we shuffle
+
+00:04:00.879 --> 00:04:06.400
+it during the training. I want to reduce
+
+00:04:03.360 --> 00:04:10.560
+the size of the the train loader to
+
+00:04:06.400 --> 00:04:13.120
+basically um better utilize GPU because
+
+00:04:10.560 --> 00:04:14.959
+we are going to do a lot of batch uh use
+
+00:04:13.120 --> 00:04:17.600
+a lot of batch during the training. We
+
+00:04:14.959 --> 00:04:19.840
+don't need to do to be that savvy or
+
+00:04:17.600 --> 00:04:21.440
+stingy on the validation because that's
+
+00:04:19.840 --> 00:04:23.840
+not really the bottleneck. So I'm going
+
+00:04:21.440 --> 00:04:26.000
+to actually increase it to emphasize
+
+00:04:23.840 --> 00:04:28.320
+with that we can uh we can actually
+
+00:04:26.000 --> 00:04:32.160
+check the code. So let's see we can get
+
+00:04:28.320 --> 00:04:34.800
+a x and y batch from our train loader
+
+00:04:32.160 --> 00:04:39.040
+and then we can of course uh print the
+
+00:04:34.800 --> 00:04:41.520
+shape. I also want to um plot uh one of
+
+00:04:39.040 --> 00:04:44.560
+these images. So let's do it. So let's
+
+00:04:41.520 --> 00:04:47.759
+first run this and then I want to
+
+00:04:44.560 --> 00:04:51.840
+visualize the the first image of this
+
+00:04:47.759 --> 00:04:55.280
+batch in the x batch. Okay. So to do
+
+00:04:51.840 --> 00:05:00.400
+that I'm going to use inkshell and here
+
+00:04:55.280 --> 00:05:03.440
+it takes the x batch zero and uh here uh
+
+00:05:00.400 --> 00:05:06.479
+remember this is the second so first
+
+00:05:03.440 --> 00:05:10.160
+dimension is the number of uh batch and
+
+00:05:06.479 --> 00:05:12.479
+here we the first batch we get 64 images
+
+00:05:10.160 --> 00:05:14.160
+and the second one is a just a channel
+
+00:05:12.479 --> 00:05:16.400
+dimension which here is a
+
+00:05:14.160 --> 00:05:19.120
+one-dimensional channel if you recall
+
+00:05:16.400 --> 00:05:24.160
+and here one trick is to instead of
+
+00:05:19.120 --> 00:05:27.120
+doing this just say that squeeze uh
+
+00:05:24.160 --> 00:05:30.400
+meaning that gave me a a view of the
+
+00:05:27.120 --> 00:05:32.639
+tensor where we remove the dimensions of
+
+00:05:30.400 --> 00:05:36.400
+size one. So this way we basically
+
+00:05:32.639 --> 00:05:39.039
+remove the unnecessary dimension that
+
+00:05:36.400 --> 00:05:42.479
+don't carry meaningful information and
+
+00:05:39.039 --> 00:05:45.280
+remember this is a view so we can do the
+
+00:05:42.479 --> 00:05:48.479
+reverse of this squeeze and go back to
+
+00:05:45.280 --> 00:05:51.199
+the original view. Okay. So, let's plot
+
+00:05:48.479 --> 00:05:54.400
+this and this is an image of a shirt.
+
+00:05:51.199 --> 00:05:56.800
+Okay. So, everything looks good and we
+
+00:05:54.400 --> 00:06:00.240
+can go on and make the model. Okay. So,
+
+00:05:56.800 --> 00:06:04.720
+now we want to make the layers. So, we
+
+00:06:00.240 --> 00:06:07.039
+can get the self dot can introduce self
+
+00:06:04.720 --> 00:06:10.240
+layers or let's just be more expressive
+
+00:06:07.039 --> 00:06:14.720
+here and and sequential. It flattens the
+
+00:06:10.240 --> 00:06:18.479
+input. it um adds a first layer going
+
+00:06:14.720 --> 00:06:21.919
+from the input to that and let's accept
+
+00:06:18.479 --> 00:06:25.039
+this. So one layer one reloop and then
+
+00:06:21.919 --> 00:06:28.639
+last layer I want to add another layer.
+
+00:06:25.039 --> 00:06:33.360
+So let's add another layer and here and
+
+00:06:28.639 --> 00:06:35.039
+n linear. So let's reduce this since I'm
+
+00:06:33.360 --> 00:06:39.680
+adding another layer.
+
+00:06:35.039 --> 00:06:42.560
+128 264 and another rel and then the
+
+00:06:39.680 --> 00:06:44.479
+final output here. So notice that the
+
+00:06:42.560 --> 00:06:46.880
+output is the output of the linear
+
+00:06:44.479 --> 00:06:49.840
+regression meaning that they will be
+
+00:06:46.880 --> 00:06:52.000
+real value positive or negative not
+
+00:06:49.840 --> 00:06:55.039
+necessarily bounded to 0 and one. So
+
+00:06:52.000 --> 00:06:58.080
+this is actually a logit value. It's not
+
+00:06:55.039 --> 00:07:00.960
+a soft max value. So remember that
+
+00:06:58.080 --> 00:07:02.880
+because that will be important in our
+
+00:07:00.960 --> 00:07:04.720
+later stage. Okay. So now that we have
+
+00:07:02.880 --> 00:07:06.720
+the architecture, we can write the
+
+00:07:04.720 --> 00:07:11.520
+forward method and we are done with the
+
+00:07:06.720 --> 00:07:15.280
+class and here I want to add um function
+
+00:07:11.520 --> 00:07:18.880
+that uh computes the accuracy of the
+
+00:07:15.280 --> 00:07:22.000
+network and we can write it as accuracy.
+
+00:07:18.880 --> 00:07:25.199
+Um so takes the output of the forward
+
+00:07:22.000 --> 00:07:28.960
+method which like I said uh the logits
+
+00:07:25.199 --> 00:07:32.639
+and the labels or the y values and it
+
+00:07:28.960 --> 00:07:34.880
+takes the maximum uh logit value uh that
+
+00:07:32.639 --> 00:07:37.440
+corresponds to the prediction of the
+
+00:07:34.880 --> 00:07:40.160
+classification because if you remember
+
+00:07:37.440 --> 00:07:42.479
+even if you do the soft max on the logit
+
+00:07:40.160 --> 00:07:45.199
+the maximum value is the same and it
+
+00:07:42.479 --> 00:07:47.680
+checks if that maximum value is the same
+
+00:07:45.199 --> 00:07:51.440
+as the label and that's basically the
+
+00:07:47.680 --> 00:07:53.759
+number of uh true positives and then len
+
+00:07:51.440 --> 00:07:56.639
+of bread is the number of all uh
+
+00:07:53.759 --> 00:08:00.720
+predictions. So this is the accuracy and
+
+00:07:56.639 --> 00:08:03.280
+remember that this should not use no uh
+
+00:08:00.720 --> 00:08:05.840
+should not use the gradient uh in other
+
+00:08:03.280 --> 00:08:07.759
+word we we want to disable the gradient
+
+00:08:05.840 --> 00:08:10.639
+tracking inside this function and
+
+00:08:07.759 --> 00:08:14.160
+there's a easy decorator that we can
+
+00:08:10.639 --> 00:08:16.800
+use. So torch no grad. So this way this
+
+00:08:14.160 --> 00:08:19.440
+function will not track gradients. It
+
+00:08:16.800 --> 00:08:21.759
+saves memory of course and speeds the
+
+00:08:19.440 --> 00:08:25.440
+evaluation. Okay. So let's write a
+
+00:08:21.759 --> 00:08:30.560
+function that trains one epoch. Okay. So
+
+00:08:25.440 --> 00:08:34.959
+then total loss and uh we want to track
+
+00:08:30.560 --> 00:08:39.279
+the total ROS total uh number of correct
+
+00:08:34.959 --> 00:08:44.159
+and total itself which start with zeros
+
+00:08:39.279 --> 00:08:46.880
+and then for X and Y in the data loader.
+
+00:08:44.159 --> 00:08:49.680
+And notice that the suggestion already
+
+00:08:46.880 --> 00:08:52.560
+did uh did sending the tensors to the
+
+00:08:49.680 --> 00:08:55.200
+device and this is important like I said
+
+00:08:52.560 --> 00:08:58.000
+when we later we change the device. So
+
+00:08:55.200 --> 00:09:02.160
+this will be done automatically here. I
+
+00:08:58.000 --> 00:09:06.000
+want to uh zero the uh the optimizer
+
+00:09:02.160 --> 00:09:08.720
+first. So this is optimizer and then we
+
+00:09:06.000 --> 00:09:12.000
+get the output. So let's just call it lo
+
+00:09:08.720 --> 00:09:15.360
+for the sake of uh clearance. So here
+
+00:09:12.000 --> 00:09:17.519
+the output of this model will be uh will
+
+00:09:15.360 --> 00:09:20.240
+have this shape basically the number of
+
+00:09:17.519 --> 00:09:24.240
+samples in the batch and for the batch
+
+00:09:20.240 --> 00:09:26.880
+size and has an logic value. So we will
+
+00:09:24.240 --> 00:09:30.720
+have some criteria here and the criteria
+
+00:09:26.880 --> 00:09:32.880
+is uh we get this from the uh argument
+
+00:09:30.720 --> 00:09:34.880
+remember that we write the function in a
+
+00:09:32.880 --> 00:09:37.040
+way that if we change the loss it
+
+00:09:34.880 --> 00:09:40.240
+doesn't really change itself. So the
+
+00:09:37.040 --> 00:09:43.680
+loss can be fed from outside. Okay, it
+
+00:09:40.240 --> 00:09:46.800
+takes the log and y and then backward
+
+00:09:43.680 --> 00:09:50.640
+optimizer step. Okay, so let's review
+
+00:09:46.800 --> 00:09:54.480
+the suggested uh code. I see that the
+
+00:09:50.640 --> 00:09:57.200
+code is uh independent of the batch size
+
+00:09:54.480 --> 00:10:00.320
+meaning that doesn't count the number of
+
+00:09:57.200 --> 00:10:02.640
+correct prediction within a batch that
+
+00:10:00.320 --> 00:10:06.160
+may have different size right mean when
+
+00:10:02.640 --> 00:10:08.320
+we are sampling from the loader we may
+
+00:10:06.160 --> 00:10:10.399
+it's possible that we accidentally get
+
+00:10:08.320 --> 00:10:13.680
+different batch sizes and even in the
+
+00:10:10.399 --> 00:10:15.440
+validation or uh in the validation set
+
+00:10:13.680 --> 00:10:18.320
+if you remember we chose a different
+
+00:10:15.440 --> 00:10:20.320
+batch size. So let's make the code be
+
+00:10:18.320 --> 00:10:23.839
+sensitive to the batch size. So with
+
+00:10:20.320 --> 00:10:26.399
+that going to make a batch size variable
+
+00:10:23.839 --> 00:10:29.120
+that gets that and then we have to
+
+00:10:26.399 --> 00:10:31.760
+update the code accordingly. Okay. So
+
+00:10:29.120 --> 00:10:34.720
+let's see what we have total loss loss
+
+00:10:31.760 --> 00:10:37.200
+item. So this is a total loss that uh
+
+00:10:34.720 --> 00:10:39.839
+should consider the batch size. I want
+
+00:10:37.200 --> 00:10:42.640
+to make this line independent of the
+
+00:10:39.839 --> 00:10:45.440
+function accuracy. Uh so let's just
+
+00:10:42.640 --> 00:10:48.800
+write it by hand. Then here we are
+
+00:10:45.440 --> 00:10:52.079
+returning also the fraction of correct.
+
+00:10:48.800 --> 00:10:55.360
+Okay. So with the same logic I'm going
+
+00:10:52.079 --> 00:10:58.640
+to write the evaluate function then we
+
+00:10:55.360 --> 00:11:02.079
+can train our network. Okay. So the
+
+00:10:58.640 --> 00:11:04.480
+model is the s simple MLP. We send it to
+
+00:11:02.079 --> 00:11:06.880
+device. Of course you have to always
+
+00:11:04.480 --> 00:11:09.360
+remember that the model goes to device.
+
+00:11:06.880 --> 00:11:11.760
+The criterion is the cross entropy. Here
+
+00:11:09.360 --> 00:11:15.360
+we are using Adam. the learning rate is
+
+00:11:11.760 --> 00:11:19.839
+that and let's use what we learned the
+
+00:11:15.360 --> 00:11:22.240
+L2 regularity and here the L2 regularity
+
+00:11:19.839 --> 00:11:24.880
+uh is implemented using this option
+
+00:11:22.240 --> 00:11:27.360
+weight decay and um if you think
+
+00:11:24.880 --> 00:11:29.519
+basically if you think about this when
+
+00:11:27.360 --> 00:11:31.839
+you are doing the training during the
+
+00:11:29.519 --> 00:11:35.519
+training the weight sometimes increase
+
+00:11:31.839 --> 00:11:38.240
+and the basically using more variable
+
+00:11:35.519 --> 00:11:40.240
+and when you increase the weight the the
+
+00:11:38.240 --> 00:11:42.800
+gradient steps are getting smaller
+
+00:11:40.240 --> 00:11:44.800
+smaller with respect to the weight sizes
+
+00:11:42.800 --> 00:11:47.920
+the norm of the weight and the weight
+
+00:11:44.800 --> 00:11:50.480
+decay makes sure that the gradient steps
+
+00:11:47.920 --> 00:11:53.760
+remain efficient. Uh we can talk about
+
+00:11:50.480 --> 00:11:56.160
+that during the class time uh with some
+
+00:11:53.760 --> 00:11:58.880
+maybe geometrical interpretation. Okay.
+
+00:11:56.160 --> 00:12:01.440
+So weight decay introduces the L2
+
+00:11:58.880 --> 00:12:04.399
+regularization. Let's train the model
+
+00:12:01.440 --> 00:12:07.519
+for a small number of epochs. I want to
+
+00:12:04.399 --> 00:12:10.160
+keep a record of the history. So let's
+
+00:12:07.519 --> 00:12:12.720
+do that. Then let's populate the values
+
+00:12:10.160 --> 00:12:15.279
+in the history dictionary. We can also
+
+00:12:12.720 --> 00:12:19.360
+print it out.
+
+00:12:15.279 --> 00:12:21.519
+Okay. So now we can run the code and
+
+00:12:19.360 --> 00:12:24.399
+wait for it. In the meantime, maybe we
+
+00:12:21.519 --> 00:12:28.600
+can write a function that can visualize
+
+00:12:24.399 --> 00:12:28.600
+the the last history
+
+00:12:31.279 --> 00:12:35.480
+and also the train accuracy.
+
+00:12:40.320 --> 00:12:44.959
+see that both training loss and
+
+00:12:42.160 --> 00:12:48.240
+validation losses are going down. Their
+
+00:12:44.959 --> 00:12:50.959
+accuracies are going up and that's of
+
+00:12:48.240 --> 00:12:53.920
+course a good sign and uh since we are
+
+00:12:50.959 --> 00:12:56.399
+waiting for this just a review. So what
+
+00:12:53.920 --> 00:12:59.519
+we were careful about during the code
+
+00:12:56.399 --> 00:13:01.360
+was the batch dimension preservation. We
+
+00:12:59.519 --> 00:13:03.440
+want to make sure all operations
+
+00:13:01.360 --> 00:13:06.160
+maintain the batch as the first
+
+00:13:03.440 --> 00:13:08.959
+dimension. We want to make sure uh all
+
+00:13:06.160 --> 00:13:12.079
+of these operations are processing the
+
+00:13:08.959 --> 00:13:14.639
+entire batch simultaneously. So that's
+
+00:13:12.079 --> 00:13:17.279
+the vectorization and the shape
+
+00:13:14.639 --> 00:13:20.639
+transformations that we did over the
+
+00:13:17.279 --> 00:13:23.360
+images from the data set. Uh of course
+
+00:13:20.639 --> 00:13:26.000
+device consistency were also important.
+
+00:13:23.360 --> 00:13:29.200
+we want to move all of the tensors to
+
+00:13:26.000 --> 00:13:32.160
+the same device either GPU or CPU and
+
+00:13:29.200 --> 00:13:34.880
+then at the end the uh handling of the
+
+00:13:32.160 --> 00:13:37.600
+cross entropy loss that averages over
+
+00:13:34.880 --> 00:13:40.639
+the entire batch by default. Okay, so
+
+00:13:37.600 --> 00:13:42.800
+the training is finished and we can plot
+
+00:13:40.639 --> 00:13:45.839
+that and you see that the loss is going
+
+00:13:42.800 --> 00:13:49.120
+down consistently and accuracy goes up
+
+00:13:45.839 --> 00:13:53.839
+and uh which shows that it's worth it if
+
+00:13:49.120 --> 00:13:56.079
+we increase the apo and maybe even uh if
+
+00:13:53.839 --> 00:13:59.040
+we are not happy if it is plateaus at
+
+00:13:56.079 --> 00:14:02.720
+some point about 90% of course that
+
+00:13:59.040 --> 00:14:05.199
+means that our network is small and we
+
+00:14:02.720 --> 00:14:07.920
+can increase the number of layers. So
+
+00:14:05.199 --> 00:14:10.959
+let's do that. Why not? We can make a
+
+00:14:07.920 --> 00:14:14.560
+deeper MLP. Let's just call it plain MLP
+
+00:14:10.959 --> 00:14:17.199
+for now as a base class that we want to
+
+00:14:14.560 --> 00:14:19.839
+maybe uh go fancy with it and add some
+
+00:14:17.199 --> 00:14:24.320
+residual blocks. If we go deep on this.
+
+00:14:19.839 --> 00:14:26.720
+Okay. So that and let's initiate it and
+
+00:14:24.320 --> 00:14:29.279
+add the layers. I want to add uh the
+
+00:14:26.720 --> 00:14:31.839
+arguments of um some of the uh
+
+00:14:29.279 --> 00:14:36.720
+architectural decision here. So input
+
+00:14:31.839 --> 00:14:39.519
+dimension is fixed which is a 28x 28 but
+
+00:14:36.720 --> 00:14:41.920
+we want to have a control over the
+
+00:14:39.519 --> 00:14:43.760
+hidden dimension and the depth of the
+
+00:14:41.920 --> 00:14:46.639
+network and of course the output
+
+00:14:43.760 --> 00:14:50.639
+dimension is 10. So we can can do all of
+
+00:14:46.639 --> 00:14:55.199
+it from here. Okay. So let's make a a
+
+00:14:50.639 --> 00:14:57.760
+list that shows the the layers u the
+
+00:14:55.199 --> 00:14:59.760
+architecture and the activation in each
+
+00:14:57.760 --> 00:15:04.480
+layer and then we can append to this
+
+00:14:59.760 --> 00:15:07.279
+link link list and and then uh later we
+
+00:15:04.480 --> 00:15:09.760
+will uh basically go over the list and
+
+00:15:07.279 --> 00:15:12.399
+add them one by one in the sequential uh
+
+00:15:09.760 --> 00:15:15.279
+and end module. Okay. So layers we start
+
+00:15:12.399 --> 00:15:18.560
+with the first one which is a linear
+
+00:15:15.279 --> 00:15:23.279
+layer. Okay. So I see the suggestion is
+
+00:15:18.560 --> 00:15:25.120
+what I want and we go over the depth and
+
+00:15:23.279 --> 00:15:27.600
+y -
+
+00:15:25.120 --> 00:15:30.320
+one. So note that I fixed the hidden
+
+00:15:27.600 --> 00:15:32.720
+dimension for all of the layers. Um this
+
+00:15:30.320 --> 00:15:34.880
+basically simplifies the shape
+
+00:15:32.720 --> 00:15:38.079
+management that we are doing here. Okay.
+
+00:15:34.880 --> 00:15:42.000
+So we have all of these layers and let's
+
+00:15:38.079 --> 00:15:44.959
+just um knit them together. Okay. So oh
+
+00:15:42.000 --> 00:15:47.920
+I see that's why we we have the output
+
+00:15:44.959 --> 00:15:51.199
+layer separate. So actually don't like
+
+00:15:47.920 --> 00:15:54.639
+the fact that self out is different. So
+
+00:15:51.199 --> 00:15:57.600
+why not doing this uh we just add that
+
+00:15:54.639 --> 00:16:00.880
+right? So we have to update forward. So
+
+00:15:57.600 --> 00:16:05.839
+here notice that uh my input is at 28x
+
+00:16:00.880 --> 00:16:10.079
+28. And I like to like to make sure the
+
+00:16:05.839 --> 00:16:13.519
+image is flattened. to do that if x beam
+
+00:16:10.079 --> 00:16:15.839
+is for example more than two we just uh
+
+00:16:13.519 --> 00:16:19.440
+basically get a view that is flattened.
+
+00:16:15.839 --> 00:16:23.360
+So now that we have a a fairly deep uh
+
+00:16:19.440 --> 00:16:26.880
+MLP let's compare it to uh a equal
+
+00:16:23.360 --> 00:16:29.199
+equivalent size MLP that has residual
+
+00:16:26.880 --> 00:16:32.160
+connection. Okay. So with that I'm going
+
+00:16:29.199 --> 00:16:34.639
+to first write a residual residual block
+
+00:16:32.160 --> 00:16:36.959
+that I will use it uh just like any
+
+00:16:34.639 --> 00:16:39.199
+other blocks that sequentially will be
+
+00:16:36.959 --> 00:16:42.800
+linearly connected. So first let's write
+
+00:16:39.199 --> 00:16:44.959
+this block which is an NN module and um
+
+00:16:42.800 --> 00:16:47.360
+for residual block if you remember we
+
+00:16:44.959 --> 00:16:51.440
+have to say the dimension of the input
+
+00:16:47.360 --> 00:16:54.320
+will stay the same and here before
+
+00:16:51.440 --> 00:16:57.199
+jumping I want to write a reminder that
+
+00:16:54.320 --> 00:16:59.519
+uh in a residual block we have a
+
+00:16:57.199 --> 00:17:03.920
+residual mapping that has the same shape
+
+00:16:59.519 --> 00:17:06.400
+of x and basically give us a x plus fx.
+
+00:17:03.920 --> 00:17:10.160
+Okay so here we want to write the fx. So
+
+00:17:06.400 --> 00:17:12.880
+for that self of f is a an n sequential
+
+00:17:10.160 --> 00:17:15.600
+basically a linear relu and a linear and
+
+00:17:12.880 --> 00:17:18.000
+then we add the x following that. So
+
+00:17:15.600 --> 00:17:20.880
+because I'm going to
+
+00:17:18.000 --> 00:17:24.959
+um need this blocks together I want to
+
+00:17:20.880 --> 00:17:27.839
+add a relu here. So torch relu and then
+
+00:17:24.959 --> 00:17:30.640
+this. So this way I don't need to write
+
+00:17:27.839 --> 00:17:33.919
+the relu again and again. And this is a
+
+00:17:30.640 --> 00:17:37.919
+this is called a post activation design.
+
+00:17:33.919 --> 00:17:42.320
+And now we can use this in our residual
+
+00:17:37.919 --> 00:17:45.440
+deep network. So we have a residual MLP.
+
+00:17:42.320 --> 00:17:47.840
+We try to keep everything similar to
+
+00:17:45.440 --> 00:17:50.480
+what we had. Notice that I have a hidden
+
+00:17:47.840 --> 00:17:52.559
+dimension meaning that I have to first
+
+00:17:50.480 --> 00:17:54.559
+project the inputs to this hidden
+
+00:17:52.559 --> 00:17:58.880
+dimension and then do the residual on
+
+00:17:54.559 --> 00:18:01.520
+that. So I need an input layer and that
+
+00:17:58.880 --> 00:18:04.320
+basically takes in the input dimension.
+
+00:18:01.520 --> 00:18:07.200
+map it to the hidden dimension just like
+
+00:18:04.320 --> 00:18:10.320
+before we have the selfnet. Okay, so
+
+00:18:07.200 --> 00:18:14.080
+notice that I don't have a rel between
+
+00:18:10.320 --> 00:18:17.360
+the input and the rest of the layers. So
+
+00:18:14.080 --> 00:18:21.840
+let's rewrite this. Maybe we can instead
+
+00:18:17.360 --> 00:18:26.400
+of doing this, we add the red and then
+
+00:18:21.840 --> 00:18:30.160
+now we have this list uh that we need to
+
+00:18:26.400 --> 00:18:33.919
+of course zip and then we can finish off
+
+00:18:30.160 --> 00:18:37.600
+with an end layer in here x to the
+
+00:18:33.919 --> 00:18:40.880
+output. So what to fix here? We don't
+
+00:18:37.600 --> 00:18:43.760
+need this anymore. Let's skip this for
+
+00:18:40.880 --> 00:18:46.400
+now. And now we just add this in the
+
+00:18:43.760 --> 00:18:50.480
+forward. Okay, we are going to use the
+
+00:18:46.400 --> 00:18:53.039
+the previous functions and um evaluate
+
+00:18:50.480 --> 00:18:57.840
+and train epoch and then build the the
+
+00:18:53.039 --> 00:19:00.240
+plane deep MLP and the residual MLP.
+
+00:18:57.840 --> 00:19:02.320
+Let's increase the depth and send it to
+
+00:19:00.240 --> 00:19:06.320
+device. So this is the plane and the
+
+00:19:02.320 --> 00:19:09.520
+residual is deep residual MLP and we
+
+00:19:06.320 --> 00:19:11.840
+keep the dimensions the same. a similar
+
+00:19:09.520 --> 00:19:15.520
+capacity. We are comparing apples to
+
+00:19:11.840 --> 00:19:18.799
+apples and uh the criterion is still
+
+00:19:15.520 --> 00:19:20.960
+cross entropy and let's just set up the
+
+00:19:18.799 --> 00:19:23.679
+optimizers for each one of the models
+
+00:19:20.960 --> 00:19:25.600
+which is again same still apples to
+
+00:19:23.679 --> 00:19:28.160
+apples and then we can do the training
+
+00:19:25.600 --> 00:19:30.480
+loop. Let's do it for 80 bucks. We did
+
+00:19:28.160 --> 00:19:32.880
+it for 10 next time but this one is more
+
+00:19:30.480 --> 00:19:36.240
+expensive so going to do it for 10.
+
+00:19:32.880 --> 00:19:40.640
+Okay, so we have the code. Uh we added
+
+00:19:36.240 --> 00:19:44.720
+the device and looks like it is running
+
+00:19:40.640 --> 00:19:47.120
+running okay. So the results is here and
+
+00:19:44.720 --> 00:19:49.919
+as you can see the residual net is
+
+00:19:47.120 --> 00:19:53.360
+working pretty good uh better than the
+
+00:19:49.919 --> 00:19:58.320
+shallow MLP. But you see that the the
+
+00:19:53.360 --> 00:20:01.200
+plain deep MLP is not really working. Uh
+
+00:19:58.320 --> 00:20:04.000
+and the main reason as we discussed is
+
+00:20:01.200 --> 00:20:06.559
+is the depth and the way that the
+
+00:20:04.000 --> 00:20:08.960
+gradient is vanishing. There are ways to
+
+00:20:06.559 --> 00:20:11.760
+investigate this for for example maybe
+
+00:20:08.960 --> 00:20:14.000
+we can reduce the weight decay. we can
+
+00:20:11.760 --> 00:20:17.520
+work on the normalization, the bash
+
+00:20:14.000 --> 00:20:21.200
+normalization and things like that and
+
+00:20:17.520 --> 00:20:24.559
+make the deep MLP uh better dealing with
+
+00:20:21.200 --> 00:20:27.840
+those things. But the main point is uh
+
+00:20:24.559 --> 00:20:30.720
+when depth increases it will be more
+
+00:20:27.840 --> 00:20:33.039
+challenging to keep the gradient flow
+
+00:20:30.720 --> 00:20:35.280
+backward and the richness of data
+
+00:20:33.039 --> 00:20:35.280
+forward.

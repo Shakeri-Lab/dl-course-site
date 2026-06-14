@@ -1,0 +1,937 @@
+WEBVTT
+
+00:00:00.240 --> 00:00:07.040
+Let us continue with our implementation
+
+00:00:03.600 --> 00:00:09.280
+of linear regression in a neural network
+
+00:00:07.040 --> 00:00:12.320
+setting. So so far we were working with
+
+00:00:09.280 --> 00:00:16.000
+a simple model uh with a finite number
+
+00:00:12.320 --> 00:00:18.880
+of features and uh we were predicting a
+
+00:00:16.000 --> 00:00:21.520
+continuous output. Uh here we want to
+
+00:00:18.880 --> 00:00:23.760
+look at a more general case where we
+
+00:00:21.520 --> 00:00:27.039
+have a highdimensional input with many
+
+00:00:23.760 --> 00:00:29.679
+features and we are predicting multiple
+
+00:00:27.039 --> 00:00:31.359
+continuous outputs. We worked with this
+
+00:00:29.679 --> 00:00:34.079
+in previous machine learning and
+
+00:00:31.359 --> 00:00:36.640
+statistical learning setups where we
+
+00:00:34.079 --> 00:00:39.600
+discussed the importance of variable
+
+00:00:36.640 --> 00:00:42.079
+selection or feature selections and
+
+00:00:39.600 --> 00:00:44.719
+applying regularization to prevent
+
+00:00:42.079 --> 00:00:47.520
+overfeeding. So we are going to bring
+
+00:00:44.719 --> 00:00:50.719
+those concepts that we know in this
+
+00:00:47.520 --> 00:00:53.360
+setups of neural network and like the
+
+00:00:50.719 --> 00:00:56.000
+previous lectures this allows us to
+
+00:00:53.360 --> 00:00:58.480
+apply those techniques in a familiar
+
+00:00:56.000 --> 00:01:00.960
+setups and later we will use the same
+
+00:00:58.480 --> 00:01:04.159
+techniques in a more complex
+
+00:01:00.960 --> 00:01:08.240
+architecture. uh we import the necessary
+
+00:01:04.159 --> 00:01:11.119
+modules and we set the the seats for
+
+00:01:08.240 --> 00:01:13.920
+reproduction and then we are going to
+
+00:01:11.119 --> 00:01:16.640
+write a function that produce a
+
+00:01:13.920 --> 00:01:20.159
+synthetic data for us that we know it's
+
+00:01:16.640 --> 00:01:24.159
+ground truth okay so I already wrote the
+
+00:01:20.159 --> 00:01:27.840
+function it's basically the same uh
+
+00:01:24.159 --> 00:01:31.680
+Gaussian data generator but here it is a
+
+00:01:27.840 --> 00:01:34.960
+multivaried Gaussian so the default
+
+00:01:31.680 --> 00:01:38.320
+setting is it is producing a number of
+
+00:01:34.960 --> 00:01:41.759
+samples here for example 1,000 sample
+
+00:01:38.320 --> 00:01:45.520
+and uh with uh a lot of features so here
+
+00:01:41.759 --> 00:01:50.320
+for example 100 features so we have five
+
+00:01:45.520 --> 00:01:53.360
+outputs and here I planted um
+
+00:01:50.320 --> 00:01:56.640
+uh a hint that basically 10 of these
+
+00:01:53.360 --> 00:02:00.640
+features are uh the most important
+
+00:01:56.640 --> 00:02:03.680
+features and I want my regularization to
+
+00:02:00.640 --> 00:02:06.079
+help identify these features. Okay, so
+
+00:02:03.680 --> 00:02:09.679
+basically this is a multivaried normal.
+
+00:02:06.079 --> 00:02:13.599
+It has a covariant structure and it will
+
+00:02:09.679 --> 00:02:18.319
+return the 1,000 observation in this
+
+00:02:13.599 --> 00:02:21.360
+case of x and y also the true weights of
+
+00:02:18.319 --> 00:02:23.599
+the linear model. Okay, so let's uh
+
+00:02:21.360 --> 00:02:27.840
+write down this multi output linear
+
+00:02:23.599 --> 00:02:31.120
+regression model. We are um initiating
+
+00:02:27.840 --> 00:02:34.239
+the class and we have the input
+
+00:02:31.120 --> 00:02:37.120
+dimension, output dimension and
+
+00:02:34.239 --> 00:02:39.519
+initialization scale or the weights
+
+00:02:37.120 --> 00:02:42.480
+because in high dimension it's important
+
+00:02:39.519 --> 00:02:45.680
+where we start the weights and the
+
+00:02:42.480 --> 00:02:48.879
+default pytor in it might be too large.
+
+00:02:45.680 --> 00:02:52.000
+So we have the super in it and one
+
+00:02:48.879 --> 00:02:54.480
+linear layer still without nonlinear
+
+00:02:52.000 --> 00:02:57.840
+activation because we are still doing
+
+00:02:54.480 --> 00:03:01.200
+linear regression and this is the
+
+00:02:57.840 --> 00:03:03.760
+torsion no grad way of initialization of
+
+00:03:01.200 --> 00:03:06.720
+the parameters. So we add some print
+
+00:03:03.760 --> 00:03:10.159
+statements and then we will write the
+
+00:03:06.720 --> 00:03:13.760
+forward method.
+
+00:03:10.159 --> 00:03:16.720
+So remember the for method returns the
+
+00:03:13.760 --> 00:03:18.959
+uh the outputs where here we have
+
+00:03:16.720 --> 00:03:22.519
+multiple outputs. Okay. So let's write
+
+00:03:18.959 --> 00:03:22.519
+the duct strings
+
+00:03:22.560 --> 00:03:29.599
+and then return the evaluation of the
+
+00:03:26.400 --> 00:03:32.959
+linear layer. So with that uh we are
+
+00:03:29.599 --> 00:03:35.840
+basically done here for the class since
+
+00:03:32.959 --> 00:03:38.239
+we uh will do the training outside of
+
+00:03:35.840 --> 00:03:41.120
+it. But like before we are going to add
+
+00:03:38.239 --> 00:03:43.200
+another method to get the weight stats.
+
+00:03:41.120 --> 00:03:46.000
+So here we have a lot of weights. We
+
+00:03:43.200 --> 00:03:48.159
+don't want to print them one by one. So
+
+00:03:46.000 --> 00:03:51.040
+we are just going to print some
+
+00:03:48.159 --> 00:03:53.760
+statistics including the the norm of the
+
+00:03:51.040 --> 00:03:58.360
+weights, mean, standard deviation, max
+
+00:03:53.760 --> 00:03:58.360
+and some measure of sparity
+
+00:03:59.200 --> 00:04:06.560
+and we are going to use the
+
+00:04:03.040 --> 00:04:09.680
+um the following stats. So maybe the
+
+00:04:06.560 --> 00:04:15.159
+weight norm and
+
+00:04:09.680 --> 00:04:15.159
+we can add the weight mean
+
+00:04:17.359 --> 00:04:23.680
+weight
+
+00:04:19.120 --> 00:04:26.880
+deviation weight mean max and let's just
+
+00:04:23.680 --> 00:04:29.440
+use max and maybe
+
+00:04:26.880 --> 00:04:33.199
+the weight sparity
+
+00:04:29.440 --> 00:04:36.560
+and we have to choose how to do this
+
+00:04:33.199 --> 00:04:39.120
+one. So the first view we have already
+
+00:04:36.560 --> 00:04:42.880
+functions. So for the measure of sparity
+
+00:04:39.120 --> 00:04:46.080
+we are going to count the number of uh
+
+00:04:42.880 --> 00:04:49.520
+weights that are smaller than some uh
+
+00:04:46.080 --> 00:04:52.240
+threshold small value over the number of
+
+00:04:49.520 --> 00:04:54.560
+the entire parameters. With that let's
+
+00:04:52.240 --> 00:04:57.680
+count the number of
+
+00:04:54.560 --> 00:05:00.960
+elements that are small and then we
+
+00:04:57.680 --> 00:05:03.680
+divide it by the entire uh number of
+
+00:05:00.960 --> 00:05:06.400
+elements in the weight tensor. Okay, so
+
+00:05:03.680 --> 00:05:09.600
+with that we are going to return the
+
+00:05:06.400 --> 00:05:13.280
+stats. Okay, so now we want to write a
+
+00:05:09.600 --> 00:05:16.720
+custom loss. Uh if you remember we had
+
+00:05:13.280 --> 00:05:20.000
+MSSE before but here I want to include
+
+00:05:16.720 --> 00:05:24.720
+some regularization penalties
+
+00:05:20.000 --> 00:05:27.440
+including L2 L1 maybe a elastic net
+
+00:05:24.720 --> 00:05:29.919
+which is a combination of the two. I
+
+00:05:27.440 --> 00:05:32.960
+assume that you know these concepts from
+
+00:05:29.919 --> 00:05:35.960
+before and with that let's write the
+
+00:05:32.960 --> 00:05:35.960
+class
+
+00:05:58.230 --> 00:06:04.720
+[Music]
+
+00:06:00.720 --> 00:06:08.240
+Okay. So let's write init class. Of
+
+00:06:04.720 --> 00:06:13.800
+course the class uh will uh inherit the
+
+00:06:08.240 --> 00:06:13.800
+n module. Let's specify this.
+
+00:06:27.759 --> 00:06:33.280
+Well, so I'm going to add a debugging
+
+00:06:30.160 --> 00:06:35.919
+message to always lock the
+
+00:06:33.280 --> 00:06:38.479
+hyperparameters here. With that, we want
+
+00:06:35.919 --> 00:06:41.120
+to write a forward method that computes
+
+00:06:38.479 --> 00:06:44.000
+this this regularized class. So we are
+
+00:06:41.120 --> 00:06:47.880
+writing the forward method. And here I'm
+
+00:06:44.000 --> 00:06:47.880
+going to change this
+
+00:06:53.600 --> 00:06:57.720
+and some dictionary here.
+
+00:06:59.199 --> 00:07:06.000
+So first we have a base MSE loss that we
+
+00:07:02.960 --> 00:07:12.000
+know how to do it. So uh to compute the
+
+00:07:06.000 --> 00:07:14.319
+loss um related to the uh L2 and L1 um
+
+00:07:12.000 --> 00:07:18.759
+we're following the suggestion. Okay,
+
+00:07:14.319 --> 00:07:18.759
+with that we can write the total loss
+
+00:07:22.960 --> 00:07:29.120
+which is this. Note that uh we could do
+
+00:07:26.240 --> 00:07:31.520
+this multiplication here
+
+00:07:29.120 --> 00:07:33.120
+and uh if it was not because of the
+
+00:07:31.520 --> 00:07:35.919
+suggestion
+
+00:07:33.120 --> 00:07:38.639
+and me being lazy I would do that. Let's
+
+00:07:35.919 --> 00:07:41.599
+write a debugging message that tracks
+
+00:07:38.639 --> 00:07:44.800
+the individual components and then
+
+00:07:41.599 --> 00:07:47.919
+return the last and this components. So
+
+00:07:44.800 --> 00:07:50.400
+now I want to write uh a train training
+
+00:07:47.919 --> 00:07:53.520
+code. Not only we need this
+
+00:07:50.400 --> 00:07:56.560
+regularization, we also need to
+
+00:07:53.520 --> 00:08:00.479
+introduce this validation set that
+
+00:07:56.560 --> 00:08:03.120
+allows for an unbiased validation of our
+
+00:08:00.479 --> 00:08:06.479
+predictions. So the nice thing about the
+
+00:08:03.120 --> 00:08:10.479
+validation set is it helps us to detect
+
+00:08:06.479 --> 00:08:13.039
+overfeitting early and it helps us to
+
+00:08:10.479 --> 00:08:15.680
+choose the optimal hyperparameters like
+
+00:08:13.039 --> 00:08:18.400
+the those lambda values and then decide
+
+00:08:15.680 --> 00:08:21.840
+when to stop the training. It is one way
+
+00:08:18.400 --> 00:08:24.560
+of uh avoiding the overfeitting. So
+
+00:08:21.840 --> 00:08:26.720
+remember that uh sometimes especially in
+
+00:08:24.560 --> 00:08:29.759
+high dimension where we have small
+
+00:08:26.720 --> 00:08:31.919
+samples the validation loss is going to
+
+00:08:29.759 --> 00:08:36.240
+be very high compared to the training
+
+00:08:31.919 --> 00:08:39.120
+loss. Uh and that shouldn't deter you as
+
+00:08:36.240 --> 00:08:43.399
+this is uh very natural. Okay. So with
+
+00:08:39.120 --> 00:08:43.399
+that let's write the function.
+
+00:08:56.160 --> 00:09:00.360
+and white train.
+
+00:09:06.640 --> 00:09:15.800
+So, just like before, we're going to
+
+00:09:09.760 --> 00:09:15.800
+write the uh the data loaders.
+
+00:09:16.240 --> 00:09:22.480
+Okay. So,
+
+00:09:18.480 --> 00:09:25.480
+uh then next we need to do the criterion
+
+00:09:22.480 --> 00:09:25.480
+here
+
+00:09:26.000 --> 00:09:30.880
+and choose our optimizer which is
+
+00:09:28.080 --> 00:09:35.440
+already chosen for us. Let's stick with
+
+00:09:30.880 --> 00:09:39.120
+our SGD for the sake of consistency. We
+
+00:09:35.440 --> 00:09:41.600
+want to track a few metrics and then we
+
+00:09:39.120 --> 00:09:46.959
+can write the training loop
+
+00:09:41.600 --> 00:09:50.680
+for a park in range.
+
+00:09:46.959 --> 00:09:50.680
+We have that
+
+00:09:58.399 --> 00:10:02.279
+or the epox stats.
+
+00:10:05.360 --> 00:10:14.040
+So we have the loss.
+
+00:10:08.640 --> 00:10:14.040
+Maybe we can even track MSE.
+
+00:10:17.920 --> 00:10:23.120
+and also the number of batches that are
+
+00:10:20.720 --> 00:10:28.480
+um so we need this to basically do some
+
+00:10:23.120 --> 00:10:32.560
+averaging. Okay, we can start the the
+
+00:10:28.480 --> 00:10:34.959
+batches. You see that already here. So
+
+00:10:32.560 --> 00:10:38.320
+we have the optimizer
+
+00:10:34.959 --> 00:10:42.279
+uh that is now zeros. So this is the
+
+00:10:38.320 --> 00:10:42.279
+forward pass here.
+
+00:10:43.600 --> 00:10:49.760
+So the output of the criterion if you
+
+00:10:46.880 --> 00:10:52.959
+remember is the laws and components
+
+00:10:49.760 --> 00:10:59.120
+which uh takes in this uh batch bread
+
+00:10:52.959 --> 00:11:02.079
+and batch y and here so we have to
+
+00:10:59.120 --> 00:11:04.079
+let's check back the criterion which is
+
+00:11:02.079 --> 00:11:09.680
+this class
+
+00:11:04.079 --> 00:11:13.360
+here it takes in the nn module
+
+00:11:09.680 --> 00:11:15.519
+so here okay so we inherit
+
+00:11:13.360 --> 00:11:20.240
+and an end module and this is basically
+
+00:11:15.519 --> 00:11:25.279
+a generic module. Later as you saw we
+
+00:11:20.240 --> 00:11:27.760
+are passing the our own model but a loss
+
+00:11:25.279 --> 00:11:30.880
+function should be able to work with any
+
+00:11:27.760 --> 00:11:33.519
+architecture. Okay. So in the forward
+
+00:11:30.880 --> 00:11:35.760
+pass we are working with the weights. So
+
+00:11:33.519 --> 00:11:37.920
+here we should
+
+00:11:35.760 --> 00:11:42.880
+um
+
+00:11:37.920 --> 00:11:45.120
+um enter the model and here again here
+
+00:11:42.880 --> 00:11:51.360
+we are going to use the NN module
+
+00:11:45.120 --> 00:11:54.240
+because we can enter it later right. So
+
+00:11:51.360 --> 00:11:56.560
+okay so with that
+
+00:11:54.240 --> 00:11:59.839
+uh here
+
+00:11:56.560 --> 00:12:02.560
+we only work with weights but this can
+
+00:11:59.839 --> 00:12:07.760
+include biases too. So we have to make
+
+00:12:02.560 --> 00:12:12.160
+sure these parameters are only weights
+
+00:12:07.760 --> 00:12:16.920
+not biases. So I'm confused why I got
+
+00:12:12.160 --> 00:12:16.920
+this suggestion. So let's go up.
+
+00:12:17.040 --> 00:12:21.279
+Uh okay. So we didn't initialize the
+
+00:12:19.680 --> 00:12:23.760
+biases.
+
+00:12:21.279 --> 00:12:27.079
+Bias is true
+
+00:12:23.760 --> 00:12:27.079
+by default.
+
+00:12:29.279 --> 00:12:38.160
+Okay. So now this is okay and
+
+00:12:34.079 --> 00:12:41.519
+in that case we have to specify here
+
+00:12:38.160 --> 00:12:44.800
+that we want to only catch the the
+
+00:12:41.519 --> 00:12:47.680
+weights not biases. Okay. So let's
+
+00:12:44.800 --> 00:12:50.480
+rewrite this. So we want to sum up these
+
+00:12:47.680 --> 00:12:53.600
+values only for the weights. So we have
+
+00:12:50.480 --> 00:12:55.920
+to write an if statement somewhere to
+
+00:12:53.600 --> 00:13:00.839
+check if the parameter is a weight or a
+
+00:12:55.920 --> 00:13:00.839
+bias. Okay. So let's start with
+
+00:13:01.760 --> 00:13:04.760
+and
+
+00:13:05.120 --> 00:13:12.399
+L1 plus to be zero and then for loop
+
+00:13:09.680 --> 00:13:15.440
+that goes over the model parameters. But
+
+00:13:12.399 --> 00:13:19.360
+I also want to want to check if the
+
+00:13:15.440 --> 00:13:22.880
+parameter is a weight or a bias. So I'm
+
+00:13:19.360 --> 00:13:24.399
+going to check the name of the parameter
+
+00:13:22.880 --> 00:13:26.560
+also.
+
+00:13:24.399 --> 00:13:30.560
+Um
+
+00:13:26.560 --> 00:13:34.079
+okay so let's see this. Okay this should
+
+00:13:30.560 --> 00:13:36.320
+be okay. So
+
+00:13:34.079 --> 00:13:39.440
+okay we prevented an error before
+
+00:13:36.320 --> 00:13:42.079
+happening which is all always good. So
+
+00:13:39.440 --> 00:13:45.279
+here even before the backward pass you
+
+00:13:42.079 --> 00:13:50.000
+can put some checks like for example if
+
+00:13:45.279 --> 00:13:53.360
+the loss is nan or infinity you can
+
+00:13:50.000 --> 00:13:56.000
+break the loop. I don't foresee anything
+
+00:13:53.360 --> 00:14:01.120
+happening here in this linear regression
+
+00:13:56.000 --> 00:14:04.480
+but for larger uh and more complex
+
+00:14:01.120 --> 00:14:08.480
+networks you may need to put this checks
+
+00:14:04.480 --> 00:14:11.680
+for nans or h in losses okay so I'm
+
+00:14:08.480 --> 00:14:17.320
+going to ask that al let us also track
+
+00:14:11.680 --> 00:14:17.320
+the the gradient magnitude it
+
+00:14:23.760 --> 00:14:28.440
+before doing the the step.
+
+00:14:31.600 --> 00:14:39.279
+Okay. So this is the total norm uh that
+
+00:14:35.199 --> 00:14:43.120
+is summation of all of these squared uh
+
+00:14:39.279 --> 00:14:48.000
+norm values and
+
+00:14:43.120 --> 00:14:50.320
+we can of course do square root of it
+
+00:14:48.000 --> 00:14:52.959
+and we can append it. So let's do the
+
+00:14:50.320 --> 00:14:55.279
+append at the end for all of them. Then
+
+00:14:52.959 --> 00:14:57.839
+we update the parameters update the
+
+00:14:55.279 --> 00:15:01.760
+epoch stats.
+
+00:14:57.839 --> 00:15:05.120
+Okay. So that's that. uh we can also add
+
+00:15:01.760 --> 00:15:07.519
+the validation phase here. So for
+
+00:15:05.120 --> 00:15:10.800
+validation phase
+
+00:15:07.519 --> 00:15:13.839
+we want to only evaluate the model. We
+
+00:15:10.800 --> 00:15:17.279
+are done with the training that is done
+
+00:15:13.839 --> 00:15:20.240
+over the training data and here for the
+
+00:15:17.279 --> 00:15:24.800
+validation we are just going to switch
+
+00:15:20.240 --> 00:15:27.800
+to the eval mode and then with torch no
+
+00:15:24.800 --> 00:15:27.800
+grad
+
+00:15:28.399 --> 00:15:34.480
+here uh like I said I don't want to work
+
+00:15:31.279 --> 00:15:38.160
+on the train I want to work on the
+
+00:15:34.480 --> 00:15:39.680
+validation so let's do it this way we
+
+00:15:38.160 --> 00:15:44.800
+are
+
+00:15:39.680 --> 00:15:47.600
+doing over x val and same criterion.
+
+00:15:44.800 --> 00:15:50.959
+Okay. So with that let's u record the
+
+00:15:47.600 --> 00:15:56.160
+matrix which is computed like this. So
+
+00:15:50.959 --> 00:16:00.600
+for each epoch we want to compute the
+
+00:15:56.160 --> 00:16:00.600
+the average training loss of that epoch.
+
+00:16:05.279 --> 00:16:13.199
+Okay. So that's that and then average
+
+00:16:08.079 --> 00:16:16.720
+training MSE weight norm gradient norm.
+
+00:16:13.199 --> 00:16:19.720
+Okay. So and then we can add an early
+
+00:16:16.720 --> 00:16:19.720
+stopping
+
+00:16:20.800 --> 00:16:26.399
+criteria
+
+00:16:22.320 --> 00:16:27.920
+wants to check if validation loss is not
+
+00:16:26.399 --> 00:16:31.199
+decreasing
+
+00:16:27.920 --> 00:16:34.000
+after like several consecutive epochs.
+
+00:16:31.199 --> 00:16:36.639
+For example, let's assume if uh after 20
+
+00:16:34.000 --> 00:16:39.519
+epochs we don't see any improvement, we
+
+00:16:36.639 --> 00:16:43.920
+can stop the training. So if we have to
+
+00:16:39.519 --> 00:16:47.920
+have 20 epochs already gone, then here
+
+00:16:43.920 --> 00:16:51.279
+you see the history validation loss
+
+00:16:47.920 --> 00:16:54.079
+greater than that.
+
+00:16:51.279 --> 00:16:57.759
+And since I want
+
+00:16:54.079 --> 00:17:00.320
+the last 20 not just the last two and
+
+00:16:57.759 --> 00:17:02.880
+then in that case we print this out. You
+
+00:17:00.320 --> 00:17:05.600
+can put a if variables here and this
+
+00:17:02.880 --> 00:17:09.919
+breaks the the training. We can of
+
+00:17:05.600 --> 00:17:12.720
+course uh continue more verbos uh which
+
+00:17:09.919 --> 00:17:16.319
+we are going to need
+
+00:17:12.720 --> 00:17:19.520
+uh later for more complex networks but
+
+00:17:16.319 --> 00:17:23.520
+I'm going to skip that and I'm going to
+
+00:17:19.520 --> 00:17:27.039
+just return the the history. Okay. So we
+
+00:17:23.520 --> 00:17:29.200
+can uh uh generate the data using what
+
+00:17:27.039 --> 00:17:32.640
+we wrote splitting
+
+00:17:29.200 --> 00:17:35.039
+what we generated into 80% training and
+
+00:17:32.640 --> 00:17:38.320
+the rest will be validation.
+
+00:17:35.039 --> 00:17:42.160
+Uh it's important to standardize the the
+
+00:17:38.320 --> 00:17:44.240
+data of course here you see that uh we
+
+00:17:42.160 --> 00:17:47.120
+did the standardization
+
+00:17:44.240 --> 00:17:51.280
+and it should be separate the train and
+
+00:17:47.120 --> 00:17:53.039
+uh validation to avoid any leak in our
+
+00:17:51.280 --> 00:17:57.360
+uh pipeline.
+
+00:17:53.039 --> 00:18:00.000
+And then here we create the model
+
+00:17:57.360 --> 00:18:03.679
+and we train the model.
+
+00:18:00.000 --> 00:18:07.360
+So doing that we see that
+
+00:18:03.679 --> 00:18:10.640
+the training is stopped at 23. Basically
+
+00:18:07.360 --> 00:18:14.960
+the first two epochs is enough
+
+00:18:10.640 --> 00:18:18.720
+and our stopping criteria
+
+00:18:14.960 --> 00:18:20.799
+uh basically checks and it saw that the
+
+00:18:18.720 --> 00:18:22.160
+next 20 is basically not improving
+
+00:18:20.799 --> 00:18:25.039
+anything.
+
+00:18:22.160 --> 00:18:28.480
+And you see that the validation over the
+
+00:18:25.039 --> 00:18:32.160
+training MSSE ratio is is pretty good
+
+00:18:28.480 --> 00:18:35.120
+which shows there is no overfeitting.
+
+00:18:32.160 --> 00:18:38.320
+And this is the case for a simple linear
+
+00:18:35.120 --> 00:18:41.200
+regression. But as you see when we move
+
+00:18:38.320 --> 00:18:45.120
+on to more complex situation the
+
+00:18:41.200 --> 00:18:50.760
+overfeitting will be very common and uh
+
+00:18:45.120 --> 00:18:50.760
+we will do that in the next lecture.

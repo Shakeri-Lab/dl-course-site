@@ -1,0 +1,577 @@
+WEBVTT
+
+00:00:00.800 --> 00:00:05.120
+Okay, so let's continue with uh the
+
+00:00:03.439 --> 00:00:08.559
+discussion on using the transformer
+
+00:00:05.120 --> 00:00:11.840
+models and why they quickly became our
+
+00:00:08.559 --> 00:00:15.040
+main tool for learning from large data
+
+00:00:11.840 --> 00:00:16.720
+sets. So we introduced transformers and
+
+00:00:15.040 --> 00:00:19.279
+we discussed that self attention
+
+00:00:16.720 --> 00:00:21.600
+basically enables this representation of
+
+00:00:19.279 --> 00:00:24.080
+the the context and then we discussed
+
+00:00:21.600 --> 00:00:26.480
+vision transformers that uses the the
+
+00:00:24.080 --> 00:00:29.279
+encoder part of the transformer to do
+
+00:00:26.480 --> 00:00:32.399
+image classification for us. they can
+
+00:00:29.279 --> 00:00:36.399
+continue improving and we didn't see a
+
+00:00:32.399 --> 00:00:38.079
+plateau like what we saw for CNN's and
+
+00:00:36.399 --> 00:00:40.320
+the question that we are asking is
+
+00:00:38.079 --> 00:00:43.120
+basically is there a limit for the
+
+00:00:40.320 --> 00:00:46.160
+improvement and how far we can go
+
+00:00:43.120 --> 00:00:49.840
+because of it getting to its limit. So
+
+00:00:46.160 --> 00:00:51.600
+the main discovery that uh was made uh
+
+00:00:49.840 --> 00:00:54.320
+or observed
+
+00:00:51.600 --> 00:00:58.079
+uh back in 2020 was the performance
+
+00:00:54.320 --> 00:01:02.160
+improvement from scaling of resources,
+
+00:00:58.079 --> 00:01:06.240
+model size, the data is not only
+
+00:01:02.160 --> 00:01:09.040
+possible but also we can predict them
+
+00:01:06.240 --> 00:01:11.920
+like how much we will improve which
+
+00:01:09.040 --> 00:01:15.360
+basically gave justification
+
+00:01:11.920 --> 00:01:18.080
+for going for larger models, larger data
+
+00:01:15.360 --> 00:01:20.320
+sets. that's and larger compute cuz we
+
+00:01:18.080 --> 00:01:22.880
+know that we are going to get better
+
+00:01:20.320 --> 00:01:27.439
+performance. So what I'm talking about
+
+00:01:22.880 --> 00:01:31.200
+here is there is a mathematical law uh
+
+00:01:27.439 --> 00:01:33.759
+in a power law form that basically says
+
+00:01:31.200 --> 00:01:36.799
+given three different scaling dimension
+
+00:01:33.759 --> 00:01:38.880
+namely model size the data set size in
+
+00:01:36.799 --> 00:01:41.119
+terms of the number of tokens in that
+
+00:01:38.880 --> 00:01:42.880
+data set and the compute budget in terms
+
+00:01:41.119 --> 00:01:45.040
+of the number of floating point
+
+00:01:42.880 --> 00:01:46.880
+operation and the discovery is basically
+
+00:01:45.040 --> 00:01:50.720
+for each one of these dimension we have
+
+00:01:46.880 --> 00:01:53.280
+a power law performance improvement and
+
+00:01:50.720 --> 00:01:56.000
+it tells us how much improvement we can
+
+00:01:53.280 --> 00:01:58.240
+expect with increasing of each one of
+
+00:01:56.000 --> 00:02:02.000
+these dimension. This gave us a
+
+00:01:58.240 --> 00:02:04.079
+predictive planning. So if we do uh if
+
+00:02:02.000 --> 00:02:06.479
+we invest this much we will get this
+
+00:02:04.079 --> 00:02:10.160
+much improvement which help us to
+
+00:02:06.479 --> 00:02:12.800
+allocate resources and uh allocate uh
+
+00:02:10.160 --> 00:02:16.000
+investments also and that explained
+
+00:02:12.800 --> 00:02:20.400
+progress of for example GPT models even
+
+00:02:16.000 --> 00:02:23.040
+after the discovery of th those um laws.
+
+00:02:20.400 --> 00:02:26.319
+um the models that came after that
+
+00:02:23.040 --> 00:02:28.640
+confirm those laws and that gives us an
+
+00:02:26.319 --> 00:02:30.560
+empirical sense of scaling. So let's go
+
+00:02:28.640 --> 00:02:33.519
+back to the equation. For example, the
+
+00:02:30.560 --> 00:02:36.319
+loss that we observe uh based on some
+
+00:02:33.519 --> 00:02:40.640
+dimension
+
+00:02:36.319 --> 00:02:43.120
+is an addition of a constant
+
+00:02:40.640 --> 00:02:45.120
+a reducible loss something that we
+
+00:02:43.120 --> 00:02:47.280
+cannot do anything about. It's just like
+
+00:02:45.120 --> 00:02:51.519
+the entropy or the uncertainty in the
+
+00:02:47.280 --> 00:02:54.480
+data just the data is like that and then
+
+00:02:51.519 --> 00:02:58.080
+a power law term
+
+00:02:54.480 --> 00:03:01.200
+which is about the reducible loss
+
+00:02:58.080 --> 00:03:04.159
+and the gap between the model and the
+
+00:03:01.200 --> 00:03:07.280
+optimal performance. So the optimal is
+
+00:03:04.159 --> 00:03:09.599
+basically this something that is the
+
+00:03:07.280 --> 00:03:12.800
+best performance.
+
+00:03:09.599 --> 00:03:15.200
+So the idea here is
+
+00:03:12.800 --> 00:03:17.200
+we can
+
+00:03:15.200 --> 00:03:19.120
+determine
+
+00:03:17.200 --> 00:03:22.120
+this constants
+
+00:03:19.120 --> 00:03:22.120
+empirically.
+
+00:03:22.159 --> 00:03:27.200
+For example, for language models, the
+
+00:03:25.120 --> 00:03:29.519
+exponents
+
+00:03:27.200 --> 00:03:33.120
+across each dimension
+
+00:03:29.519 --> 00:03:37.200
+is approximated like this. So for
+
+00:03:33.120 --> 00:03:41.280
+example here we see the slowest
+
+00:03:37.200 --> 00:03:43.760
+improvement for uh investing in compute
+
+00:03:41.280 --> 00:03:47.280
+and the most improvement for investing
+
+00:03:43.760 --> 00:03:49.760
+in the data set size.
+
+00:03:47.280 --> 00:03:52.319
+So what I mean is something like this
+
+00:03:49.760 --> 00:03:55.200
+basically if you increase the parameter
+
+00:03:52.319 --> 00:03:57.439
+the loss will decrease. So for example
+
+00:03:55.200 --> 00:03:59.680
+it's something like this. If you
+
+00:03:57.439 --> 00:04:03.280
+increase the performance, the SL loss
+
+00:03:59.680 --> 00:04:05.439
+will decrease with this rate that is
+
+00:04:03.280 --> 00:04:08.319
+determined this way. Uh getting closer
+
+00:04:05.439 --> 00:04:10.319
+and closer to this reducible loss and
+
+00:04:08.319 --> 00:04:12.640
+same for the number of tokens and the
+
+00:04:10.319 --> 00:04:14.799
+number of flops. And this remarkable
+
+00:04:12.640 --> 00:04:17.919
+finding really holds for different
+
+00:04:14.799 --> 00:04:21.359
+modalities. Those constants may change
+
+00:04:17.919 --> 00:04:25.199
+but the power law form so far stands the
+
+00:04:21.359 --> 00:04:27.600
+test of time. So the the maybe the first
+
+00:04:25.199 --> 00:04:31.840
+paper that started the the whole
+
+00:04:27.600 --> 00:04:35.440
+conversation is this paper by Kaplan and
+
+00:04:31.840 --> 00:04:37.280
+uh colleagues back in 2020. But um
+
+00:04:35.440 --> 00:04:41.759
+something that I want to point out other
+
+00:04:37.280 --> 00:04:45.199
+than uh this uh general laws is there is
+
+00:04:41.759 --> 00:04:47.759
+a surprising result that larger models
+
+00:04:45.199 --> 00:04:50.560
+are also more sample efficient. meaning
+
+00:04:47.759 --> 00:04:53.440
+that larger models can squeeze more
+
+00:04:50.560 --> 00:04:55.120
+information from the examples that they
+
+00:04:53.440 --> 00:04:56.960
+are seeing which is somehow
+
+00:04:55.120 --> 00:05:01.360
+counterintuitive. So all of these
+
+00:04:56.960 --> 00:05:04.720
+results uh led to um the seminal paper
+
+00:05:01.360 --> 00:05:08.400
+of GPT3 uh which was a massive bet on
+
+00:05:04.720 --> 00:05:10.800
+the scaling. GPT3 has 175 billion
+
+00:05:08.400 --> 00:05:14.160
+parameters. And with all of these
+
+00:05:10.800 --> 00:05:17.120
+resources and the cost of uh several
+
+00:05:14.160 --> 00:05:20.080
+million dollars uh for the for its
+
+00:05:17.120 --> 00:05:22.639
+training, it confirmed that scaling law
+
+00:05:20.080 --> 00:05:25.840
+and matched the prediction. Other models
+
+00:05:22.639 --> 00:05:29.600
+that came after GPT3 like for example
+
+00:05:25.840 --> 00:05:32.560
+models by Deep Mind also confirm this
+
+00:05:29.600 --> 00:05:36.160
+observation. But things even get better
+
+00:05:32.560 --> 00:05:38.240
+that oh maybe we are undertraining this
+
+00:05:36.160 --> 00:05:40.720
+model we can do even better. So the
+
+00:05:38.240 --> 00:05:43.280
+scaling can be even more optimal and
+
+00:05:40.720 --> 00:05:46.160
+that's where the chinchilla models came
+
+00:05:43.280 --> 00:05:49.120
+in with this new notion of compute
+
+00:05:46.160 --> 00:05:52.880
+optimal language models. But the main
+
+00:05:49.120 --> 00:05:54.560
+maybe the main result of um this paper
+
+00:05:52.880 --> 00:05:57.280
+was connecting these different
+
+00:05:54.560 --> 00:06:00.720
+dimensions. For example, parameters and
+
+00:05:57.280 --> 00:06:03.919
+tokens should scale equally and not for
+
+00:06:00.720 --> 00:06:07.759
+example in one side. And another
+
+00:06:03.919 --> 00:06:11.120
+practical rule that it says that
+
+00:06:07.759 --> 00:06:14.319
+approximately 20 token per parameter is
+
+00:06:11.120 --> 00:06:19.039
+a good rule of thumb. So if we have more
+
+00:06:14.319 --> 00:06:22.360
+parameters, we can feed more data and
+
+00:06:19.039 --> 00:06:22.360
+learn more.
+
+00:06:24.240 --> 00:06:29.520
+So they basically came up with this
+
+00:06:26.319 --> 00:06:33.680
+parametric form that uh if you remember
+
+00:06:29.520 --> 00:06:36.240
+similar to the lecture on efficient net
+
+00:06:33.680 --> 00:06:38.639
+it help us to
+
+00:06:36.240 --> 00:06:41.199
+design
+
+00:06:38.639 --> 00:06:43.919
+more optimal architectures
+
+00:06:41.199 --> 00:06:48.160
+and language models
+
+00:06:43.919 --> 00:06:49.680
+and update those uh power law uh
+
+00:06:48.160 --> 00:06:53.120
+coefficients.
+
+00:06:49.680 --> 00:06:56.000
+So the take-home message somehow changed
+
+00:06:53.120 --> 00:06:59.120
+slightly uh from the as big as possible
+
+00:06:56.000 --> 00:07:02.000
+to compute optimal size with much more
+
+00:06:59.120 --> 00:07:04.800
+data and chinchilla for example they
+
+00:07:02.000 --> 00:07:07.680
+showed that they can achieve similar
+
+00:07:04.800 --> 00:07:10.319
+performance with much less number of
+
+00:07:07.680 --> 00:07:12.880
+parameters but with more tokens. I mean
+
+00:07:10.319 --> 00:07:15.520
+still we are doing power law but in a
+
+00:07:12.880 --> 00:07:18.479
+more efficient way and they showed that
+
+00:07:15.520 --> 00:07:21.120
+uh in their comparison of chinchilla
+
+00:07:18.479 --> 00:07:24.080
+with the gopher which is a very large
+
+00:07:21.120 --> 00:07:27.360
+model and chinchilla with much less
+
+00:07:24.080 --> 00:07:29.599
+number of parameter but more tokens in
+
+00:07:27.360 --> 00:07:32.479
+the training performs much better in a
+
+00:07:29.599 --> 00:07:34.479
+lot of benchmarks. So there are a lot of
+
+00:07:32.479 --> 00:07:36.960
+other models that came after chinchilla
+
+00:07:34.479 --> 00:07:39.840
+but they uh started using this
+
+00:07:36.960 --> 00:07:43.759
+principles that well we can give more
+
+00:07:39.840 --> 00:07:46.400
+tokens to less to smaller models and
+
+00:07:43.759 --> 00:07:49.440
+gained similar performances. So that's
+
+00:07:46.400 --> 00:07:51.120
+why you will see the ratio of token to
+
+00:07:49.440 --> 00:07:53.919
+parameter
+
+00:07:51.120 --> 00:07:56.639
+now much higher than those old models.
+
+00:07:53.919 --> 00:07:58.479
+So then you can revisit these models for
+
+00:07:56.639 --> 00:08:01.440
+example GPT3
+
+00:07:58.479 --> 00:08:03.759
+and retrain them with more tokens and
+
+00:08:01.440 --> 00:08:05.919
+you will get better performance and
+
+00:08:03.759 --> 00:08:09.039
+that's where you get a better and
+
+00:08:05.919 --> 00:08:12.639
+optimal GPT3 which then requires much
+
+00:08:09.039 --> 00:08:15.680
+more number of tokens and then you can
+
+00:08:12.639 --> 00:08:18.160
+just extrapolate to future models. There
+
+00:08:15.680 --> 00:08:20.720
+are of course some caveats to this
+
+00:08:18.160 --> 00:08:23.919
+story. For example, well, hey, what if
+
+00:08:20.720 --> 00:08:26.160
+the this tokens are just repeated tokens
+
+00:08:23.919 --> 00:08:28.639
+and things like that, which basically
+
+00:08:26.160 --> 00:08:30.560
+means the data is not new, which I'm
+
+00:08:28.639 --> 00:08:34.320
+going to skip. But of course, these are
+
+00:08:30.560 --> 00:08:37.039
+those caveats. But the the main thing
+
+00:08:34.320 --> 00:08:39.200
+here is if we can achieve the same
+
+00:08:37.039 --> 00:08:41.919
+performance with smaller model we should
+
+00:08:39.200 --> 00:08:44.320
+do it because then those models are
+
+00:08:41.919 --> 00:08:47.600
+cheaper doing inference and then they
+
+00:08:44.320 --> 00:08:51.440
+will be picked up more which is the name
+
+00:08:47.600 --> 00:08:54.240
+of the game for any products. So if um
+
+00:08:51.440 --> 00:08:57.839
+just to give you a sketch of uh y power
+
+00:08:54.240 --> 00:09:00.560
+law uh we have to drill down into this
+
+00:08:57.839 --> 00:09:02.480
+type of loss that we use in the auto
+
+00:09:00.560 --> 00:09:05.440
+reggressive mainly auto reggressive
+
+00:09:02.480 --> 00:09:08.480
+tasks and that's the cross entropy. So
+
+00:09:05.440 --> 00:09:11.200
+there are resources like papers and even
+
+00:09:08.480 --> 00:09:15.959
+YouTube videos that I will uh reference
+
+00:09:11.200 --> 00:09:15.959
+on why that's the case.

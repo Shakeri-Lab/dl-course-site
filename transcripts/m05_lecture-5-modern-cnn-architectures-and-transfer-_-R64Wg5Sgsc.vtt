@@ -1,0 +1,2299 @@
+WEBVTT
+
+00:00:00.160 --> 00:00:06.000
+the first architecture that shows the
+
+00:00:02.879 --> 00:00:10.719
+advantage of a convolution based neural
+
+00:00:06.000 --> 00:00:14.000
+network. We added a few modern flavor
+
+00:00:10.719 --> 00:00:17.760
+using batchorm and we achieved a very
+
+00:00:14.000 --> 00:00:20.160
+good performance of unfashion mnist but
+
+00:00:17.760 --> 00:00:23.600
+the problem is still this is a large
+
+00:00:20.160 --> 00:00:27.199
+model compared to its depth and its
+
+00:00:23.600 --> 00:00:31.279
+limitation. It uses only one um filter
+
+00:00:27.199 --> 00:00:33.920
+size 5x5. uh but here in this session we
+
+00:00:31.279 --> 00:00:36.800
+will talk about ways to capitalize on
+
+00:00:33.920 --> 00:00:39.600
+this performance while making it simpler
+
+00:00:36.800 --> 00:00:42.320
+and develop huristics for better
+
+00:00:39.600 --> 00:00:46.079
+designs. Just a footnote that after
+
+00:00:42.320 --> 00:00:49.200
+lenet Alexate came and it did increase
+
+00:00:46.079 --> 00:00:52.480
+the the depth and added different filter
+
+00:00:49.200 --> 00:00:55.039
+sizes with a very similar architecture.
+
+00:00:52.480 --> 00:00:58.399
+Though back in that time they had to
+
+00:00:55.039 --> 00:01:01.199
+chop the model in two to manage the GPU
+
+00:00:58.399 --> 00:01:04.159
+aspects. We don't have that problem now
+
+00:01:01.199 --> 00:01:06.799
+and uh basically if you look at lenet
+
+00:01:04.159 --> 00:01:09.360
+Alexent is a deeper version of this with
+
+00:01:06.799 --> 00:01:12.080
+an additional 3x3 convolution in the
+
+00:01:09.360 --> 00:01:14.960
+next sliders. Okay. So let's ask these
+
+00:01:12.080 --> 00:01:18.080
+questions first. Why we are using 5x5
+
+00:01:14.960 --> 00:01:20.640
+kernels in linet? Can we use a smaller
+
+00:01:18.080 --> 00:01:22.880
+filter? So smaller filter means less
+
+00:01:20.640 --> 00:01:24.560
+parameters, right? Then how can we
+
+00:01:22.880 --> 00:01:27.520
+increase the depth of the network
+
+00:01:24.560 --> 00:01:30.720
+without the vanishing gradient and then
+
+00:01:27.520 --> 00:01:32.479
+looking at the parameters usage in the
+
+00:01:30.720 --> 00:01:34.240
+model? Where is the bottleneck? Where
+
+00:01:32.479 --> 00:01:36.560
+are the most parameters? How can we
+
+00:01:34.240 --> 00:01:39.280
+reduce them? And then how to make our
+
+00:01:36.560 --> 00:01:41.520
+life easier? Coming up with blocks in
+
+00:01:39.280 --> 00:01:44.560
+this design. So a block is a combination
+
+00:01:41.520 --> 00:01:47.040
+of layers that can be repeated and we
+
+00:01:44.560 --> 00:01:50.000
+know that that block is highly optimized
+
+00:01:47.040 --> 00:01:53.040
+and if we stack them in a in a organized
+
+00:01:50.000 --> 00:01:55.439
+way we can achieve a good performance
+
+00:01:53.040 --> 00:01:57.520
+while having a bird eye on the design
+
+00:01:55.439 --> 00:01:59.759
+without getting lost in things that we
+
+00:01:57.520 --> 00:02:01.600
+already improved and we don't want to
+
+00:01:59.759 --> 00:02:04.000
+redesign them. So to answer these
+
+00:02:01.600 --> 00:02:07.040
+questions we are going to go through a
+
+00:02:04.000 --> 00:02:10.399
+few architectures. We start from VGG and
+
+00:02:07.040 --> 00:02:13.280
+then we build on top of on top on that
+
+00:02:10.399 --> 00:02:15.520
+and then we get to changes that lead to
+
+00:02:13.280 --> 00:02:18.879
+other architectures. Okay. So let's
+
+00:02:15.520 --> 00:02:21.440
+start with VG. VG tried to answer the
+
+00:02:18.879 --> 00:02:24.400
+first question. They basically show that
+
+00:02:21.440 --> 00:02:26.640
+3x3 convolutions when stack on top of
+
+00:02:24.400 --> 00:02:29.120
+each other can give us the same
+
+00:02:26.640 --> 00:02:32.160
+receptive field as bigger size
+
+00:02:29.120 --> 00:02:35.360
+convolutions with less parameters. So
+
+00:02:32.160 --> 00:02:38.160
+for example here a stack of 3x3 a two
+
+00:02:35.360 --> 00:02:41.360
+layer 3x3 not only gives us the same
+
+00:02:38.160 --> 00:02:43.599
+receptive field as one 5x5 with less
+
+00:02:41.360 --> 00:02:46.400
+parameters it also infuse more
+
+00:02:43.599 --> 00:02:48.160
+nonlinearity than this with one layer.
+
+00:02:46.400 --> 00:02:50.400
+So notice that we will have one
+
+00:02:48.160 --> 00:02:53.840
+injection of nonlinearity here and one
+
+00:02:50.400 --> 00:02:56.560
+here via the activation functions. So if
+
+00:02:53.840 --> 00:02:59.920
+the number of channels in and out is the
+
+00:02:56.560 --> 00:03:03.280
+same the 3x3 number of parameter the 3x3
+
+00:02:59.920 --> 00:03:08.239
+gives us 18 multiply by channel squared
+
+00:03:03.280 --> 00:03:11.440
+versus 25 in the 5x5 case. So in fact if
+
+00:03:08.239 --> 00:03:15.040
+we add another layer of 3x3 then we will
+
+00:03:11.440 --> 00:03:18.879
+have almost the same parameters 5x5 with
+
+00:03:15.040 --> 00:03:21.680
+more receptive field and much more nar
+
+00:03:18.879 --> 00:03:25.040
+nonlinearity. So the idea was let's make
+
+00:03:21.680 --> 00:03:28.000
+a block with this stack of 3x3's with
+
+00:03:25.040 --> 00:03:30.959
+padding and max pooling for our
+
+00:03:28.000 --> 00:03:32.879
+convolution parts of the network and
+
+00:03:30.959 --> 00:03:34.959
+then just stack them on top of each
+
+00:03:32.879 --> 00:03:37.040
+other. So let's compare this idea with
+
+00:03:34.959 --> 00:03:40.400
+the Alex net that we discussed in the
+
+00:03:37.040 --> 00:03:42.640
+previous slide. So here first look at
+
+00:03:40.400 --> 00:03:44.799
+the alexn net. So like I said Alex net
+
+00:03:42.640 --> 00:03:48.799
+is a architecture that is very similar
+
+00:03:44.799 --> 00:03:51.760
+to linet. It has more convolution with
+
+00:03:48.799 --> 00:03:54.640
+different filter sizes. So recall that
+
+00:03:51.760 --> 00:03:57.280
+uh leet was on the amnes data but here
+
+00:03:54.640 --> 00:04:00.400
+Alex that was developed for image net
+
+00:03:57.280 --> 00:04:02.879
+competition and back then it smoked the
+
+00:04:00.400 --> 00:04:05.200
+competition really with a large margin.
+
+00:04:02.879 --> 00:04:07.760
+However this is like I said a very very
+
+00:04:05.200 --> 00:04:09.680
+large network with many parameters and
+
+00:04:07.760 --> 00:04:11.439
+of course this stack of different
+
+00:04:09.680 --> 00:04:13.840
+convolution. So note that the
+
+00:04:11.439 --> 00:04:17.359
+convolution layers are in blue here with
+
+00:04:13.840 --> 00:04:20.639
+their max pools needs to have a lot of
+
+00:04:17.359 --> 00:04:23.680
+ablation and good design to make these
+
+00:04:20.639 --> 00:04:25.680
+choices. What VG is offering here is
+
+00:04:23.680 --> 00:04:27.600
+I'll give you a block. You don't need to
+
+00:04:25.680 --> 00:04:29.680
+really do a lot of work here because
+
+00:04:27.600 --> 00:04:32.800
+this is highly optimized. We showed that
+
+00:04:29.680 --> 00:04:35.520
+this can do more impact than the
+
+00:04:32.800 --> 00:04:37.759
+alternatives with larger convolution
+
+00:04:35.520 --> 00:04:40.000
+filters. So note that 3x3 is the
+
+00:04:37.759 --> 00:04:42.080
+smallest convolution yet. So we are
+
+00:04:40.000 --> 00:04:45.840
+looking at the smallest convolution unit
+
+00:04:42.080 --> 00:04:48.479
+a group of them with good padding and
+
+00:04:45.840 --> 00:04:50.560
+max pooling and once you have this block
+
+00:04:48.479 --> 00:04:52.880
+just stack them on top of each other and
+
+00:04:50.560 --> 00:04:55.440
+give it to your classification head. So
+
+00:04:52.880 --> 00:04:58.320
+why this is very significant in design
+
+00:04:55.440 --> 00:05:00.479
+because of its ease of implementation.
+
+00:04:58.320 --> 00:05:02.960
+We basically repeat the same structure
+
+00:05:00.479 --> 00:05:05.840
+in a for loop and give it to our
+
+00:05:02.960 --> 00:05:07.600
+forward. So with that let's go ahead and
+
+00:05:05.840 --> 00:05:10.160
+implement this. We are going to
+
+00:05:07.600 --> 00:05:12.000
+implement the block and show some
+
+00:05:10.160 --> 00:05:15.120
+aspects of it. Okay, with that we are
+
+00:05:12.000 --> 00:05:18.800
+going back to our code um still fashion
+
+00:05:15.120 --> 00:05:21.600
+emnest loaders and the train one epoch
+
+00:05:18.800 --> 00:05:23.840
+evaluate. Uh we still have the advanced
+
+00:05:21.600 --> 00:05:25.759
+MLP which I removed because we don't
+
+00:05:23.840 --> 00:05:28.960
+need that anymore. Uh but we are going
+
+00:05:25.759 --> 00:05:30.960
+to use some of this helper functions.
+
+00:05:28.960 --> 00:05:32.960
+Okay, but before going forward let me
+
+00:05:30.960 --> 00:05:35.280
+just write a function that count the
+
+00:05:32.960 --> 00:05:38.800
+parameters of the model. This will be
+
+00:05:35.280 --> 00:05:41.440
+useful when we are trying to discuss the
+
+00:05:38.800 --> 00:05:43.759
+changes in the model architectures. So
+
+00:05:41.440 --> 00:05:47.039
+now we want to make a VG block. So if
+
+00:05:43.759 --> 00:05:51.840
+you remember a VG block is a stack of
+
+00:05:47.039 --> 00:05:55.039
+3x3 convolutions with uh of course max
+
+00:05:51.840 --> 00:05:58.400
+pooling. But in each one of these 3x3s
+
+00:05:55.039 --> 00:06:00.720
+we have a bash norm and a reloop. So
+
+00:05:58.400 --> 00:06:04.080
+maybe even before making the block of
+
+00:06:00.720 --> 00:06:06.800
+VG, we can make a block of 3x3
+
+00:06:04.080 --> 00:06:09.840
+convolution dash umbrella, right? That's
+
+00:06:06.800 --> 00:06:12.400
+the smallest component this the atom
+
+00:06:09.840 --> 00:06:14.560
+that we will build other blocks with.
+
+00:06:12.400 --> 00:06:16.960
+Right? So first let's build build this
+
+00:06:14.560 --> 00:06:19.600
+and then build the VG plug and then we
+
+00:06:16.960 --> 00:06:23.199
+can go to our the VG network. So with
+
+00:06:19.600 --> 00:06:27.360
+that going to write a convolution batch
+
+00:06:23.199 --> 00:06:29.440
+norm and here I see that uh the
+
+00:06:27.360 --> 00:06:32.639
+suggestion is to go with default which
+
+00:06:29.440 --> 00:06:34.560
+we can of course uh but here since we
+
+00:06:32.639 --> 00:06:37.039
+don't want to redo something we already
+
+00:06:34.560 --> 00:06:39.280
+know that let's just try something else.
+
+00:06:37.039 --> 00:06:42.319
+While this is absolutely okay you can of
+
+00:06:39.280 --> 00:06:45.360
+course do that but here for the sake of
+
+00:06:42.319 --> 00:06:47.600
+trying to be more savvy with this block
+
+00:06:45.360 --> 00:06:49.680
+design let's just go with a more
+
+00:06:47.600 --> 00:06:54.160
+abstract design. So I'm going to
+
+00:06:49.680 --> 00:06:57.600
+directly ask for sequential and uh takes
+
+00:06:54.160 --> 00:07:02.160
+the channel in channel out kernel 3
+
+00:06:57.600 --> 00:07:05.599
+padding one stride one and um and here
+
+00:07:02.160 --> 00:07:08.400
+we have bias false. So bias is false
+
+00:07:05.599 --> 00:07:10.720
+because we are not going to need bias.
+
+00:07:08.400 --> 00:07:13.199
+The batch norm already has a bias within
+
+00:07:10.720 --> 00:07:16.319
+it. uh we really don't need and we can
+
+00:07:13.199 --> 00:07:18.319
+actually even consider this in a lower
+
+00:07:16.319 --> 00:07:20.560
+level when we are uh building the
+
+00:07:18.319 --> 00:07:22.960
+convolution itself. So just consider
+
+00:07:20.560 --> 00:07:25.440
+remember that and here as you can see
+
+00:07:22.960 --> 00:07:28.960
+this is also a suggestion meaning that I
+
+00:07:25.440 --> 00:07:32.240
+could directly list the modules that I
+
+00:07:28.960 --> 00:07:34.639
+want that this sequential needs together
+
+00:07:32.240 --> 00:07:36.960
+and if I do this I really don't need a
+
+00:07:34.639 --> 00:07:39.840
+forward method because it does it by
+
+00:07:36.960 --> 00:07:42.880
+itself. So this is just a clean to make
+
+00:07:39.840 --> 00:07:45.360
+it even more minimal. I'm going to just
+
+00:07:42.880 --> 00:07:47.280
+change this rotation. I'm going to send
+
+00:07:45.360 --> 00:07:50.240
+this to a lower level because I do want
+
+00:07:47.280 --> 00:07:53.840
+to control it. Less is more always. And
+
+00:07:50.240 --> 00:07:56.240
+I'm going to make the relu in place to
+
+00:07:53.840 --> 00:07:58.160
+save some memory. Okay. So that's our
+
+00:07:56.240 --> 00:08:02.000
+convolution globe. Now I'm going to use
+
+00:07:58.160 --> 00:08:05.520
+that to make our VG block. Okay. So and
+
+00:08:02.000 --> 00:08:07.440
+my EG block. Let's just go default with
+
+00:08:05.520 --> 00:08:10.160
+this. So this is the number of
+
+00:08:07.440 --> 00:08:14.720
+convolutions we want within the block
+
+00:08:10.160 --> 00:08:16.400
+and or I in number of convolutions of
+
+00:08:14.720 --> 00:08:19.599
+course the range of that we want to
+
+00:08:16.400 --> 00:08:22.240
+append this layers right. Uh so maybe we
+
+00:08:19.599 --> 00:08:25.039
+should initiate this earlier. Going to
+
+00:08:22.240 --> 00:08:27.520
+just make it empty but you saw the
+
+00:08:25.039 --> 00:08:29.360
+suggestion and the reason more clear
+
+00:08:27.520 --> 00:08:32.399
+here. Want the first layer to have its
+
+00:08:29.360 --> 00:08:35.279
+own um channel input to be independent
+
+00:08:32.399 --> 00:08:38.640
+from the others as we can use this black
+
+00:08:35.279 --> 00:08:41.039
+block anywhere. So the in channels or
+
+00:08:38.640 --> 00:08:44.240
+each one of this layers that I'm going
+
+00:08:41.039 --> 00:08:47.120
+to append will be C in if it's the first
+
+00:08:44.240 --> 00:08:49.600
+layer and it will be see out if it's the
+
+00:08:47.120 --> 00:08:51.519
+intermediate layers. Okay, so that's the
+
+00:08:49.600 --> 00:08:53.760
+reason and we are going to append them
+
+00:08:51.519 --> 00:08:56.240
+all together. So note that I really I
+
+00:08:53.760 --> 00:09:00.399
+could do the and then sequential again
+
+00:08:56.240 --> 00:09:03.360
+here and if I did that I didn't I I was
+
+00:09:00.399 --> 00:09:05.040
+not forced to write a forward method. I
+
+00:09:03.360 --> 00:09:08.240
+didn't do it. Well, you can do it
+
+00:09:05.040 --> 00:09:10.160
+yourself or maybe practice but here I
+
+00:09:08.240 --> 00:09:13.839
+have to write them forward.
+
+00:09:10.160 --> 00:09:17.200
+>> Okay. So here um just uh maybe a design
+
+00:09:13.839 --> 00:09:19.839
+point I I'd really like to separate my
+
+00:09:17.200 --> 00:09:23.760
+convolution stack from my max pooling
+
+00:09:19.839 --> 00:09:26.399
+stack. And uh this way I will be able to
+
+00:09:23.760 --> 00:09:29.360
+for example maybe I may want to change
+
+00:09:26.399 --> 00:09:32.320
+change my pooling to average or I want
+
+00:09:29.360 --> 00:09:35.120
+to have choice later to do some
+
+00:09:32.320 --> 00:09:39.440
+ablation. So to do that let's just
+
+00:09:35.120 --> 00:09:41.760
+change the the appending strategy and uh
+
+00:09:39.440 --> 00:09:45.440
+separate the pooling here and let's call
+
+00:09:41.760 --> 00:09:48.800
+this colony and then we have the pool
+
+00:09:45.440 --> 00:09:52.959
+separate. So in that case we now have to
+
+00:09:48.800 --> 00:09:56.240
+change this. Okay. Now let's um test um
+
+00:09:52.959 --> 00:09:58.160
+for an input image of two channel or
+
+00:09:56.240 --> 00:10:00.880
+maybe one channel just like fashion
+
+00:09:58.160 --> 00:10:03.600
+emist grayscale and let's say we have
+
+00:10:00.880 --> 00:10:07.519
+two images in a in a batch. What happens
+
+00:10:03.600 --> 00:10:09.680
+if we send that through this VG that has
+
+00:10:07.519 --> 00:10:12.480
+two convolution? Of course, we can
+
+00:10:09.680 --> 00:10:16.240
+increase that if we want. And let's say
+
+00:10:12.480 --> 00:10:19.920
+that we are asking for 32 different
+
+00:10:16.240 --> 00:10:22.720
+features. So 32 channels in the output.
+
+00:10:19.920 --> 00:10:25.519
+So if we do that, what will be the size
+
+00:10:22.720 --> 00:10:28.079
+of the output? So basically, if I have a
+
+00:10:25.519 --> 00:10:30.160
+image, let's just make a random torch
+
+00:10:28.079 --> 00:10:32.720
+and then send it to the VG block. I'm
+
+00:10:30.160 --> 00:10:34.800
+asking what's the shape of Y. So pause
+
+00:10:32.720 --> 00:10:37.440
+the video, think about this. So the
+
+00:10:34.800 --> 00:10:40.079
+output will be 14 by 14 and the result
+
+00:10:37.440 --> 00:10:42.399
+is of course the pooling. So now that we
+
+00:10:40.079 --> 00:10:45.920
+have this, we good to go. We can write
+
+00:10:42.399 --> 00:10:48.320
+our first VG neural network. So to do
+
+00:10:45.920 --> 00:10:51.279
+that, uh let's just call it a VG
+
+00:10:48.320 --> 00:10:54.320
+simpler. Let's go just with two VG
+
+00:10:51.279 --> 00:10:57.120
+blocks and then a simple classification.
+
+00:10:54.320 --> 00:11:00.399
+It should be easy. So the F in it uh
+
+00:10:57.120 --> 00:11:03.200
+let's specify the uh number of classes
+
+00:11:00.399 --> 00:11:05.040
+convolution layers basically split out
+
+00:11:03.200 --> 00:11:08.240
+the features for our classification
+
+00:11:05.040 --> 00:11:11.360
+layer. The sequential of one BG block
+
+00:11:08.240 --> 00:11:13.680
+132 two convolution and another one with
+
+00:11:11.360 --> 00:11:16.880
+the input channel of 32 that is the
+
+00:11:13.680 --> 00:11:19.440
+output of the previous one and 64. Okay
+
+00:11:16.880 --> 00:11:22.640
+so the output of this one will be a 7 by
+
+00:11:19.440 --> 00:11:24.640
+7. Okay let's just make it even smaller
+
+00:11:22.640 --> 00:11:26.880
+because it's supposed to be simple. So
+
+00:11:24.640 --> 00:11:29.519
+just just show that we have control over
+
+00:11:26.880 --> 00:11:31.680
+this VG blocks. Okay, that's it. That's
+
+00:11:29.519 --> 00:11:34.399
+the convolution stack. Let's make the
+
+00:11:31.680 --> 00:11:37.839
+classifier sequential that flattens the
+
+00:11:34.399 --> 00:11:39.519
+input destroys all of the spatial
+
+00:11:37.839 --> 00:11:41.839
+information. But we don't care because
+
+00:11:39.519 --> 00:11:44.320
+we are giving features. It's already
+
+00:11:41.839 --> 00:11:48.320
+encoded with our convolution. Okay, it
+
+00:11:44.320 --> 00:11:51.440
+takes in the input and this will blow
+
+00:11:48.320 --> 00:11:54.880
+out to be very a lot of parameter. So
+
+00:11:51.440 --> 00:11:58.160
+let's just simplify this. 128
+
+00:11:54.880 --> 00:12:00.480
+128 done with the classifier. Then let's
+
+00:11:58.160 --> 00:12:03.200
+write a four. Now let's just check the
+
+00:12:00.480 --> 00:12:05.360
+number of parameters and we have uh half
+
+00:12:03.200 --> 00:12:08.320
+a million parameter here. This is still
+
+00:12:05.360 --> 00:12:11.600
+a lot. So we have to do something about
+
+00:12:08.320 --> 00:12:13.839
+this. Let's go back to our quest here.
+
+00:12:11.600 --> 00:12:16.320
+So we reduced the number of parameters
+
+00:12:13.839 --> 00:12:19.519
+in our convolution stack compared to the
+
+00:12:16.320 --> 00:12:22.240
+previous architectures Linux or AlexNet.
+
+00:12:19.519 --> 00:12:24.560
+But if we look closely in our stack, we
+
+00:12:22.240 --> 00:12:27.519
+always increase the number of channels.
+
+00:12:24.560 --> 00:12:30.240
+So this is like increasing the number of
+
+00:12:27.519 --> 00:12:33.440
+features aka the number of dimensions.
+
+00:12:30.240 --> 00:12:36.000
+So even if we reduce the height and
+
+00:12:33.440 --> 00:12:38.079
+widths, if this reduction is not with
+
+00:12:36.000 --> 00:12:40.560
+the same speed, eventually this will
+
+00:12:38.079 --> 00:12:42.160
+blow up and at the end we are still
+
+00:12:40.560 --> 00:12:44.639
+dealing with this dimensionality
+
+00:12:42.160 --> 00:12:46.480
+problem. Channels is basically the
+
+00:12:44.639 --> 00:12:48.720
+determining reason for the number of
+
+00:12:46.480 --> 00:12:52.959
+flops too. If you increase a channel
+
+00:12:48.720 --> 00:12:54.800
+from one to two or anything beyond one,
+
+00:12:52.959 --> 00:12:56.800
+it's now you're dealing with a
+
+00:12:54.800 --> 00:12:59.440
+multi-dimensional cube that you're doing
+
+00:12:56.800 --> 00:13:02.399
+a convolution over. So that's why it's
+
+00:12:59.440 --> 00:13:05.040
+the bottleneck of our computation. So we
+
+00:13:02.399 --> 00:13:07.040
+really want to control this channels. So
+
+00:13:05.040 --> 00:13:10.079
+we are going to talk about an idea that
+
+00:13:07.040 --> 00:13:12.720
+we haven't yet thought about and it's
+
+00:13:10.079 --> 00:13:15.360
+basically pulling across the channel and
+
+00:13:12.720 --> 00:13:18.320
+to do that we will introduce this one by
+
+00:13:15.360 --> 00:13:21.360
+one convolutions. So let's start with
+
+00:13:18.320 --> 00:13:23.920
+this. So the idea is rather simple for
+
+00:13:21.360 --> 00:13:27.440
+example if you had only one channel you
+
+00:13:23.920 --> 00:13:31.360
+look at just that feature for each pixel
+
+00:13:27.440 --> 00:13:33.760
+and you basically multiply it by comp
+
+00:13:31.360 --> 00:13:35.440
+and a scaler doesn't do anything right.
+
+00:13:33.760 --> 00:13:37.600
+But what if you have more than one
+
+00:13:35.440 --> 00:13:41.120
+channel? In that case, you can pull
+
+00:13:37.600 --> 00:13:44.000
+across that channels for that pixel. So
+
+00:13:41.120 --> 00:13:46.720
+everything is for one pixel. There's no
+
+00:13:44.000 --> 00:13:49.600
+spatial mixing. And then for that one
+
+00:13:46.720 --> 00:13:52.000
+pixel, we look at this features
+
+00:13:49.600 --> 00:13:54.240
+corresponding features in that channel
+
+00:13:52.000 --> 00:13:56.480
+and we come up with a a linear waiting
+
+00:13:54.240 --> 00:13:59.360
+with a bias. And remember this is
+
+00:13:56.480 --> 00:14:02.160
+basically the linear regression. So we
+
+00:13:59.360 --> 00:14:04.880
+make a linear regression over the values
+
+00:14:02.160 --> 00:14:07.680
+of the channels corresponding to that
+
+00:14:04.880 --> 00:14:10.320
+pixel and we report the output. So this
+
+00:14:07.680 --> 00:14:12.959
+output can be one dimensional or more
+
+00:14:10.320 --> 00:14:16.000
+and that's the new channel for us. If
+
+00:14:12.959 --> 00:14:17.839
+you add a nonlinearity or an activation
+
+00:14:16.000 --> 00:14:20.880
+to this you basically have out your
+
+00:14:17.839 --> 00:14:24.639
+perceptron. So that's why this is a mini
+
+00:14:20.880 --> 00:14:27.279
+LP. For each pixel we make a mini LP and
+
+00:14:24.639 --> 00:14:30.160
+we output new channels like this. This
+
+00:14:27.279 --> 00:14:32.720
+channel can be one or more but usually
+
+00:14:30.160 --> 00:14:35.199
+this is less than the number of initial
+
+00:14:32.720 --> 00:14:37.440
+channels. Of course it can be more but
+
+00:14:35.199 --> 00:14:42.000
+usually it's less. And that's how we
+
+00:14:37.440 --> 00:14:44.000
+shrink the channels while not losing any
+
+00:14:42.000 --> 00:14:46.800
+information without processing. We are
+
+00:14:44.000 --> 00:14:49.680
+not dropping any information. We're just
+
+00:14:46.800 --> 00:14:51.440
+summarizing it with our tools which here
+
+00:14:49.680 --> 00:14:54.160
+is a linear regression plus an
+
+00:14:51.440 --> 00:14:57.600
+linearity. And notice that we also
+
+00:14:54.160 --> 00:15:00.160
+inject some nonlinearity here. We always
+
+00:14:57.600 --> 00:15:03.680
+in our design this is the principle
+
+00:15:00.160 --> 00:15:06.800
+always we inject as much as possible
+
+00:15:03.680 --> 00:15:10.320
+nonlinearity to increase the capacity of
+
+00:15:06.800 --> 00:15:11.760
+our networks. So hence there are names
+
+00:15:10.320 --> 00:15:14.000
+uh for the same technique we have
+
+00:15:11.760 --> 00:15:16.800
+different names for it feature map
+
+00:15:14.000 --> 00:15:18.959
+pooling cross channel parametric pooling
+
+00:15:16.800 --> 00:15:20.959
+and so many other names for it. But if
+
+00:15:18.959 --> 00:15:24.079
+you remember most of the parameters that
+
+00:15:20.959 --> 00:15:27.040
+we had in all of the designs so far are
+
+00:15:24.079 --> 00:15:29.920
+actually living in the classification
+
+00:15:27.040 --> 00:15:32.000
+head. So if we go back comparing the
+
+00:15:29.920 --> 00:15:34.240
+classification head number of parameters
+
+00:15:32.000 --> 00:15:37.839
+to the rest of the network for example
+
+00:15:34.240 --> 00:15:39.360
+in this case probably 80% or maybe 90%
+
+00:15:37.839 --> 00:15:41.199
+of the parameters are in the
+
+00:15:39.360 --> 00:15:44.880
+classification and we know why.
+
+00:15:41.199 --> 00:15:47.920
+Basically in each convolution stack the
+
+00:15:44.880 --> 00:15:50.399
+number of parameters is the number of
+
+00:15:47.920 --> 00:15:52.639
+values in the filter. We have one small
+
+00:15:50.399 --> 00:15:55.120
+network that we do the convolution. It's
+
+00:15:52.639 --> 00:15:57.920
+very small but compared to this fully
+
+00:15:55.120 --> 00:16:00.480
+connected MLPS they are not really the
+
+00:15:57.920 --> 00:16:03.440
+bottleneck. So we have to find a way to
+
+00:16:00.480 --> 00:16:05.759
+reduce this. This is where we can do the
+
+00:16:03.440 --> 00:16:08.320
+most damage to the number of parameters.
+
+00:16:05.759 --> 00:16:10.800
+And this technique here let us do that.
+
+00:16:08.320 --> 00:16:13.839
+Once we mix the information in the
+
+00:16:10.800 --> 00:16:16.560
+channels, we can use it to directly
+
+00:16:13.839 --> 00:16:18.399
+summarize and send to the class uh to
+
+00:16:16.560 --> 00:16:21.279
+the classification result. So the idea
+
+00:16:18.399 --> 00:16:24.320
+is the output of this one by ones which
+
+00:16:21.279 --> 00:16:26.560
+will be a bunch of features like I said
+
+00:16:24.320 --> 00:16:28.320
+these are the output which is a mixture
+
+00:16:26.560 --> 00:16:31.279
+of the features that the convolution
+
+00:16:28.320 --> 00:16:33.600
+finds. We don't need to really do do the
+
+00:16:31.279 --> 00:16:35.839
+mixing again in a fully connected neural
+
+00:16:33.600 --> 00:16:38.800
+network. I just directly give it to a
+
+00:16:35.839 --> 00:16:40.399
+pooling for example averaging and
+
+00:16:38.800 --> 00:16:43.519
+aggregate all of this information
+
+00:16:40.399 --> 00:16:46.880
+together. So what we achieved here we
+
+00:16:43.519 --> 00:16:49.920
+achieved a lot of nonlinearity with not
+
+00:16:46.880 --> 00:16:52.240
+many parameters through this one by one
+
+00:16:49.920 --> 00:16:55.120
+layers and we decreased the
+
+00:16:52.240 --> 00:16:57.600
+classification head size significantly.
+
+00:16:55.120 --> 00:17:00.000
+Okay, with that let's go on and do the
+
+00:16:57.600 --> 00:17:03.440
+implementation of this one by one
+
+00:17:00.000 --> 00:17:05.760
+convolutions and um just a note on the
+
+00:17:03.440 --> 00:17:08.720
+name network in network it's because of
+
+00:17:05.760 --> 00:17:10.880
+this MLPS that are leaving across the
+
+00:17:08.720 --> 00:17:13.919
+channels. So we are going to keep the
+
+00:17:10.880 --> 00:17:17.679
+same naming the class name black block
+
+00:17:13.919 --> 00:17:21.360
+takes inherit all module and then what
+
+00:17:17.679 --> 00:17:23.360
+we need inside this we don't need the
+
+00:17:21.360 --> 00:17:25.919
+kernel size because it's always one by
+
+00:17:23.360 --> 00:17:27.839
+one we just need the channel input and
+
+00:17:25.919 --> 00:17:32.000
+channel output since we can have
+
+00:17:27.839 --> 00:17:35.520
+multiple of them of this nin blocks ni
+
+00:17:32.000 --> 00:17:39.440
+uh convolutions within one n block. So
+
+00:17:35.520 --> 00:17:41.600
+I'm going to specify um the different
+
+00:17:39.440 --> 00:17:43.919
+channel that we can have different
+
+00:17:41.600 --> 00:17:46.720
+channel size in the intermediate one by
+
+00:17:43.919 --> 00:17:50.080
+once. Okay. So let's just think about
+
+00:17:46.720 --> 00:17:53.440
+three different channel size simplify
+
+00:17:50.080 --> 00:17:57.600
+for a little let's actually add special
+
+00:17:53.440 --> 00:18:01.360
+mixing at the first kind of pianu. So
+
+00:17:57.600 --> 00:18:04.000
+then padding one and now we can do the
+
+00:18:01.360 --> 00:18:07.039
+mixing of the channels. This will be
+
+00:18:04.000 --> 00:18:10.640
+convolution. But when we say kel one and
+
+00:18:07.039 --> 00:18:12.960
+this is the next one by one and we need
+
+00:18:10.640 --> 00:18:17.120
+another rebel.
+
+00:18:12.960 --> 00:18:20.799
+Okay. So let's check this out.
+
+00:18:17.120 --> 00:18:23.360
+We forget a comma here.
+
+00:18:20.799 --> 00:18:25.840
+So what we expect here? We expect that
+
+00:18:23.360 --> 00:18:29.120
+since we're not messing up the the image
+
+00:18:25.840 --> 00:18:32.240
+size and this common be in the loop and
+
+00:18:29.120 --> 00:18:35.360
+the rest is basically per pixel. There's
+
+00:18:32.240 --> 00:18:38.160
+no spatial changing. So the output will
+
+00:18:35.360 --> 00:18:41.440
+be the same spatial and we can control
+
+00:18:38.160 --> 00:18:43.679
+the channels with whatever channel size
+
+00:18:41.440 --> 00:18:46.000
+that we want to be in the middle or
+
+00:18:43.679 --> 00:18:48.480
+output. Remember the initial one is just
+
+00:18:46.000 --> 00:18:53.360
+the the raw input channel. Okay. So
+
+00:18:48.480 --> 00:18:55.919
+let's make the network. So name simpler
+
+00:18:53.360 --> 00:18:59.120
+NN module takes in the number of
+
+00:18:55.919 --> 00:19:04.520
+classes. It's a sequential of an NN
+
+00:18:59.120 --> 00:19:04.520
+block. Then we do a max pull over this.
+
+00:19:04.559 --> 00:19:10.880
+Then another block. Let's just make it
+
+00:19:07.679 --> 00:19:13.440
+simpler. And then another max pull.
+
+00:19:10.880 --> 00:19:16.720
+Okay. So then we need a classification
+
+00:19:13.440 --> 00:19:19.360
+head which is uh implemented by an
+
+00:19:16.720 --> 00:19:21.919
+adaptive average pooling. We could do
+
+00:19:19.360 --> 00:19:23.760
+average pooling without adaptive but
+
+00:19:21.919 --> 00:19:27.280
+basically we have to take care of all of
+
+00:19:23.760 --> 00:19:30.320
+these heights and weights even maybe in
+
+00:19:27.280 --> 00:19:32.640
+different batches. Uh here adaptive it
+
+00:19:30.320 --> 00:19:35.600
+be bins the heights and weights in a way
+
+00:19:32.640 --> 00:19:38.720
+that average the value of that channel
+
+00:19:35.600 --> 00:19:40.720
+in those beans and output that and send
+
+00:19:38.720 --> 00:19:43.520
+it to the classifier and the classifier
+
+00:19:40.720 --> 00:19:46.559
+is basically a linear regression fully
+
+00:19:43.520 --> 00:19:50.400
+connected classification linear
+
+00:19:46.559 --> 00:19:55.200
+regression takes in 64 features gives
+
+00:19:50.400 --> 00:19:58.919
+out the logic values for each classes.
+
+00:19:55.200 --> 00:19:58.919
+Now the folder.
+
+00:19:59.520 --> 00:20:05.960
+That's it. Let's count the number of
+
+00:20:02.240 --> 00:20:05.960
+parameters here.
+
+00:20:08.160 --> 00:20:12.600
+Okay, there's an error here.
+
+00:20:13.760 --> 00:20:21.760
+Oh, I see. But got 32 got 64.
+
+00:20:20.160 --> 00:20:23.760
+Okay.
+
+00:20:21.760 --> 00:20:27.200
+So let's compare the number of
+
+00:20:23.760 --> 00:20:30.480
+parameters between the NIN simpler and
+
+00:20:27.200 --> 00:20:32.640
+the VGG. And as you will as you see
+
+00:20:30.480 --> 00:20:35.440
+here, we're looking at half a million
+
+00:20:32.640 --> 00:20:38.480
+compared to 30,000.
+
+00:20:35.440 --> 00:20:42.480
+That's a huge difference.
+
+00:20:38.480 --> 00:20:44.159
+Okay. So to do the training uh here I
+
+00:20:42.480 --> 00:20:45.760
+repeated the code from before the
+
+00:20:44.159 --> 00:20:49.679
+auxiliary code that we wrote for the
+
+00:20:45.760 --> 00:20:52.480
+loaders and training and recall that we
+
+00:20:49.679 --> 00:20:55.440
+use the transform to tensor for both uh
+
+00:20:52.480 --> 00:20:58.480
+training and validation data when we are
+
+00:20:55.440 --> 00:21:01.840
+feeding feeding to the model. Here I
+
+00:20:58.480 --> 00:21:04.559
+want to use this movement to add u
+
+00:21:01.840 --> 00:21:06.640
+another concept that basically is called
+
+00:21:04.559 --> 00:21:09.840
+data augmentation.
+
+00:21:06.640 --> 00:21:13.120
+So the idea is for image data we have
+
+00:21:09.840 --> 00:21:17.120
+this convolutional neural network that
+
+00:21:13.120 --> 00:21:21.200
+gives a translation equivalence for us
+
+00:21:17.120 --> 00:21:24.880
+but we want the model to be able to do
+
+00:21:21.200 --> 00:21:27.600
+the detection for an image that is taken
+
+00:21:24.880 --> 00:21:30.240
+night or during the day. So these two
+
+00:21:27.600 --> 00:21:32.640
+image have different lighting condition
+
+00:21:30.240 --> 00:21:35.120
+different colors and we want the model
+
+00:21:32.640 --> 00:21:38.799
+to be invariant to them too. So in those
+
+00:21:35.120 --> 00:21:42.480
+cases what we can do is to just feed the
+
+00:21:38.799 --> 00:21:44.880
+model with images in those condition and
+
+00:21:42.480 --> 00:21:47.840
+because the labeling are the same we
+
+00:21:44.880 --> 00:21:52.080
+expect the model to become robust
+
+00:21:47.840 --> 00:21:55.679
+against those variations. So here we can
+
+00:21:52.080 --> 00:21:57.360
+look at a horizontal flip. For example,
+
+00:21:55.679 --> 00:22:00.080
+if you have a cat and you flip the
+
+00:21:57.360 --> 00:22:03.360
+image, it is still a cat. And you can
+
+00:22:00.080 --> 00:22:06.320
+also add some
+
+00:22:03.360 --> 00:22:09.120
+probability that every
+
+00:22:06.320 --> 00:22:11.600
+uh in every 10 image
+
+00:22:09.120 --> 00:22:13.600
+flip one of them when you're feeding to
+
+00:22:11.600 --> 00:22:16.159
+the model.
+
+00:22:13.600 --> 00:22:19.679
+The common one like for example we can
+
+00:22:16.159 --> 00:22:22.960
+do random rotation for example.
+
+00:22:19.679 --> 00:22:26.799
+We can do cropping, random crop, random
+
+00:22:22.960 --> 00:22:30.480
+pie. They all keep the same. But it's
+
+00:22:26.799 --> 00:22:33.120
+important to remember
+
+00:22:30.480 --> 00:22:35.679
+we only augment the data during
+
+00:22:33.120 --> 00:22:39.440
+training, not during validation.
+
+00:22:35.679 --> 00:22:42.480
+And sometimes uh when uh we use
+
+00:22:39.440 --> 00:22:44.559
+pre-trained model uh we should be more
+
+00:22:42.480 --> 00:22:46.960
+strategic in the way that we are doing
+
+00:22:44.559 --> 00:22:49.679
+this augmentation. For example, two
+
+00:22:46.960 --> 00:22:52.559
+strong transformation. If you change the
+
+00:22:49.679 --> 00:22:55.679
+angle for for example for a building it
+
+00:22:52.559 --> 00:22:58.159
+may break the class identity. So it's
+
+00:22:55.679 --> 00:23:01.919
+important to know how strong should be
+
+00:22:58.159 --> 00:23:04.000
+this augmentation. Uh sometimes it
+
+00:23:01.919 --> 00:23:05.760
+doesn't really help a lot in feature
+
+00:23:04.000 --> 00:23:08.799
+learning because we have a very strong
+
+00:23:05.760 --> 00:23:10.880
+pre-trained model that already does a
+
+00:23:08.799 --> 00:23:13.679
+great job in feature learning. We only
+
+00:23:10.880 --> 00:23:17.360
+need to change the classification.
+
+00:23:13.679 --> 00:23:19.840
+So we may not need this augmentation. So
+
+00:23:17.360 --> 00:23:23.280
+like I said it is important to decide
+
+00:23:19.840 --> 00:23:24.880
+where to use it.
+
+00:23:23.280 --> 00:23:27.360
+Okay.
+
+00:23:24.880 --> 00:23:30.240
+So with that let's do the training.
+
+00:23:27.360 --> 00:23:33.600
+Okay. There is an error. Let's see
+
+00:23:30.240 --> 00:23:36.080
+what's going on. Imp place operation.
+
+00:23:33.600 --> 00:23:39.320
+Something is wrong with our rel. Let's
+
+00:23:36.080 --> 00:23:39.320
+go back.
+
+00:23:39.919 --> 00:23:44.360
+Oh, I see we have relution
+
+00:23:45.120 --> 00:23:52.159
+and re. So we don't need this. That's
+
+00:23:48.320 --> 00:23:55.360
+not the case in VGC. Uh okay, great. So
+
+00:23:52.159 --> 00:23:58.799
+this should do it.
+
+00:23:55.360 --> 00:24:00.640
+So I see the results are back and let's
+
+00:23:58.799 --> 00:24:03.760
+just look at the validation accuracy
+
+00:24:00.640 --> 00:24:06.880
+here and the VG is going up and we
+
+00:24:03.760 --> 00:24:09.760
+already broke the 90%. with just a few
+
+00:24:06.880 --> 00:24:12.320
+epochs and we see a respectable
+
+00:24:09.760 --> 00:24:15.200
+performance for the networking network
+
+00:24:12.320 --> 00:24:18.000
+almost as good as linet and remember
+
+00:24:15.200 --> 00:24:20.240
+compare the number of parameters we're
+
+00:24:18.000 --> 00:24:24.480
+achieving that with much less parameters
+
+00:24:20.240 --> 00:24:27.120
+to care of two situations one was the
+
+00:24:24.480 --> 00:24:29.840
+blow up of the dimension with this one
+
+00:24:27.120 --> 00:24:31.919
+by ones the other one was taking care of
+
+00:24:29.840 --> 00:24:34.720
+this many parameters in the fully
+
+00:24:31.919 --> 00:24:37.440
+connected classification head and then
+
+00:24:34.720 --> 00:24:39.919
+we came up with these blocks that can do
+
+00:24:37.440 --> 00:24:42.159
+optimal performance while help us doing
+
+00:24:39.919 --> 00:24:44.400
+our designs. So the next important
+
+00:24:42.159 --> 00:24:47.039
+modification is how can we achieve
+
+00:24:44.400 --> 00:24:50.080
+deeper architecture
+
+00:24:47.039 --> 00:24:52.480
+that's where the idea of inception nets
+
+00:24:50.080 --> 00:24:55.919
+uh comes in. So back then we still
+
+00:24:52.480 --> 00:24:58.960
+didn't have ResNet, a way to go deeper
+
+00:24:55.919 --> 00:25:01.600
+without gradient vanishing. But now that
+
+00:24:58.960 --> 00:25:04.400
+we have this one by one convolution, it
+
+00:25:01.600 --> 00:25:06.960
+basically took care of blockers for us
+
+00:25:04.400 --> 00:25:09.440
+to go with more layers. We took care of
+
+00:25:06.960 --> 00:25:11.919
+the blow up. Now we can stack more
+
+00:25:09.440 --> 00:25:14.640
+layers. We know how to deal with heights
+
+00:25:11.919 --> 00:25:17.760
+and weights with padding and pulling.
+
+00:25:14.640 --> 00:25:20.799
+And we now can control the number of
+
+00:25:17.760 --> 00:25:23.120
+channels with this one by ones. And now
+
+00:25:20.799 --> 00:25:25.039
+with that we will talk about this new
+
+00:25:23.120 --> 00:25:27.760
+architecture. And don't worry we will
+
+00:25:25.039 --> 00:25:30.720
+zoom in into this blocks. But the idea
+
+00:25:27.760 --> 00:25:33.840
+here is we can stack many convolution
+
+00:25:30.720 --> 00:25:36.159
+and this inception blocks because of all
+
+00:25:33.840 --> 00:25:38.000
+this advancement that we had so far. So
+
+00:25:36.159 --> 00:25:40.640
+this is developed by Google. There is a
+
+00:25:38.000 --> 00:25:43.120
+lenit reference here for respect. But
+
+00:25:40.640 --> 00:25:45.840
+the idea is here now that we can b
+
+00:25:43.120 --> 00:25:48.799
+budget the parameters we can go deeper.
+
+00:25:45.840 --> 00:25:51.760
+And the other idea is we can also keep
+
+00:25:48.799 --> 00:25:54.960
+different scales in our convolution.
+
+00:25:51.760 --> 00:25:57.840
+Maybe if we look at different spatial
+
+00:25:54.960 --> 00:26:00.159
+scale at once we may find better
+
+00:25:57.840 --> 00:26:02.320
+features. So when we zoom in into the
+
+00:26:00.159 --> 00:26:05.440
+inception block firstly we have this one
+
+00:26:02.320 --> 00:26:08.240
+by ones that manage the the shape makes
+
+00:26:05.440 --> 00:26:11.360
+the channels prevents explosion of the
+
+00:26:08.240 --> 00:26:13.760
+dimensionality and then feed that to
+
+00:26:11.360 --> 00:26:16.000
+these two different kernamel sizes and
+
+00:26:13.760 --> 00:26:18.960
+they are looking at the image uh
+
+00:26:16.000 --> 00:26:21.600
+simultaneously speed out the found
+
+00:26:18.960 --> 00:26:24.159
+features and we concatenate all of these
+
+00:26:21.600 --> 00:26:26.400
+found features. So note that we have the
+
+00:26:24.159 --> 00:26:28.960
+one by one's if you think about it it's
+
+00:26:26.400 --> 00:26:31.760
+like a residual really uh it doesn't do
+
+00:26:28.960 --> 00:26:34.640
+any convolution after that and then we
+
+00:26:31.760 --> 00:26:37.279
+have another channel here basically
+
+00:26:34.640 --> 00:26:40.400
+pulls the information and gives to a one
+
+00:26:37.279 --> 00:26:44.400
+by one. All of these branches have their
+
+00:26:40.400 --> 00:26:48.159
+own nonlinearity injected and here the
+
+00:26:44.400 --> 00:26:50.000
+principles that we achieve is first of
+
+00:26:48.159 --> 00:26:52.720
+all we are not committed to a single
+
+00:26:50.000 --> 00:26:55.919
+scale we are using different kernels.
+
+00:26:52.720 --> 00:26:57.840
+The height and widths will be preserved.
+
+00:26:55.919 --> 00:27:00.080
+Of course we will have many channels
+
+00:26:57.840 --> 00:27:03.200
+because we concatenate all of this. The
+
+00:27:00.080 --> 00:27:05.360
+pooling channel here is also gives a
+
+00:27:03.200 --> 00:27:07.120
+shortcut about the context. For example,
+
+00:27:05.360 --> 00:27:10.320
+if it's an average like the average
+
+00:27:07.120 --> 00:27:13.440
+context or if it's smacks the most
+
+00:27:10.320 --> 00:27:16.159
+dominant uh concepts that can talk to
+
+00:27:13.440 --> 00:27:19.360
+the other features later. This way we
+
+00:27:16.159 --> 00:27:21.039
+solve this cost of going deeper to some
+
+00:27:19.360 --> 00:27:23.279
+extent. There's a lot of parallel
+
+00:27:21.039 --> 00:27:25.840
+computation. Of course, we inject a lot
+
+00:27:23.279 --> 00:27:28.480
+of nonlinearity with not a lot of
+
+00:27:25.840 --> 00:27:31.360
+parameters. So cheap nonlinearity still
+
+00:27:28.480 --> 00:27:34.559
+factoriz kernel smaller kernels stacking
+
+00:27:31.360 --> 00:27:38.000
+together. And long story short, this was
+
+00:27:34.559 --> 00:27:40.159
+not enough even after all of this. And
+
+00:27:38.000 --> 00:27:43.520
+that's where residual connections came
+
+00:27:40.159 --> 00:27:45.919
+in and resolved the depth problem. Okay,
+
+00:27:43.520 --> 00:27:48.320
+so to recap about ResNet, if you
+
+00:27:45.919 --> 00:27:52.559
+remember, we just add skip connection
+
+00:27:48.320 --> 00:27:54.480
+and learn only the FX here plus an X
+
+00:27:52.559 --> 00:27:58.880
+that we don't need to learn. Just a
+
+00:27:54.480 --> 00:28:02.159
+recap on what we can achieve with this
+
+00:27:58.880 --> 00:28:06.799
+uh baselines. For example, the net had
+
+00:28:02.159 --> 00:28:10.880
+about 60k about 45k of it was in the
+
+00:28:06.799 --> 00:28:12.640
+classification head. We achieved 89% uh
+
+00:28:10.880 --> 00:28:16.960
+validation accuracy but of course this
+
+00:28:12.640 --> 00:28:20.799
+is a large network. Then we discussed VG
+
+00:28:16.960 --> 00:28:24.240
+which uh about the same number of
+
+00:28:20.799 --> 00:28:28.240
+parameters but of course with more depth
+
+00:28:24.240 --> 00:28:31.520
+and it gives us I I would argue more
+
+00:28:28.240 --> 00:28:36.559
+than 90% and we just showed it in our
+
+00:28:31.520 --> 00:28:40.559
+code here even with seven epochs we can
+
+00:28:36.559 --> 00:28:43.360
+go even higher and then the networking
+
+00:28:40.559 --> 00:28:46.000
+network again here we see that it's
+
+00:28:43.360 --> 00:28:48.799
+going up. Of course, if we continue the
+
+00:28:46.000 --> 00:28:50.399
+epoch, we may get even better
+
+00:28:48.799 --> 00:28:53.279
+performance.
+
+00:28:50.399 --> 00:28:56.640
+And we are getting close to linet with
+
+00:28:53.279 --> 00:29:00.559
+much less parameters. And then if we go
+
+00:28:56.640 --> 00:29:03.279
+for resets again deeper architectures,
+
+00:29:00.559 --> 00:29:05.760
+you can hit even more and more
+
+00:29:03.279 --> 00:29:09.200
+validation accuracy. And we will see
+
+00:29:05.760 --> 00:29:12.320
+that uh in the assignment. Okay. So like
+
+00:29:09.200 --> 00:29:15.520
+I said, the idea is let's use all of
+
+00:29:12.320 --> 00:29:18.559
+let's go for an architecture that is
+
+00:29:15.520 --> 00:29:20.880
+even smaller but with a respectable
+
+00:29:18.559 --> 00:29:23.679
+performance. And the idea is we want to
+
+00:29:20.880 --> 00:29:26.880
+put this model on a on a phone for
+
+00:29:23.679 --> 00:29:29.200
+example on an edge device. And we know
+
+00:29:26.880 --> 00:29:31.679
+there are some limitations for example
+
+00:29:29.200 --> 00:29:34.480
+this much memory that we can use. So the
+
+00:29:31.679 --> 00:29:37.679
+model cannot be larger than this many
+
+00:29:34.480 --> 00:29:40.640
+parameters. So we want to be able to do
+
+00:29:37.679 --> 00:29:43.600
+our best with that given constraint. We
+
+00:29:40.640 --> 00:29:45.840
+want to engineer the model using all of
+
+00:29:43.600 --> 00:29:48.720
+these tips and tricks and principles
+
+00:29:45.840 --> 00:29:51.520
+that we learned. So we should know what
+
+00:29:48.720 --> 00:29:53.760
+are the extremes that we can go and then
+
+00:29:51.520 --> 00:29:57.600
+play within these extremes. So that's
+
+00:29:53.760 --> 00:30:00.880
+where the mobile nets come in. Like I
+
+00:29:57.600 --> 00:30:03.840
+said, these networks were designed for
+
+00:30:00.880 --> 00:30:06.880
+mobile or edge devices where we have
+
+00:30:03.840 --> 00:30:09.600
+this constraint of very small RAM tight
+
+00:30:06.880 --> 00:30:13.200
+latency and the budgets on energy
+
+00:30:09.600 --> 00:30:15.760
+battery power. So we have to reduce the
+
+00:30:13.200 --> 00:30:18.320
+number of parameters a lot without
+
+00:30:15.760 --> 00:30:21.039
+killing really the accuracy. We still
+
+00:30:18.320 --> 00:30:23.679
+want the spatial inductive bias. So we
+
+00:30:21.039 --> 00:30:27.120
+still need convolution. Let's go from
+
+00:30:23.679 --> 00:30:30.240
+this standard convolution where we do KK
+
+00:30:27.120 --> 00:30:32.880
+convolution and instead of doing this
+
+00:30:30.240 --> 00:30:35.840
+let's look at each channel each input
+
+00:30:32.880 --> 00:30:39.520
+channel for example in the case of RGB
+
+00:30:35.840 --> 00:30:42.080
+look at RG and B separately and do KK on
+
+00:30:39.520 --> 00:30:45.039
+each one of these filter by Kami KK
+
+00:30:42.080 --> 00:30:49.200
+convolution and then mix the channels
+
+00:30:45.039 --> 00:30:51.440
+separately for each pixel that's the N I
+
+00:30:49.200 --> 00:30:54.559
+style basically one one convolution so
+
+00:30:51.440 --> 00:30:56.960
+this way we split the spatial compute
+
+00:30:54.559 --> 00:30:58.720
+from the channel mixing and this will
+
+00:30:56.960 --> 00:31:00.799
+reduce the number of parameters
+
+00:30:58.720 --> 00:31:03.200
+significantly. For example, in the case
+
+00:31:00.799 --> 00:31:05.600
+of standard one here we have this many
+
+00:31:03.200 --> 00:31:08.880
+parameters but if we separate them we
+
+00:31:05.600 --> 00:31:11.520
+basically break the C out outside of
+
+00:31:08.880 --> 00:31:14.480
+this we're looking at about 10 times
+
+00:31:11.520 --> 00:31:16.399
+fewer parameters in a small block and
+
+00:31:14.480 --> 00:31:19.440
+when you stack them we're talking about
+
+00:31:16.399 --> 00:31:23.520
+exponentially less parameters. So like I
+
+00:31:19.440 --> 00:31:27.039
+said we will explore this ideas.
+
+00:31:23.520 --> 00:31:29.760
+So with all of these advances and all of
+
+00:31:27.039 --> 00:31:32.960
+this data the image data that we have
+
+00:31:29.760 --> 00:31:35.200
+out there some of these models achieve
+
+00:31:32.960 --> 00:31:38.559
+very good very good performance and we
+
+00:31:35.200 --> 00:31:42.559
+know that most of the features that we
+
+00:31:38.559 --> 00:31:45.279
+can find in in images are shared across
+
+00:31:42.559 --> 00:31:48.080
+different objects. The idea is well why
+
+00:31:45.279 --> 00:31:51.120
+should we retrain this convolution
+
+00:31:48.080 --> 00:31:53.440
+stacks or at least the early layers of
+
+00:31:51.120 --> 00:31:56.960
+it well when they are doing the same
+
+00:31:53.440 --> 00:31:59.679
+thing. So why don't we just go ahead and
+
+00:31:56.960 --> 00:32:02.720
+train a very good design stack of
+
+00:31:59.679 --> 00:32:05.360
+convolution layers and then use it for
+
+00:32:02.720 --> 00:32:07.919
+our classification per purposes. Maybe
+
+00:32:05.360 --> 00:32:11.919
+we just train the classification ad. So
+
+00:32:07.919 --> 00:32:15.360
+this idea is transfer learning and uh it
+
+00:32:11.919 --> 00:32:17.760
+means that we can copy a trained model
+
+00:32:15.360 --> 00:32:19.919
+freeze it uh we are not allowing any
+
+00:32:17.760 --> 00:32:23.360
+back propagation through its weight and
+
+00:32:19.919 --> 00:32:26.399
+we only back prop through our linear
+
+00:32:23.360 --> 00:32:29.200
+layers. we can generate a very large
+
+00:32:26.399 --> 00:32:31.919
+data set for example imageet that has
+
+00:32:29.200 --> 00:32:35.120
+about 14 million images and 1,000
+
+00:32:31.919 --> 00:32:38.159
+classes which requires a lot of time and
+
+00:32:35.120 --> 00:32:41.120
+compute to to train a model on this. But
+
+00:32:38.159 --> 00:32:44.240
+if we already have a model that has the
+
+00:32:41.120 --> 00:32:47.279
+weights trained for us that can work as
+
+00:32:44.240 --> 00:32:50.799
+a prior for us. So we will keep this
+
+00:32:47.279 --> 00:32:52.960
+prior and use it in our pipeline. And if
+
+00:32:50.799 --> 00:32:55.120
+we have more data we will train more.
+
+00:32:52.960 --> 00:32:58.559
+will go back and train. So for example,
+
+00:32:55.120 --> 00:33:01.120
+if we only train the head of this class
+
+00:32:58.559 --> 00:33:03.519
+head of this network, the classifier, we
+
+00:33:01.120 --> 00:33:06.320
+call this a linear probe. We basically
+
+00:33:03.519 --> 00:33:08.880
+use the feature extraction and we linear
+
+00:33:06.320 --> 00:33:11.919
+probe. If we want to train more, we want
+
+00:33:08.880 --> 00:33:15.039
+to go back more, we call it fine-tuning.
+
+00:33:11.919 --> 00:33:18.240
+For example, if we use a model that is
+
+00:33:15.039 --> 00:33:22.240
+trained on image nets with only a few
+
+00:33:18.240 --> 00:33:25.519
+epoch, we can achieve a 93% performance
+
+00:33:22.240 --> 00:33:28.960
+on fashion data. And we can if we have
+
+00:33:25.519 --> 00:33:31.919
+if we use more data from fashion, we can
+
+00:33:28.960 --> 00:33:35.679
+even fine-tune the last block and
+
+00:33:31.919 --> 00:33:38.559
+achieve 94%. But we'll see that in the
+
+00:33:35.679 --> 00:33:41.600
+assignment. Okay. So let's uh do a
+
+00:33:38.559 --> 00:33:43.760
+transfer learning and resonate
+
+00:33:41.600 --> 00:33:47.039
+architecture that is available from
+
+00:33:43.760 --> 00:33:50.399
+torch vision. So we will use the reset
+
+00:33:47.039 --> 00:33:53.679
+18 architecture. U so 18 comes from the
+
+00:33:50.399 --> 00:33:56.000
+18 layer of the network and you see that
+
+00:33:53.679 --> 00:33:59.600
+there are two different blocks here. If
+
+00:33:56.000 --> 00:34:03.120
+you look up at figure 863, the first
+
+00:33:59.600 --> 00:34:05.600
+block has this uh basic block that is
+
+00:34:03.120 --> 00:34:09.200
+very similar to what we wrote kind of a
+
+00:34:05.600 --> 00:34:12.560
+3x3 a batch norm relu kind of batch norm
+
+00:34:09.200 --> 00:34:14.399
+and uh relu here is not present. It's of
+
+00:34:12.560 --> 00:34:16.159
+skip and then relu. So that's the
+
+00:34:14.399 --> 00:34:19.119
+difference from the previous block that
+
+00:34:16.159 --> 00:34:21.359
+we wrote. Okay, going back here. So we
+
+00:34:19.119 --> 00:34:23.599
+are going to use this. There's m here
+
+00:34:21.359 --> 00:34:26.079
+that we are not touching. Most of these
+
+00:34:23.599 --> 00:34:28.399
+layers will not be touched during the
+
+00:34:26.079 --> 00:34:30.800
+transfer learning. We're going to do
+
+00:34:28.399 --> 00:34:34.240
+linear probe for FC. And if we want to
+
+00:34:30.800 --> 00:34:36.960
+do fine tuning, we may hold one of this
+
+00:34:34.240 --> 00:34:40.159
+last convolution layer. Okay. So with
+
+00:34:36.960 --> 00:34:42.639
+that, let's go to the code. Okay. So you
+
+00:34:40.159 --> 00:34:45.359
+see that in torch vision models, I'm
+
+00:34:42.639 --> 00:34:47.679
+importing reset 18 model and its
+
+00:34:45.359 --> 00:34:52.000
+weights. Note that here in the
+
+00:34:47.679 --> 00:34:54.879
+augmentation I put some transfers to to
+
+00:34:52.000 --> 00:34:57.119
+make sure the ResNet 18 works with our
+
+00:34:54.879 --> 00:35:00.560
+fashionist data because remember that
+
+00:34:57.119 --> 00:35:03.200
+the reset 18 is trained on imageet.
+
+00:35:00.560 --> 00:35:06.079
+Okay, with that the rest is basically
+
+00:35:03.200 --> 00:35:08.720
+like before and we are going to the
+
+00:35:06.079 --> 00:35:12.560
+model. So for now we are freezing the
+
+00:35:08.720 --> 00:35:15.839
+entire reset 18 and weights. So we are
+
+00:35:12.560 --> 00:35:17.839
+not activate gradients on that. So if we
+
+00:35:15.839 --> 00:35:20.880
+have freeze all it means that we are
+
+00:35:17.839 --> 00:35:22.480
+just linear probing. So all of them
+
+00:35:20.880 --> 00:35:24.960
+parameters
+
+00:35:22.480 --> 00:35:30.240
+will be frozen.
+
+00:35:24.960 --> 00:35:34.720
+So model here is res 18 trunk and here
+
+00:35:30.240 --> 00:35:36.800
+for the FC part we release the gradient
+
+00:35:34.720 --> 00:35:39.760
+and basically we allow gradient if we
+
+00:35:36.800 --> 00:35:44.560
+want to fine-tune. So if we have enough
+
+00:35:39.760 --> 00:35:47.440
+data to go and deeper and train the last
+
+00:35:44.560 --> 00:35:50.880
+convolution layer the layer four we can
+
+00:35:47.440 --> 00:35:53.839
+do this. So we allow a function here. So
+
+00:35:50.880 --> 00:35:57.599
+for linear probe like I said we are just
+
+00:35:53.839 --> 00:36:01.920
+training the FC and for finetune we also
+
+00:35:57.599 --> 00:36:04.320
+train the the last layer. The important
+
+00:36:01.920 --> 00:36:08.000
+thing here is we have different learning
+
+00:36:04.320 --> 00:36:10.640
+rate for the backbone and the head. uh
+
+00:36:08.000 --> 00:36:12.640
+when we are doing fine-tuning we allow
+
+00:36:10.640 --> 00:36:14.240
+larger learning rate for the for the
+
+00:36:12.640 --> 00:36:16.640
+classification head and very
+
+00:36:14.240 --> 00:36:19.280
+conservative learning rate for the force
+
+00:36:16.640 --> 00:36:22.240
+layer of convolution that's it we can do
+
+00:36:19.280 --> 00:36:25.280
+the training and test this out so this
+
+00:36:22.240 --> 00:36:28.079
+takes some time but since you guys have
+
+00:36:25.280 --> 00:36:32.040
+a similar result in the assignment I'm
+
+00:36:28.079 --> 00:36:32.040
+going to stop Yeah.

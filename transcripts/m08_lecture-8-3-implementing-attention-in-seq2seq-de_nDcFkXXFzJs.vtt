@@ -1,0 +1,1465 @@
+WEBVTT
+
+00:00:03.360 --> 00:00:12.000
+Okay. So let's um add uh attention to
+
+00:00:08.160 --> 00:00:15.599
+our sick to seek model
+
+00:00:12.000 --> 00:00:19.279
+for a very simple example that uh we can
+
+00:00:15.599 --> 00:00:23.039
+cook along the way and we want to see
+
+00:00:19.279 --> 00:00:25.600
+how it allow the decoder to have a
+
+00:00:23.039 --> 00:00:29.599
+differentiable access to all of these
+
+00:00:25.600 --> 00:00:31.920
+encoder states. Okay. So for this I'm
+
+00:00:29.599 --> 00:00:36.239
+going to
+
+00:00:31.920 --> 00:00:38.320
+assume um a very simple minimal reverse
+
+00:00:36.239 --> 00:00:41.680
+task meaning that let's say we have an
+
+00:00:38.320 --> 00:00:44.559
+input of uh
+
+00:00:41.680 --> 00:00:50.399
+integers let's say x1
+
+00:00:44.559 --> 00:00:53.120
+x2 dta until xt and then uh we want to
+
+00:00:50.399 --> 00:00:56.559
+learn how to reverse this. So given an
+
+00:00:53.120 --> 00:01:00.559
+input like that we want the neural
+
+00:00:56.559 --> 00:01:05.439
+network to learn uh the reversal task.
+
+00:01:00.559 --> 00:01:10.560
+Okay. So the reverse will be t minus one
+
+00:01:05.439 --> 00:01:13.040
+dot x1 until end of the sentence. Okay.
+
+00:01:10.560 --> 00:01:18.479
+So this is basically like the contract
+
+00:01:13.040 --> 00:01:21.280
+that uh we want to have the model solve.
+
+00:01:18.479 --> 00:01:24.159
+So why reverse? because well the first
+
+00:01:21.280 --> 00:01:27.040
+output depends on the last input which
+
+00:01:24.159 --> 00:01:29.200
+requires a long range dependency.
+
+00:01:27.040 --> 00:01:32.320
+Somehow it stresses the fixed size
+
+00:01:29.200 --> 00:01:35.280
+bottleneck and showcases showcases how
+
+00:01:32.320 --> 00:01:39.360
+and showcases how attention
+
+00:01:35.280 --> 00:01:43.840
+removes this bottleneck. Okay.
+
+00:01:39.360 --> 00:01:46.560
+So just to do a recap uh we have uh data
+
+00:01:43.840 --> 00:01:50.399
+pooling using attention let's say an
+
+00:01:46.560 --> 00:01:54.799
+alpha going to get alpha from somewhere.
+
+00:01:50.399 --> 00:01:57.360
+Okay. So let's do a recap on uh the
+
+00:01:54.799 --> 00:02:01.200
+formulation of attention. uh we are
+
+00:01:57.360 --> 00:02:03.840
+going to do the simplest possible form
+
+00:02:01.200 --> 00:02:08.959
+of that and then maybe along the way we
+
+00:02:03.840 --> 00:02:11.360
+can tweak it as we learn data pooling um
+
+00:02:08.959 --> 00:02:14.720
+that learns its uh similarity between
+
+00:02:11.360 --> 00:02:19.280
+the date it's here the query or the
+
+00:02:14.720 --> 00:02:22.319
+decoder state and the keys or encoder
+
+00:02:19.280 --> 00:02:25.280
+state and this way after the softmax we
+
+00:02:22.319 --> 00:02:27.599
+get this waitings and using this waiting
+
+00:02:25.280 --> 00:02:30.239
+we have this weighted sum at the values
+
+00:02:27.599 --> 00:02:33.680
+and then we use alpha for this weighted
+
+00:02:30.239 --> 00:02:36.560
+sum that gives us the context uh that we
+
+00:02:33.680 --> 00:02:39.200
+will use for the next decoder state. So
+
+00:02:36.560 --> 00:02:43.599
+remember that we call this c in a
+
+00:02:39.200 --> 00:02:45.680
+formulation and uh to compute a we use
+
+00:02:43.599 --> 00:02:49.200
+the scale.product product that recall
+
+00:02:45.680 --> 00:02:54.400
+that we also had a rotation on Q and K
+
+00:02:49.200 --> 00:02:57.840
+using WQ and WV WK let's import some
+
+00:02:54.400 --> 00:03:00.640
+modules and then we'll set up the this
+
+00:02:57.840 --> 00:03:03.280
+problem that we discussed here okay so
+
+00:03:00.640 --> 00:03:08.319
+let's make the
+
+00:03:03.280 --> 00:03:11.519
+um a simple example or data let's say of
+
+00:03:08.319 --> 00:03:14.480
+20 possible different integers so we are
+
+00:03:11.519 --> 00:03:19.519
+looking at vocabulary size of I need um
+
+00:03:14.480 --> 00:03:22.239
+let's give a pipe token of um zero. So
+
+00:03:19.519 --> 00:03:25.200
+this is the token for the paddings.
+
+00:03:22.239 --> 00:03:29.200
+Since this a seek to seek, we will have
+
+00:03:25.200 --> 00:03:31.760
+padding in the cases that the number of
+
+00:03:29.200 --> 00:03:34.959
+uh input sequence is less than the
+
+00:03:31.760 --> 00:03:38.319
+maximum sequence size. Okay. So let's
+
+00:03:34.959 --> 00:03:42.159
+have a start of sequence token.
+
+00:03:38.319 --> 00:03:45.360
+Let's just give it a vocap size plus two
+
+00:03:42.159 --> 00:03:50.239
+plus one here which basically we we make
+
+00:03:45.360 --> 00:03:55.120
+it 21 and an end of sequence token plus
+
+00:03:50.239 --> 00:03:58.480
+two and we have a max length um
+
+00:03:55.120 --> 00:04:01.840
+basically what I mean the total
+
+00:03:58.480 --> 00:04:05.599
+vocab size
+
+00:04:01.840 --> 00:04:08.159
+which here will be wap size plus three
+
+00:04:05.599 --> 00:04:12.000
+and note that that yes we are working
+
+00:04:08.159 --> 00:04:15.200
+with this um integers but we could
+
+00:04:12.000 --> 00:04:18.160
+easily had uh text for example or words
+
+00:04:15.200 --> 00:04:19.600
+that we we wanted to do the reversal uh
+
+00:04:18.160 --> 00:04:22.400
+but here we don't want to deal with the
+
+00:04:19.600 --> 00:04:24.639
+text processing tokenization vocabulary
+
+00:04:22.400 --> 00:04:28.639
+building we just basically generate this
+
+00:04:24.639 --> 00:04:31.280
+random sequences and NLP aspects is not
+
+00:04:28.639 --> 00:04:35.280
+of our interest for now okay so these
+
+00:04:31.280 --> 00:04:39.120
+are this is the uh dimensions of each
+
+00:04:35.280 --> 00:04:41.280
+RNN cell that we'll need together for
+
+00:04:39.120 --> 00:04:44.400
+the encoder and decoder. So we are
+
+00:04:41.280 --> 00:04:47.360
+looking at a 32 two-dimensional
+
+00:04:44.400 --> 00:04:49.120
+uh hidden state or embedding that will
+
+00:04:47.360 --> 00:04:53.120
+be
+
+00:04:49.120 --> 00:04:59.680
+carried over in this RNN cells and let's
+
+00:04:53.120 --> 00:05:01.280
+use uh GRU cells and um we are making um
+
+00:04:59.680 --> 00:05:05.280
+1,500
+
+00:05:01.280 --> 00:05:08.080
+number of samples or training pairs
+
+00:05:05.280 --> 00:05:10.960
+and uh the batch size 64 number of
+
+00:05:08.080 --> 00:05:14.800
+epochs 80 and let's assume in two
+
+00:05:10.960 --> 00:05:17.039
+different cases. Let's uh one time we
+
+00:05:14.800 --> 00:05:20.240
+train we can train this uh architecture
+
+00:05:17.039 --> 00:05:22.400
+with a short sequence of size five and
+
+00:05:20.240 --> 00:05:25.199
+then one time with a longer sequence of
+
+00:05:22.400 --> 00:05:27.680
+size 20 which is much more difficult. So
+
+00:05:25.199 --> 00:05:30.720
+these are the two possible sequences
+
+00:05:27.680 --> 00:05:34.560
+that we want the model to handle. Let's
+
+00:05:30.720 --> 00:05:38.800
+make a data set class that makes this
+
+00:05:34.560 --> 00:05:41.919
+example pairs with shape handling and um
+
+00:05:38.800 --> 00:05:44.240
+tokenization that we discussed. So this
+
+00:05:41.919 --> 00:05:46.960
+here is the class
+
+00:05:44.240 --> 00:05:49.120
+and for example if you want to sample
+
+00:05:46.960 --> 00:05:52.320
+the short sequences or long sequences we
+
+00:05:49.120 --> 00:05:55.280
+can do it using this. So now we have the
+
+00:05:52.320 --> 00:05:58.080
+the data set for the short and long
+
+00:05:55.280 --> 00:06:00.800
+sequences. For example, if you want to
+
+00:05:58.080 --> 00:06:04.080
+look at the the first example in short
+
+00:06:00.800 --> 00:06:08.319
+sequence, here is the example.
+
+00:06:04.080 --> 00:06:10.400
+So we get uh we take in this value. This
+
+00:06:08.319 --> 00:06:13.440
+is token 21 which is the start of
+
+00:06:10.400 --> 00:06:16.720
+sequence and then the reversal. So if
+
+00:06:13.440 --> 00:06:19.120
+you assume that we have this decoder
+
+00:06:16.720 --> 00:06:21.199
+output. Okay. So let's make the vanilla
+
+00:06:19.120 --> 00:06:23.600
+encoder something that you already know.
+
+00:06:21.199 --> 00:06:27.199
+So I will be fast and just include the
+
+00:06:23.600 --> 00:06:29.280
+code. So this here is the our encoder
+
+00:06:27.199 --> 00:06:32.319
+which is a GRU
+
+00:06:29.280 --> 00:06:35.919
+and we know how it works. So let's write
+
+00:06:32.319 --> 00:06:40.080
+the decoder and here is the decoder same
+
+00:06:35.919 --> 00:06:41.680
+GRU cell RNN. Okay. So during the
+
+00:06:40.080 --> 00:06:44.479
+training of course we are using teacher
+
+00:06:41.680 --> 00:06:46.560
+forcing meaning that we are using the
+
+00:06:44.479 --> 00:06:49.039
+ground truth token instead of the
+
+00:06:46.560 --> 00:06:52.400
+model's prediction but that's uh not
+
+00:06:49.039 --> 00:06:54.800
+possible during the inference. So that
+
+00:06:52.400 --> 00:06:57.199
+ground truth token we call it gold
+
+00:06:54.800 --> 00:06:59.520
+tokens. Just remember if you heard that.
+
+00:06:57.199 --> 00:07:01.759
+Okay. So and remember that here the
+
+00:06:59.520 --> 00:07:06.400
+decoder state takes in the entire
+
+00:07:01.759 --> 00:07:08.880
+sequence. This makes uh uh some um
+
+00:07:06.400 --> 00:07:10.800
+optimization behind the scene. It's not
+
+00:07:08.880 --> 00:07:13.759
+really parallelization.
+
+00:07:10.800 --> 00:07:15.360
+Basically it it's much better than a for
+
+00:07:13.759 --> 00:07:18.080
+loop.
+
+00:07:15.360 --> 00:07:21.039
+um the real parallelization will happen
+
+00:07:18.080 --> 00:07:23.440
+later when we go to self attention and
+
+00:07:21.039 --> 00:07:27.039
+transformers. So that's the decoder. Now
+
+00:07:23.440 --> 00:07:31.120
+let's uh write the seek to seek class.
+
+00:07:27.039 --> 00:07:33.919
+So class uh vanilla seek to seek which
+
+00:07:31.120 --> 00:07:36.880
+has the encoder and decoder and and this
+
+00:07:33.919 --> 00:07:41.120
+is the forward methods. Okay, great. So
+
+00:07:36.880 --> 00:07:43.520
+with that let's implement the seek to
+
+00:07:41.120 --> 00:07:45.680
+seek with attention. So first we need to
+
+00:07:43.520 --> 00:07:48.560
+write the attention mechanism
+
+00:07:45.680 --> 00:07:52.240
+scale.product attention. Okay. So for
+
+00:07:48.560 --> 00:07:55.240
+that let's write the class attention
+
+00:07:52.240 --> 00:07:55.240
+mechanism.
+
+00:07:56.000 --> 00:08:01.039
+So we compute the scores and then we
+
+00:07:58.800 --> 00:08:04.319
+compute the softmax
+
+00:08:01.039 --> 00:08:07.440
+weights and then we do the kernel
+
+00:08:04.319 --> 00:08:11.120
+regression for the context. In this case
+
+00:08:07.440 --> 00:08:13.840
+of RNN V happens to be the same as the
+
+00:08:11.120 --> 00:08:16.800
+hidden state. Okay. So here I note that
+
+00:08:13.840 --> 00:08:19.199
+I used an implicit WV. It's not really
+
+00:08:16.800 --> 00:08:24.440
+necessary here.
+
+00:08:19.199 --> 00:08:24.440
+Okay. So with that the init
+
+00:08:30.560 --> 00:08:37.039
+we need hidden dimension and just
+
+00:08:33.919 --> 00:08:39.680
+simplify the syntax. I know that I told
+
+00:08:37.039 --> 00:08:42.640
+you to do the good practice, but here
+
+00:08:39.680 --> 00:08:45.200
+don't want a screen splash. I want you
+
+00:08:42.640 --> 00:08:48.800
+to pay attention to what matters at this
+
+00:08:45.200 --> 00:08:51.120
+point. So, we need WQ, which is a
+
+00:08:48.800 --> 00:08:53.839
+linear. Remember, this is just a
+
+00:08:51.120 --> 00:08:57.680
+rotation. It's not a fine
+
+00:08:53.839 --> 00:09:01.519
+transformation. And another linear for W
+
+00:08:57.680 --> 00:09:03.920
+K. And same deal. Like I said, I don't
+
+00:09:01.519 --> 00:09:06.720
+really need this, so let's just forget
+
+00:09:03.920 --> 00:09:08.720
+that for now. We are opting for
+
+00:09:06.720 --> 00:09:11.279
+simplicity.
+
+00:09:08.720 --> 00:09:14.080
+We need the scaling which is basically
+
+00:09:11.279 --> 00:09:17.360
+this variance stabilization that we
+
+00:09:14.080 --> 00:09:20.320
+discussed. So, so we need a float output
+
+00:09:17.360 --> 00:09:22.640
+of npubr
+
+00:09:20.320 --> 00:09:26.240
+pen dimension. So, this is like I said
+
+00:09:22.640 --> 00:09:31.000
+that one over u square root of dk. Good.
+
+00:09:26.240 --> 00:09:31.000
+So, let's write the forward method.
+
+00:09:34.000 --> 00:09:41.600
+Um we have the query Q and the cheese.
+
+00:09:40.000 --> 00:09:45.040
+And
+
+00:09:41.600 --> 00:09:49.200
+with that remember a query is uh the
+
+00:09:45.040 --> 00:09:53.839
+current decoder state of size batch and
+
+00:09:49.200 --> 00:09:57.440
+hidden uh keys is of course uh the
+
+00:09:53.839 --> 00:10:01.120
+sequence length and we return the
+
+00:09:57.440 --> 00:10:03.120
+context of size batch and hidden and
+
+00:10:01.120 --> 00:10:08.000
+then at the end
+
+00:10:03.120 --> 00:10:10.560
+weight which is the size of batch and uh
+
+00:10:08.000 --> 00:10:14.560
+sequence input sequence length.
+
+00:10:10.560 --> 00:10:17.440
+So we are returning not just this we are
+
+00:10:14.560 --> 00:10:22.480
+also returning the context. So what I
+
+00:10:17.440 --> 00:10:24.640
+mean is this. So the context
+
+00:10:22.480 --> 00:10:27.040
+which is the kernel regression and then
+
+00:10:24.640 --> 00:10:29.760
+we are doing it for the number of
+
+00:10:27.040 --> 00:10:33.240
+encoder states. Okay let's call it
+
+00:10:29.760 --> 00:10:33.240
+attention weights.
+
+00:10:34.240 --> 00:10:40.399
+Um, here we have that. Um, just to be in
+
+00:10:38.480 --> 00:10:43.360
+line with what I said at the beginning,
+
+00:10:40.399 --> 00:10:47.040
+I'm going to just call it Q and K. But
+
+00:10:43.360 --> 00:10:52.720
+this is really the uppercase Q and K in
+
+00:10:47.040 --> 00:10:56.800
+the notes. Okay. So, we have a 2D tensor
+
+00:10:52.720 --> 00:11:00.320
+Q and a 3D tensor K.
+
+00:10:56.800 --> 00:11:01.920
+And now we want to compute the matrix
+
+00:11:00.320 --> 00:11:04.560
+multiplication.
+
+00:11:01.920 --> 00:11:07.360
+But we want to use batch matrix
+
+00:11:04.560 --> 00:11:10.880
+multiplication which requires uh tensors
+
+00:11:07.360 --> 00:11:14.320
+of the same dimension. So with that I'm
+
+00:11:10.880 --> 00:11:16.320
+going to just add another dimension here
+
+00:11:14.320 --> 00:11:19.120
+in a safe way. We know how to do it
+
+00:11:16.320 --> 00:11:22.640
+using unsqueeze. So let's do it. And
+
+00:11:19.120 --> 00:11:26.240
+this will return this and then we can do
+
+00:11:22.640 --> 00:11:30.320
+batch matrix multiplication using uh
+
+00:11:26.240 --> 00:11:33.920
+torch bmm. So torch bmm will give us the
+
+00:11:30.320 --> 00:11:36.079
+scores. So this is scores and um this is
+
+00:11:33.920 --> 00:11:39.200
+basically what we were wishing for the
+
+00:11:36.079 --> 00:11:42.480
+inner product in a uh the most efficient
+
+00:11:39.200 --> 00:11:45.839
+way that capitalize all of this
+
+00:11:42.480 --> 00:11:48.160
+resources that we have right okay so how
+
+00:11:45.839 --> 00:11:50.399
+to get the attention weights we
+
+00:11:48.160 --> 00:11:53.839
+basically do the soft max we doing it
+
+00:11:50.399 --> 00:11:58.399
+from the functional from the scores and
+
+00:11:53.839 --> 00:12:01.760
+we do the soft max over dimension two so
+
+00:11:58.399 --> 00:12:06.480
+remember the dimension of T maybe it's
+
+00:12:01.760 --> 00:12:10.320
+good to explain why here. So uh here in
+
+00:12:06.480 --> 00:12:14.959
+this uh scores when we do the batch math
+
+00:12:10.320 --> 00:12:20.560
+mall so we basically do a multiplication
+
+00:12:14.959 --> 00:12:22.399
+of tensor of size this with a tensor of
+
+00:12:20.560 --> 00:12:27.920
+size
+
+00:12:22.399 --> 00:12:31.680
+which returns tensor of size B1 and G.
+
+00:12:27.920 --> 00:12:37.600
+So this will return tensor of size. This
+
+00:12:31.680 --> 00:12:43.920
+this is another matal f sizing batch t
+
+00:12:37.600 --> 00:12:45.760
+in h which returns h one h right okay
+
+00:12:43.920 --> 00:12:48.959
+great so that's the context and we can
+
+00:12:45.760 --> 00:12:51.360
+basically return the squeeze version of
+
+00:12:48.959 --> 00:12:54.160
+them. So remember that we only unsqueeze
+
+00:12:51.360 --> 00:12:56.079
+for the batch multiplication. Uh that's
+
+00:12:54.160 --> 00:12:59.120
+the attention mechanism. We're done with
+
+00:12:56.079 --> 00:13:01.440
+that. We just need to write the encoder.
+
+00:12:59.120 --> 00:13:03.920
+Uh so like I said, I need an encoder
+
+00:13:01.440 --> 00:13:06.240
+that returns all of this hidden states.
+
+00:13:03.920 --> 00:13:07.680
+Let's call it attention encoder even
+
+00:13:06.240 --> 00:13:10.160
+though there's no attention really
+
+00:13:07.680 --> 00:13:12.800
+within this. We just return everything
+
+00:13:10.160 --> 00:13:14.959
+for the attention decoder. Okay. So it's
+
+00:13:12.800 --> 00:13:17.519
+basically the same thing just returns
+
+00:13:14.959 --> 00:13:21.600
+all of the Okay, I added some
+
+00:13:17.519 --> 00:13:27.959
+commentation for you. Um okay, now let's
+
+00:13:21.600 --> 00:13:27.959
+write uh attention decoder. Here
+
+00:13:29.120 --> 00:13:34.959
+in this class, we want to basically do a
+
+00:13:32.160 --> 00:13:38.000
+one-step decoder attention. I mean at
+
+00:13:34.959 --> 00:13:41.279
+each step, if you remember indexed by t,
+
+00:13:38.000 --> 00:13:44.399
+we want to form a query from the current
+
+00:13:41.279 --> 00:13:48.000
+decoder hidden state which is h t minus
+
+00:13:44.399 --> 00:13:51.519
+one. And we want to compute attention
+
+00:13:48.000 --> 00:13:53.760
+weights over encoder outputs. And then
+
+00:13:51.519 --> 00:13:58.079
+using that tension weights we
+
+00:13:53.760 --> 00:14:01.120
+concatenate the computed context T and
+
+00:13:58.079 --> 00:14:04.240
+the embedding T giving we give it to the
+
+00:14:01.120 --> 00:14:07.680
+GRU cell and predict the next token
+
+00:14:04.240 --> 00:14:10.240
+distribution from this output T and
+
+00:14:07.680 --> 00:14:11.920
+context T. So I will write this down. So
+
+00:14:10.240 --> 00:14:16.880
+this is basically what we are trying to
+
+00:14:11.920 --> 00:14:20.839
+do and with that let's write the init.
+
+00:14:16.880 --> 00:14:20.839
+We need the hidden dimension
+
+00:14:22.000 --> 00:14:25.800
+self embedding.
+
+00:14:28.720 --> 00:14:34.160
+Remember we have this total
+
+00:14:31.839 --> 00:14:36.639
+vocabulary size. We have the hidden
+
+00:14:34.160 --> 00:14:40.120
+dimension. Oops. And then let's write
+
+00:14:36.639 --> 00:14:40.120
+the self attention
+
+00:14:43.440 --> 00:14:49.279
+which is an attention mechanism says a
+
+00:14:45.920 --> 00:14:52.279
+hidden deu
+
+00:14:49.279 --> 00:14:52.279
+cells.
+
+00:14:52.480 --> 00:14:59.839
+Okay, looks good.
+
+00:14:56.800 --> 00:15:02.800
+And then we have the FC that requires an
+
+00:14:59.839 --> 00:15:06.000
+input of size hidden dimension multiply
+
+00:15:02.800 --> 00:15:09.279
+by two. Now let's write the forward.
+
+00:15:06.000 --> 00:15:12.000
+What we have? We have X hidden encoder
+
+00:15:09.279 --> 00:15:14.240
+outputs. Great.
+
+00:15:12.000 --> 00:15:17.680
+And what's X is basically the current
+
+00:15:14.240 --> 00:15:19.920
+input token. Uh hidden is the previous
+
+00:15:17.680 --> 00:15:22.399
+decoder state.
+
+00:15:19.920 --> 00:15:24.560
+And the encoder outputs is basically all
+
+00:15:22.399 --> 00:15:26.959
+of these encoder states. And we want to
+
+00:15:24.560 --> 00:15:29.279
+return the logits the hidden everything
+
+00:15:26.959 --> 00:15:32.079
+at time t logits hidden and attention
+
+00:15:29.279 --> 00:15:34.240
+weights. Okay. So like I said we need
+
+00:15:32.079 --> 00:15:40.000
+the embedding. We are using the current
+
+00:15:34.240 --> 00:15:42.000
+in decoder state as our query B and H.
+
+00:15:40.000 --> 00:15:45.680
+Remember that still we need to do the
+
+00:15:42.000 --> 00:15:47.839
+concatenation and um of course we have
+
+00:15:45.680 --> 00:15:51.519
+to take care of that. Okay. So that's
+
+00:15:47.839 --> 00:15:53.680
+the query and now we have the query, we
+
+00:15:51.519 --> 00:15:56.880
+have the embedding, we can pass it to
+
+00:15:53.680 --> 00:16:00.959
+our attention. Okay, we have it here.
+
+00:15:56.880 --> 00:16:02.880
+Great. So query encoder outputs
+
+00:16:00.959 --> 00:16:06.959
+PHPT
+
+00:16:02.880 --> 00:16:08.959
+that's correct. Let's just simplify this
+
+00:16:06.959 --> 00:16:12.480
+is the context
+
+00:16:08.959 --> 00:16:16.160
+and uh this attention weight.
+
+00:16:12.480 --> 00:16:18.480
+Now we want to concatenate the token emo
+
+00:16:16.160 --> 00:16:23.040
+embedding with this context right and
+
+00:16:18.480 --> 00:16:25.279
+that will be the gru input. Okay we have
+
+00:16:23.040 --> 00:16:27.040
+it here
+
+00:16:25.279 --> 00:16:30.920
+cat
+
+00:16:27.040 --> 00:16:30.920
+embedding. Oh
+
+00:16:33.600 --> 00:16:38.720
+now that we have this rna input we can
+
+00:16:36.079 --> 00:16:41.360
+advance one grru step. So we have to
+
+00:16:38.720 --> 00:16:44.880
+concatenate the output and the context
+
+00:16:41.360 --> 00:16:47.839
+and then send them to the feed forward
+
+00:16:44.880 --> 00:16:51.920
+predictor. So first um let's call this
+
+00:16:47.839 --> 00:16:55.199
+the prediction input which is this
+
+00:16:51.920 --> 00:16:58.639
+output and here you see an unsque quiz
+
+00:16:55.199 --> 00:17:02.240
+to make sure they are they have the same
+
+00:16:58.639 --> 00:17:05.679
+dimensions and then we pass this to the
+
+00:17:02.240 --> 00:17:08.880
+feed forward or FC the fully connected
+
+00:17:05.679 --> 00:17:11.600
+prediction head predicts the token.
+
+00:17:08.880 --> 00:17:14.480
+Okay. And the output is the logits at
+
+00:17:11.600 --> 00:17:16.720
+time t.
+
+00:17:14.480 --> 00:17:19.199
+And then we are returning the hidden and
+
+00:17:16.720 --> 00:17:22.000
+attention weight. So we have everything
+
+00:17:19.199 --> 00:17:26.720
+to write our class. The class of
+
+00:17:22.000 --> 00:17:29.840
+attention seek to seek
+
+00:17:26.720 --> 00:17:32.960
+what we have here. Great. And then just
+
+00:17:29.840 --> 00:17:36.240
+like before a def code decode. Okay.
+
+00:17:32.960 --> 00:17:38.000
+Have that too. Okay. So let's do the
+
+00:17:36.240 --> 00:17:40.320
+training. Remember the training is with
+
+00:17:38.000 --> 00:17:42.480
+teacher forcing. What I mean is uh we
+
+00:17:40.320 --> 00:17:44.640
+feed the true previous token to the
+
+00:17:42.480 --> 00:17:47.440
+decoder during the training. Uh but of
+
+00:17:44.640 --> 00:17:50.000
+course we don't have that at inference
+
+00:17:47.440 --> 00:17:53.440
+time. The last will be the token level
+
+00:17:50.000 --> 00:17:56.880
+cross entropy over the entire t+1
+
+00:17:53.440 --> 00:18:00.000
+decoder steps of course including the
+
+00:17:56.880 --> 00:18:02.400
+end of sequence token. So we have to
+
+00:18:00.000 --> 00:18:06.160
+make sure in the cross entropy loss we
+
+00:18:02.400 --> 00:18:08.400
+will ignore the padding tokens. Uh
+
+00:18:06.160 --> 00:18:10.720
+that's the only thing that we should
+
+00:18:08.400 --> 00:18:14.960
+take care of. Okay. So with that let's
+
+00:18:10.720 --> 00:18:18.000
+write the train model. So we taking in
+
+00:18:14.960 --> 00:18:21.039
+model let's pass the learning rate too.
+
+00:18:18.000 --> 00:18:24.160
+So with that um just to write what I
+
+00:18:21.039 --> 00:18:27.440
+mean here about the train uh with the
+
+00:18:24.160 --> 00:18:31.440
+teacher forcing. Okay. So now the
+
+00:18:27.440 --> 00:18:34.000
+optimizer um let's do add
+
+00:18:31.440 --> 00:18:36.559
+okay so takes in model parameters
+
+00:18:34.000 --> 00:18:39.280
+learning rate okay criteria and cross
+
+00:18:36.559 --> 00:18:42.320
+entropy of course we got this as a
+
+00:18:39.280 --> 00:18:45.600
+suggestion that's great
+
+00:18:42.320 --> 00:18:48.880
+um before train just make sure you're
+
+00:18:45.600 --> 00:18:52.880
+sending it to device that's that uh
+
+00:18:48.880 --> 00:18:56.000
+loader is the data loader and that takes
+
+00:18:52.880 --> 00:18:58.000
+in the data set we have the batch size
+
+00:18:56.000 --> 00:19:00.720
+and everything. So let's just use that
+
+00:18:58.000 --> 00:19:03.520
+shuffle true. We don't need this. Okay.
+
+00:19:00.720 --> 00:19:07.280
+For epochs, let's before writing this
+
+00:19:03.520 --> 00:19:10.320
+just make sure we have empty list for
+
+00:19:07.280 --> 00:19:14.000
+recording the accuracies and also time
+
+00:19:10.320 --> 00:19:18.000
+let's do time. Okay. So for epoch in
+
+00:19:14.000 --> 00:19:21.120
+range we need the epoch loss to start
+
+00:19:18.000 --> 00:19:25.200
+epoch loss and correct and total we need
+
+00:19:21.120 --> 00:19:27.679
+to initiate this values. So our
+
+00:19:25.200 --> 00:19:31.280
+recording we want to initiate this for
+
+00:19:27.679 --> 00:19:35.360
+keeping the tally. Okay. four source
+
+00:19:31.280 --> 00:19:37.760
+target input target output in loader we
+
+00:19:35.360 --> 00:19:41.360
+have source stat
+
+00:19:37.760 --> 00:19:44.880
+device and then optimizer no gra zero
+
+00:19:41.360 --> 00:19:47.600
+grad so let's uh because I want to uh
+
+00:19:44.880 --> 00:19:49.840
+run this in two different ways of
+
+00:19:47.600 --> 00:19:52.799
+attention and no attention let's define
+
+00:19:49.840 --> 00:19:57.720
+an is attention instance here let's do
+
+00:19:52.799 --> 00:19:57.720
+it here so is attention
+
+00:19:58.960 --> 00:20:08.000
+is an instance. The model is attention
+
+00:20:04.320 --> 00:20:12.880
+seek to seek. If is tension basically
+
+00:20:08.000 --> 00:20:15.120
+run the modeling code uh once per batch
+
+00:20:12.880 --> 00:20:18.720
+and then we want to do stepbystep
+
+00:20:15.120 --> 00:20:22.480
+decoding and to do that let's accept
+
+00:20:18.720 --> 00:20:26.720
+this and simplify then
+
+00:20:22.480 --> 00:20:30.320
+press which we need to populate like I
+
+00:20:26.720 --> 00:20:33.640
+said in a stepbystep decoding so for t
+
+00:20:30.320 --> 00:20:33.640
+in range
+
+00:20:34.159 --> 00:20:42.320
+Um this requires a teacher forcing a
+
+00:20:38.400 --> 00:20:45.360
+token. So I have to first get the token
+
+00:20:42.320 --> 00:20:47.280
+to use it instead of this which happens
+
+00:20:45.360 --> 00:20:49.600
+in during the inference of course. But
+
+00:20:47.280 --> 00:20:52.000
+here for the training we have to do
+
+00:20:49.600 --> 00:20:56.960
+teacher forcing. Okay. So that's that
+
+00:20:52.000 --> 00:20:59.360
+that good and now else the venda seek to
+
+00:20:56.960 --> 00:21:02.799
+seek remember. So in this case hidden
+
+00:20:59.360 --> 00:21:03.440
+encode source here we are just leaving
+
+00:21:02.799 --> 00:21:08.559
+living leaving living leaving living it
+
+00:21:03.440 --> 00:21:11.919
+to pietorch gru that does everything at
+
+00:21:08.559 --> 00:21:14.240
+basically decodes the force sequence in
+
+00:21:11.919 --> 00:21:16.559
+parallel so it does itself we don't need
+
+00:21:14.240 --> 00:21:19.760
+to do anything did I forget something so
+
+00:21:16.559 --> 00:21:21.679
+for t this that's the pred
+
+00:21:19.760 --> 00:21:27.520
+we have to output something here right
+
+00:21:21.679 --> 00:21:32.240
+so output cat pres one which will be F
+
+00:21:27.520 --> 00:21:35.440
+size B the decode sequence and we now
+
+00:21:32.240 --> 00:21:38.480
+going back here the output here
+
+00:21:35.440 --> 00:21:42.400
+is the output of the decoder and let's
+
+00:21:38.480 --> 00:21:45.039
+accept this and that's that and this is
+
+00:21:42.400 --> 00:21:47.280
+of the same size we're done with that
+
+00:21:45.039 --> 00:21:52.000
+part now we have to compute the loss we
+
+00:21:47.280 --> 00:21:55.120
+got the suggestion and okay view output
+
+00:21:52.000 --> 00:21:56.960
+shape target output so this is basically
+
+00:21:55.120 --> 00:22:00.559
+cross entropy over all of these time
+
+00:21:56.960 --> 00:22:02.880
+steps. We flatten batches and times and
+
+00:22:00.559 --> 00:22:06.000
+we do the loss backward and then
+
+00:22:02.880 --> 00:22:08.320
+optimizer. We can for example clip the
+
+00:22:06.000 --> 00:22:12.000
+the gradient here before the step.
+
+00:22:08.320 --> 00:22:14.960
+Right? Let's record the epoch loss and
+
+00:22:12.000 --> 00:22:17.600
+uh let's look at the token accuracy. So
+
+00:22:14.960 --> 00:22:19.200
+epoch class uh let's first compute the
+
+00:22:17.600 --> 00:22:21.679
+predicted
+
+00:22:19.200 --> 00:22:24.720
+token
+
+00:22:21.679 --> 00:22:28.480
+which is a size batch and the uh the
+
+00:22:24.720 --> 00:22:32.960
+decoder sequence and let's mask the the
+
+00:22:28.480 --> 00:22:35.840
+paths and let's compute the corrected
+
+00:22:32.960 --> 00:22:39.039
+correct predictions. We may have a error
+
+00:22:35.840 --> 00:22:43.600
+here but let's accept this for now and
+
+00:22:39.039 --> 00:22:46.080
+then so where's if total
+
+00:22:43.600 --> 00:22:49.280
+it's not zero we should be careful here
+
+00:22:46.080 --> 00:22:54.720
+so then we can append that uh I had the
+
+00:22:49.280 --> 00:22:56.880
+epoch loss so let's just record loss too
+
+00:22:54.720 --> 00:23:00.159
+that's that we just need to return the
+
+00:22:56.880 --> 00:23:03.360
+accuracies um let's actually add some
+
+00:23:00.159 --> 00:23:06.240
+verbos uh to just show the the epoch
+
+00:23:03.360 --> 00:23:08.640
+classes and the token accuracy uh when
+
+00:23:06.240 --> 00:23:10.159
+it finish the timing of that and then we
+
+00:23:08.640 --> 00:23:13.120
+will return the accuracy. So I'm going
+
+00:23:10.159 --> 00:23:16.000
+to add that. Let's run this. In the
+
+00:23:13.120 --> 00:23:17.520
+meantime, we can write a function for
+
+00:23:16.000 --> 00:23:19.919
+evaluation.
+
+00:23:17.520 --> 00:23:22.960
+Basically, we want to evaluate the the
+
+00:23:19.919 --> 00:23:25.039
+sequence with a greedy decoding meaning
+
+00:23:22.960 --> 00:23:28.000
+that we don't have any teacher forcing
+
+00:23:25.039 --> 00:23:31.440
+anymore, right? We require the exact
+
+00:23:28.000 --> 00:23:33.679
+match of the entire t+1 length sequence
+
+00:23:31.440 --> 00:23:35.600
+even including the end of sequence.
+
+00:23:33.679 --> 00:23:37.200
+Right? I assume you know this function
+
+00:23:35.600 --> 00:23:41.280
+because you wrote this in the
+
+00:23:37.200 --> 00:23:44.400
+assignment. Then I will write evaluation
+
+00:23:41.280 --> 00:23:46.960
+and some visualization code. I also
+
+00:23:44.400 --> 00:23:49.280
+included a plotting
+
+00:23:46.960 --> 00:23:52.960
+uh that uh basically shows the
+
+00:23:49.280 --> 00:23:55.679
+comparison of this um evaluation. What
+
+00:23:52.960 --> 00:23:58.320
+else? We can also write um a function
+
+00:23:55.679 --> 00:24:00.159
+that visualize the attention. Why this
+
+00:23:58.320 --> 00:24:04.159
+is interesting? Because I I want to show
+
+00:24:00.159 --> 00:24:08.320
+that how tension manages to to look way
+
+00:24:04.159 --> 00:24:11.360
+back in the past to align the first
+
+00:24:08.320 --> 00:24:15.679
+decoder state to the first encoder
+
+00:24:11.360 --> 00:24:20.000
+state. So first let's look at this.
+
+00:24:15.679 --> 00:24:22.080
+We see that attention works
+
+00:24:20.000 --> 00:24:25.600
+perfect in the in the case of short
+
+00:24:22.080 --> 00:24:28.400
+sequences. I had some errors in how to
+
+00:24:25.600 --> 00:24:30.240
+how I'm uh recording the the token
+
+00:24:28.400 --> 00:24:33.440
+accuracy. So I have to revisit that. But
+
+00:24:30.240 --> 00:24:36.400
+the the sequence accuracy we see here.
+
+00:24:33.440 --> 00:24:40.159
+Uh we are not doing well in the vanilla
+
+00:24:36.400 --> 00:24:43.039
+for long sequences because of that issue
+
+00:24:40.159 --> 00:24:46.720
+the bottleneck issue that uh is the
+
+00:24:43.039 --> 00:24:50.400
+worst in this case. it has to look back
+
+00:24:46.720 --> 00:24:52.080
+20 states back to be able to uh
+
+00:24:50.400 --> 00:24:55.200
+understand the reversal. We don't have
+
+00:24:52.080 --> 00:24:58.400
+that issue with attention here. You see
+
+00:24:55.200 --> 00:25:01.360
+that I made an error here to go back and
+
+00:24:58.400 --> 00:25:04.400
+fix it. But for now, let's rely on this.
+
+00:25:01.360 --> 00:25:09.559
+And I want to also this attention
+
+00:25:04.400 --> 00:25:09.559
+patterns and let's do it.
+
+00:25:10.799 --> 00:25:15.679
+So basically we one example and we
+
+00:25:13.039 --> 00:25:18.240
+visualize the tension weights. Okay, I
+
+00:25:15.679 --> 00:25:21.520
+will share the code with you. This is
+
+00:25:18.240 --> 00:25:23.679
+just we just need to if we run the
+
+00:25:21.520 --> 00:25:29.159
+visualization weights it will return a
+
+00:25:23.679 --> 00:25:29.159
+fe. So big
+
+00:25:29.520 --> 00:25:33.840
+visual.
+
+00:25:31.120 --> 00:25:37.840
+Okay. So if we do it basically the input
+
+00:25:33.840 --> 00:25:40.400
+sequence uh output sequence. So input is
+
+00:25:37.840 --> 00:25:44.400
+24 1947
+
+00:25:40.400 --> 00:25:47.600
+until 16 and the output 165 and looked
+
+00:25:44.400 --> 00:25:50.400
+at uh the the first output is looking at
+
+00:25:47.600 --> 00:25:52.720
+the first input. So this is basically a
+
+00:25:50.400 --> 00:25:55.520
+long range attention that we are talking
+
+00:25:52.720 --> 00:25:58.000
+about. Basically it's the the max out
+
+00:25:55.520 --> 00:26:00.159
+length right it's instead of that
+
+00:25:58.000 --> 00:26:02.559
+diagonal here we have the other
+
+00:26:00.159 --> 00:26:05.360
+diagonal. We will look at the purely
+
+00:26:02.559 --> 00:26:08.320
+attentionbased neural networks. We drop
+
+00:26:05.360 --> 00:26:11.600
+even the RNN and we use self attention
+
+00:26:08.320 --> 00:26:11.600
+to do the encoding.

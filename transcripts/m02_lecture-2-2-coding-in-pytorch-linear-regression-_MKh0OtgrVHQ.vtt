@@ -1,0 +1,1897 @@
+WEBVTT
+
+00:00:06.799 --> 00:00:13.040
+Okay, so let's continue from last time
+
+00:00:10.400 --> 00:00:16.160
+where we implemented linear regression
+
+00:00:13.040 --> 00:00:20.080
+in neural network from scratch. So back
+
+00:00:16.160 --> 00:00:24.240
+then we didn't use any of the tools that
+
+00:00:20.080 --> 00:00:29.039
+uh we introduced using back propagation
+
+00:00:24.240 --> 00:00:32.399
+and the autograd in uh pytorch. So here
+
+00:00:29.039 --> 00:00:36.079
+we are slowly bringing them into the
+
+00:00:32.399 --> 00:00:39.920
+implementation. Okay. So we import
+
+00:00:36.079 --> 00:00:45.120
+mattplot liap and torch
+
+00:00:39.920 --> 00:00:47.920
+and then uh we also import the typing
+
+00:00:45.120 --> 00:00:51.520
+and the reason is this type hints
+
+00:00:47.920 --> 00:00:55.360
+basically help documentation
+
+00:00:51.520 --> 00:00:58.559
+and what our functions are expecting and
+
+00:00:55.360 --> 00:01:00.960
+returning and also makes the code more
+
+00:00:58.559 --> 00:01:05.040
+maintainable. We generated a synthetic
+
+00:01:00.960 --> 00:01:08.400
+data and here last time if you remember
+
+00:01:05.040 --> 00:01:11.760
+we had some issues with the tensor
+
+00:01:08.400 --> 00:01:14.240
+shapes here we basically make sure that
+
+00:01:11.760 --> 00:01:17.439
+we are not getting that anymore before
+
+00:01:14.240 --> 00:01:20.960
+going into the details of the code I
+
+00:01:17.439 --> 00:01:25.200
+want uh to get your attention for this
+
+00:01:20.960 --> 00:01:28.400
+figure from the book figure 5.3.1
+
+00:01:25.200 --> 00:01:32.400
+this is um just a schematic of a
+
+00:01:28.400 --> 00:01:38.640
+computation graph graph and uh as you
+
+00:01:32.400 --> 00:01:43.600
+see here we have the values of x w all
+
+00:01:38.640 --> 00:01:45.759
+in square. So these are the items that
+
+00:01:43.600 --> 00:01:48.159
+can take value and we have some
+
+00:01:45.759 --> 00:01:50.696
+operations over them. So if you remember
+
+00:01:48.159 --> 00:01:53.680
+in back propagation we start from
+
+00:01:50.696 --> 00:01:58.479
+[clears throat] last loss value and then
+
+00:01:53.680 --> 00:02:01.119
+propagate that backward and uh the last
+
+00:01:58.479 --> 00:02:04.640
+points of this backward propagations are
+
+00:02:01.119 --> 00:02:06.799
+those values that we start from and we
+
+00:02:04.640 --> 00:02:09.679
+uh apply some operations. So for example
+
+00:02:06.799 --> 00:02:13.040
+here the weights these two weights and x
+
+00:02:09.679 --> 00:02:15.360
+which is the input uh data and the rest
+
+00:02:13.040 --> 00:02:18.160
+will be based on these values or the
+
+00:02:15.360 --> 00:02:20.400
+parameters of the neural network and
+
+00:02:18.160 --> 00:02:23.599
+input [clears throat] data the leaf
+
+00:02:20.400 --> 00:02:26.000
+tensors. So leaf tensors
+
+00:02:23.599 --> 00:02:30.400
+and non-leaf tensors are important
+
+00:02:26.000 --> 00:02:34.480
+concepts that we have to consider during
+
+00:02:30.400 --> 00:02:37.760
+our implementations. Again leaf tensor
+
+00:02:34.480 --> 00:02:38.640
+are instantiated directly. They are not
+
+00:02:37.760 --> 00:02:42.879
+the [clears throat] result of an
+
+00:02:38.640 --> 00:02:46.720
+operation uh over some other leaf tensor
+
+00:02:42.879 --> 00:02:48.239
+and we keep the value of their
+
+00:02:46.720 --> 00:02:50.640
+gradients.
+
+00:02:48.239 --> 00:02:52.959
+So the function backward the method
+
+00:02:50.640 --> 00:02:56.000
+backward that you will see that
+
+00:02:52.959 --> 00:03:00.319
+basically apply the back propagation
+
+00:02:56.000 --> 00:03:03.920
+will store the grad values for these
+
+00:03:00.319 --> 00:03:08.480
+tensors leaf tensors for the other
+
+00:03:03.920 --> 00:03:12.159
+non-leaf tensors the grad will be
+
+00:03:08.480 --> 00:03:15.200
+removed or basically the entire
+
+00:03:12.159 --> 00:03:18.879
+computation graph will be removed for
+
+00:03:15.200 --> 00:03:22.959
+saving memory essentially and uh the
+
+00:03:18.879 --> 00:03:26.319
+gradient for those values are not uh
+
+00:03:22.959 --> 00:03:30.239
+stored. So for example when we initiate
+
+00:03:26.319 --> 00:03:33.120
+the weights and biases for example here
+
+00:03:30.239 --> 00:03:36.080
+those are the leaf values but if we
+
+00:03:33.120 --> 00:03:39.599
+apply some other operations on them and
+
+00:03:36.080 --> 00:03:42.879
+maybe introduce new values the new value
+
+00:03:39.599 --> 00:03:45.040
+will be a non-leaf tensor. So after
+
+00:03:42.879 --> 00:03:47.680
+calling backward
+
+00:03:45.040 --> 00:03:51.760
+uh you can basically print the grad
+
+00:03:47.680 --> 00:03:55.120
+attribute of leaf tensors but for
+
+00:03:51.760 --> 00:03:58.239
+non-leaf tensors there will be no grad
+
+00:03:55.120 --> 00:04:01.120
+attribute. If we want to update the the
+
+00:03:58.239 --> 00:04:04.319
+values of the parameters following the
+
+00:04:01.120 --> 00:04:09.040
+computation of the gradients for example
+
+00:04:04.319 --> 00:04:12.080
+we are trying to update the weights. So
+
+00:04:09.040 --> 00:04:15.200
+previous weight minus the learning rate
+
+00:04:12.080 --> 00:04:17.919
+by the the gradient of the of the leaf.
+
+00:04:15.200 --> 00:04:20.320
+But notice that this is a leaf note and
+
+00:04:17.919 --> 00:04:23.840
+we are doing some operations on that
+
+00:04:20.320 --> 00:04:26.000
+that makes it a non-leaf note. And then
+
+00:04:23.840 --> 00:04:28.560
+after that all of the issues that we
+
+00:04:26.000 --> 00:04:32.000
+discussed above. The right way to do it
+
+00:04:28.560 --> 00:04:35.360
+is basically we have to tell PyTorch
+
+00:04:32.000 --> 00:04:39.199
+that we want this to be kept as a leaf
+
+00:04:35.360 --> 00:04:42.400
+node. So this is a way for PyTorch to
+
+00:04:39.199 --> 00:04:44.960
+keep the parameters out uh updates
+
+00:04:42.400 --> 00:04:47.759
+outside of the autograd [clears throat]
+
+00:04:44.960 --> 00:04:51.040
+uh because otherwise memory usage will
+
+00:04:47.759 --> 00:04:52.800
+explode gradients of gradients and then
+
+00:04:51.040 --> 00:04:57.040
+runtime errors when we [clears throat]
+
+00:04:52.800 --> 00:05:00.800
+reuse this modified parameters and uh
+
+00:04:57.040 --> 00:05:05.440
+some other problems. Okay. So let's uh
+
+00:05:00.800 --> 00:05:09.120
+quickly summarize this methods.
+
+00:05:05.440 --> 00:05:12.240
+The torsional grat is very common. We
+
+00:05:09.120 --> 00:05:14.320
+disable the autograd and then we can
+
+00:05:12.240 --> 00:05:15.919
+update the parameters. Maybe we want to
+
+00:05:14.320 --> 00:05:18.479
+do inference.
+
+00:05:15.919 --> 00:05:21.440
+Uh the tensor data. This is a direct
+
+00:05:18.479 --> 00:05:24.639
+access to the underlying data. The
+
+00:05:21.440 --> 00:05:27.360
+detach is a way of creating new tensors
+
+00:05:24.639 --> 00:05:30.880
+without the grat history.
+
+00:05:27.360 --> 00:05:34.080
+And then basically it will work like a
+
+00:05:30.880 --> 00:05:36.720
+leaf node. So for example if we want to
+
+00:05:34.080 --> 00:05:39.280
+do some in place operation that is not
+
+00:05:36.720 --> 00:05:43.039
+introduced new variables for example uh
+
+00:05:39.280 --> 00:05:47.759
+value x and we do some operation over it
+
+00:05:43.039 --> 00:05:50.800
+multiply by two we introduce y. Now if I
+
+00:05:47.759 --> 00:05:52.960
+add something to x [clears throat]
+
+00:05:50.800 --> 00:05:55.600
+now this is an in place operation. For
+
+00:05:52.960 --> 00:05:58.000
+example, if we compute the loss minus
+
+00:05:55.600 --> 00:06:00.080
+the y sum and do the loss backward. So
+
+00:05:58.000 --> 00:06:04.720
+it basically
+
+00:06:00.080 --> 00:06:08.160
+tells that uh now a leaf variable that
+
+00:06:04.720 --> 00:06:11.600
+requires grat is being used in an in
+
+00:06:08.160 --> 00:06:15.120
+place operation. We don't want that. And
+
+00:06:11.600 --> 00:06:20.000
+here to avoid that we have to produce a
+
+00:06:15.120 --> 00:06:22.160
+new x and then we continue doing this.
+
+00:06:20.000 --> 00:06:25.680
+We are okay.
+
+00:06:22.160 --> 00:06:29.039
+Okay. So um it's it's good to discuss
+
+00:06:25.680 --> 00:06:31.840
+another behavior of auto define in
+
+00:06:29.039 --> 00:06:34.400
+PyTorch. So for example, if we do the
+
+00:06:31.840 --> 00:06:36.479
+backward once and then do it again,
+
+00:06:34.400 --> 00:06:40.800
+right? Do another backward. Uh this
+
+00:06:36.479 --> 00:06:43.440
+basically adds up the gradient for the
+
+00:06:40.800 --> 00:06:47.120
+weights. Okay, which uh this will give
+
+00:06:43.440 --> 00:06:49.600
+me wra
+
+00:06:47.120 --> 00:06:53.680
+that I want. But here after doing this
+
+00:06:49.600 --> 00:06:55.919
+step we will get rad of one plus rad of
+
+00:06:53.680 --> 00:06:58.880
+two and that means that basically
+
+00:06:55.919 --> 00:07:02.720
+gradients accumulate. So to avoid that
+
+00:06:58.880 --> 00:07:05.520
+we have to zero the uh the gradient. So
+
+00:07:02.720 --> 00:07:08.319
+with self
+
+00:07:05.520 --> 00:07:14.800
+grad uh
+
+00:07:08.319 --> 00:07:16.720
+so whenever if we haven't uh zero
+
+00:07:14.800 --> 00:07:19.919
+the grad
+
+00:07:16.720 --> 00:07:23.520
+in that case the self.w.grat
+
+00:07:19.919 --> 00:07:26.960
+Grat is not none. We have to make sure
+
+00:07:23.520 --> 00:07:30.960
+to zero it and this is how we are doing
+
+00:07:26.960 --> 00:07:33.759
+it. We check first and then we zero and
+
+00:07:30.960 --> 00:07:36.160
+then after that we can do a fresh
+
+00:07:33.759 --> 00:07:40.240
+backward. Okay. [clears throat]
+
+00:07:36.160 --> 00:07:42.960
+In PyTorch um we have the optimizers
+
+00:07:40.240 --> 00:07:46.080
+that are basically doing this operation
+
+00:07:42.960 --> 00:07:48.720
+for us updating the W's and doing this
+
+00:07:46.080 --> 00:07:50.880
+gradient descent. So for example a
+
+00:07:48.720 --> 00:07:55.759
+stocastic gradient descent is an
+
+00:07:50.880 --> 00:07:59.039
+optimizer that we use like this here we
+
+00:07:55.759 --> 00:08:02.000
+compute the new gradients and then here
+
+00:07:59.039 --> 00:08:05.840
+we update the parameters. So in each
+
+00:08:02.000 --> 00:08:09.599
+forward pass this will compute a a
+
+00:08:05.840 --> 00:08:12.800
+computation graph and here if we do the
+
+00:08:09.599 --> 00:08:16.000
+forward pass again this will make the
+
+00:08:12.800 --> 00:08:17.840
+second graph independently. Then if we
+
+00:08:16.000 --> 00:08:21.120
+somehow have we have a let's say we have
+
+00:08:17.840 --> 00:08:24.000
+a loss function here and uh we compute
+
+00:08:21.120 --> 00:08:28.080
+the loss here and if I do a backward
+
+00:08:24.000 --> 00:08:31.440
+here this will compute the backward pass
+
+00:08:28.080 --> 00:08:35.039
+for the first computation graph
+
+00:08:31.440 --> 00:08:37.760
+and it will free graph one. So but graph
+
+00:08:35.039 --> 00:08:41.279
+two is still there. So that's how uh we
+
+00:08:37.760 --> 00:08:46.000
+know PyTorch is handling this memory uh
+
+00:08:41.279 --> 00:08:49.600
+or managing it. And um if we are not
+
+00:08:46.000 --> 00:08:53.279
+careful let's say we have a loop over
+
+00:08:49.600 --> 00:08:57.761
+different batches right uh in our
+
+00:08:53.279 --> 00:08:58.560
+whatever data loader we have and uh here
+
+00:08:57.761 --> 00:09:03.760
+[gasps]
+
+00:08:58.560 --> 00:09:06.800
+um so we do a forward pass we get the uh
+
+00:09:03.760 --> 00:09:10.000
+inferred Y bread with the current model
+
+00:09:06.800 --> 00:09:12.720
+parameters and then we compute the loss
+
+00:09:10.000 --> 00:09:17.120
+and let's say we want to store this loss
+
+00:09:12.720 --> 00:09:19.839
+Right this loss if I don't do this say
+
+00:09:17.120 --> 00:09:23.360
+we are doing this instead then if I do
+
+00:09:19.839 --> 00:09:26.080
+loss backward each time we append the
+
+00:09:23.360 --> 00:09:29.920
+computation graph in memory and then we
+
+00:09:26.080 --> 00:09:32.640
+do the the backward. So this is not uh a
+
+00:09:29.920 --> 00:09:34.959
+good practice because of the the memory
+
+00:09:32.640 --> 00:09:38.320
+leak that is happening here. So let's
+
+00:09:34.959 --> 00:09:40.640
+just instead of the uh computing
+
+00:09:38.320 --> 00:09:43.760
+computation graph let's just store the
+
+00:09:40.640 --> 00:09:47.360
+scalar value of loss which is after all
+
+00:09:43.760 --> 00:09:50.161
+our purpose here. Okay let's um write a
+
+00:09:47.360 --> 00:09:53.120
+summary of this uh common things
+
+00:09:50.161 --> 00:09:55.440
+[clears throat] that uh can happen and
+
+00:09:53.120 --> 00:09:59.120
+how to handle them when dealing with
+
+00:09:55.440 --> 00:10:02.560
+non-leaf parameters. we get this error
+
+00:09:59.120 --> 00:10:04.800
+for in place operation like we did. The
+
+00:10:02.560 --> 00:10:08.480
+issue with
+
+00:10:04.800 --> 00:10:10.560
+um computation graph uh storing a
+
+00:10:08.480 --> 00:10:13.279
+gradient uh [clears throat] that is not
+
+00:10:10.560 --> 00:10:16.079
+converging and one reason can be we are
+
+00:10:13.279 --> 00:10:19.600
+not zeroing the gradient and there's a
+
+00:10:16.079 --> 00:10:22.000
+accumulation of it. Uh we will go over
+
+00:10:19.600 --> 00:10:23.839
+the example of linear regression. We
+
+00:10:22.000 --> 00:10:26.399
+will show that there are some best
+
+00:10:23.839 --> 00:10:30.839
+practices that we can follow to minimize
+
+00:10:26.399 --> 00:10:30.839
+this type of errors.
+
+00:10:36.000 --> 00:10:42.560
+Okay. So let's uh go back to that class
+
+00:10:39.600 --> 00:10:48.240
+of linear regression that we uh were
+
+00:10:42.560 --> 00:10:52.560
+working on and um you can write um um
+
+00:10:48.240 --> 00:10:55.120
+and um then let's write the init value.
+
+00:10:52.560 --> 00:10:59.920
+Then let's write the
+
+00:10:55.120 --> 00:11:03.360
+init method. And here recall that's uh
+
+00:10:59.920 --> 00:11:05.519
+the learning rate is a float. And let's
+
+00:11:03.360 --> 00:11:09.360
+just put a [clears throat]
+
+00:11:05.519 --> 00:11:13.440
+like a default value for that. Okay. So,
+
+00:11:09.360 --> 00:11:14.959
+uh let's introduce the weights here.
+
+00:11:13.440 --> 00:11:18.079
+Going to just [clears throat] go with a
+
+00:11:14.959 --> 00:11:21.279
+default for now. And you see that uh we
+
+00:11:18.079 --> 00:11:24.880
+started with from random. And notice
+
+00:11:21.279 --> 00:11:28.959
+that here we have a require grad as
+
+00:11:24.880 --> 00:11:31.680
+true. And if you remember I said this is
+
+00:11:28.959 --> 00:11:34.880
+a leaf value
+
+00:11:31.680 --> 00:11:38.720
+leaf tensor and [laughter] accepts a
+
+00:11:34.880 --> 00:11:42.560
+gradient. Uh for example input data is
+
+00:11:38.720 --> 00:11:47.120
+also leaf tensors but they they don't
+
+00:11:42.560 --> 00:11:50.240
+have uh gradient and they are constants
+
+00:11:47.120 --> 00:11:54.240
+but weights and biases are not constants
+
+00:11:50.240 --> 00:11:56.560
+and we want to tell pytorch that. Okay.
+
+00:11:54.240 --> 00:11:59.440
+So let's just reduce this value even
+
+00:11:56.560 --> 00:12:02.160
+more. If you remember we discussed this
+
+00:11:59.440 --> 00:12:06.079
+in parameter initialization
+
+00:12:02.160 --> 00:12:09.680
+and here we have the biases and
+
+00:12:06.079 --> 00:12:11.279
+let's just stick with my own
+
+00:12:09.680 --> 00:12:16.240
+shorter
+
+00:12:11.279 --> 00:12:19.920
+what else we have the input
+
+00:12:16.240 --> 00:12:23.920
+uh size as the input size and then it's
+
+00:12:19.920 --> 00:12:27.519
+good to have some print statement to
+
+00:12:23.920 --> 00:12:31.360
+just um show the sizes
+
+00:12:27.519 --> 00:12:35.360
+Okay, so with that let's write the first
+
+00:12:31.360 --> 00:12:38.639
+um function. Um so we have the forward
+
+00:12:35.360 --> 00:12:43.680
+method and the forward method here takes
+
+00:12:38.639 --> 00:12:46.880
+X returns a tensor which is simply the
+
+00:12:43.680 --> 00:12:50.000
+operation in this one layer neural
+
+00:12:46.880 --> 00:12:54.079
+network. Okay, next let's compute the
+
+00:12:50.000 --> 00:12:57.279
+loss and and then let's do the
+
+00:12:54.079 --> 00:13:03.839
+back our own back one. So here basically
+
+00:12:57.279 --> 00:13:06.880
+we want to um simulate or do what uh tap
+
+00:13:03.839 --> 00:13:11.839
+pytor is doing behind the scenes. So
+
+00:13:06.880 --> 00:13:16.079
+here we have x y. Okay. So let's just do
+
+00:13:11.839 --> 00:13:21.074
+like what we did last time. We have uh
+
+00:13:16.079 --> 00:13:21.920
+the gradient of w and gradient of
+
+00:13:21.074 --> 00:13:26.560
+[gasps]
+
+00:13:21.920 --> 00:13:29.760
+uh biases. You see that we already
+
+00:13:26.560 --> 00:13:32.209
+have a nice suggestion.
+
+00:13:29.760 --> 00:13:34.000
+Um we had a two over n here
+
+00:13:32.209 --> 00:13:38.880
+[clears throat] if you didn't remember
+
+00:13:34.000 --> 00:13:41.379
+but um well let's put it here. Uh but we
+
+00:13:38.880 --> 00:13:42.560
+have to keep a value of n if
+
+00:13:41.379 --> 00:13:45.279
+[clears throat] we want to do it and
+
+00:13:42.560 --> 00:13:49.920
+it's not really necessary. So let's just
+
+00:13:45.279 --> 00:13:56.079
+avoid it to make our life easier. So now
+
+00:13:49.920 --> 00:13:59.199
+you see that we have u uh autograd like
+
+00:13:56.079 --> 00:14:01.440
+uh storing of the gradients but we
+
+00:13:59.199 --> 00:14:07.040
+discussed that it's always a good
+
+00:14:01.440 --> 00:14:09.920
+practice to check if the uh gradient is
+
+00:14:07.040 --> 00:14:13.120
+uh already zero or not. If it's not zero
+
+00:14:09.920 --> 00:14:16.800
+we have to zero it. So let's do it.
+
+00:14:13.120 --> 00:14:20.560
+Okay. And now we make sure that the
+
+00:14:16.800 --> 00:14:23.680
+gradients are zero. And then we can uh
+
+00:14:20.560 --> 00:14:27.440
+store them. And then after that uh let's
+
+00:14:23.680 --> 00:14:33.600
+go for our gradient step. So let's see
+
+00:14:27.440 --> 00:14:39.600
+what we have x and y. And then we return
+
+00:14:33.600 --> 00:14:43.839
+a step. Okay. So notice that here um we
+
+00:14:39.600 --> 00:14:48.079
+have the forward and that uh computes a
+
+00:14:43.839 --> 00:14:51.920
+yhat and then we compute the loss here
+
+00:14:48.079 --> 00:14:55.040
+and then we do the manual backward. Uh
+
+00:14:51.920 --> 00:14:59.279
+one thing that I don't like is we uh
+
+00:14:55.040 --> 00:15:01.760
+compute it we do the forward pass twice.
+
+00:14:59.279 --> 00:15:07.839
+So why we should do it? Let's avoid
+
+00:15:01.760 --> 00:15:14.240
+that. is set uh I had here
+
+00:15:07.839 --> 00:15:17.665
+and um y had here update the parameters.
+
+00:15:14.240 --> 00:15:18.480
+Okay, so let's do it. So this is that
+
+00:15:17.665 --> 00:15:22.000
+[clears throat]
+
+00:15:18.480 --> 00:15:25.519
+and then we return the last item. Um so
+
+00:15:22.000 --> 00:15:28.480
+here the last item is a float
+
+00:15:25.519 --> 00:15:32.079
+and so maybe I should say that here. I
+
+00:15:28.480 --> 00:15:35.120
+mean doesn't hurt to be more accurate.
+
+00:15:32.079 --> 00:15:38.959
+Okay. So, u get this basically give us
+
+00:15:35.120 --> 00:15:42.959
+the step of the gradient descent. Okay.
+
+00:15:38.959 --> 00:15:46.320
+So, with that uh let's do some debugging
+
+00:15:42.959 --> 00:15:48.800
+and let's see where are uh the holes in
+
+00:15:46.320 --> 00:15:53.839
+our code. So, first I'm going to make
+
+00:15:48.800 --> 00:15:56.720
+some uh data and then we are running the
+
+00:15:53.839 --> 00:15:59.120
+model. Okay. So, let's see what we have.
+
+00:15:56.720 --> 00:16:01.519
+We have the regression model. This is
+
+00:15:59.120 --> 00:16:06.240
+our first step. uh we do want gradient
+
+00:16:01.519 --> 00:16:10.720
+descent. Okay. So let's see. Okay.
+
+00:16:06.240 --> 00:16:13.360
+So notice that the problem is here where
+
+00:16:10.720 --> 00:16:16.639
+we are
+
+00:16:13.360 --> 00:16:18.399
+um storing the gradient of the bias that
+
+00:16:16.639 --> 00:16:21.600
+we computed
+
+00:16:18.399 --> 00:16:25.759
+and uh the assignment that has an issue
+
+00:16:21.600 --> 00:16:27.279
+is we are assigning a scalar to a
+
+00:16:25.759 --> 00:16:31.519
+tensor.
+
+00:16:27.279 --> 00:16:34.560
+Okay. So that's not what we want to do.
+
+00:16:31.519 --> 00:16:38.240
+So let's fix it here.
+
+00:16:34.560 --> 00:16:42.240
+This is a scalar because of how we are
+
+00:16:38.240 --> 00:16:47.199
+computing it. And uh the good thing is
+
+00:16:42.240 --> 00:16:50.720
+we can just tell uh PyTorch to reshape
+
+00:16:47.199 --> 00:16:52.959
+that to whatever it really wants to. So
+
+00:16:50.720 --> 00:16:56.079
+let's just reshape
+
+00:16:52.959 --> 00:16:59.759
+it uh to
+
+00:16:56.079 --> 00:17:03.360
+uh whatever is the shape of the B rat,
+
+00:16:59.759 --> 00:17:06.319
+right? So let's just write
+
+00:17:03.360 --> 00:17:10.400
+uh grat
+
+00:17:06.319 --> 00:17:13.439
+and shape. Uh actually you know what we
+
+00:17:10.400 --> 00:17:16.799
+don't want the grat because just need
+
+00:17:13.439 --> 00:17:18.160
+the shape of B. Okay, so let's try
+
+00:17:16.799 --> 00:17:21.760
+again.
+
+00:17:18.160 --> 00:17:24.319
+Okay, we got an error an warning and the
+
+00:17:21.760 --> 00:17:26.160
+warning is [clears throat] uh we are
+
+00:17:24.319 --> 00:17:29.200
+accessing a lift tensor make we are
+
+00:17:26.160 --> 00:17:30.960
+making it a non-lift again that's uh
+
+00:17:29.200 --> 00:17:34.080
+dangerous
+
+00:17:30.960 --> 00:17:36.720
+um maybe one obvious thing here is we
+
+00:17:34.080 --> 00:17:39.520
+are
+
+00:17:36.720 --> 00:17:42.320
+uh we discussed this right so we don't
+
+00:17:39.520 --> 00:17:46.880
+want to
+
+00:17:42.320 --> 00:17:49.360
+update the leaf tensor if the self do
+
+00:17:46.880 --> 00:17:52.902
+that w.grad
+
+00:17:49.360 --> 00:17:53.919
+course or course same for B is uh
+
+00:17:52.902 --> 00:17:58.000
+[groaning]
+
+00:17:53.919 --> 00:18:01.760
+in the gradient mode. So we have to tell
+
+00:17:58.000 --> 00:18:03.360
+PyTorch that. Okay. So with torch no
+
+00:18:01.760 --> 00:18:06.320
+grad
+
+00:18:03.360 --> 00:18:09.440
+we want to do this updates.
+
+00:18:06.320 --> 00:18:13.280
+Okay. So that's that.
+
+00:18:09.440 --> 00:18:18.640
+Ah we have another one. So what's going
+
+00:18:13.280 --> 00:18:21.679
+on here? There is a leaf tensor
+
+00:18:18.640 --> 00:18:25.360
+that we are touching it.
+
+00:18:21.679 --> 00:18:28.720
+So we are basically doing some operation
+
+00:18:25.360 --> 00:18:31.200
+on a leaf tensor. Let's find that leaf
+
+00:18:28.720 --> 00:18:33.760
+tensor that we are touching it. So we
+
+00:18:31.200 --> 00:18:36.720
+fix this
+
+00:18:33.760 --> 00:18:39.600
+uh this is okay.
+
+00:18:36.720 --> 00:18:42.400
+These are
+
+00:18:39.600 --> 00:18:45.280
+uh some constant.
+
+00:18:42.400 --> 00:18:46.880
+This is leaf tensor that we introduce.
+
+00:18:45.280 --> 00:18:50.320
+And this is a leaf tensor that we
+
+00:18:46.880 --> 00:18:53.360
+introduce. And we do an operation on it.
+
+00:18:50.320 --> 00:18:57.760
+Oh, we don't want to do that. So let's
+
+00:18:53.360 --> 00:19:01.919
+remove this. Let's try again. And we are
+
+00:18:57.760 --> 00:19:05.600
+good. Let's do another step gradient
+
+00:19:01.919 --> 00:19:07.520
+descent and see if things are not
+
+00:19:05.600 --> 00:19:09.919
+accumulating.
+
+00:19:07.520 --> 00:19:13.840
+Uh
+
+00:19:09.919 --> 00:19:16.960
+I see that we have some
+
+00:19:13.840 --> 00:19:20.280
+let's see if
+
+00:19:16.960 --> 00:19:20.280
+last two
+
+00:19:20.480 --> 00:19:26.000
+can remove this. No we are okay. There
+
+00:19:23.919 --> 00:19:28.799
+is no error.
+
+00:19:26.000 --> 00:19:32.480
+We are good. So so far so good. Let's
+
+00:19:28.799 --> 00:19:35.039
+continue. Okay. So now that we have the
+
+00:19:32.480 --> 00:19:39.440
+the manual version [clears throat] in
+
+00:19:35.039 --> 00:19:43.600
+place, let's uh implement
+
+00:19:39.440 --> 00:19:47.679
+a pure autograd version of this.
+
+00:19:43.600 --> 00:19:49.760
+So we have a linear uh regression
+
+00:19:47.679 --> 00:19:54.799
+and we [snorts] are going to use the
+
+00:19:49.760 --> 00:20:00.720
+version of it and I want to inherit
+
+00:19:54.799 --> 00:20:03.919
+all what torch nn has to offer. Okay.
+
+00:20:00.720 --> 00:20:08.559
+So, usually what we do here just to uh
+
+00:20:03.919 --> 00:20:13.679
+use a [clears throat] um um
+
+00:20:08.559 --> 00:20:16.320
+like a conventional import we import to
+
+00:20:13.679 --> 00:20:19.679
+n
+
+00:20:16.320 --> 00:20:21.840
+uh as nn just to
+
+00:20:19.679 --> 00:20:26.559
+be
+
+00:20:21.840 --> 00:20:29.120
+more in line with uh the practice. So,
+
+00:20:26.559 --> 00:20:34.000
+we don't need that. Okay. So with that
+
+00:20:29.120 --> 00:20:39.280
+we have the NN module
+
+00:20:34.000 --> 00:20:42.799
+inside that and notice that uh Google
+
+00:20:39.280 --> 00:20:47.520
+Collab already did the super indeed for
+
+00:20:42.799 --> 00:20:53.600
+me. If for example we don't have uh this
+
+00:20:47.520 --> 00:20:55.919
+call and we want to do for example a
+
+00:20:53.600 --> 00:20:58.799
+self
+
+00:20:55.919 --> 00:21:03.360
+linear
+
+00:20:58.799 --> 00:21:06.320
+um layer like here
+
+00:21:03.360 --> 00:21:08.799
+uh if I don't have that yet for example
+
+00:21:06.320 --> 00:21:12.159
+if I have this commented
+
+00:21:08.799 --> 00:21:15.200
+and if I run this this will fail
+
+00:21:12.159 --> 00:21:18.960
+basically you can think of But like we
+
+00:21:15.200 --> 00:21:21.679
+want to build a house on a foundation
+
+00:21:18.960 --> 00:21:24.480
+and we have to have the foundation first
+
+00:21:21.679 --> 00:21:26.799
+and super is basically making a
+
+00:21:24.480 --> 00:21:31.039
+foundation and then we are building up
+
+00:21:26.799 --> 00:21:34.294
+over it using the methods within it. For
+
+00:21:31.039 --> 00:21:36.720
+now let's um move this uh
+
+00:21:34.294 --> 00:21:40.799
+[clears throat] for later and make keep
+
+00:21:36.720 --> 00:21:43.280
+it simple for now. I mean even we can
+
+00:21:40.799 --> 00:21:45.760
+move the learning rate
+
+00:21:43.280 --> 00:21:51.280
+uh outside of this and the main reason
+
+00:21:45.760 --> 00:21:52.880
+is uh we want to give this away to the
+
+00:21:51.280 --> 00:21:57.200
+optimizer
+
+00:21:52.880 --> 00:22:00.240
+not uh keeping it here [gasps] and we
+
+00:21:57.200 --> 00:22:02.559
+want to keep the architecture as
+
+00:22:00.240 --> 00:22:04.159
+independent as possible from those
+
+00:22:02.559 --> 00:22:08.240
+decisions.
+
+00:22:04.159 --> 00:22:12.799
+So with that I'm going to even simplify
+
+00:22:08.240 --> 00:22:17.600
+and um one thing else maybe is to uh if
+
+00:22:12.799 --> 00:22:21.039
+we want to compare this with uh the
+
+00:22:17.600 --> 00:22:22.880
+the manual version that we wrote up u we
+
+00:22:21.039 --> 00:22:26.240
+let's initialize
+
+00:22:22.880 --> 00:22:29.120
+it to be similar to the manual version.
+
+00:22:26.240 --> 00:22:34.320
+So with torch
+
+00:22:29.120 --> 00:22:37.360
+uh no grad I want to initialize it. So
+
+00:22:34.320 --> 00:22:40.000
+we want to initialize it as a Gaussian.
+
+00:22:37.360 --> 00:22:42.240
+Uh so let's go back see how we
+
+00:22:40.000 --> 00:22:45.840
+initialize this.
+
+00:22:42.240 --> 00:22:49.760
+Okay. So notice that we
+
+00:22:45.840 --> 00:22:53.600
+um we remove the that scaling and this
+
+00:22:49.760 --> 00:22:57.919
+may be a bit large for the starter and
+
+00:22:53.600 --> 00:23:03.679
+uh like we discuss uh we
+
+00:22:57.919 --> 00:23:05.440
+don't want to do an operation on this uh
+
+00:23:03.679 --> 00:23:08.159
+after
+
+00:23:05.440 --> 00:23:12.080
+we introduce it as a leaf node. So one
+
+00:23:08.159 --> 00:23:16.640
+way to reduce this is to first just
+
+00:23:12.080 --> 00:23:21.440
+introduce this as a concept constant and
+
+00:23:16.640 --> 00:23:26.320
+um as a constant and then after that we
+
+00:23:21.440 --> 00:23:27.840
+will set the gradient on for it. So
+
+00:23:26.320 --> 00:23:32.080
+let's
+
+00:23:27.840 --> 00:23:34.400
+uh do a check again if everything looks
+
+00:23:32.080 --> 00:23:37.436
+okay here.
+
+00:23:34.400 --> 00:23:37.600
+Yep. So
+
+00:23:37.436 --> 00:23:43.280
+>> [groaning]
+
+00:23:37.600 --> 00:23:45.360
+>> uh let's continue here. Um let's uh add
+
+00:23:43.280 --> 00:23:48.480
+some print statements to [clears throat]
+
+00:23:45.360 --> 00:23:52.240
+basically check the initialization
+
+00:23:48.480 --> 00:23:55.679
+and uh [clears throat] okay.
+
+00:23:52.240 --> 00:24:00.480
+Okay. So we initialized the the class
+
+00:23:55.679 --> 00:24:05.039
+and we added a linear layer. Now we want
+
+00:24:00.480 --> 00:24:07.679
+to specify how we are doing the forward
+
+00:24:05.039 --> 00:24:12.400
+right. So here let's see what we have as
+
+00:24:07.679 --> 00:24:15.600
+suggestion. Uh we take tensor we return
+
+00:24:12.400 --> 00:24:19.039
+tensor [gasps] uh basically by doing a
+
+00:24:15.600 --> 00:24:23.760
+forward pass. Nice. Good. So what else
+
+00:24:19.039 --> 00:24:27.840
+we want? That's it really. But let's uh
+
+00:24:23.760 --> 00:24:30.159
+extract the parameters too uh this way.
+
+00:24:27.840 --> 00:24:32.000
+So notice that we don't want step
+
+00:24:30.159 --> 00:24:35.200
+because we
+
+00:24:32.000 --> 00:24:38.559
+uh delegate all of that to the optimizer
+
+00:24:35.200 --> 00:24:41.840
+later. So here I just want to write a
+
+00:24:38.559 --> 00:24:46.559
+method to get the parameters and we want
+
+00:24:41.840 --> 00:24:50.400
+to make it easily readable. So let's
+
+00:24:46.559 --> 00:24:55.120
+just do some operation on them. So with
+
+00:24:50.400 --> 00:24:57.279
+torch no grat we want to return
+
+00:24:55.120 --> 00:24:59.360
+the
+
+00:24:57.279 --> 00:25:00.880
+weights.
+
+00:24:59.360 --> 00:25:05.760
+Uh
+
+00:25:00.880 --> 00:25:08.480
+yep I want weight data flatten to list
+
+00:25:05.760 --> 00:25:12.960
+and by self
+
+00:25:08.480 --> 00:25:14.480
+linear bias item.
+
+00:25:12.960 --> 00:25:16.880
+Okay
+
+00:25:14.480 --> 00:25:19.600
+sounds like a plan. [gasps]
+
+00:25:16.880 --> 00:25:21.279
+Okay. So with that we can start
+
+00:25:19.600 --> 00:25:24.960
+training.
+
+00:25:21.279 --> 00:25:27.919
+So we had the training of the manual
+
+00:25:24.960 --> 00:25:31.120
+version very similar from before. Going
+
+00:25:27.919 --> 00:25:33.840
+to just maybe I can add it right after
+
+00:25:31.120 --> 00:25:37.360
+this to be closer.
+
+00:25:33.840 --> 00:25:40.480
+So here we are training the manual where
+
+00:25:37.360 --> 00:25:42.159
+we have a verbose. We have several
+
+00:25:40.480 --> 00:25:44.960
+epochs.
+
+00:25:42.159 --> 00:25:48.320
+Uh like I said, we shuffle the data and
+
+00:25:44.960 --> 00:25:51.279
+then we initialize the last and the
+
+00:25:48.320 --> 00:25:56.000
+number of batches
+
+00:25:51.279 --> 00:26:00.880
+and then we make the batches of X and Y.
+
+00:25:56.000 --> 00:26:06.000
+We do a step descent on this batch and
+
+00:26:00.880 --> 00:26:09.200
+then we add the loss for each apoch
+
+00:26:06.000 --> 00:26:13.200
+and we control the number of
+
+00:26:09.200 --> 00:26:16.640
+apoch to compute the average loss so far
+
+00:26:13.200 --> 00:26:18.960
+in the epoch. Then we print this out.
+
+00:26:16.640 --> 00:26:23.039
+Then at the end we have the apoch
+
+00:26:18.960 --> 00:26:27.120
+losses. So basically the average loss of
+
+00:26:23.039 --> 00:26:30.640
+each epoch. Okay. and for the auto
+
+00:26:27.120 --> 00:26:34.080
+version. So instead of doing this um
+
+00:26:30.640 --> 00:26:37.679
+data loading ourself, let's use the
+
+00:26:34.080 --> 00:26:41.279
+utilities in PyTorch.
+
+00:26:37.679 --> 00:26:47.360
+So the first one is we want to
+
+00:26:41.279 --> 00:26:53.039
+use the the data loaders uh in PyTorch.
+
+00:26:47.360 --> 00:26:55.279
+So we have the tensor data set and data
+
+00:26:53.039 --> 00:26:58.000
+loader
+
+00:26:55.279 --> 00:27:00.400
+which basically data loader handles the
+
+00:26:58.000 --> 00:27:04.240
+batching, shuffling
+
+00:27:00.400 --> 00:27:07.840
+and uh also parallel data loading which
+
+00:27:04.240 --> 00:27:11.760
+is very handy for large data sets. What
+
+00:27:07.840 --> 00:27:16.720
+does the tensor data set do? help uh it
+
+00:27:11.760 --> 00:27:19.279
+helps us to wrap tensors into a data set
+
+00:27:16.720 --> 00:27:22.720
+for the data loader.
+
+00:27:19.279 --> 00:27:25.679
+So without tensor data set we have to
+
+00:27:22.720 --> 00:27:30.080
+manually create our own custom data set
+
+00:27:25.679 --> 00:27:32.400
+class uh that keeps the x train and y
+
+00:27:30.080 --> 00:27:35.279
+train synchronized
+
+00:27:32.400 --> 00:27:39.919
+and that's a lot of work for something
+
+00:27:35.279 --> 00:27:43.279
+that common and uh we pytorch as a way
+
+00:27:39.919 --> 00:27:46.480
+to simplify our life. Uh what else we
+
+00:27:43.279 --> 00:27:50.320
+want? uh we already import the optin
+
+00:27:46.480 --> 00:27:52.080
+here so we need that too. Like I said
+
+00:27:50.320 --> 00:27:54.399
+this provides the optimization
+
+00:27:52.080 --> 00:27:57.600
+algorithms like stochastic gradient
+
+00:27:54.399 --> 00:27:59.360
+descent or Adam or other advanced
+
+00:27:57.600 --> 00:28:02.640
+algorithms.
+
+00:27:59.360 --> 00:28:06.720
+Okay. So let's use them.
+
+00:28:02.640 --> 00:28:10.559
+So here I'm going to write a train
+
+00:28:06.720 --> 00:28:13.600
+uh method for our
+
+00:28:10.559 --> 00:28:15.440
+nice mutated
+
+00:28:13.600 --> 00:28:18.080
+uh model
+
+00:28:15.440 --> 00:28:21.200
+which is a
+
+00:28:18.080 --> 00:28:24.240
+and we can take the rest. So within this
+
+00:28:21.200 --> 00:28:27.760
+function we will have the optimizers.
+
+00:28:24.240 --> 00:28:31.120
+Okay. So we can take in the uh the
+
+00:28:27.760 --> 00:28:33.840
+learning rates here. Okay. So with that
+
+00:28:31.120 --> 00:28:38.399
+let's write the function. So when we
+
+00:28:33.840 --> 00:28:43.279
+take in x and y we can make the data set
+
+00:28:38.399 --> 00:28:45.840
+using our uh tensor data set. Then we
+
+00:28:43.279 --> 00:28:50.480
+have the data loader that takes in this
+
+00:28:45.840 --> 00:28:54.000
+tensord data set and the batch
+
+00:28:50.480 --> 00:28:57.200
+uh batches that we the batch sizes that
+
+00:28:54.000 --> 00:28:59.039
+we determined in the try not to grab
+
+00:28:57.200 --> 00:28:59.760
+function.
+
+00:28:59.039 --> 00:29:04.960
+And [snorts]
+
+00:28:59.760 --> 00:29:09.039
+uh this way we can prepare for the
+
+00:29:04.960 --> 00:29:14.399
+optimizer. Of course we need a criterion
+
+00:29:09.039 --> 00:29:17.840
+here and um let's uh oh we have the
+
+00:29:14.399 --> 00:29:19.679
+criterion in an MSE loss and that's what
+
+00:29:17.840 --> 00:29:22.720
+we want.
+
+00:29:19.679 --> 00:29:25.279
+So notice that uh in the suggestion we
+
+00:29:22.720 --> 00:29:27.919
+had the criterion after the optimizer
+
+00:29:25.279 --> 00:29:31.279
+which is okay because we are going to
+
+00:29:27.919 --> 00:29:34.240
+use it within the training loop and we
+
+00:29:31.279 --> 00:29:37.360
+haven't yet written the loop. So it can
+
+00:29:34.240 --> 00:29:42.880
+be before or after. Uh okay. So with
+
+00:29:37.360 --> 00:29:45.919
+that let's write the training loop
+
+00:29:42.880 --> 00:29:47.440
+starting with the AP classes that we
+
+00:29:45.919 --> 00:29:54.399
+want to [snorts]
+
+00:29:47.440 --> 00:29:56.640
+suffer empty and for a in the range of
+
+00:29:54.399 --> 00:29:59.120
+epox
+
+00:29:56.640 --> 00:30:01.919
+and we have the total loss and number of
+
+00:29:59.120 --> 00:30:03.840
+batches. And then now we can use the
+
+00:30:01.919 --> 00:30:05.840
+data loader.
+
+00:30:03.840 --> 00:30:08.799
+And for
+
+00:30:05.840 --> 00:30:11.750
+um badge
+
+00:30:08.799 --> 00:30:11.840
+um let's keep it similar to what we had
+
+00:30:11.750 --> 00:30:13.760
+>> [clears throat]
+
+00:30:11.840 --> 00:30:18.240
+>> uh in the
+
+00:30:13.760 --> 00:30:20.720
+um manual version and then in in
+
+00:30:18.240 --> 00:30:25.120
+numerate
+
+00:30:20.720 --> 00:30:28.960
+and we are using data loader and uh by
+
+00:30:25.120 --> 00:30:32.640
+default it uh put the zero grad for us
+
+00:30:28.960 --> 00:30:34.960
+which is nice. Like I said, this can be
+
+00:30:32.640 --> 00:30:39.520
+a common problem
+
+00:30:34.960 --> 00:30:42.536
+and commenting out this we'll see uh we
+
+00:30:39.520 --> 00:30:43.200
+will see the the gradient accumulation.
+
+00:30:42.536 --> 00:30:45.919
+[clears throat]
+
+00:30:43.200 --> 00:30:49.360
+Okay. So with that uh we have the
+
+00:30:45.919 --> 00:30:51.760
+forward here and doing this forward the
+
+00:30:49.360 --> 00:30:55.919
+autograd will track the operation for
+
+00:30:51.760 --> 00:30:57.760
+us. Then we have the last computation
+
+00:30:55.919 --> 00:31:00.640
+the backward
+
+00:30:57.760 --> 00:31:03.520
+and then the update of the parameters
+
+00:31:00.640 --> 00:31:06.880
+using the optimizer optimizer.
+
+00:31:03.520 --> 00:31:09.600
+So let's
+
+00:31:06.880 --> 00:31:12.720
+update the total loss [sighs]
+
+00:31:09.600 --> 00:31:16.399
+um the number of batches and then we
+
+00:31:12.720 --> 00:31:20.320
+have the average loss and epo losses
+
+00:31:16.399 --> 00:31:25.120
+and then after that we can return
+
+00:31:20.320 --> 00:31:27.120
+the the epo classes. Uh we can add some
+
+00:31:25.120 --> 00:31:30.320
+variables
+
+00:31:27.120 --> 00:31:33.279
+um for debugging
+
+00:31:30.320 --> 00:31:39.120
+will be for the training loop. Let's put
+
+00:31:33.279 --> 00:31:41.200
+a bus here. Okay. So, we'll put one here
+
+00:31:39.120 --> 00:31:45.600
+and
+
+00:31:41.200 --> 00:31:50.080
+Okay. So, let's write a main function.
+
+00:31:45.600 --> 00:31:52.480
+And in this main function, we make the
+
+00:31:50.080 --> 00:31:56.080
+the synthetic data. Let's uh let's do it
+
+00:31:52.480 --> 00:31:59.440
+like last time where we had a true
+
+00:31:56.080 --> 00:32:01.039
+weight and [clears throat]
+
+00:31:59.440 --> 00:32:08.039
+um
+
+00:32:01.039 --> 00:32:08.039
+uh true B. Let's compare the two model.
+
+00:32:08.240 --> 00:32:14.240
+Okay, so we have the models
+
+00:32:11.440 --> 00:32:21.200
+loss of average loss of each epoch and
+
+00:32:14.240 --> 00:32:22.720
+then do the same for the uh autograd.
+
+00:32:21.200 --> 00:32:26.919
+So
+
+00:32:22.720 --> 00:32:26.919
+it's no grad.
+
+00:32:27.279 --> 00:32:36.000
+Uh what we have? We take in the
+
+00:32:31.919 --> 00:32:37.760
+um [clears throat and snorts] both the
+
+00:32:36.000 --> 00:32:41.519
+the
+
+00:32:37.760 --> 00:32:43.120
+weights flatten that and also the
+
+00:32:41.519 --> 00:32:46.159
+biases.
+
+00:32:43.120 --> 00:32:48.640
+Let's see. We get this and then we have
+
+00:32:46.159 --> 00:32:53.919
+we have this nice method that does it
+
+00:32:48.640 --> 00:32:56.399
+for our auto model. It's also in the
+
+00:32:53.919 --> 00:33:00.799
+final [clears throat] loss. Okay. So
+
+00:32:56.399 --> 00:33:03.760
+let's run this and train autograd and
+
+00:33:00.799 --> 00:33:07.679
+train manual. Oh, I didn't run this
+
+00:33:03.760 --> 00:33:12.320
+apparently. So let's try again.
+
+00:33:07.679 --> 00:33:15.760
+Okay, so the manual is trained. Okay.
+
+00:33:12.320 --> 00:33:18.320
+Oh, there is an error here. U we don't
+
+00:33:15.760 --> 00:33:20.880
+have a forward. That's impossible. Let's
+
+00:33:18.320 --> 00:33:25.679
+go back to
+
+00:33:20.880 --> 00:33:30.720
+Oh, okay. We never close this here.
+
+00:33:25.679 --> 00:33:35.679
+Okay, let's um good. Let's go back
+
+00:33:30.720 --> 00:33:37.919
+and run this. Oh, another error. So, we
+
+00:33:35.679 --> 00:33:41.039
+our linear regression alpha class
+
+00:33:37.919 --> 00:33:43.318
+doesn't have a get parameters. I'm
+
+00:33:41.039 --> 00:33:43.919
+pretty sure I wrote that. So,
+
+00:33:43.318 --> 00:33:46.559
+[sighs and gasps]
+
+00:33:43.919 --> 00:33:48.559
+there might be some naming issues. Get
+
+00:33:46.559 --> 00:33:51.039
+parami
+
+00:33:48.559 --> 00:33:54.799
+errors of course.
+
+00:33:51.039 --> 00:33:57.600
+Okay, so let's run again. There will be
+
+00:33:54.799 --> 00:34:01.713
+always errors. So,
+
+00:33:57.600 --> 00:34:01.713
+okay. So, another one. [sighs]
+
+00:34:01.919 --> 00:34:06.320
+Let's just look for any of these
+
+00:34:03.600 --> 00:34:09.839
+instances. Where is that? You see that
+
+00:34:06.320 --> 00:34:13.839
+he should be very patient even with me.
+
+00:34:09.839 --> 00:34:18.560
+We have the final losses and um
+
+00:34:13.839 --> 00:34:22.639
+weights and biases. So, here was two
+
+00:34:18.560 --> 00:34:29.040
+that they are all the same. We can also
+
+00:34:22.639 --> 00:34:32.639
+plot the values of this uh epoch losses.
+
+00:34:29.040 --> 00:34:34.720
+So let me write a plot.
+
+00:34:32.639 --> 00:34:39.440
+Okay. So we will add a plot function
+
+00:34:34.720 --> 00:34:44.000
+here. We already have that and just need
+
+00:34:39.440 --> 00:34:47.040
+to align it and let's try again.
+
+00:34:44.000 --> 00:34:48.639
+So notice that the autocrat
+
+00:34:47.040 --> 00:34:51.839
+um
+
+00:34:48.639 --> 00:34:55.359
+minimizes the loss faster. And that's
+
+00:34:51.839 --> 00:34:59.280
+because of the better SGD implementation
+
+00:34:55.359 --> 00:35:01.520
+than what we did. Uh, of course the
+
+00:34:59.280 --> 00:35:05.280
+initialization
+
+00:35:01.520 --> 00:35:09.040
+uh even here it's not exactly the same
+
+00:35:05.280 --> 00:35:12.320
+but uh we didn't let autograd
+
+00:35:09.040 --> 00:35:16.000
+go smart on the initialization.
+
+00:35:12.320 --> 00:35:18.800
+The final result of W1 W2 and bias is
+
+00:35:16.000 --> 00:35:20.720
+almost the same and we are happy with
+
+00:35:18.800 --> 00:35:23.200
+that. So,
+
+00:35:20.720 --> 00:35:23.200
+uh that's

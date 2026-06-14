@@ -1,0 +1,1126 @@
+WEBVTT
+
+00:00:01.280 --> 00:00:06.799
+Okay, so let us pick up from where we
+
+00:00:04.080 --> 00:00:10.480
+left. Uh we have this solution proposed
+
+00:00:06.799 --> 00:00:13.840
+by Badano at all with this idea that
+
+00:00:10.480 --> 00:00:18.160
+want to learn the similarity or score
+
+00:00:13.840 --> 00:00:21.039
+that how well a decoder state ST aka the
+
+00:00:18.160 --> 00:00:25.359
+query should attend to then to an
+
+00:00:21.039 --> 00:00:27.599
+encoder state hi or the key value. This
+
+00:00:25.359 --> 00:00:30.800
+is done using a tiny neural network an
+
+00:00:27.599 --> 00:00:34.160
+MLP with one hidden layer and a tangent
+
+00:00:30.800 --> 00:00:37.440
+hyperbolic activation. So let us look
+
+00:00:34.160 --> 00:00:41.280
+closer at this formulation. We have WQ
+
+00:00:37.440 --> 00:00:46.640
+and W K as the learn projections that
+
+00:00:41.280 --> 00:00:50.000
+map queries ST and keys HI into this
+
+00:00:46.640 --> 00:00:53.920
+common alignment space of dimension DH.
+
+00:00:50.000 --> 00:00:58.239
+So note that this let us compare SD and
+
+00:00:53.920 --> 00:01:04.559
+hi from uh different sizes. Let's say SD
+
+00:00:58.239 --> 00:01:07.040
+can be um the decoder dimension and hi
+
+00:01:04.559 --> 00:01:10.320
+uh the encoder dimension and not
+
+00:01:07.040 --> 00:01:14.080
+necessarily the same. So that's a nice
+
+00:01:10.320 --> 00:01:17.439
+feature. So again this let us compare
+
+00:01:14.080 --> 00:01:22.400
+objects of different size. So you can uh
+
+00:01:17.439 --> 00:01:25.920
+imagine uh that uh this rotate and scale
+
+00:01:22.400 --> 00:01:29.759
+both s and hi in a way that they are
+
+00:01:25.920 --> 00:01:32.799
+semantically matching then it will
+
+00:01:29.759 --> 00:01:35.600
+inject some nonlinear interaction using
+
+00:01:32.799 --> 00:01:39.600
+the tangent hyperbolic between the
+
+00:01:35.600 --> 00:01:43.600
+projected vectors that enables a reacher
+
+00:01:39.600 --> 00:01:48.159
+non by linear matching. So beyond let's
+
+00:01:43.600 --> 00:01:51.040
+say a dot product or a cosine similarity
+
+00:01:48.159 --> 00:01:53.840
+and then we have this VA that is
+
+00:01:51.040 --> 00:01:57.040
+basically a feature selector in this
+
+00:01:53.840 --> 00:02:00.880
+alignment space. So after computing the
+
+00:01:57.040 --> 00:02:04.799
+DH dimensional match features now we
+
+00:02:00.880 --> 00:02:07.759
+have a vector of features with DH
+
+00:02:04.799 --> 00:02:11.680
+dimension following these steps here.
+
+00:02:07.759 --> 00:02:14.080
+But then later we also choose those
+
+00:02:11.680 --> 00:02:18.160
+features that actually matter in this
+
+00:02:14.080 --> 00:02:20.239
+alignment. So VA help helps us to do
+
+00:02:18.160 --> 00:02:22.560
+that to assign some positive and
+
+00:02:20.239 --> 00:02:25.280
+negative importance to each one of these
+
+00:02:22.560 --> 00:02:28.879
+hidden features produced by calling the
+
+00:02:25.280 --> 00:02:33.120
+tangent hyperbolic. Okay. So note that
+
+00:02:28.879 --> 00:02:35.599
+this is defined for T and I but we are
+
+00:02:33.120 --> 00:02:40.400
+going to share the parameters of this
+
+00:02:35.599 --> 00:02:44.480
+MLP for all pairs of TNI. Remember that
+
+00:02:40.400 --> 00:02:48.160
+this is very similar to CNN logic that
+
+00:02:44.480 --> 00:02:50.560
+we are using or learning a kernel but we
+
+00:02:48.160 --> 00:02:54.800
+are using the same kernel across all
+
+00:02:50.560 --> 00:02:57.440
+pairs. Okay. So let's look at why this
+
+00:02:54.800 --> 00:03:00.319
+works. So first of all it removes the
+
+00:02:57.440 --> 00:03:03.040
+bottleneck that we discussed. So this
+
+00:03:00.319 --> 00:03:06.400
+decoder no longer compresses this entire
+
+00:03:03.040 --> 00:03:09.040
+source into a single vector and instead
+
+00:03:06.400 --> 00:03:13.599
+it adapts a context
+
+00:03:09.040 --> 00:03:18.000
+uh dynamic con context ct at each step.
+
+00:03:13.599 --> 00:03:19.599
+So now let us call this uh E
+
+00:03:18.000 --> 00:03:23.040
+TI
+
+00:03:19.599 --> 00:03:27.920
+and then we can uh we can make this uh
+
+00:03:23.040 --> 00:03:31.280
+tension weights alpha t and I that is
+
+00:03:27.920 --> 00:03:33.760
+basically a soft max of this. Like I
+
+00:03:31.280 --> 00:03:37.599
+said this gives us the CT and the
+
+00:03:33.760 --> 00:03:41.519
+decoder uses this CT and the SD to
+
+00:03:37.599 --> 00:03:44.480
+predict the next token. So again we know
+
+00:03:41.519 --> 00:03:46.959
+what's nice about this soft alignment.
+
+00:03:44.480 --> 00:03:49.519
+This weights or the soft alignments
+
+00:03:46.959 --> 00:03:53.599
+behave like a like differentiable
+
+00:03:49.519 --> 00:03:56.879
+alignment from this target position t to
+
+00:03:53.599 --> 00:03:58.480
+the source position I. So the paper from
+
+00:03:56.879 --> 00:04:00.799
+2014
+
+00:03:58.480 --> 00:04:03.200
+showed that using this additive
+
+00:04:00.799 --> 00:04:06.080
+attention
+
+00:04:03.200 --> 00:04:08.959
+significantly advanced the original seek
+
+00:04:06.080 --> 00:04:12.640
+to seek LSTDM breakthrough
+
+00:04:08.959 --> 00:04:16.239
+uh by Ilia and others. So now let us
+
+00:04:12.640 --> 00:04:19.759
+look at how can we implement this and
+
+00:04:16.239 --> 00:04:24.479
+before coding I want to take a closer
+
+00:04:19.759 --> 00:04:26.639
+look on the scalability of this additive
+
+00:04:24.479 --> 00:04:30.639
+attention.
+
+00:04:26.639 --> 00:04:33.199
+We know that uh our GPUs and TPUs are
+
+00:04:30.639 --> 00:04:34.720
+optimized for this dense matrix
+
+00:04:33.199 --> 00:04:37.680
+multiplication.
+
+00:04:34.720 --> 00:04:40.960
+However, additive attention requires
+
+00:04:37.680 --> 00:04:44.400
+this kind of complex fused operation.
+
+00:04:40.960 --> 00:04:48.000
+It's not pure matrix multiplication.
+
+00:04:44.400 --> 00:04:51.280
+So if we could do the same thing but
+
+00:04:48.000 --> 00:04:54.320
+only with pure matrix multiplication, we
+
+00:04:51.280 --> 00:04:56.479
+could achieve massive speed ups and of
+
+00:04:54.320 --> 00:05:00.320
+course scalability which is something
+
+00:04:56.479 --> 00:05:04.320
+that we need for training large models.
+
+00:05:00.320 --> 00:05:08.880
+So looking at this here, let's see what
+
+00:05:04.320 --> 00:05:12.400
+prevents us from this scaling up and
+
+00:05:08.880 --> 00:05:15.360
+going toward pure multiplication. So I'm
+
+00:05:12.400 --> 00:05:18.639
+going to rewrite this just for the sake
+
+00:05:15.360 --> 00:05:21.360
+of discussing this computation aspects.
+
+00:05:18.639 --> 00:05:24.160
+So let's assume this we have t as the
+
+00:05:21.360 --> 00:05:26.400
+target length or the number of tokens
+
+00:05:24.160 --> 00:05:30.000
+for example in the French translation
+
+00:05:26.400 --> 00:05:36.639
+and n to be the source length. Okay. So
+
+00:05:30.000 --> 00:05:39.280
+now we have WQ ST from T1 to T uh which
+
+00:05:36.639 --> 00:05:40.880
+is in R TH
+
+00:05:39.280 --> 00:05:45.120
+right
+
+00:05:40.880 --> 00:05:50.000
+and on the other side we have W K hi
+
+00:05:45.120 --> 00:05:52.880
+from I 1 to N in this the pair wise
+
+00:05:50.000 --> 00:05:54.960
+hidden feature will be first let's write
+
+00:05:52.880 --> 00:05:58.960
+the first component
+
+00:05:54.960 --> 00:06:02.960
+H of I'm going to make my notation
+
+00:05:58.960 --> 00:06:07.919
+easier here by calling this guy a t from
+
+00:06:02.960 --> 00:06:12.160
+t1 to t or shorthanded by matrix a and
+
+00:06:07.919 --> 00:06:16.160
+this guy let's call it b from i 1 to n
+
+00:06:12.160 --> 00:06:19.199
+or b right so the tangent hyperbolic
+
+00:06:16.160 --> 00:06:21.440
+that we discussed will be a t plus b
+
+00:06:19.199 --> 00:06:25.360
+plus some bias term and we know that
+
+00:06:21.440 --> 00:06:30.800
+this guy is in our dh right let's call
+
+00:06:25.360 --> 00:06:33.680
+this h now e t and I will be the feature
+
+00:06:30.800 --> 00:06:36.080
+selector multiplied by this H. Okay. So
+
+00:06:33.680 --> 00:06:37.680
+computing this
+
+00:06:36.080 --> 00:06:44.560
+naively
+
+00:06:37.680 --> 00:06:46.880
+uh requires u T and DH tensor uh and of
+
+00:06:44.560 --> 00:06:48.720
+course an elementwise nonlinearity in
+
+00:06:46.880 --> 00:06:53.440
+10h
+
+00:06:48.720 --> 00:06:56.319
+and a reduction here. So this pattern is
+
+00:06:53.440 --> 00:07:01.120
+extremely broadcast heavy. It is memory
+
+00:06:56.319 --> 00:07:04.560
+bound and it's not really using our GPU
+
+00:07:01.120 --> 00:07:08.160
+tensor core units. Like I said, what we
+
+00:07:04.560 --> 00:07:10.880
+really want is this generalized
+
+00:07:08.160 --> 00:07:14.720
+matrix multiplication. This way, if we
+
+00:07:10.880 --> 00:07:18.000
+do it, we can leverage all of this GPU
+
+00:07:14.720 --> 00:07:21.599
+cores and we basically can achieve a hit
+
+00:07:18.000 --> 00:07:25.759
+peak or the maximum number of floating
+
+00:07:21.599 --> 00:07:28.800
+point operation. So note that this
+
+00:07:25.759 --> 00:07:34.000
+nonlinearity plus these two is not
+
+00:07:28.800 --> 00:07:37.840
+separable in our uh GPU. So I encourage
+
+00:07:34.000 --> 00:07:40.720
+you to look at this and see why it's not
+
+00:07:37.840 --> 00:07:46.479
+possible to separate and distribute it
+
+00:07:40.720 --> 00:07:49.680
+over the GPU cores. Okay. So let's move
+
+00:07:46.479 --> 00:07:51.599
+toward this uh kind of matrix
+
+00:07:49.680 --> 00:07:53.599
+multiplication version of this attention
+
+00:07:51.599 --> 00:07:55.680
+computation that we are going to call it
+
+00:07:53.599 --> 00:07:58.639
+an inner product or a dotproduct
+
+00:07:55.680 --> 00:08:01.919
+attention. Okay. So we want to do the
+
+00:07:58.639 --> 00:08:05.759
+same thing but only with dot product. So
+
+00:08:01.919 --> 00:08:08.319
+how to do it? Basically, I like to do
+
+00:08:05.759 --> 00:08:11.759
+this calculation here
+
+00:08:08.319 --> 00:08:14.560
+or this computation of attention of this
+
+00:08:11.759 --> 00:08:17.120
+guy here in a way that I'm not dealing
+
+00:08:14.560 --> 00:08:19.520
+with any of these two. But we know that
+
+00:08:17.120 --> 00:08:23.680
+nonlinearity does something for us. It
+
+00:08:19.520 --> 00:08:28.879
+really enriches this latent space and
+
+00:08:23.680 --> 00:08:32.479
+finds better alignment. And also this VA
+
+00:08:28.879 --> 00:08:35.599
+helps to add another level of uh feature
+
+00:08:32.479 --> 00:08:39.839
+selection. So we need to somehow build
+
+00:08:35.599 --> 00:08:43.039
+up this nonlinearity in our uh
+
+00:08:39.839 --> 00:08:45.600
+architecture in a way that uh we
+
+00:08:43.039 --> 00:08:47.600
+basically separate the building up of
+
+00:08:45.600 --> 00:08:51.600
+nonlinearity
+
+00:08:47.600 --> 00:08:55.200
+to achieve richer features and then once
+
+00:08:51.600 --> 00:08:58.080
+we have that in this rich feature space
+
+00:08:55.200 --> 00:09:01.440
+then we can do inner products without
+
+00:08:58.080 --> 00:09:04.720
+the need of infusing additional
+
+00:09:01.440 --> 00:09:08.240
+nonlinearity. Okay. So we'll explain
+
+00:09:04.720 --> 00:09:11.200
+what I mean by that. Okay. So let us uh
+
+00:09:08.240 --> 00:09:13.680
+state the problem that we want to solve.
+
+00:09:11.200 --> 00:09:18.560
+We want to find the similarity between
+
+00:09:13.680 --> 00:09:22.240
+two vector right the query and the key.
+
+00:09:18.560 --> 00:09:25.440
+In our case for example Q was S of T and
+
+00:09:22.240 --> 00:09:27.760
+K was H of I right. But we want to do it
+
+00:09:25.440 --> 00:09:31.519
+in a way that uh the when we are
+
+00:09:27.760 --> 00:09:35.920
+computing this uh payer attention we
+
+00:09:31.519 --> 00:09:38.399
+only want to use uh inner product
+
+00:09:35.920 --> 00:09:42.160
+right
+
+00:09:38.399 --> 00:09:44.240
+between SD and hi or some function of
+
+00:09:42.160 --> 00:09:47.360
+them right I mean we can do any
+
+00:09:44.240 --> 00:09:50.160
+operation we want as long as it's on
+
+00:09:47.360 --> 00:09:53.600
+them separately not under interaction so
+
+00:09:50.160 --> 00:09:57.760
+let's call this functions fi
+
+00:09:53.600 --> 00:10:00.240
+Okay. So if we have this then we can
+
+00:09:57.760 --> 00:10:03.120
+just compute the inner product. Let's
+
+00:10:00.240 --> 00:10:07.600
+use the classic inner product style
+
+00:10:03.120 --> 00:10:10.480
+notation. We want to find phi
+
+00:10:07.600 --> 00:10:13.839
+uh here that in a way that the inner
+
+00:10:10.480 --> 00:10:15.920
+product give gives us a kernel that is
+
+00:10:13.839 --> 00:10:18.959
+the most relevant kernel for our task.
+
+00:10:15.920 --> 00:10:21.600
+So we want to learn this vice
+
+00:10:18.959 --> 00:10:26.160
+and this will give us the similarity
+
+00:10:21.600 --> 00:10:27.839
+that we want right. So where we saw this
+
+00:10:26.160 --> 00:10:30.880
+if you remember in support vector
+
+00:10:27.839 --> 00:10:34.240
+machine for example we had this problem
+
+00:10:30.880 --> 00:10:39.720
+of separation of let's say a two group
+
+00:10:34.240 --> 00:10:39.720
+of data points like this
+
+00:10:41.120 --> 00:10:47.200
+with a linear plane or line. So this is
+
+00:10:45.120 --> 00:10:52.720
+a two-dimensional
+
+00:10:47.200 --> 00:10:54.720
+space let's say let's call it x1 and x2.
+
+00:10:52.720 --> 00:10:57.360
+So in support vector machine we what we
+
+00:10:54.720 --> 00:11:01.480
+did was to find a higher dimensional
+
+00:10:57.360 --> 00:11:01.480
+space let's say
+
+00:11:01.519 --> 00:11:10.440
+fi 1 of x 5 2 of x
+
+00:11:06.160 --> 00:11:10.440
+and 53 of x
+
+00:11:10.720 --> 00:11:16.720
+where things are
+
+00:11:13.440 --> 00:11:18.959
+separated. Let's say here we have this
+
+00:11:16.720 --> 00:11:22.279
+separation
+
+00:11:18.959 --> 00:11:22.279
+like this.
+
+00:11:22.959 --> 00:11:29.120
+So now with a simple plane between them
+
+00:11:26.560 --> 00:11:32.320
+we can separate them. Um you can think
+
+00:11:29.120 --> 00:11:37.120
+of fs for example here in this case we
+
+00:11:32.320 --> 00:11:40.640
+have x was x1 and x2
+
+00:11:37.120 --> 00:11:44.720
+but fs are I don't know some form of
+
+00:11:40.640 --> 00:11:46.800
+functions of x1's and so on. Okay. So
+
+00:11:44.720 --> 00:11:50.320
+note that we can have any function here.
+
+00:11:46.800 --> 00:11:53.920
+For example, it can be sin of x1,
+
+00:11:50.320 --> 00:11:55.760
+cosine of x1,
+
+00:11:53.920 --> 00:11:58.320
+x2,
+
+00:11:55.760 --> 00:12:00.480
+anything. So how many of the functions
+
+00:11:58.320 --> 00:12:02.720
+we have in the world? We have infinite.
+
+00:12:00.480 --> 00:12:05.360
+And as long as we can compute the inner
+
+00:12:02.720 --> 00:12:08.240
+product, we are happy.
+
+00:12:05.360 --> 00:12:11.600
+And in this higher dimensional space,
+
+00:12:08.240 --> 00:12:15.120
+things are easier to separate. we can
+
+00:12:11.600 --> 00:12:18.160
+employ linear operation to for example
+
+00:12:15.120 --> 00:12:21.519
+separate them, rotate them and uh align
+
+00:12:18.160 --> 00:12:25.680
+them together and that's the idea. So we
+
+00:12:21.519 --> 00:12:29.519
+need to build up a feature space using
+
+00:12:25.680 --> 00:12:33.920
+nonlinearity that we want that on this
+
+00:12:29.519 --> 00:12:36.079
+SD and hi and lift them
+
+00:12:33.920 --> 00:12:39.200
+from this lower dimension to this higher
+
+00:12:36.079 --> 00:12:41.839
+dimension where things are easier to
+
+00:12:39.200 --> 00:12:44.560
+manipulate uh using our linear
+
+00:12:41.839 --> 00:12:47.360
+operations or linear algebra and dot
+
+00:12:44.560 --> 00:12:50.160
+product is one of them and as long as we
+
+00:12:47.360 --> 00:12:53.279
+are in this space we can dot product. So
+
+00:12:50.160 --> 00:12:57.360
+that's the the real idea here. Okay. So
+
+00:12:53.279 --> 00:13:00.959
+let's go back to our seek to seek RNN
+
+00:12:57.360 --> 00:13:05.440
+where we had type of RNN layer. Uh we
+
+00:13:00.959 --> 00:13:09.120
+had uh several activation within the RNN
+
+00:13:05.440 --> 00:13:12.160
+that adds nonlinearity to the encoder
+
+00:13:09.120 --> 00:13:13.760
+and decoder states. And given that
+
+00:13:12.160 --> 00:13:16.560
+nonlinearity
+
+00:13:13.760 --> 00:13:18.720
+and some rotation of them and the inner
+
+00:13:16.560 --> 00:13:21.839
+product of this
+
+00:13:18.720 --> 00:13:25.279
+will do what we want. But like I said
+
+00:13:21.839 --> 00:13:28.639
+this is all relying on the case that we
+
+00:13:25.279 --> 00:13:31.600
+already have enough nonlinearity here or
+
+00:13:28.639 --> 00:13:33.760
+we already lift this up to this higher
+
+00:13:31.600 --> 00:13:37.120
+dimension. So that's the idea. So we
+
+00:13:33.760 --> 00:13:40.639
+need the nonlinearity. We cannot only do
+
+00:13:37.120 --> 00:13:45.120
+this rotation. Okay. Later you will see
+
+00:13:40.639 --> 00:13:48.959
+when we remove even the RNN or CNN
+
+00:13:45.120 --> 00:13:52.399
+encoders and we only do attention we
+
+00:13:48.959 --> 00:13:55.519
+have to have some form of feed forward
+
+00:13:52.399 --> 00:13:58.720
+neural network that injects this uh
+
+00:13:55.519 --> 00:14:01.279
+nonlinearity or lifting role. Okay. So
+
+00:13:58.720 --> 00:14:04.320
+remember when we go to self attention
+
+00:14:01.279 --> 00:14:07.839
+where we only have attention we still
+
+00:14:04.320 --> 00:14:10.639
+need some form of feed forward to infuse
+
+00:14:07.839 --> 00:14:13.519
+enough nonlinearity
+
+00:14:10.639 --> 00:14:15.920
+uh to lift everything up and then in
+
+00:14:13.519 --> 00:14:18.320
+this higher dimensional space we can do
+
+00:14:15.920 --> 00:14:21.120
+this inner product. We can also show
+
+00:14:18.320 --> 00:14:23.839
+this from the previous kernel view. So
+
+00:14:21.120 --> 00:14:27.040
+assume a a Gaussian kernel let's say a
+
+00:14:23.839 --> 00:14:31.440
+kernel between Q and K that is written
+
+00:14:27.040 --> 00:14:34.720
+like this right with some kernel widths
+
+00:14:31.440 --> 00:14:39.519
+which is a function of this norm. So if
+
+00:14:34.720 --> 00:14:43.519
+we write this down it is basically Q
+
+00:14:39.519 --> 00:14:46.639
+minus 2 QT K. So this is uh an inner
+
+00:14:43.519 --> 00:14:49.839
+product right. So the idea is this is
+
+00:14:46.639 --> 00:14:53.839
+equivalent to this. So why? Because we
+
+00:14:49.839 --> 00:14:57.199
+know that later when we send this guy to
+
+00:14:53.839 --> 00:15:00.160
+soft max.
+
+00:14:57.199 --> 00:15:03.680
+Soft max is invariant to shifts. Meaning
+
+00:15:00.160 --> 00:15:09.279
+that for example if you have soft max of
+
+00:15:03.680 --> 00:15:16.240
+a q let's say ki plus some constant this
+
+00:15:09.279 --> 00:15:19.360
+will be similar to soft max of a q ki.
+
+00:15:16.240 --> 00:15:22.720
+Okay. So anything that is constant here
+
+00:15:19.360 --> 00:15:26.000
+and not a function of ki that changes
+
+00:15:22.720 --> 00:15:27.839
+with I will vanish. Okay. So let's go
+
+00:15:26.000 --> 00:15:30.880
+back here.
+
+00:15:27.839 --> 00:15:34.399
+Well this guy is a function of Q. So it
+
+00:15:30.880 --> 00:15:37.120
+will vanish in a soft max. How about
+
+00:15:34.399 --> 00:15:40.880
+this guy? Well, we know that this is KI,
+
+00:15:37.120 --> 00:15:43.600
+right? So this shouldn't really vanish.
+
+00:15:40.880 --> 00:15:46.880
+But the thing is in in attention we do
+
+00:15:43.600 --> 00:15:50.160
+this layer norm which makes all of this
+
+00:15:46.880 --> 00:15:53.199
+features to be normalized meaning that
+
+00:15:50.160 --> 00:15:57.440
+they all have the same norm. So all of
+
+00:15:53.199 --> 00:16:00.399
+the kis has the same norm. So ki has the
+
+00:15:57.440 --> 00:16:02.880
+same norm as kj when i and j is not the
+
+00:16:00.399 --> 00:16:04.959
+same. This is happening because that's
+
+00:16:02.880 --> 00:16:07.920
+how we adjust them. This is the layer
+
+00:16:04.959 --> 00:16:11.040
+norm. So in that case this is also a
+
+00:16:07.920 --> 00:16:13.600
+constant and the whole thing reduces to
+
+00:16:11.040 --> 00:16:16.480
+the inner product. So we want to
+
+00:16:13.600 --> 00:16:19.759
+maximize similarity we minimizing the
+
+00:16:16.480 --> 00:16:21.920
+kernel or the distance and maximizing
+
+00:16:19.759 --> 00:16:24.720
+the dot product because of this
+
+00:16:21.920 --> 00:16:26.720
+negative. Okay. So this is another way
+
+00:16:24.720 --> 00:16:30.160
+of looking at this. Okay. Okay. So it's
+
+00:16:26.720 --> 00:16:34.240
+important to know that after this
+
+00:16:30.160 --> 00:16:38.560
+calculation we said that a QA basically
+
+00:16:34.240 --> 00:16:41.519
+same as QT K but we also want to make
+
+00:16:38.560 --> 00:16:44.880
+sure that we are taking care of the the
+
+00:16:41.519 --> 00:16:47.040
+variance here because we can have a high
+
+00:16:44.880 --> 00:16:49.759
+dimension for these vectors like we
+
+00:16:47.040 --> 00:16:52.560
+discussed. So the vectors let's say they
+
+00:16:49.759 --> 00:16:56.480
+are living in DK and the inner product
+
+00:16:52.560 --> 00:17:00.079
+basically is happening in DK. So even if
+
+00:16:56.480 --> 00:17:03.920
+Q and K both the expectation
+
+00:17:00.079 --> 00:17:06.959
+is zero, they're centered and even their
+
+00:17:03.920 --> 00:17:10.000
+variance is one. We do this scaling,
+
+00:17:06.959 --> 00:17:12.079
+right? The variance of the dot product
+
+00:17:10.000 --> 00:17:14.319
+is the summation of all of these
+
+00:17:12.079 --> 00:17:16.959
+variances, right? Which is the
+
+00:17:14.319 --> 00:17:19.919
+dimension. And when dimension goes
+
+00:17:16.959 --> 00:17:23.039
+higher, this variance goes higher. So
+
+00:17:19.919 --> 00:17:26.480
+how to control this? We basically make
+
+00:17:23.039 --> 00:17:28.160
+sure that this guy is divided by DK. So
+
+00:17:26.480 --> 00:17:31.360
+we want to make sure the variance of
+
+00:17:28.160 --> 00:17:35.240
+this is not exploding with DK. And to do
+
+00:17:31.360 --> 00:17:35.240
+that it's enough to
+
+00:17:35.520 --> 00:17:42.960
+divided by square root of DK. So this is
+
+00:17:39.520 --> 00:17:46.160
+the notion of scale.product
+
+00:17:42.960 --> 00:17:48.880
+and using this now if you compute the
+
+00:17:46.160 --> 00:17:51.360
+variance the variance will be one. So
+
+00:17:48.880 --> 00:17:53.360
+that's the idea we are going to use
+
+00:17:51.360 --> 00:17:58.120
+scale.product
+
+00:17:53.360 --> 00:17:58.120
+of the WQ
+
+00:17:58.320 --> 00:18:06.160
+and W K
+
+00:18:01.760 --> 00:18:09.440
+over what do you call square root of DK.
+
+00:18:06.160 --> 00:18:11.280
+So this is the scaled outproduct between
+
+00:18:09.440 --> 00:18:14.320
+the aligned
+
+00:18:11.280 --> 00:18:17.679
+vectors. So this is what we have so far
+
+00:18:14.320 --> 00:18:21.280
+and uh we have this scale product that
+
+00:18:17.679 --> 00:18:24.080
+gives us this similarity. So of course
+
+00:18:21.280 --> 00:18:27.280
+we need to have a way to learn this Q
+
+00:18:24.080 --> 00:18:31.919
+and K using enough nonlinearity and then
+
+00:18:27.280 --> 00:18:34.799
+learn W Q and W K to align them and then
+
+00:18:31.919 --> 00:18:38.240
+this dotproduct that is scaled will give
+
+00:18:34.799 --> 00:18:41.600
+us the similarity that matters between Q
+
+00:18:38.240 --> 00:18:44.799
+and K. So this way we check those case
+
+00:18:41.600 --> 00:18:49.280
+that are the most similar to Q. Okay. So
+
+00:18:44.799 --> 00:18:50.799
+let's just move on to compute what we
+
+00:18:49.280 --> 00:18:55.840
+discussed
+
+00:18:50.799 --> 00:18:58.960
+that gives us the value of Q right. So
+
+00:18:55.840 --> 00:19:03.360
+this is that uh in the case of RNN this
+
+00:18:58.960 --> 00:19:05.919
+is hi but let's just stay um general
+
+00:19:03.360 --> 00:19:11.360
+here. I'm going to simplify a little
+
+00:19:05.919 --> 00:19:14.720
+bit. I'm going to call this Q this K and
+
+00:19:11.360 --> 00:19:18.400
+rewrite this guy in a matrix form for
+
+00:19:14.720 --> 00:19:21.120
+all Q's and K's and V's. Okay. So
+
+00:19:18.400 --> 00:19:23.440
+remember that we want to compute the the
+
+00:19:21.120 --> 00:19:25.760
+kernel regression. If you remember, we
+
+00:19:23.440 --> 00:19:28.799
+learned the kernel, but we have to do a
+
+00:19:25.760 --> 00:19:31.039
+soft max over that kernel
+
+00:19:28.799 --> 00:19:33.360
+and then
+
+00:19:31.039 --> 00:19:39.039
+uh multiply by vi this gives us this
+
+00:19:33.360 --> 00:19:44.880
+pooling. And if we write this with this,
+
+00:19:39.039 --> 00:19:48.080
+it's basically soft max of Q, KT scaled
+
+00:19:44.880 --> 00:19:51.520
+multiply by V. And this is called
+
+00:19:48.080 --> 00:19:54.480
+attention which is a function of Q, K
+
+00:19:51.520 --> 00:19:58.720
+and V. We learn K and Q with enough
+
+00:19:54.480 --> 00:20:01.600
+nonlinearity. Then WQ and W K that align
+
+00:19:58.720 --> 00:20:05.520
+them and then pass it to softmax
+
+00:20:01.600 --> 00:20:08.080
+multiply by the values and that's the
+
+00:20:05.520 --> 00:20:10.559
+attention pooling. Okay. Next we are
+
+00:20:08.080 --> 00:20:13.360
+going to code upproduct
+
+00:20:10.559 --> 00:20:16.160
+attention and show the simplicity of
+
+00:20:13.360 --> 00:20:19.120
+this idea. But of course we have to
+
+00:20:16.160 --> 00:20:21.440
+remember where it comes from and why we
+
+00:20:19.120 --> 00:20:24.720
+can do it because of all of this
+
+00:20:21.440 --> 00:20:26.799
+nonlinearities that lift our data to a
+
+00:20:24.720 --> 00:20:29.280
+higher dimension where the linear
+
+00:20:26.799 --> 00:20:32.720
+operation and linear alignment is
+
+00:20:29.280 --> 00:20:34.960
+possible and reach enough that gives us
+
+00:20:32.720 --> 00:20:38.240
+enough learning from data to do the
+
+00:20:34.960 --> 00:20:41.240
+task. For example, translation or token
+
+00:20:38.240 --> 00:20:41.240
+generation.
