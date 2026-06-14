@@ -1,5 +1,6 @@
 // Self-check questions per module, converted from the instructor quiz bank
-// (LaTeX sources in 6050/LaTeX/Module*/…Q*.tex). Math uses KaTeX $...$ delimiters.
+// (LaTeX sources in 6050/LaTeX/Module*/…Q*.tex) and expanded with transcript-grounded
+// questions verified against the lecture videos. Math uses KaTeX $...$ delimiters.
 
 export type SelfCheckQuestion = {
   question: string
@@ -40,6 +41,11 @@ export const selfChecks: Record<number, SelfCheckQuestion[]> = {
       answer: "The Universal Approximation Theorem.",
       explanation: "This ability to create 'bumps' is the intuitive basis for the Universal Approximation Theorem. By creating and summing many such bumps of different sizes and positions, a neural network with one hidden layer can approximate any continuous function.",
     },
+    {
+      question: "For softmax regression with cross-entropy loss, what is the gradient of the loss with respect to the logits $\\mathbf{o}$ (before softmax)?",
+      answer: "$\\nabla_{\\mathbf{o}} L = \\hat{\\mathbf{y}} - \\mathbf{y}$ (predicted probabilities minus one-hot target)",
+      explanation: "This is the elegant identity that emerges from the chain rule when differentiating softmax followed by cross-entropy. The result is the difference between predicted and true probabilities, which directly informs weight updates in classification networks and is why softmax+CE is the standard pairing.",
+    },
   ],
   2: [
     {
@@ -63,9 +69,16 @@ export const selfChecks: Record<number, SelfCheckQuestion[]> = {
       explanation: "These are complementary mechanisms: $\\texttt{detach()}$ breaks the graph locally for a single tensor (useful when you want to reuse values without backprop), while $\\texttt{no\\_grad()}$ disables recording globally for efficiency during inference or when updating parameters. Understanding both is essential for controlling autograd.",
     },
     {
-      question: "For softmax regression with cross-entropy loss, what is the gradient of the loss with respect to the logits $\\mathbf{o}$ (before softmax)?",
-      answer: "$\\nabla_{\\mathbf{o}} L = \\hat{\\mathbf{y}} - \\mathbf{y}$ (predicted probabilities minus one-hot target)",
-      explanation: "This is the elegant identity that emerges from the chain rule when differentiating softmax followed by cross-entropy. The result is the difference between predicted and true probabilities, which directly informs weight updates in classification networks and is why softmax+CE is the standard pairing.",
+      question: "Why does ReLU mitigate the vanishing gradient problem in deep neural networks, while sigmoid does not?",
+      choices: ["ReLU has a constant derivative of 1 for positive inputs, allowing gradients to flow unchanged through the network during backpropagation, whereas sigmoid has small derivatives everywhere except near zero", "ReLU uses a larger learning rate internally, which prevents gradient shrinkage compared to sigmoid", "ReLU is faster to compute, so the backpropagation pass completes before gradients can vanish", "ReLU normalizes the input data automatically, whereas sigmoid requires manual normalization to prevent vanishing gradients"],
+      answer: "ReLU has a constant derivative of 1 for positive inputs, allowing gradients to flow unchanged through the network during backpropagation, whereas sigmoid has small derivatives everywhere except near zero",
+      explanation: "The lecturer explains that sigmoid's maximum derivative is 0.25 (at z=0) and approaches zero for larger inputs, causing the chain-rule product of these small derivatives to shrink exponentially. ReLU's derivative is simply 0 or 1: when a neuron is active (positive input), the gradient passes through unchanged (multiplication by 1), creating a 'gradient superhighway' that allows error signals to propagate through many layers without diminishing.",
+    },
+    {
+      question: "In batch normalization, why are learnable scale and shift parameters (gamma and beta) necessary after normalizing pre-activation values to mean zero and unit variance?",
+      choices: ["They allow the network to undo the normalization and recover the original signal distribution when a standard normal is not optimal for the next layer", "They are required for numerical stability and prevent overflow errors during the forward pass", "They enable batch normalization to work with non-convex loss functions", "They reduce the computational cost of the normalization operation"],
+      answer: "They allow the network to undo the normalization and recover the original signal distribution when a standard normal is not optimal for the next layer",
+      explanation: "The lecturer notes a counterintuitive point: forcing all activations into a 'rigid structure' of standard normal distribution may limit the network's representation power, since that distribution may not be optimal for the next layer. The scale parameter (gamma) and shift parameter (beta) let the network learn to adjust the normalized values to whatever mean and variance is best for the downstream computation. In the worst case, the network can learn gamma and beta to recover the original distribution entirely.",
     },
   ],
   3: [
@@ -82,12 +95,6 @@ export const selfChecks: Record<number, SelfCheckQuestion[]> = {
       explanation: "ReLU avoids the saturation zones where derivatives approach zero, which is critical for gradient flow in deep networks. Sigmoid and tanh have derivative bounds (like $\\sigma'(z) \\leq 0.25$) and saturate to plateau regions where gradients vanish regardless of learning rate.",
     },
     {
-      question: "During training vs. inference, memory usage is higher mainly because we:",
-      choices: ["Cache dataloader workers", "Store intermediate activations needed for backprop", "Keep multiple optimizer states for only the output layer", "Maintain two copies of each parameter tensor"],
-      answer: "Store intermediate activations needed for backprop",
-      explanation: "Backpropagation requires saved activations from the forward pass to compute gradients with respect to parameters. This activation memory can dominate in deep networks, sometimes 3-4 times larger than the parameter memory itself, explaining why training is more memory-intensive than inference.",
-    },
-    {
       question: "Which change best improves gradient flow in a very deep MLP (same width)?",
       choices: ["Replace all ReLUs with sigmoids", "Add residual (skip) connections between blocks", "Remove bias terms", "Use $\\texttt{sum()}$ instead of $\\texttt{mean()}$ in the loss"],
       answer: "Add residual (skip) connections between blocks",
@@ -98,6 +105,18 @@ export const selfChecks: Record<number, SelfCheckQuestion[]> = {
       choices: ["Xavier only, regardless of activation", "He/Kaiming init to maintain activation/gradient scale", "All zeros for faster symmetry breaking", "Random choice; init rarely matters"],
       answer: "He/Kaiming init to maintain activation/gradient scale",
       explanation: "He initialization sets $\\text{Var}(w) = 2/\\text{fan\\_in}$ to preserve the variance of activations and gradients through ReLU layers. This is critical because ReLU kills half the activations (zeros out negative values), so He init accounts for this by doubling the variance compared to Xavier initialization designed for symmetric activations.",
+    },
+    {
+      question: "In an ablation study for neural network training, what is the correct methodology for isolating the effect of a single technique (e.g., batch normalization)?",
+      choices: ["Apply all techniques simultaneously and compare against a baseline to measure total improvement", "Start with a baseline configuration, change one component at a time, and measure performance changes for each modification", "Test each technique in isolation on completely separate datasets to avoid any interaction effects", "Apply techniques in random order and compute statistical significance with p-values"],
+      answer: "Start with a baseline configuration, change one component at a time, and measure performance changes for each modification",
+      explanation: "The ablation study methodology involves a controlled baseline and then systematically adding or modifying one component at a time while keeping everything else fixed. This allows you to isolate and measure the individual contribution of each technique. The lecture demonstrates this by starting with a control configuration (default initialization, no normalization, no dropout), then progressively adding He initialization, batch norm, layer norm, and dropout one at a time to see which components provide the most performance benefit.",
+    },
+    {
+      question: "Why is batch normalization typically NOT applied to the output layer of a classification network?",
+      choices: ["It increases computational cost too much for the final layer", "The output layer gradients are too large for batch norm to handle", "Normalization would distort the output scale, and the output logits should remain unnormalized for the loss function", "Batch norm only works on hidden layers with ReLU activations"],
+      answer: "Normalization would distort the output scale, and the output logits should remain unnormalized for the loss function",
+      explanation: "The output layer produces raw logits that feed directly into the cross-entropy loss function, which expects unnormalized scores. Applying batch normalization to the output layer would rescale these logits, distorting their magnitude and interfering with the loss computation. Unlike hidden layers where normalization stabilizes gradient flow, the output layer must preserve the natural scale of its predictions. Additionally, dropout is also skipped on the output layer because randomly suppressing predictions during training would corrupt the loss signal.",
     },
   ],
   4: [
@@ -150,6 +169,12 @@ export const selfChecks: Record<number, SelfCheckQuestion[]> = {
       choices: ["Using very deep networks", "Using large kernel sizes", "Transfer learning from pretrained models", "Using no regularization"],
       answer: "Transfer learning from pretrained models",
       explanation: "Transfer learning leverages features learned on large datasets (ImageNet), preventing overfitting on small data. Training from scratch on limited data will overfit quickly, making this the critical technique.",
+    },
+    {
+      question: "In MobileNets, how does depthwise-separable convolution reduce parameters compared to standard convolution?",
+      choices: ["By applying 1×1 convolutions before spatial convolutions to reduce channel dimensions first", "By performing spatial convolution separately on each input channel, then mixing channels separately using 1×1 convolutions", "By replacing all convolutions with fully connected layers", "By removing batch normalization between convolution layers"],
+      answer: "By performing spatial convolution separately on each input channel, then mixing channels separately using 1×1 convolutions",
+      explanation: "Depthwise-separable convolution splits standard convolution into two steps: (1) apply KxK convolution independently to each input channel (depthwise), and (2) mix channels using 1×1 convolutions (pointwise). This separates spatial computation from channel mixing, reducing parameters by roughly 10x in small blocks and exponentially across stacked layers—critical for mobile/edge devices with tight memory and latency constraints.",
     },
   ],
   6: [
@@ -215,6 +240,12 @@ export const selfChecks: Record<number, SelfCheckQuestion[]> = {
       answer: "LSTM maintains separate cell state $\\mathbf{C}_t$ (long-term memory) and hidden state $\\mathbf{h}_t$ (short-term memory), while GRU merges them into a single state $\\mathbf{h}_t$",
       explanation: "LSTM uses 3 gates (forget, input, output) to control separate cell and hidden states, providing more flexible control. GRU uses only 2 gates (update, reset) and a single state, making it more parameter-efficient while still capturing long-range dependencies effectively.",
     },
+    {
+      question: "Why does truncated backpropagation through time (TBPTT)—where sequences are split into shorter segments of fixed length (e.g., 20–50 tokens)—remain effective for training RNNs despite not capturing long-range dependencies?",
+      choices: ["Longer sequences are always harmful, so truncation eliminates them entirely", "The influence of past observations on gradients decays naturally; information beyond a few steps is already diluted by repeated nonlinearities; and fixed-size segments act as a mild regularizer preventing overfitting to long-range noise", "Truncation makes the model faster but sacrifices accuracy", "The RNN cell architecture makes all historical information irrelevant after truncation"],
+      answer: "The influence of past observations on gradients decays naturally; information beyond a few steps is already diluted by repeated nonlinearities; and fixed-size segments act as a mild regularizer preventing overfitting to long-range noise",
+      explanation: "The lecturer explains that after a few steps (20–50 in practice), the gradient contribution from earlier states decays exponentially, and information is further diluted as it passes through multiple tanh nonlinearities. Fixed-length truncation stabilizes training as a mild regularizer, learning robust short-term memory without overfitting to spurious long-range correlations—making the model more robust to out-of-distribution sequences.",
+    },
   ],
   8: [
     {
@@ -246,6 +277,12 @@ export const selfChecks: Record<number, SelfCheckQuestion[]> = {
       choices: ["They cannot handle long sequences", "Sequential computation prevents parallelization during training", "They do not use neural networks", "They cannot do translation"],
       answer: "Sequential computation prevents parallelization during training",
       explanation: "Both architectures rely on RNNs where $\\mathbf{h}_t$ depends on $\\mathbf{h}_{t-1}$, preventing parallelization across time steps. Attention solved the information bottleneck but not the computational bottleneck. Transformers address this by replacing RNNs entirely with self-attention, enabling massive parallelization of sequence processing.",
+    },
+    {
+      question: "Why does additive (Bahdanau) attention require complex fused operations that don't leverage GPU tensor cores, while scaled dot-product attention achieves better scalability?",
+      choices: ["Additive attention uses exponential functions which are slower than matrix multiplication", "Additive attention computes $\\tanh(\\mathbf{W}_Q \\mathbf{s}_t + \\mathbf{W}_K \\mathbf{h}_i + \\mathbf{b})$ with a nonlinearity that cannot be separated into independent operations on queries and keys alone", "Dot-product attention uses fewer parameters and trains faster", "Additive attention cannot be parallelized across batch dimensions"],
+      answer: "Additive attention computes $\\tanh(\\mathbf{W}_Q \\mathbf{s}_t + \\mathbf{W}_K \\mathbf{h}_i + \\mathbf{b})$ with a nonlinearity that cannot be separated into independent operations on queries and keys alone",
+      explanation: "Additive attention requires computing pairwise interactions (projections + elementwise addition + nonlinearity) in a fused kernel, which is memory-bound and doesn't utilize GPU tensor cores efficiently. Scaled dot-product attention separates the computation into independent linear transformations (can be done in parallel), then uses a simple matrix multiplication and softmax—pure dense operations that GPUs are optimized for. The key insight is that the nonlinearity in additive attention depends on *both* query and key simultaneously, making it unparallelizable at the computation-graph level, whereas dot-product defers nonlinearity to earlier RNN/MLP layers, allowing linear operations (pure matrix multiplication) in attention, which map perfectly to GPU tensor core operations.",
     },
   ],
   9: [
@@ -279,6 +316,12 @@ export const selfChecks: Record<number, SelfCheckQuestion[]> = {
       answer: "It efficiently spans many octaves, capturing both local and global structure",
       explanation: "Geometric spacing (frequencies via $10000^{-2j/d}$) covers a wide frequency range without redundancy, yielding multi-scale positional features. Linear spacing would either waste dimensions on low frequencies or leave large gaps at high frequencies, failing to capture fine-grained local structure.",
     },
+    {
+      question: "In multi-head attention, why do we use multiple heads instead of a single attention head?",
+      choices: ["Multiple heads process the sequence in parallel, making computation faster", "Single attention heads average information from all positions, which dilutes the model's ability to focus on different semantic relationships simultaneously; multiple heads operate on different representation subspaces to preserve resolution", "Multiple heads allow different layers of the network to attend to different tokens", "Multiple heads enable the use of different values of $d_k$ for better numerical stability"],
+      answer: "Single attention heads average information from all positions, which dilutes the model's ability to focus on different semantic relationships simultaneously; multiple heads operate on different representation subspaces to preserve resolution",
+      explanation: "The lecturer explains that a single attention head computes a weighted average of value vectors, which can lose information when compressing multiple relationship types (semantic roles, positional context) into one output. Using multiple heads, each attending to a different subspace of the embedding dimension, allows the model to simultaneously capture different linguistic phenomena without dilution.",
+    },
   ],
   10: [
     {
@@ -305,6 +348,18 @@ export const selfChecks: Record<number, SelfCheckQuestion[]> = {
       question: "According to the textbook, Transformer language models exhibit power-law scaling relationships. What does this mean, and why is it important?",
       answer: "Performance loss scales as a power law with model parameters, training tokens, and compute: the larger the model, the more data you train on, or the more compute you use, the better the performance follows a predictable $L(N, D, C) \\propto N^{-\\alpha_N} D^{-\\alpha_D} C^{-\\alpha_C}$ relationship. This is important because it allows prediction of performance before training and guides allocation of resources.",
       explanation: "Power-law scaling is remarkable because these relationships hold over many orders of magnitude (from millions to billions of parameters). This predictability has enabled researchers to estimate optimal model sizes and training compute budgets, driving the modern push toward larger models.",
+    },
+    {
+      question: "In knowledge distillation for ViT training, why does the lecturer argue that using separate distillation and classification tokens (with separate heads) allows the model to learn more effectively than using a single token?",
+      choices: ["The distillation head forces the model to memorize the teacher's predictions rather than learning from data", "Separate tokens allow the model to learn from both the ground truth labels and the teacher's inductive bias simultaneously, without conflicting gradients", "The classification token learns faster than the distillation token, so they must be separated to prevent training instability", "Using two tokens doubles the model's parameter count, which automatically improves performance"],
+      answer: "Separate tokens allow the model to learn from both the ground truth labels and the teacher's inductive bias simultaneously, without conflicting gradients",
+      explanation: "The lecturer explains that the distillation token learns from the CNN teacher's hard predictions, while the classification token learns from ground truth labels via cross-entropy. By using separate heads for these two learning signals, the model can learn effectively from both sources—the inductive biases the CNN provides and the ground truth labels—without one forcing the other. The lecturer emphasizes this is 'a loss and a tradeoff that the model will do' and that 'diversity helps' because it 'leads to a richer learning signal.' The CNN teacher brings different inductive biases than the transformer naturally has, allowing the flexible transformer architecture to incorporate this prior knowledge while remaining exposed to real labels.",
+    },
+    {
+      question: "According to the Chinchilla scaling laws, what key principle changed from earlier scaling practices like GPT-3, and what is the practical implication?",
+      choices: ["Models should be as large as possible regardless of data; this means investing all compute into model parameters, not training data", "Parameters and tokens should scale equally, not privileging one dimension; approximately 20 tokens per parameter is optimal, enabling smaller models with more data to match larger models' performance", "Compute should be spent exclusively on gathering more data rather than increasing model size; this eliminates the need for large parameters", "Scaling laws only apply to decoder models like GPT; encoder models like BERT do not follow power-law relationships"],
+      answer: "Parameters and tokens should scale equally, not privileging one dimension; approximately 20 tokens per parameter is optimal, enabling smaller models with more data to match larger models' performance",
+      explanation: "The lecturer contrasts the earlier 'as big as possible' paradigm (exemplified by GPT-3's 175B parameters) with Chinchilla's insight: the token-to-parameter ratio matters. By scaling both dimensions proportionally (~20 tokens per parameter), you can achieve similar performance with far fewer parameters, reducing inference cost. This was empirically demonstrated: Chinchilla (smaller, more-tokens) outperformed Gopher (much larger) on many benchmarks. The practical shift from maximizing model size to optimizing the compute-parameter-token tradeoff changed how researchers design language models.",
     },
   ],
   11: [
