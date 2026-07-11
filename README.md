@@ -3,9 +3,9 @@
 The public website for **DS 6050 Deep Learning** (School of Data Science, University of
 Virginia), taught by [Heman Shakeri](https://shakeri-lab.github.io/). Twelve modules take
 you from linear models and backpropagation to transformers, parameter-efficient
-fine-tuning, and generative AI — through video lectures, readings from the open
-[Dive into Deep Learning](https://d2l.ai) textbook, Colab notebooks, and self-check
-questions.
+fine-tuning, and generative AI through video lectures, the open course book
+[*Deep Learning: Making It Learnable*](https://shakeri-lab.github.io/dl-book/),
+selected alternative readings, Colab notebooks, and self-check questions.
 
 **Live site:** <https://shakeri-lab.github.io/dl-course-site/>
 **YouTube playlist:** <https://www.youtube.com/playlist?list=PLwZv_wzaKu3vzW88m6ASKemCTb70ukycH>
@@ -27,7 +27,7 @@ All course content is data, not markup. To update content you almost never touch
 | File | Contents |
 |------|----------|
 | `lib/module-data.ts` | Per-module lectures (YouTube IDs, slide PDFs), Colab links, readings, descriptions |
-| `lib/module-extras.ts` | Per-module learning objectives, time estimates, prerequisites, D2L section links, homepage topics |
+| `lib/module-extras.ts` | Per-module learning objectives, time estimates, prerequisites, course-book chapter mappings, D2L alternatives, homepage topics |
 | `lib/self-check-data.ts` | Per-module self-check questions (KaTeX `$...$` math supported) |
 | `lib/site-config.ts` | Site-wide facts: URLs, instructor, playlist, analytics code, "content current as of" |
 | `public/` | Slide PDFs (Modules 11–12), syllabus PDF, logo, social-share card, `llms.txt` |
@@ -40,9 +40,10 @@ same data — adding a module to `module-data.ts` updates everything automatical
 
 - **New lecture video:** add `{ title, videoId }` to the module's `lectures` array in
   `lib/module-data.ts`.
-- **Change a reading:** edit `d2lLinks` in `lib/module-extras.ts` (each entry is a
-  verified `https://d2l.ai/...` section URL).
-- **Add a self-check question:** append to the module's array in `lib/self-check-data.ts`.
+- **Change a reading:** edit `bookChapters` or `d2lLinks` in `lib/module-extras.ts`.
+  The former accepts several chapters because the course and book do not map one-to-one.
+- **Add a self-check question:** append to the module's array in `lib/self-check-data.ts`,
+  then run `npm run study-guide` to refresh the consolidated Markdown copy.
 - **Enable analytics:** create a free [GoatCounter](https://www.goatcounter.com) site and
   put its code in `siteConfig.goatcounter`.
 - **New semester:** update `siteConfig.contentCurrentAsOf`, tag the release
@@ -68,9 +69,9 @@ links (D2L, arXiv, YouTube) and opens an issue if any rot.
 ## Design principles
 
 - **One learning path per module** — watch → read → self-check → code, all on the module
-  page. D2L is the canonical text for Modules 1–9; for Modules 10–12 (ViT, PEFT,
-  quantization, multimodal, diffusion) the lecture slides and linked papers are the
-  readings, because the book doesn't cover them at course depth.
+  page. Reviewed course-book chapters are the primary reading; D2L stays available as
+  an alternative. Modules whose book chapters are still in development continue to use
+  the lecture slides and linked papers.
 - **No slide duplication** — lectures are board-first; slides are published only where
   they substitute for not-yet-recorded videos (Modules 11–12). Keeping slides out of the
   site elsewhere avoids drift against the LaTeX sources.

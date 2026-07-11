@@ -22,17 +22,16 @@ export default function CoursePage() {
         </h1>
         <p className="mt-4 max-w-2xl text-lg text-slate-600 dark:text-slate-300">
           A free, open graduate course from UVA&apos;s School of Data Science — from linear models and
-          backpropagation to transformers and generative AI, taught through video lectures, readings
-          from the open{" "}
+          backpropagation to transformers and generative AI, taught through video lectures, the open{" "}
           <a
-            href={siteConfig.textbook.url}
+            href={siteConfig.courseBook.url}
             target="_blank"
             rel="noopener noreferrer"
             className="font-medium text-[#002862] underline decoration-[#FFBA69]/70 underline-offset-4 hover:text-[#001a44] dark:text-[#7EB5F0] dark:hover:text-[#a8d0ff]"
           >
-            Dive into Deep Learning
-          </a>{" "}
-          textbook, and hands-on PyTorch notebooks.
+            course book
+          </a>{", "}
+          selected alternative readings, and hands-on PyTorch notebooks.
         </p>
         <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">
           Taught by{" "}

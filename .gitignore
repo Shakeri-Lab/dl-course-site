@@ -40,3 +40,8 @@ next-env.d.ts
 out/
 # local editor/agent settings
 /.claude/
+
+# local transcript/archive bundles
+/Archive.zip
+/transcripts.zip
+/transcripts/Archive.zip

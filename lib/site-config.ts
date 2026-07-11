@@ -5,7 +5,7 @@ export const siteConfig = {
   title: "Deep Learning (DS 6050) — Shakeri Lab, UVA",
   titleTemplate: "%s · DS 6050 Deep Learning",
   description:
-    "A free, open graduate deep learning course from UVA's School of Data Science: from linear models and backpropagation to transformers, PEFT, and generative AI — video lectures, D2L readings, and hands-on PyTorch notebooks.",
+    "A free, open graduate deep learning course from UVA's School of Data Science: course-book chapters, video lectures, self-checks, and hands-on PyTorch notebooks from linear models through generative AI.",
   // Production origin + basePath. Used for canonical URLs, OG tags, sitemap, JSON-LD.
   url: "https://shakeri-lab.github.io/dl-course-site",
   institution: "School of Data Science, University of Virginia",
@@ -25,6 +25,10 @@ export const siteConfig = {
   textbook: {
     name: "Dive into Deep Learning (D2L)",
     url: "https://d2l.ai",
+  },
+  courseBook: {
+    name: "Deep Learning: Making It Learnable",
+    url: "https://shakeri-lab.github.io/dl-book/",
   },
   // Set to your GoatCounter code (e.g. "dl6050") to enable privacy-friendly analytics.
   // Sign up free at https://www.goatcounter.com — no cookies, no consent banner needed.

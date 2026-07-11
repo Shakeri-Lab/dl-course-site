@@ -29,7 +29,7 @@ const refreshers = [
 
 const loop = [
   { step: "Watch", detail: "the module's lecture videos (most are board lectures — have pen and paper ready)." },
-  { step: "Read", detail: "the linked Dive into Deep Learning sections — the course textbook, free and open." },
+  { step: "Read", detail: "the linked course-book chapters first, then use the alternative readings where useful." },
   { step: "Self-check", detail: "answer the \"Test your understanding\" questions before revealing the answers." },
   { step: "Code", detail: "open the module's Colab notebook and run/modify the lecture code yourself." },
 ]
@@ -110,18 +110,19 @@ export default function StartHerePage() {
               ))}
             </ol>
             <p className="text-slate-600 dark:text-slate-300">
-              The textbook for Modules 1–9 is the free{" "}
+              Reviewed chapters from the free{" "}
               <a
-                href={siteConfig.textbook.url}
+                href={siteConfig.courseBook.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[#002862] underline decoration-[#FFBA69]/70 underline-offset-4 hover:text-[#001a44] dark:text-[#7EB5F0] dark:hover:text-[#a8d0ff]"
               >
-                Dive into Deep Learning
+                course book
               </a>{" "}
-              — each module links the exact sections to read. Modules 10–12 cover topics past the
-              book (ViT, PEFT, quantization, multimodal, diffusion), so there the lecture slides and
-              linked papers are the readings.
+              are the primary reading, and a module may link several chapters because the two
+              structures do not map one-to-one. The exact D2L sections remain as alternatives.
+              Modules whose book chapters are still in development use the lecture slides and
+              linked papers in the meantime.
             </p>
             <p className="text-slate-600 dark:text-slate-300">
               <span className="font-semibold text-slate-800 dark:text-slate-100">Suggested pacing:</span>{" "}

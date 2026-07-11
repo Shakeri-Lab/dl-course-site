@@ -88,6 +88,15 @@ export default function SyllabusPage() {
           The goal is genuine expertise rather than pattern-matching: the judgment to design, debug,
           and innovate in real AI systems. Lectures are mostly worked on the board; the free{" "}
           <a
+            href={siteConfig.courseBook.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[#002862] underline decoration-[#FFBA69]/70 underline-offset-4 hover:text-[#001a44] dark:text-[#7EB5F0] dark:hover:text-[#a8d0ff]"
+          >
+            course book
+          </a>{" "}
+          anchors modules whose chapters have completed review. The open{" "}
+          <a
             href={siteConfig.textbook.url}
             target="_blank"
             rel="noopener noreferrer"
@@ -95,7 +104,7 @@ export default function SyllabusPage() {
           >
             Dive into Deep Learning
           </a>{" "}
-          textbook anchors the readings for Modules 1–9.
+          textbook remains an alternative reading.
         </p>
         <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">
           Self-paced learners: dates, submissions, and grades apply to the for-credit UVA offering

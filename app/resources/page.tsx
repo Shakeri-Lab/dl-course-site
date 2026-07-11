@@ -6,8 +6,10 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { BookOpen, Video, Code, ExternalLink, Search, Star } from "lucide-react"
 import { useState } from "react"
+import { siteConfig } from "@/lib/site-config"
 
 const resources = [
+  { id: 0, title: "Deep Learning: Making It Learnable", description: "The DS 6050 course book, with executable experiments, conceptual bridges, and chapter exercises aligned to the modules", type: "book", category: "Fundamentals", difficulty: "Intermediate", rating: 5.0, url: siteConfig.courseBook.url, tags: ["Course book", "DS 6050", "Primary"] },
   { id: 1, title: "Deep Learning Textbook", description: "Comprehensive textbook by Ian Goodfellow, Yoshua Bengio, and Aaron Courville", type: "book", category: "Fundamentals", difficulty: "Intermediate", rating: 4.8, url: "https://www.deeplearningbook.org/", tags: ["Theory", "Mathematics", "Comprehensive"] },
   { id: 2, title: "Neural Networks and Deep Learning", description: "Online course by Michael Nielsen with interactive explanations", type: "course", category: "Fundamentals", difficulty: "Beginner", rating: 4.7, url: "http://neuralnetworksanddeeplearning.com/", tags: ["Interactive", "Beginner-friendly", "Visual"] },
   { id: 3, title: "PyTorch Tutorials", description: "Official PyTorch tutorials and documentation", type: "tutorial", category: "Implementation", difficulty: "Intermediate", rating: 4.6, url: "https://pytorch.org/tutorials/", tags: ["PyTorch", "Hands-on", "Official"] },

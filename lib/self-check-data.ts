@@ -36,10 +36,10 @@ export const selfChecks: Record<number, SelfCheckQuestion[]> = {
       explanation: "Variance measures how much the prediction would change if we collected a fresh training set. It captures the model's sensitivity to small fluctuations in training data. High variance risks overfitting.",
     },
     {
-      question: "When two neurons combine to create a 'bump' function in the input space, this illustrates the basis for what theoretical guarantee about neural networks?",
+      question: "When three ReLU hinges combine to create a compact triangular 'bump' in the input space, this illustrates the intuition behind what theoretical guarantee?",
       choices: ["The Normal Equation for solving linear regression analytically.", "The Universal Approximation Theorem.", "The bias-variance trade-off.", "The central limit theorem for error estimation."],
       answer: "The Universal Approximation Theorem.",
-      explanation: "This ability to create 'bumps' is the intuitive basis for the Universal Approximation Theorem. By creating and summing many such bumps of different sizes and positions, a neural network with one hidden layer can approximate any continuous function.",
+      explanation: "Three hinges can start a rise, reverse its slope, and cancel it back to zero. Creating and summing many such localized pieces gives the intuition behind uniform approximation of continuous functions on compact domains.",
     },
     {
       question: "For softmax regression with cross-entropy loss, what is the gradient of the loss with respect to the logits $\\mathbf{o}$ (before softmax)?",
@@ -70,9 +70,9 @@ export const selfChecks: Record<number, SelfCheckQuestion[]> = {
     },
     {
       question: "Why does ReLU mitigate the vanishing gradient problem in deep neural networks, while sigmoid does not?",
-      choices: ["ReLU has a constant derivative of 1 for positive inputs, allowing gradients to flow unchanged through the network during backpropagation, whereas sigmoid has small derivatives everywhere except near zero", "ReLU uses a larger learning rate internally, which prevents gradient shrinkage compared to sigmoid", "ReLU is faster to compute, so the backpropagation pass completes before gradients can vanish", "ReLU normalizes the input data automatically, whereas sigmoid requires manual normalization to prevent vanishing gradients"],
-      answer: "ReLU has a constant derivative of 1 for positive inputs, allowing gradients to flow unchanged through the network during backpropagation, whereas sigmoid has small derivatives everywhere except near zero",
-      explanation: "The lecturer explains that sigmoid's maximum derivative is 0.25 (at z=0) and approaches zero for larger inputs, causing the chain-rule product of these small derivatives to shrink exponentially. ReLU's derivative is simply 0 or 1: when a neuron is active (positive input), the gradient passes through unchanged (multiplication by 1), creating a 'gradient superhighway' that allows error signals to propagate through many layers without diminishing.",
+      choices: ["An active ReLU contributes an activation derivative of 1 instead of an additional factor below 1, whereas sigmoid derivatives are at most 0.25 and shrink in saturation", "ReLU uses a larger learning rate internally, which prevents gradient shrinkage compared to sigmoid", "ReLU is faster to compute, so the backpropagation pass completes before gradients can vanish", "ReLU normalizes the input data automatically, whereas sigmoid requires manual normalization to prevent vanishing gradients"],
+      answer: "An active ReLU contributes an activation derivative of 1 instead of an additional factor below 1, whereas sigmoid derivatives are at most 0.25 and shrink in saturation",
+      explanation: "Sigmoid's derivative peaks at 0.25 and approaches zero in its saturated tails, so repeated activation factors can strongly attenuate blame. An active ReLU contributes a factor of 1 at that gate. The complete gradient can still shrink, grow, or cancel through weight matrices and other operations; ReLU removes one common source of attenuation rather than guaranteeing unchanged flow through the network.",
     },
     {
       question: "In batch normalization, why are learnable scale and shift parameters (gamma and beta) necessary after normalizing pre-activation values to mean zero and unit variance?",
@@ -98,7 +98,7 @@ export const selfChecks: Record<number, SelfCheckQuestion[]> = {
       question: "Which change best improves gradient flow in a very deep MLP (same width)?",
       choices: ["Replace all ReLUs with sigmoids", "Add residual (skip) connections between blocks", "Remove bias terms", "Use $\\texttt{sum()}$ instead of $\\texttt{mean()}$ in the loss"],
       answer: "Add residual (skip) connections between blocks",
-      explanation: "Skip connections create identity paths that allow gradients to flow directly backward without being attenuated by many layers of matrix multiplications and activations. This is the core principle enabling training of very deep networks (1000+ layers).",
+      explanation: "For a residual block, the input Jacobian contains an additive identity term as well as the learned branch. That direct route usually improves conditioning and makes the identity function easy to represent. It is not attenuation-proof: the learned Jacobian can reinforce or partly cancel the identity contribution, and successful depth still depends on normalization, initialization, optimization, and architecture.",
     },
     {
       question: "Proper initialization for ReLU networks typically uses:",
@@ -113,10 +113,10 @@ export const selfChecks: Record<number, SelfCheckQuestion[]> = {
       explanation: "The ablation study methodology involves a controlled baseline and then systematically adding or modifying one component at a time while keeping everything else fixed. This allows you to isolate and measure the individual contribution of each technique. The lecture demonstrates this by starting with a control configuration (default initialization, no normalization, no dropout), then progressively adding He initialization, batch norm, layer norm, and dropout one at a time to see which components provide the most performance benefit.",
     },
     {
-      question: "Why is batch normalization typically NOT applied to the output layer of a classification network?",
-      choices: ["It increases computational cost too much for the final layer", "The output layer gradients are too large for batch norm to handle", "Normalization would distort the output scale, and the output logits should remain unnormalized for the loss function", "Batch norm only works on hidden layers with ReLU activations"],
-      answer: "Normalization would distort the output scale, and the output logits should remain unnormalized for the loss function",
-      explanation: "The output layer produces raw logits that feed directly into the cross-entropy loss function, which expects unnormalized scores. Applying batch normalization to the output layer would rescale these logits, distorting their magnitude and interfering with the loss computation. Unlike hidden layers where normalization stabilizes gradient flow, the output layer must preserve the natural scale of its predictions. Additionally, dropout is also skipped on the output layer because randomly suppressing predictions during training would corrupt the loss signal.",
+      question: "Why is batch normalization usually omitted from the final classification logits?",
+      choices: ["It makes each example's scores depend on batch statistics and introduces a train/eval statistic shift where stable, independently interpretable logits are preferred", "It is too expensive for a small output layer", "Cross-entropy cannot differentiate through normalization", "Batch normalization only works after convolution"],
+      answer: "It makes each example's scores depend on batch statistics and introduces a train/eval statistic shift where stable, independently interpretable logits are preferred",
+      explanation: "Cross-entropy accepts any real logits, so normalization is not mathematically forbidden. The practical concern is that output BN couples one example's scores to the other examples in its batch and changes behavior between batch and running statistics, which can complicate calibration and interpretation. Hidden layers often benefit from that normalization; the final score layer usually does not need it.",
     },
   ],
   4: [
@@ -134,9 +134,9 @@ export const selfChecks: Record<number, SelfCheckQuestion[]> = {
     },
     {
       question: "What is the main purpose of pooling layers in CNNs?",
-      choices: ["To increase the number of parameters", "To add non-linearity to the network", "To reduce spatial dimensions and build translation invariance", "To normalize the activations"],
-      answer: "To reduce spatial dimensions and build translation invariance",
-      explanation: "Pooling (max or average) downsamples feature maps, reducing computation and memory, while providing robustness to small spatial shifts in the input.",
+      choices: ["To increase the number of parameters", "To add non-linearity to the network", "To reduce spatial dimensions and add local tolerance to small translations", "To normalize the activations"],
+      answer: "To reduce spatial dimensions and add local tolerance to small translations",
+      explanation: "Pooling downsamples feature maps and can make a response insensitive to a shift that stays within the same pooling neighborhood. It does not make the complete CNN exactly translation-invariant: window boundaries, stride, padding, clipping, and later position-sensitive layers still matter.",
     },
     {
       question: "How many parameters does a convolutional layer with 32 input channels, 64 output channels, and 3×3 kernels have (including bias)?",
@@ -159,36 +159,36 @@ export const selfChecks: Record<number, SelfCheckQuestion[]> = {
       explanation: "The identity mapping $+x$ allows networks to learn residuals rather than full functions, making it easy to learn identity mappings and enabling training of extremely deep networks.",
     },
     {
-      question: "Why do skip connections in ResNet help with training very deep networks?",
-      choices: ["They reduce the number of parameters", "They provide gradient highways preventing vanishing gradients", "They eliminate the need for batch normalization", "They automatically tune learning rates"],
-      answer: "They provide gradient highways preventing vanishing gradients",
-      explanation: "During backpropagation, gradients flow through both the residual path $\\frac{\\partial F}{\\partial x}$ and the identity path $I$, giving $\\frac{\\partial L}{\\partial x} = \\frac{\\partial L}{\\partial H}(\\frac{\\partial F}{\\partial x} + I)$. The $+I$ term ensures gradients don't vanish even through hundreds of layers.",
+      question: "Why do skip connections in ResNet usually make very deep networks easier to optimize?",
+      choices: ["They reduce the number of parameters", "They add an identity route for activations and gradients and make the identity mapping easy to represent", "They eliminate the need for batch normalization", "They automatically tune learning rates"],
+      answer: "They add an identity route for activations and gradients and make the identity mapping easy to represent",
+      explanation: "A residual block has Jacobian $I + \\partial F/\\partial x$, so incoming blame has a direct additive identity term as well as the learned branch. This strongly improves gradient flow and makes doing nothing as simple as learning $F=0$, although it is not a mathematical guarantee against every cancellation or poorly conditioned network.",
     },
     {
-      question: "When designing a CNN for a small dataset, which technique is MOST important?",
-      choices: ["Using very deep networks", "Using large kernel sizes", "Transfer learning from pretrained models", "Using no regularization"],
-      answer: "Transfer learning from pretrained models",
-      explanation: "Transfer learning leverages features learned on large datasets (ImageNet), preventing overfitting on small data. Training from scratch on limited data will overfit quickly, making this the critical technique.",
+      question: "In which small-data regime is transfer learning most likely to beat a well-tuned scratch model?",
+      choices: ["Whenever the target dataset is small, regardless of task", "When labels are scarce, the task needs rich features, and source coverage and input scale match the target", "Only when the pretrained model has more parameters", "Whenever the target images are grayscale"],
+      answer: "When labels are scarce, the task needs rich features, and source coverage and input scale match the target",
+      explanation: "Scarce labels alone are not enough. Transfer pays when the source model learned features the target genuinely needs and those features survive the domain and resolution change. At tiny 28-pixel scale, the course experiment found scratch tied or beat imported features; that honest null result is part of the decision rule.",
     },
     {
       question: "In MobileNets, how does depthwise-separable convolution reduce parameters compared to standard convolution?",
       choices: ["By applying 1×1 convolutions before spatial convolutions to reduce channel dimensions first", "By performing spatial convolution separately on each input channel, then mixing channels separately using 1×1 convolutions", "By replacing all convolutions with fully connected layers", "By removing batch normalization between convolution layers"],
       answer: "By performing spatial convolution separately on each input channel, then mixing channels separately using 1×1 convolutions",
-      explanation: "Depthwise-separable convolution splits standard convolution into two steps: (1) apply KxK convolution independently to each input channel (depthwise), and (2) mix channels using 1×1 convolutions (pointwise). This separates spatial computation from channel mixing, reducing parameters by roughly 10x in small blocks and exponentially across stacked layers—critical for mobile/edge devices with tight memory and latency constraints.",
+      explanation: "Depthwise-separable convolution splits standard convolution into two steps: (1) apply a K×K filter independently to each input channel, then (2) mix channels with 1×1 convolutions. Its per-layer parameter ratio relative to a dense convolution is roughly $1/C_{out} + 1/K^2$; summing those savings across a network can be substantial, but the savings do not grow exponentially with depth.",
     },
   ],
   6: [
     {
-      question: "Why does an autoencoder force the model to learn meaningful patterns rather than memorize inputs?",
-      choices: ["Because the encoder has more parameters than the input", "Because of the bottleneck: $k \\ll d$ (latent dimension much smaller than input dimension)", "Because the decoder uses different weights than the encoder", "Because autoencoders only work on labeled data"],
-      answer: "Because of the bottleneck: $k \\ll d$ (latent dimension much smaller than input dimension)",
-      explanation: "The information bottleneck restricts capacity, forcing the model to extract only essential patterns. With insufficient dimensions to store all input details, the network must learn the underlying structure rather than memorize.",
+      question: "Why can a low-dimensional bottleneck encourage an autoencoder to learn useful structure?",
+      choices: ["Because the encoder has more parameters than the input", "Because $k \\ll d$ limits the information that can pass directly through the latent code", "Because the decoder uses different weights than the encoder", "Because autoencoders only work on labeled data"],
+      answer: "Because $k \\ll d$ limits the information that can pass directly through the latent code",
+      explanation: "A narrow bottleneck creates pressure to compress recurring structure instead of copying every coordinate directly. It is an inductive bias, not a guarantee: an expressive network can still memorize a finite training set, so generalization must be checked on held-out data.",
     },
     {
-      question: "What is the relationship between PCA and a linear autoencoder?",
-      choices: ["They are completely unrelated methods", "A linear autoencoder with tied weights and MSE loss learns exactly the PCA subspace", "PCA is always better than a linear autoencoder", "Linear autoencoders can only approximate PCA results"],
-      answer: "A linear autoencoder with tied weights and MSE loss learns exactly the PCA subspace",
-      explanation: "This is a proven mathematical equivalence (Ky Fan theorem): under these conditions, the learned latent space spans the same principal components as PCA, showing how autoencoders generalize classical dimensionality reduction.",
+      question: "Under what conditions does a linear autoencoder recover the PCA principal subspace?",
+      choices: ["For any nonlinear decoder", "For centered data, an undercomplete linear encoder-decoder, squared reconstruction loss, and a global optimum", "Only when the data already has zero reconstruction error", "Only with classification labels"],
+      answer: "For centered data, an undercomplete linear encoder-decoder, squared reconstruction loss, and a global optimum",
+      explanation: "Under those conditions, the optimal reconstruction projects onto the same leading principal subspace as PCA. Individual encoder coordinates need not equal the uniquely ordered PCA vectors: invertible changes of basis inside the latent space can represent the same projection.",
     },
     {
       question: "In PCA viewed as an encoder-decoder, what is the encoding step?",
@@ -197,16 +197,16 @@ export const selfChecks: Record<number, SelfCheckQuestion[]> = {
       explanation: "The transpose projects the input onto the principal component directions. Reconstruction then uses $\\hat{\\mathbf{x}} = \\mathbf{V}_k \\mathbf{z}$, recovering data in the original space.",
     },
     {
-      question: "What does the information bottleneck force the model to do?",
-      choices: ["Memorize all input details", "Remove noise, find structure, and learn abstractions", "Increase the dimensionality", "Use more parameters"],
-      answer: "Remove noise, find structure, and learn abstractions",
-      explanation: "Since the bottleneck cannot preserve all information, the model must selectively compress data by filtering noise and capturing essential patterns. This principle—that compression requires understanding—is foundational to representation learning.",
+      question: "What is the most defensible claim about an autoencoder bottleneck?",
+      choices: ["It guarantees semantic features", "It encourages selective compression, whose usefulness must be evaluated", "It prevents memorization in every architecture", "It always removes noise"],
+      answer: "It encourages selective compression, whose usefulness must be evaluated",
+      explanation: "The bottleneck constrains the representation, but the reconstruction objective does not specify which information is semantically useful. Inspect reconstructions and test the representation on held-out or downstream tasks before making that claim.",
     },
     {
-      question: "Why are autoencoders called unsupervised learning?",
-      choices: ["They don't use any labels", "The input serves as its own target label", "They only work on unlabeled data", "They don't require training"],
-      answer: "The input serves as its own target label",
-      explanation: "No external labels are provided; the reconstruction objective uses the input itself as supervision. This self-supervised approach allows learning from raw data without manual annotation.",
+      question: "Why is the standard autoencoder reconstruction objective called self-supervised?",
+      choices: ["The input itself supplies the reconstruction target", "A pretrained classifier supplies semantic labels", "The decoder is never trained", "The method can only use perfectly clean data"],
+      answer: "The input itself supplies the reconstruction target",
+      explanation: "The training pair is constructed automatically as $(x,x)$: no external semantic annotation is required. Autoencoders are often grouped under unsupervised representation learning, while self-supervised names the more precise mechanism that creates their target.",
     },
   ],
   7: [
@@ -241,10 +241,10 @@ export const selfChecks: Record<number, SelfCheckQuestion[]> = {
       explanation: "LSTM uses 3 gates (forget, input, output) to control separate cell and hidden states, providing more flexible control. GRU uses only 2 gates (update, reset) and a single state, making it more parameter-efficient while still capturing long-range dependencies effectively.",
     },
     {
-      question: "Why does truncated backpropagation through time (TBPTT)—where sequences are split into shorter segments of fixed length (e.g., 20–50 tokens)—remain effective for training RNNs despite not capturing long-range dependencies?",
-      choices: ["Longer sequences are always harmful, so truncation eliminates them entirely", "The influence of past observations on gradients decays naturally; information beyond a few steps is already diluted by repeated nonlinearities; and fixed-size segments act as a mild regularizer preventing overfitting to long-range noise", "Truncation makes the model faster but sacrifices accuracy", "The RNN cell architecture makes all historical information irrelevant after truncation"],
-      answer: "The influence of past observations on gradients decays naturally; information beyond a few steps is already diluted by repeated nonlinearities; and fixed-size segments act as a mild regularizer preventing overfitting to long-range noise",
-      explanation: "The lecturer explains that after a few steps (20–50 in practice), the gradient contribution from earlier states decays exponentially, and information is further diluted as it passes through multiple tanh nonlinearities. Fixed-length truncation stabilizes training as a mild regularizer, learning robust short-term memory without overfitting to spurious long-range correlations—making the model more robust to out-of-distribution sequences.",
+      question: "What trade-off does truncated backpropagation through time (TBPTT) make?",
+      choices: ["It deletes all context before each chunk", "It carries recurrent-state values across contiguous chunks but detaches the graph, bounding memory and compute while preventing credit assignment across the boundary", "It is exact BPTT implemented in smaller batches", "It guarantees that dependencies beyond 50 tokens never matter"],
+      answer: "It carries recurrent-state values across contiguous chunks but detaches the graph, bounding memory and compute while preventing credit assignment across the boundary",
+      explanation: "TBPTT preserves running context by carrying the state value forward, then detaches that value so the backward graph has a finite horizon. The benefit is bounded memory and compute; the cost is that the loss cannot assign gradient credit beyond the chosen horizon. There is no universal 20–50-token cutoff—the right horizon depends on the task and architecture.",
     },
   ],
   8: [
@@ -264,7 +264,7 @@ export const selfChecks: Record<number, SelfCheckQuestion[]> = {
       question: "In cross-attention for seq2seq, do we use a causal mask (preventing attention to future positions)?",
       choices: ["Yes, always", "No — the decoder can attend to all encoder positions", "Only during training", "Only for long sequences"],
       answer: "No — the decoder can attend to all encoder positions",
-      explanation: "Cross-attention connects decoder to encoder (not decoder to itself), and the entire source sentence is available simultaneously. Causal masking only applies to decoder self-attention to prevent looking at future decoder positions during generation. Encoder self-attention and cross-attention are both bidirectional/unmasked.",
+      explanation: "Cross-attention connects the decoder to the already-available encoder memory, so it needs no future-token causal mask over source positions. It may still use padding or task-specific visibility masks. Encoder self-attention is likewise non-causal in the standard encoder, while decoder self-attention uses a causal mask.",
     },
     {
       question: "Why are $\\mathbf{W}_Q$ and $\\mathbf{W}_K$ separate matrices in dot-product attention?",
@@ -279,10 +279,10 @@ export const selfChecks: Record<number, SelfCheckQuestion[]> = {
       explanation: "Both architectures rely on RNNs where $\\mathbf{h}_t$ depends on $\\mathbf{h}_{t-1}$, preventing parallelization across time steps. Attention solved the information bottleneck but not the computational bottleneck. Transformers address this by replacing RNNs entirely with self-attention, enabling massive parallelization of sequence processing.",
     },
     {
-      question: "Why does additive (Bahdanau) attention require complex fused operations that don't leverage GPU tensor cores, while scaled dot-product attention achieves better scalability?",
-      choices: ["Additive attention uses exponential functions which are slower than matrix multiplication", "Additive attention computes $\\tanh(\\mathbf{W}_Q \\mathbf{s}_t + \\mathbf{W}_K \\mathbf{h}_i + \\mathbf{b})$ with a nonlinearity that cannot be separated into independent operations on queries and keys alone", "Dot-product attention uses fewer parameters and trains faster", "Additive attention cannot be parallelized across batch dimensions"],
-      answer: "Additive attention computes $\\tanh(\\mathbf{W}_Q \\mathbf{s}_t + \\mathbf{W}_K \\mathbf{h}_i + \\mathbf{b})$ with a nonlinearity that cannot be separated into independent operations on queries and keys alone",
-      explanation: "Additive attention requires computing pairwise interactions (projections + elementwise addition + nonlinearity) in a fused kernel, which is memory-bound and doesn't utilize GPU tensor cores efficiently. Scaled dot-product attention separates the computation into independent linear transformations (can be done in parallel), then uses a simple matrix multiplication and softmax—pure dense operations that GPUs are optimized for. The key insight is that the nonlinearity in additive attention depends on *both* query and key simultaneously, making it unparallelizable at the computation-graph level, whereas dot-product defers nonlinearity to earlier RNN/MLP layers, allowing linear operations (pure matrix multiplication) in attention, which map perfectly to GPU tensor core operations.",
+      question: "Why is scaled dot-product attention usually more accelerator-friendly than additive (Bahdanau) attention?",
+      choices: ["Additive attention cannot be vectorized over query–key pairs", "Dot-product scoring reduces the pairwise core to large matrix multiplications, while additive scoring needs broadcasted sums, a nonlinear activation, and a reduction for every pair", "Dot-product attention never uses softmax", "Additive attention cannot process batches"],
+      answer: "Dot-product scoring reduces the pairwise core to large matrix multiplications, while additive scoring needs broadcasted sums, a nonlinear activation, and a reduction for every pair",
+      explanation: "Both mechanisms can be batched and vectorized. The difference is the computational shape: dot-product scores are one GEMM followed by scaling and softmax, whereas additive attention materializes or fuses pairwise projected sums, applies tanh, and reduces with another vector. That extra elementwise work and memory traffic is generally less friendly to dense-matrix hardware.",
     },
   ],
   9: [
@@ -290,7 +290,7 @@ export const selfChecks: Record<number, SelfCheckQuestion[]> = {
       question: "What is the computational complexity of self-attention with respect to sequence length $n$ and embedding dimension $d$?",
       choices: ["$O(nd^2)$", "$O(n^2d)$", "$O(nd)$", "$O(n^2d^2)$"],
       answer: "$O(n^2d)$",
-      explanation: "Computing $QK^T$ requires $(n \\times d) \\times (d \\times n)$ matrix multiplication, giving $n^2 \\cdot d$ operations. This quadratic complexity in sequence length enables full parallelization (unlike RNNs which are sequential), but limits practical context lengths to ~2K-8K tokens due to memory constraints.",
+      explanation: "Computing $QK^T$ requires an $(n \\times d)(d \\times n)$ multiplication, giving $O(n^2d)$ work and an $n \\times n$ attention matrix. That quadratic pressure makes long contexts costly, although sparse, fused, and memory-efficient implementations can extend practical context lengths substantially.",
     },
     {
       question: "In the self-attention formula $\\text{Attention}(Q,K,V) = \\text{softmax}\\left(\\frac{QK^T}{\\sqrt{d_k}}\\right)V$, why do we scale by $\\sqrt{d_k}$?",
@@ -326,8 +326,8 @@ export const selfChecks: Record<number, SelfCheckQuestion[]> = {
   10: [
     {
       question: "Why does ViT underperform ResNet on small datasets like Fashion-MNIST, but outperform ResNet on larger datasets like JFT-300M?",
-      answer: "Transformers lack the useful inductive biases present in CNNs (translation invariance and locality), which help CNNs generalize better with limited data. However, Transformers' flexibility allows them to scale better with large datasets, eventually outperforming CNNs.",
-      explanation: "This illustrates the fundamental tradeoff: CNNs have built-in geometric assumptions about images that help with small datasets, but Transformers' flexibility becomes an advantage when you have abundant data to learn these properties from scratch. The dataset size determines which architecture wins.",
+      answer: "Transformers lack some useful CNN inductive biases, especially locality and translation equivariance, which can help CNNs generalize with limited data. With enough data and compute, a Transformer's weaker spatial prior can instead offer useful flexibility.",
+      explanation: "CNN locality and translation equivariance can improve sample efficiency, while a weaker spatial prior can become flexible at scale. Dataset size is one important axis, but compute, augmentation, pretraining, architecture, and optimization recipe also affect the comparison; no single threshold determines the winner.",
     },
     {
       question: "How do BERT and GPT differ in their pretraining objectives, and why does this difference affect what attention patterns they can use?",
@@ -337,7 +337,7 @@ export const selfChecks: Record<number, SelfCheckQuestion[]> = {
     {
       question: "What architectural role does the `<cls>` token play in both ViT and BERT, and why is this design useful?",
       answer: "In both architectures, `<cls>` is prepended to the input (patches in ViT, tokens in BERT), and its representation after the Transformer is used for classification. Through self-attention, it aggregates information from all inputs and serves as a learnable global representation.",
-      explanation: "Using a dedicated pooling token is elegant because self-attention automatically learns to integrate information from all inputs into a single vector. This is superior to just taking the last token because the final `<cls>` vector has direct paths to attend to every input element.",
+      explanation: "A dedicated pooling token gives the objective an explicit location whose representation can learn to aggregate the sequence. It has direct attention paths to all inputs, but it is a design choice rather than inherently superior: mean pooling, attention pooling, or a designated final token can also work when the architecture and objective support them.",
     },
     {
       question: "How does T5 unify diverse NLP tasks (classification, summarization, translation) into a single framework, and what advantage does this provide?",
@@ -346,20 +346,20 @@ export const selfChecks: Record<number, SelfCheckQuestion[]> = {
     },
     {
       question: "According to the textbook, Transformer language models exhibit power-law scaling relationships. What does this mean, and why is it important?",
-      answer: "Performance loss scales as a power law with model parameters, training tokens, and compute: the larger the model, the more data you train on, or the more compute you use, the better the performance follows a predictable $L(N, D, C) \\propto N^{-\\alpha_N} D^{-\\alpha_D} C^{-\\alpha_C}$ relationship. This is important because it allows prediction of performance before training and guides allocation of resources.",
-      explanation: "Power-law scaling is remarkable because these relationships hold over many orders of magnitude (from millions to billions of parameters). This predictability has enabled researchers to estimate optimal model sizes and training compute budgets, driving the modern push toward larger models.",
+      answer: "In controlled empirical studies, loss often follows an approximately linear trend on log-log plots as model size, data, or compute is varied. Because compute couples model size and training tokens rather than forming an independent multiplicative factor, fitted scaling laws can be used to estimate a compute-efficient frontier instead of simply maximizing one quantity.",
+      explanation: "These are empirical regularities over measured regimes, not a universal product formula. Their practical value is comparative: under an explicit compute budget and training recipe, they help estimate how to divide resources between parameters and data and where extrapolation becomes risky.",
     },
     {
-      question: "In knowledge distillation for ViT training, why does the lecturer argue that using separate distillation and classification tokens (with separate heads) allows the model to learn more effectively than using a single token?",
-      choices: ["The distillation head forces the model to memorize the teacher's predictions rather than learning from data", "Separate tokens allow the model to learn from both the ground truth labels and the teacher's inductive bias simultaneously, without conflicting gradients", "The classification token learns faster than the distillation token, so they must be separated to prevent training instability", "Using two tokens doubles the model's parameter count, which automatically improves performance"],
-      answer: "Separate tokens allow the model to learn from both the ground truth labels and the teacher's inductive bias simultaneously, without conflicting gradients",
-      explanation: "The lecturer explains that the distillation token learns from the CNN teacher's hard predictions, while the classification token learns from ground truth labels via cross-entropy. By using separate heads for these two learning signals, the model can learn effectively from both sources—the inductive biases the CNN provides and the ground truth labels—without one forcing the other. The lecturer emphasizes this is 'a loss and a tradeoff that the model will do' and that 'diversity helps' because it 'leads to a richer learning signal.' The CNN teacher brings different inductive biases than the transformer naturally has, allowing the flexible transformer architecture to incorporate this prior knowledge while remaining exposed to real labels.",
+      question: "What does using separate classification and distillation tokens and heads provide in a distilled ViT?",
+      choices: ["It prevents all gradient interaction between the two objectives", "It gives the label and teacher objectives separate readout pathways that can specialize, while both still train the shared trunk", "It doubles the model's parameter count", "It guarantees the student will outperform the teacher"],
+      answer: "It gives the label and teacher objectives separate readout pathways that can specialize, while both still train the shared trunk",
+      explanation: "The classification head reads a token trained toward ground-truth labels, while the distillation head reads a token trained toward teacher targets. Separate readouts reduce direct competition for one summary vector and let the two tokens specialize. They do not make the objectives independent: both losses backpropagate through shared Transformer parameters, where their gradients can still agree or conflict.",
     },
     {
-      question: "According to the Chinchilla scaling laws, what key principle changed from earlier scaling practices like GPT-3, and what is the practical implication?",
-      choices: ["Models should be as large as possible regardless of data; this means investing all compute into model parameters, not training data", "Parameters and tokens should scale equally, not privileging one dimension; approximately 20 tokens per parameter is optimal, enabling smaller models with more data to match larger models' performance", "Compute should be spent exclusively on gathering more data rather than increasing model size; this eliminates the need for large parameters", "Scaling laws only apply to decoder models like GPT; encoder models like BERT do not follow power-law relationships"],
-      answer: "Parameters and tokens should scale equally, not privileging one dimension; approximately 20 tokens per parameter is optimal, enabling smaller models with more data to match larger models' performance",
-      explanation: "The lecturer contrasts the earlier 'as big as possible' paradigm (exemplified by GPT-3's 175B parameters) with Chinchilla's insight: the token-to-parameter ratio matters. By scaling both dimensions proportionally (~20 tokens per parameter), you can achieve similar performance with far fewer parameters, reducing inference cost. This was empirically demonstrated: Chinchilla (smaller, more-tokens) outperformed Gopher (much larger) on many benchmarks. The practical shift from maximizing model size to optimizing the compute-parameter-token tradeoff changed how researchers design language models.",
+      question: "What practical principle did the Chinchilla study add to earlier language-model scaling practice?",
+      choices: ["Make models as large as possible regardless of training data", "Scale parameters and training tokens together under a compute budget; its fitted regime suggested roughly 20 training tokens per parameter", "Spend all compute on data and never increase model size", "Use one universal token-to-parameter ratio for every architecture and dataset"],
+      answer: "Scale parameters and training tokens together under a compute budget; its fitted regime suggested roughly 20 training tokens per parameter",
+      explanation: "The study found that several earlier large models were undertrained for their size. In its measured regime, allocating compute to both model size and more training tokens produced a smaller, more thoroughly trained Chinchilla model that outperformed the larger Gopher on many evaluations. The roughly 20:1 figure is an empirical rule from that setup, not a universal constant.",
     },
   ],
   11: [
@@ -403,9 +403,9 @@ export const selfChecks: Record<number, SelfCheckQuestion[]> = {
     },
     {
       question: "Why does predicting a masked image patch directly using MSE loss typically result in blurry images, and how does diffusion solve this?",
-      choices: ["MSE is computationally expensive; diffusion uses faster gradient descent", "MSE forces the model to average over multiple valid completions; diffusion predicts independent noise components instead", "MSE cannot handle color images; diffusion learns in latent space", "MSE requires too much training data; diffusion uses smaller datasets"],
-      answer: "MSE forces the model to average over multiple valid completions; diffusion predicts independent noise components instead",
-      explanation: "When multiple valid completions exist, MSE loss mathematically averages them, producing blur. Diffusion avoids this by targeting independent Gaussian noise (whose components are uncorrelated) rather than correlated pixel values, enabling precise generation through iterated denoising.",
+      choices: ["MSE is computationally expensive; diffusion uses faster gradient descent", "A one-shot MSE predictor averages competing completions; diffusion learns denoising information across noise levels and samples through repeated refinement", "MSE cannot handle color images; diffusion learns in latent space", "MSE requires too much training data; diffusion uses smaller datasets"],
+      answer: "A one-shot MSE predictor averages competing completions; diffusion learns denoising information across noise levels and samples through repeated refinement",
+      explanation: "When several completions are plausible, a deterministic one-shot squared-error prediction tends toward their conditional mean, which can look blurry. A diffusion model learns a denoising or score field at many noise levels and follows a stochastic reverse process, so separate runs can realize different plausible modes.",
     },
     {
       question: "What is the score function in diffusion models, and what does Tweedie's formula reveal about its relationship to noise prediction?",
@@ -420,10 +420,10 @@ export const selfChecks: Record<number, SelfCheckQuestion[]> = {
       explanation: "Standard autoencoders map inputs to fixed latent vectors; VAEs map inputs to distributions (mean and variance), then sample $\\mathbf{z} \\sim \\mathcal{N}(\\boldsymbol{\\mu}, \\boldsymbol{\\sigma}^2)$. The KL regularization forces the latent space near $\\mathcal{N}(0,I)$, enabling generation by sampling from the prior without the encoder.",
     },
     {
-      question: "In GANs, what does a discriminator output of 0.5 for all inputs signify about training equilibrium?",
-      choices: ["The discriminator has failed to learn meaningful features", "The generator has reached Nash equilibrium—generated samples are indistinguishable from real data", "The training is unstable and will diverge", "The batch size is too small for convergence"],
-      answer: "The generator has reached Nash equilibrium—generated samples are indistinguishable from real data",
-      explanation: "When $D(\\mathbf{x})=0.5$ everywhere, the discriminator cannot distinguish real from fake, meaning it has been reduced to random guessing. This occurs at the Nash equilibrium where generator and discriminator strategies are balanced and neither can improve unilaterally.",
+      question: "At the theoretical optimum of the original GAN objective, what happens when $p_g=p_{data}$?",
+      choices: ["The optimal discriminator outputs 0.5 wherever either distribution has support", "The discriminator memorizes every training image", "The generator's loss must be zero", "The batch size becomes irrelevant"],
+      answer: "The optimal discriminator outputs 0.5 wherever either distribution has support",
+      explanation: "For the original minimax objective and an optimal discriminator, matching the generated and data distributions makes the density ratio equal, so $D^*(x)=1/2$. Observing a value near 0.5 in an actual run is not by itself proof of equilibrium: the discriminator could also be undertrained or otherwise ineffective.",
     },
   ],
 }

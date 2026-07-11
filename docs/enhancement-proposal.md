@@ -101,17 +101,23 @@ Content-ops observations (local, not site):
 
 ## 3. The proposal
 
+> **July 2026 update:** this document records the site's original design decision,
+> when D2L was the canonical reading. Reviewed chapters from the course's own book are
+> now the primary readings through a plural `bookChapters` mapping; D2L remains an
+> alternative. Modules without a substantive book chapter retain their existing
+> slides and linked readings.
+
 ### Guiding principles (from your constraints)
 
 1. **Public learners are the audience.** Discoverability and self-paced clarity outrank
    semester logistics. Anything cohort-specific (deadlines, Gradescope, Canvas) stays in
    Canvas; the site stays evergreen.
 2. **One learning path per module — no fragmentation.** The module page is the *only*
-   hub: watch → read → self-check → code. "Read" means: **D2L is the canonical text for
-   Modules 1–9** (one click to the exact sections); **your notes/slides are the canonical
-   reading for Modules 10–12**, because D2L simply doesn't cover PEFT, quantization,
-   CLIP/multimodal, or diffusion at course depth — which is why the site already publishes
-   your decks there. We do **not** build parallel notes for material D2L covers well.
+   hub: watch → read → self-check → code. Reviewed chapters from the course's own book
+   are the primary reading, with several chapters linked when the structures do not map
+   one-to-one. D2L remains a clearly labeled alternative. Modules whose course-book
+   chapters are not yet substantive retain their current slides and primary-source
+   links rather than pointing learners to a stub.
 3. **Evergreen.** Prioritize by impact; every phase leaves the site deployable; prefer
    features with near-zero ongoing maintenance.
 

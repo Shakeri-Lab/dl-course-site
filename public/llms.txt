@@ -1,12 +1,13 @@
 # DS 6050: Deep Learning — University of Virginia, School of Data Science
 
 > A free, open graduate deep learning course by Heman Shakeri (Shakeri Lab, UVA):
-> video lectures, Dive into Deep Learning (D2L) readings, and hands-on PyTorch
-> Colab notebooks, from linear models to transformers and generative AI.
+> course-book chapters, video lectures, self-checks, and hands-on PyTorch Colab
+> notebooks, from linear models to transformers and generative AI.
 
 Site: https://shakeri-lab.github.io/dl-course-site/
 YouTube playlist: https://www.youtube.com/playlist?list=PLwZv_wzaKu3vzW88m6ASKemCTb70ukycH
-Textbook: https://d2l.ai (Dive into Deep Learning — canonical reading for Modules 1–9)
+Course book: https://shakeri-lab.github.io/dl-book/ (primary where chapters are reviewed)
+Alternative text: https://d2l.ai (Dive into Deep Learning)
 License: original materials CC BY 4.0; lecture videos © Heman Shakeri
 
 ## Modules

@@ -81,6 +81,7 @@ export function ModuleTemplate({ data }: { data: ModuleData }) {
   const questions = selfChecks[data.moduleNumber]
 
   const hasSharedResources =
+    (extras?.bookChapters && extras.bookChapters.length > 0) ||
     extras?.d2lLinks?.length ||
     data.d2lReference ||
     data.resourceDescription ||
@@ -247,10 +248,32 @@ export function ModuleTemplate({ data }: { data: ModuleData }) {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              {extras?.bookChapters && extras.bookChapters.length > 0 && (
+                <div className="space-y-1 text-slate-600 dark:text-slate-300">
+                  <p className="font-medium text-slate-800 dark:text-slate-100">
+                    Course book · primary reading
+                  </p>
+                  <ul className="list-disc pl-6 space-y-1">
+                    {extras.bookChapters.map((chapter) => (
+                      <li key={chapter.url}>
+                        <a
+                          href={chapter.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={LINK_CLASSES}
+                        >
+                          {chapter.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
               {extras?.d2lLinks && extras.d2lLinks.length > 0 ? (
                 <div className="space-y-1 text-slate-600 dark:text-slate-300">
                   <p>
-                    Recommended reading from{" "}
+                    {extras.bookChapters?.length ? "Alternative reading from " : "Recommended reading from "}
                     <a
                       href={siteConfig.textbook.url}
                       target="_blank"

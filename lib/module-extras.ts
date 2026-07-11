@@ -11,6 +11,7 @@ export type ModuleCategory =
   | "advanced"
 
 export type D2lLink = { label: string; url: string }
+export type BookChapter = { label: string; url: string }
 
 export type ModuleExtras = {
   category: ModuleCategory
@@ -18,6 +19,7 @@ export type ModuleExtras = {
   objectives: string[]
   estimatedTime: string
   prereq?: string
+  bookChapters?: BookChapter[]
   d2lLinks?: D2lLink[]
 }
 
@@ -32,6 +34,12 @@ export const moduleExtras: Record<number, ModuleExtras> = {
     ],
     estimatedTime: "≈6 h · 2 h video · 2 h reading · 2 h coding",
     prereq: "None — start here",
+    bookChapters: [
+      { label: "Ch. 1 · Linear Regression, the Mother Model", url: "https://shakeri-lab.github.io/dl-book/chapters/part1/01-linear-regression.html" },
+      { label: "Ch. 2 · Linear Models that Classify", url: "https://shakeri-lab.github.io/dl-book/chapters/part1/02-logistic-softmax.html" },
+      { label: "Ch. 3 · Nonlinearity and the MLP", url: "https://shakeri-lab.github.io/dl-book/chapters/part1/03-nonlinearity-mlp.html" },
+      { label: "Ch. 4 · Training: Loss and SGD", url: "https://shakeri-lab.github.io/dl-book/chapters/part1/04-training-loss-sgd.html" },
+    ],
     d2lLinks: [
       { label: "§ 2.3 Linear Algebra", url: "https://d2l.ai/chapter_preliminaries/linear-algebra.html" },
       { label: "§ 3.1 Linear Regression", url: "https://d2l.ai/chapter_linear-networks-regression/linear-regression.html" },
@@ -50,6 +58,9 @@ export const moduleExtras: Record<number, ModuleExtras> = {
     ],
     estimatedTime: "≈6 h · 2 h video · 2 h reading · 2 h coding",
     prereq: "Builds on Module 1",
+    bookChapters: [
+      { label: "Ch. 5 · Backpropagation", url: "https://shakeri-lab.github.io/dl-book/chapters/part1/05-backpropagation.html" },
+    ],
     d2lLinks: [
       { label: "§ 2.4 Calculus", url: "https://d2l.ai/chapter_preliminaries/calculus.html" },
       { label: "§ 2.5 Automatic Differentiation", url: "https://d2l.ai/chapter_preliminaries/autograd.html" },
@@ -65,6 +76,10 @@ export const moduleExtras: Record<number, ModuleExtras> = {
     ],
     estimatedTime: "≈5 h · 1.5 h video · 1.5 h reading · 2 h coding",
     prereq: "Builds on Modules 1–2",
+    bookChapters: [
+      { label: "Ch. 4 · Training: Loss and SGD", url: "https://shakeri-lab.github.io/dl-book/chapters/part1/04-training-loss-sgd.html" },
+      { label: "Ch. 6 · Generalization and Inductive Bias", url: "https://shakeri-lab.github.io/dl-book/chapters/part1/06-generalization-inductive-bias.html" },
+    ],
     d2lLinks: [
       { label: "§ 3.6 Generalization", url: "https://d2l.ai/chapter_linear-networks-regression/generalization.html" },
       { label: "§ 3.7 Weight Decay", url: "https://d2l.ai/chapter_linear-networks-regression/weight-decay.html" },
@@ -82,6 +97,11 @@ export const moduleExtras: Record<number, ModuleExtras> = {
     ],
     estimatedTime: "≈6 h · 2 h video · 2 h reading · 2 h coding",
     prereq: "Builds on Modules 1–3",
+    bookChapters: [
+      { label: "Ch. 6 · Generalization and Inductive Bias", url: "https://shakeri-lab.github.io/dl-book/chapters/part1/06-generalization-inductive-bias.html" },
+      { label: "Ch. 7 · Filters and Convolution", url: "https://shakeri-lab.github.io/dl-book/chapters/part2/07-filters-convolution.html" },
+      { label: "Ch. 8 · CNNs: Making Filters Learnable", url: "https://shakeri-lab.github.io/dl-book/chapters/part2/08-cnn.html" },
+    ],
     d2lLinks: [
       { label: "§ 5.6 Dropout", url: "https://d2l.ai/chapter_multilayer-perceptrons/dropout.html" },
       { label: "Ch. 7 Convolutional Neural Networks", url: "https://d2l.ai/chapter_convolutional-neural-networks/index.html" },
@@ -99,6 +119,9 @@ export const moduleExtras: Record<number, ModuleExtras> = {
     ],
     estimatedTime: "≈6 h · 2 h video · 2 h reading · 2 h coding",
     prereq: "Builds on Modules 1–4",
+    bookChapters: [
+      { label: "Ch. 9 · Modern CNNs and Transfer Learning", url: "https://shakeri-lab.github.io/dl-book/chapters/part2/09-modern-cnns-transfer.html" },
+    ],
     d2lLinks: [
       { label: "§ 5.4 Numerical Stability and Initialization", url: "https://d2l.ai/chapter_multilayer-perceptrons/numerical-stability-and-init.html" },
       { label: "§ 8.2 Networks Using Blocks (VGG)", url: "https://d2l.ai/chapter_modern-convolutional-neural-networks/vgg.html" },
@@ -111,7 +134,7 @@ export const moduleExtras: Record<number, ModuleExtras> = {
   },
   6: {
     category: "bridge",
-    topics: ["Seq2Seq", "Encoder–Decoder", "U-Net"],
+    topics: ["Autoencoders", "PCA", "Encoder–Decoder"],
     objectives: [
       "Implement an autoencoder from scratch; visualize learned representations",
       "Build a CNN encoder-decoder for image tasks",
@@ -135,6 +158,10 @@ export const moduleExtras: Record<number, ModuleExtras> = {
     ],
     estimatedTime: "≈7 h · 2.5 h video · 2 h reading · 2.5 h coding",
     prereq: "Builds on Modules 1–5",
+    bookChapters: [
+      { label: "Ch. 10 · Sequences and Recurrence", url: "https://shakeri-lab.github.io/dl-book/chapters/part3/10-sequences-rnn.html" },
+      { label: "Ch. 11 · Encoder–Decoder, Teacher Forcing, Beam Search", url: "https://shakeri-lab.github.io/dl-book/chapters/part3/11-encoder-decoder.html" },
+    ],
     d2lLinks: [
       { label: "Ch. 9 Recurrent Neural Networks", url: "https://d2l.ai/chapter_recurrent-neural-networks/index.html" },
       { label: "Ch. 10 Modern Recurrent Neural Networks", url: "https://d2l.ai/chapter_modern-recurrent-neural-networks/index.html" },
@@ -176,9 +203,10 @@ export const moduleExtras: Record<number, ModuleExtras> = {
     category: "transformer",
     topics: ["ViT", "BERT/T5/GPT", "Scaling"],
     objectives: [
-      "Implement patchify + linear embedding; train a tiny ViT",
-      "Run a patch-size ablation; inspect attention maps qualitatively",
-      "Compare a small ViT vs small ResNet for efficiency vs accuracy",
+      "Implement patchify + linear embedding and explain ViT's data-versus-bias trade-off",
+      "Contrast BERT, T5, and GPT through their pretraining objectives and attention masks",
+      "Explain knowledge distillation and why a CNN teacher can lend useful inductive bias to ViT",
+      "Use scaling laws to reason jointly about parameters, training tokens, and compute",
     ],
     estimatedTime: "≈6 h · 2 h video · 2 h reading · 2 h coding",
     prereq: "Builds on Modules 1–9",
@@ -190,9 +218,10 @@ export const moduleExtras: Record<number, ModuleExtras> = {
     category: "advanced",
     topics: ["Prompting/RAG", "PEFT", "QLoRA"],
     objectives: [
-      "Pretrain on synthetic sequences (masked and autoregressive); evaluate representations",
-      "Fine-tune on a small downstream task; compare PEFT (LoRA) vs full FT",
-      "Summarize scaling-law takeaways for model/data/compute",
+      "Choose zero-shot, few-shot, or chain-of-thought prompting for a concrete task",
+      "Explain how RAG grounds generation and when retrieval is preferable to changing weights",
+      "Compare full fine-tuning with LoRA/QLoRA in trainable parameters and memory use",
+      "Use the course decision framework to choose prompting, RAG, PEFT, or quantization",
     ],
     estimatedTime: "≈6 h · 2 h video · 2 h reading · 2 h coding",
     prereq: "Builds on Modules 1–10",
