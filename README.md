@@ -70,8 +70,8 @@ links (D2L, arXiv, YouTube) and opens an issue if any rot.
 
 - **One learning path per module** — watch → read → self-check → code, all on the module
   page. Reviewed course-book chapters are the primary reading; D2L stays available as
-  an alternative. Modules whose book chapters are still in development continue to use
-  the lecture slides and linked papers.
+  an alternative or parallel treatment. Keep every mapping aligned with the book's
+  reading order and verify new chapter URLs after publication.
 - **No slide duplication** — lectures are board-first; slides are published only where
   they substitute for not-yet-recorded videos (Modules 11–12). Keeping slides out of the
   site elsewhere avoids drift against the LaTeX sources.

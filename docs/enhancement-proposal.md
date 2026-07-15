@@ -104,8 +104,9 @@ Content-ops observations (local, not site):
 > **July 2026 update:** this document records the site's original design decision,
 > when D2L was the canonical reading. Reviewed chapters from the course's own book are
 > now the primary readings through a plural `bookChapters` mapping; D2L remains an
-> alternative. Modules without a substantive book chapter retain their existing
-> slides and linked readings.
+> alternative. The July 15 course-alignment pass completed the primary course-book
+> route across all twelve modules, including the experimentation and autoencoder
+> interludes; slides and papers remain parallel resources rather than stub fallbacks.
 
 ### Guiding principles (from your constraints)
 
@@ -115,9 +116,8 @@ Content-ops observations (local, not site):
 2. **One learning path per module — no fragmentation.** The module page is the *only*
    hub: watch → read → self-check → code. Reviewed chapters from the course's own book
    are the primary reading, with several chapters linked when the structures do not map
-   one-to-one. D2L remains a clearly labeled alternative. Modules whose course-book
-   chapters are not yet substantive retain their current slides and primary-source
-   links rather than pointing learners to a stub.
+   one-to-one. D2L remains a clearly labeled alternative; slides and primary-source
+   links provide parallel treatments where they add value.
 3. **Evergreen.** Prioritize by impact; every phase leaves the site deployable; prefer
    features with near-zero ongoing maintenance.
 

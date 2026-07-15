@@ -117,12 +117,12 @@ export default function StartHerePage() {
                 rel="noopener noreferrer"
                 className="text-[#002862] underline decoration-[#FFBA69]/70 underline-offset-4 hover:text-[#001a44] dark:text-[#7EB5F0] dark:hover:text-[#a8d0ff]"
               >
-                course book
+              course book
               </a>{" "}
               are the primary reading, and a module may link several chapters because the two
               structures do not map one-to-one. The exact D2L sections remain as alternatives.
-              Modules whose book chapters are still in development use the lecture slides and
-              linked papers in the meantime.
+              The linked course-book route now spans every module; slides and papers remain
+              available when a second treatment is useful.
             </p>
             <p className="text-slate-600 dark:text-slate-300">
               <span className="font-semibold text-slate-800 dark:text-slate-100">Suggested pacing:</span>{" "}

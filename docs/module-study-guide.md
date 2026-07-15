@@ -34,7 +34,7 @@ A consolidated reference mirroring the course website
 
 - Compute matrix–vector products and visualize linear transforms
 - Explain XOR nonlinearity and demonstrate failure → fix with ReLU
-- Implement a minimal MLP (NumPy/PyTorch) and describe SGD updates
+- Implement a minimal MLP with PyTorch tensors/modules and describe SGD updates
 
 ### Test your understanding
 
@@ -581,7 +581,7 @@ The training pair is constructed automatically as $(x,x)$: no external semantic 
 
 ## Module 7 – Recurrent Neural Networks
 
-*≈7 h · 2.5 h video · 2 h reading · 2.5 h coding · Builds on Modules 1–5*
+*≈7 h · 2.5 h video · 2 h reading · 2.5 h coding · Builds on Modules 1–6*
 
 **Topics:** RNN Basics · LSTM · GRU
 
@@ -1001,7 +1001,7 @@ The study found that several earlier large models were undertrained for their si
 
 ## Module 11 – Prompting, PEFT, and Quantization (Gemma)
 
-*≈6 h · 2 h video · 2 h reading · 2 h coding · Builds on Modules 1–10*
+*≈7 h · 2 h video · 3 h reading · 2 h coding · Builds on Modules 1–10*
 
 **Topics:** Prompting/RAG · PEFT · QLoRA
 
@@ -1010,6 +1010,7 @@ The study found that several earlier large models were undertrained for their si
 - Choose zero-shot, few-shot, or chain-of-thought prompting for a concrete task
 - Explain how RAG grounds generation and when retrieval is preferable to changing weights
 - Compare full fine-tuning with LoRA/QLoRA in trainable parameters and memory use
+- Distinguish instruction tuning, preference learning, and policy optimization as alignment objectives
 - Use the course decision framework to choose prompting, RAG, PEFT, or quantization
 
 ### Test your understanding
@@ -1094,12 +1095,13 @@ RAG is ideal when knowledge changes frequently or is sensitive/private, since it
 
 ## Module 12 – Multimodal Learning & GenAI
 
-*≈7 h · 2.5 h video · 2 h reading · 2.5 h coding · Builds on Modules 1–11*
+*≈8 h · 2.5 h video · 3 h reading · 2.5 h coding · Builds on Modules 1–11*
 
 **Topics:** Multimodal · Diffusion · VAE · GAN
 
 ### What you'll learn
 
+- Explain symmetric image–text contrastive learning and audit cross-modal retrieval
 - Implement a tiny VAE; explore the latent space qualitatively
 - Train a small GAN; apply simple stability tweaks; assess samples
 - Explain forward/reverse diffusion and demonstrate sampling

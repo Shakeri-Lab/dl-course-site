@@ -30,7 +30,7 @@ export const moduleExtras: Record<number, ModuleExtras> = {
     objectives: [
       "Compute matrix–vector products and visualize linear transforms",
       "Explain XOR nonlinearity and demonstrate failure → fix with ReLU",
-      "Implement a minimal MLP (NumPy/PyTorch) and describe SGD updates",
+      "Implement a minimal MLP with PyTorch tensors/modules and describe SGD updates",
     ],
     estimatedTime: "≈6 h · 2 h video · 2 h reading · 2 h coding",
     prereq: "None — start here",
@@ -79,6 +79,7 @@ export const moduleExtras: Record<number, ModuleExtras> = {
     bookChapters: [
       { label: "Ch. 4 · Training: Loss and SGD", url: "https://shakeri-lab.github.io/dl-book/chapters/part1/04-training-loss-sgd.html" },
       { label: "Ch. 6 · Generalization and Inductive Bias", url: "https://shakeri-lab.github.io/dl-book/chapters/part1/06-generalization-inductive-bias.html" },
+      { label: "Interlude · Who Trains the Trainer? Learning by Experiment", url: "https://shakeri-lab.github.io/dl-book/chapters/interludes/learning-by-experiment.html" },
     ],
     d2lLinks: [
       { label: "§ 3.6 Generalization", url: "https://d2l.ai/chapter_linear-networks-regression/generalization.html" },
@@ -141,6 +142,10 @@ export const moduleExtras: Record<number, ModuleExtras> = {
     ],
     estimatedTime: "≈5 h · 1.5 h video · 1.5 h reading · 2 h coding",
     prereq: "Builds on Modules 1–5",
+    bookChapters: [
+      { label: "Interlude · Making PCA Learnable", url: "https://shakeri-lab.github.io/dl-book/chapters/interludes/making-pca-learnable.html" },
+      { label: "Appendix A § PCA is SVD after centering", url: "https://shakeri-lab.github.io/dl-book/chapters/appendices/a1-linear-algebra.html#pca-is-svd-after-centering" },
+    ],
     d2lLinks: [
       { label: "§ 10.6 The Encoder-Decoder Architecture", url: "https://d2l.ai/chapter_modern-recurrent-neural-networks/encoder-decoder.html" },
       { label: "§ 14.10 Transposed Convolution", url: "https://d2l.ai/chapter_computer-vision/transposed-conv.html" },
@@ -157,7 +162,7 @@ export const moduleExtras: Record<number, ModuleExtras> = {
       "Apply gradient clipping and truncated BPTT; analyze training stability",
     ],
     estimatedTime: "≈7 h · 2.5 h video · 2 h reading · 2.5 h coding",
-    prereq: "Builds on Modules 1–5",
+    prereq: "Builds on Modules 1–6",
     bookChapters: [
       { label: "Ch. 10 · Sequences and Recurrence", url: "https://shakeri-lab.github.io/dl-book/chapters/part3/10-sequences-rnn.html" },
       { label: "Ch. 11 · Encoder–Decoder, Teacher Forcing, Beam Search", url: "https://shakeri-lab.github.io/dl-book/chapters/part3/11-encoder-decoder.html" },
@@ -177,6 +182,10 @@ export const moduleExtras: Record<number, ModuleExtras> = {
     ],
     estimatedTime: "≈6 h · 2 h video · 2 h reading · 2 h coding",
     prereq: "Builds on Modules 1–7",
+    bookChapters: [
+      { label: "Ch. 12 · Kernel Regression", url: "https://shakeri-lab.github.io/dl-book/chapters/part4/12-kernel-regression.html" },
+      { label: "Ch. 13 · Attention: Making Similarity Learnable", url: "https://shakeri-lab.github.io/dl-book/chapters/part4/13-attention.html" },
+    ],
     d2lLinks: [
       { label: "§ 11.1 Queries, Keys, and Values", url: "https://d2l.ai/chapter_attention-mechanisms-and-transformers/queries-keys-values.html" },
       { label: "§ 11.2 Attention Pooling by Similarity", url: "https://d2l.ai/chapter_attention-mechanisms-and-transformers/attention-pooling.html" },
@@ -195,6 +204,9 @@ export const moduleExtras: Record<number, ModuleExtras> = {
     ],
     estimatedTime: "≈6 h · 2 h video · 2 h reading · 2 h coding",
     prereq: "Builds on Modules 1–8",
+    bookChapters: [
+      { label: "Ch. 14 · Self-Attention and the Transformer", url: "https://shakeri-lab.github.io/dl-book/chapters/part4/14-self-attention-transformer.html" },
+    ],
     d2lLinks: [
       { label: "Ch. 11 Attention Mechanisms and Transformers", url: "https://d2l.ai/chapter_attention-mechanisms-and-transformers/index.html" },
     ],
@@ -210,6 +222,10 @@ export const moduleExtras: Record<number, ModuleExtras> = {
     ],
     estimatedTime: "≈6 h · 2 h video · 2 h reading · 2 h coding",
     prereq: "Builds on Modules 1–9",
+    bookChapters: [
+      { label: "Ch. 15 · BERT and Pretraining", url: "https://shakeri-lab.github.io/dl-book/chapters/part4/15-bert-pretraining.html" },
+      { label: "Ch. 16 · Vision Transformers and Scaling", url: "https://shakeri-lab.github.io/dl-book/chapters/part4/16-vit-scaling.html" },
+    ],
     d2lLinks: [
       { label: "Ch. 11 Attention Mechanisms and Transformers", url: "https://d2l.ai/chapter_attention-mechanisms-and-transformers/index.html" },
     ],
@@ -221,21 +237,31 @@ export const moduleExtras: Record<number, ModuleExtras> = {
       "Choose zero-shot, few-shot, or chain-of-thought prompting for a concrete task",
       "Explain how RAG grounds generation and when retrieval is preferable to changing weights",
       "Compare full fine-tuning with LoRA/QLoRA in trainable parameters and memory use",
+      "Distinguish instruction tuning, preference learning, and policy optimization as alignment objectives",
       "Use the course decision framework to choose prompting, RAG, PEFT, or quantization",
     ],
-    estimatedTime: "≈6 h · 2 h video · 2 h reading · 2 h coding",
+    estimatedTime: "≈7 h · 2 h video · 3 h reading · 2 h coding",
     prereq: "Builds on Modules 1–10",
+    bookChapters: [
+      { label: "Ch. 17 · Prompting, Retrieval, PEFT, and Quantization", url: "https://shakeri-lab.github.io/dl-book/chapters/part5/17-peft-quantization.html" },
+      { label: "Ch. 18 · Alignment and RL Fine-Tuning", url: "https://shakeri-lab.github.io/dl-book/chapters/part5/18-alignment.html" },
+    ],
   },
   12: {
     category: "advanced",
     topics: ["Multimodal", "Diffusion", "VAE", "GAN"],
     objectives: [
+      "Explain symmetric image–text contrastive learning and audit cross-modal retrieval",
       "Implement a tiny VAE; explore the latent space qualitatively",
       "Train a small GAN; apply simple stability tweaks; assess samples",
       "Explain forward/reverse diffusion and demonstrate sampling",
       "Briefly discuss evaluation metrics and ethical considerations",
     ],
-    estimatedTime: "≈7 h · 2.5 h video · 2 h reading · 2.5 h coding",
+    estimatedTime: "≈8 h · 2.5 h video · 3 h reading · 2.5 h coding",
     prereq: "Builds on Modules 1–11",
+    bookChapters: [
+      { label: "Ch. 19 · Generative Models: From Codes to Samples", url: "https://shakeri-lab.github.io/dl-book/chapters/part5/19-generative.html" },
+      { label: "Ch. 20 · Multimodal Learning: One Space, Two Views", url: "https://shakeri-lab.github.io/dl-book/chapters/part5/20-multimodal.html" },
+    ],
   },
 }

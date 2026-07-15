@@ -22,7 +22,7 @@ const phases = [
     modules: "Modules 1–3",
     range: [1, 3],
     summary:
-      "Master the mathematical underpinnings and implement core algorithms from scratch with NumPy: linear models, neural networks, and backpropagation — plus the optimization foundations and ablation methodology that recur throughout the course.",
+      "Master the mathematical underpinnings and implement core algorithms from scratch with native PyTorch tensors: linear models, neural networks, and backpropagation — plus the optimization foundations and ablation methodology that recur throughout the course.",
   },
   {
     name: "Architectural Innovations & Domain Specialization",
@@ -84,7 +84,7 @@ export default function SyllabusPage() {
 
         <p className="mt-5 text-lg text-slate-600 dark:text-slate-300">
           This course takes you from linear models to transformers and generative AI, combining
-          rigorous mathematical foundations with from-scratch implementations in NumPy and PyTorch.
+          rigorous mathematical foundations with from-scratch implementations in native PyTorch tensors and modules.
           The goal is genuine expertise rather than pattern-matching: the judgment to design, debug,
           and innovate in real AI systems. Lectures are mostly worked on the board; the free{" "}
           <a
