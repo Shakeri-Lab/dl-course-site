@@ -18,6 +18,7 @@ import {
 import { Check, ChevronDown, Clock, ExternalLink, Target } from "lucide-react"
 import { ModulePager } from "@/components/module-pager"
 import { LiteYouTube } from "@/components/lite-youtube"
+import { MathText } from "@/components/math-text"
 import { SelfCheck } from "@/components/self-check"
 import { ModuleJsonLd } from "@/components/structured-data"
 import { modules, type ModuleData, type ColabLink, type Reading } from "@/lib/module-data"
@@ -84,6 +85,7 @@ export function ModuleTemplate({ data }: { data: ModuleData }) {
     (extras?.bookChapters && extras.bookChapters.length > 0) ||
     extras?.d2lLinks?.length ||
     data.d2lReference ||
+    (data.researchLensReadings && data.researchLensReadings.length > 0) ||
     data.resourceDescription ||
     data.homeworkDescription ||
     (data.colabLinks && data.colabLinks.length > 0) ||
@@ -191,6 +193,40 @@ export function ModuleTemplate({ data }: { data: ModuleData }) {
                 <p className="text-slate-600 dark:text-slate-300">{lecture.description}</p>
               )}
 
+              {lecture.outline && lecture.outline.length > 0 && (
+                <div className="rounded-lg border border-slate-200/80 bg-white/60 p-5 dark:border-white/10 dark:bg-gray-800/60">
+                  <p className="font-medium text-slate-800 dark:text-slate-100">
+                    20-minute lecture outline
+                  </p>
+                  <ol className="mt-4 space-y-4">
+                    {lecture.outline.map((item) => (
+                      <li key={`${item.time}-${item.title}`} className="grid gap-2 sm:grid-cols-[5.5rem_1fr]">
+                        <span className="h-fit rounded-full bg-[#002862]/10 px-2.5 py-1 text-center text-xs font-semibold text-[#002862] dark:bg-[#7EB5F0]/15 dark:text-[#7EB5F0]">
+                          {item.time}
+                        </span>
+                        <div>
+                          <p className="font-medium text-slate-800 dark:text-slate-100">{item.title}</p>
+                          <p className="mt-1 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+                            <MathText text={item.detail} />
+                          </p>
+                        </div>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              )}
+
+              {lecture.discussionPrompt && (
+                <div className="rounded-lg border border-[#FFBA69]/70 bg-[#FFF4E6]/70 p-5 dark:border-[#FFBA69]/30 dark:bg-[#FFBA69]/10">
+                  <p className="font-medium text-slate-800 dark:text-slate-100">
+                    Discussion-leading prompt
+                  </p>
+                  <p className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+                    <MathText text={lecture.discussionPrompt} />
+                  </p>
+                </div>
+              )}
+
               {/* YouTube video (lazy facade) */}
               {lecture.videoId && (
                 <div className="max-w-4xl mx-auto">
@@ -263,6 +299,31 @@ export function ModuleTemplate({ data }: { data: ModuleData }) {
                           className={LINK_CLASSES}
                         >
                           {chapter.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {data.researchLensReadings && data.researchLensReadings.length > 0 && (
+                <div className="space-y-1 text-slate-600 dark:text-slate-300">
+                  <p className="font-medium text-slate-800 dark:text-slate-100">
+                    Research lens · read after the course book
+                  </p>
+                  <p className="text-sm">
+                    These papers use the regression lens as architecture-design language; begin with the named sections after completing the book derivation.
+                  </p>
+                  <ul className="list-disc space-y-1 pl-6">
+                    {data.researchLensReadings.map((reading) => (
+                      <li key={reading.url}>
+                        <a
+                          href={reading.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={LINK_CLASSES}
+                        >
+                          {reading.label}
                         </a>
                       </li>
                     ))}

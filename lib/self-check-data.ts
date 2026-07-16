@@ -361,6 +361,36 @@ export const selfChecks: Record<number, SelfCheckQuestion[]> = {
       answer: "Scale parameters and training tokens together under a compute budget; its fitted regime suggested roughly 20 training tokens per parameter",
       explanation: "The study found that several earlier large models were undertrained for their size. In its measured regime, allocating compute to both model size and more training tokens produced a smaller, more thoroughly trained Chinchilla model that outperformed the larger Gopher on many evaluations. The roughly 20:1 figure is an empirical rule from that setup, not a universal constant.",
     },
+    {
+      question: "Why must exact softmax attention keep a KV cache while a fixed-state SSM does not? Answer in regression vocabulary.",
+      choices: ["Attention is a query-local nonparametric regressor that retains its observed key/value pairs as the dataset; a fixed-state SSM compresses the prefix into bounded state", "Attention stores optimizer gradients, while an SSM recomputes every past token", "The KV cache stores model parameters, while an SSM has no parameters", "An SSM always recalls every past value exactly, so it needs no dataset"],
+      answer: "Attention is a query-local nonparametric regressor that retains its observed key/value pairs as the dataset; a fixed-state SSM compresses the prefix into bounded state",
+      explanation: "For exact softmax attention, the projected keys and values are the data traversed by each new query. Caching them avoids recomputing earlier projections, but the dataset still grows with the prefix. A fixed-state SSM chooses a different statistical contract: it updates a bounded summary, gaining constant state size while generally accepting lossy compression. Keeping every K/V row does not by itself guarantee exact numeric recall; the query-dependent weighted average still matters.",
+    },
+    {
+      question: "Which dial of the shared regression objective does Mamba-style selectivity most naturally turn?",
+      choices: ["Token-dependent retention and input injection, interpretable as a learned forgetting and update schedule", "The local-constant constraint that makes softmax a weighted average", "The choice to retain every key/value pair losslessly", "Only the output vocabulary and tokenizer"],
+      answer: "Token-dependent retention and input injection, interpretable as a learned forgetting and update schedule",
+      explanation: "Selectivity lets the recurrence retain or inject information differently for different tokens. In regression language, that plays a role analogous to learning which history to weight and how strongly to update. This is an interpretive bridge, not an exact derivation of Mamba from one least-squares objective, and it says nothing about selective-scan implementation details.",
+    },
+    {
+      question: "Which claim requires the local-constant qualification before we say ‘attention is regression,’ and why?",
+      choices: ["The claim that unrestricted $M$ with $w=1$ and no regularizer directly yields the softmax weighted average, because such a function can interpolate the observed pairs instead", "The claim that the softmax weights are nonnegative and sum to one, because softmax can produce negative weights", "The claim that queries and keys are learned views, because they must always share one projection", "The claim that attention uses values, because values are used only during training"],
+      answer: "The claim that unrestricted $M$ with $w=1$ and no regularizer directly yields the softmax weighted average, because such a function can interpolate the observed pairs instead",
+      explanation: "The exact statement fixes one constant prediction $c$ at query $q$ and minimizes $\\frac12\\sum_\\tau\\kappa(q,k_\\tau)\\lVert c-v_\\tau\\rVert^2$. Stationarity gives $\\sum_\\tau\\kappa(q,k_\\tau)(c-v_\\tau)=0$, so $c$ is the normalized kernel-weighted average. The kernel supplies the weights; the local-constant fit supplies the average.",
+    },
+    {
+      question: "If a kernel factors as $\\kappa(q,k)=\\phi(q)^\\top\\phi(k)$, which running state exactly reproduces the normalized kernel traversal?",
+      choices: ["$S_t$ alone", "$z_t$ alone", "The pair $(S_t,z_t)$, where $S_t=\\sum_{\\tau\\le t}\\phi(k_\\tau)v_\\tau^\\top$ and $z_t=\\sum_{\\tau\\le t}\\phi(k_\\tau)$", "The final key/value pair only"],
+      answer: "The pair $(S_t,z_t)$, where $S_t=\\sum_{\\tau\\le t}\\phi(k_\\tau)v_\\tau^\\top$ and $z_t=\\sum_{\\tau\\le t}\\phi(k_\\tau)$",
+      explanation: "$S_t$ supplies the weighted numerator and $z_t$ supplies the normalizing denominator: $\\phi(q)^\\top S_t/(\\phi(q)^\\top z_t)$. Both are sufficient statistics for that factorized kernel. This exact recurrence does not make ordinary softmax attention a fixed-state method unless its kernel is replaced by, or represented with, an appropriate factorization.",
+    },
+    {
+      question: "Wang et al. report comparable added parameters in Table 2 and a shared chain-of-thought protocol in §E.2. What matched-comparison conclusion is justified?",
+      choices: ["The comparison is automatically matched for total inference compute", "Some architecture and prompting confounds are controlled, but horizon-dependent internal planning work is not matched by counting generated tokens alone", "Parameter matching makes the choice of hardware irrelevant", "The results establish a universal ranking of memory and control architectures"],
+      answer: "Some architecture and prompting confounds are controlled, but horizon-dependent internal planning work is not matched by counting generated tokens alone",
+      explanation: "Comparable added parameter counts and a shared prompting/sampling recipe are useful controls, but they do not equalize total per-example inference work. A compute-matched rematch would fix the backbone, data, prompt, sampling, hardware, and output cap; include the planner's internal horizon work; allocate equal measured FLOPs or wall time; and report accuracy versus compute with uncertainty and a memory-only baseline. That would be a rematch, not a referendum.",
+    },
   ],
   11: [
     {

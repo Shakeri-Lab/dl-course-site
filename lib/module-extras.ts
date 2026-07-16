@@ -213,14 +213,15 @@ export const moduleExtras: Record<number, ModuleExtras> = {
   },
   10: {
     category: "transformer",
-    topics: ["ViT", "BERT/T5/GPT", "Scaling"],
+    topics: ["ViT", "BERT/T5/GPT", "Scaling", "Test-Time Memory & Control"],
     objectives: [
       "Implement patchify + linear embedding and explain ViT's data-versus-bias trade-off",
       "Contrast BERT, T5, and GPT through their pretraining objectives and attention masks",
       "Explain knowledge distillation and why a CNN teacher can lend useful inductive bias to ViT",
       "Use scaling laws to reason jointly about parameters, training tokens, and compute",
+      "Compare KV retention, factorized sufficient statistics, and bounded online state in regression vocabulary; critique test-time planning under a compute-matched rematch",
     ],
-    estimatedTime: "≈6 h · 2 h video · 2 h reading · 2 h coding",
+    estimatedTime: "≈6.5 h · 2 h video · 20 min frontier outline · 2 h reading · 2 h coding",
     prereq: "Builds on Modules 1–9",
     bookChapters: [
       { label: "Ch. 15 · BERT and Pretraining", url: "https://shakeri-lab.github.io/dl-book/chapters/part4/15-bert-pretraining.html" },

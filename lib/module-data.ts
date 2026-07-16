@@ -5,6 +5,12 @@ export type Reading = {
   url: string
 }
 
+export type LectureOutlineItem = {
+  time: string
+  title: string
+  detail: string
+}
+
 export type ColabLink = {
   label: string
   url: string
@@ -18,6 +24,8 @@ export type Lecture = {
   description?: string
   colabLinks?: ColabLink[]
   readings?: Reading[]
+  outline?: LectureOutlineItem[]
+  discussionPrompt?: string
 }
 
 export type ExtraSection = {
@@ -37,6 +45,7 @@ export type ModuleData = {
   homeworkDescription?: string
   colabLinks?: ColabLink[]
   readings?: Reading[]
+  researchLensReadings?: Reading[]
   pdfPreview?: { title: string; src: string }
   extraSections?: ExtraSection[]
 }
@@ -242,6 +251,16 @@ export const modules: Record<number, ModuleData> = {
     ],
     resourceTitle: "📚 Resources & Live Coding",
     d2lReference: "Chapter 11 up to 11.5",
+    researchLensReadings: [
+      {
+        label: "Wang, Shi & Fox, “Test-Time Regression” (2025)",
+        url: "https://arxiv.org/abs/2501.12352",
+      },
+      {
+        label: "Wang, Yang, Vidal et al., “Beyond Test-Time Memory” (ICML 2026) — §2 and Fig. 1",
+        url: "https://vita-group.github.io/TTC-Net/",
+      },
+    ],
     homeworkDescription:
       "Homework 4: Add cross-attention to your prior GRU-based seq2seq model so that the decoder can attend over all encoder hidden states at each decoding step (same translation task). Report and compare accuracy/bleu vs your previous best.",
     pdfPreview: {
@@ -270,6 +289,16 @@ export const modules: Record<number, ModuleData> = {
       },
     ],
     d2lReference: "Chapter 11",
+    researchLensReadings: [
+      {
+        label: "Wang, Shi & Fox, “Test-Time Regression” (2025)",
+        url: "https://arxiv.org/abs/2501.12352",
+      },
+      {
+        label: "Wang, Yang, Vidal et al., “Beyond Test-Time Memory” (ICML 2026) — §2 and Fig. 1",
+        url: "https://vita-group.github.io/TTC-Net/",
+      },
+    ],
     readings: [
       { label: "Vaswani et al., \"Attention Is All You Need\" (NeurIPS 2017)", url: "https://papers.nips.cc/paper_files/paper/2017/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html" },
     ],
@@ -296,6 +325,51 @@ export const modules: Record<number, ModuleData> = {
       {
         title: "10.3 Scaling of Decoder Transformer Models",
         videoId: "Q56DkFc05Tg",
+      },
+      {
+        title: "10.4 – Test-time Regression and Test-time Control",
+        description:
+          "A 20-minute research-frontier segment: start with the precise local-constant regression statement, compare three memory contracts, then ask what changes when a layer evaluates possible futures before predicting. The memory-versus-planning split is an architectural bet, not settled science; the System 1/System 2 language in the paper is only a loose metaphor.",
+        outline: [
+          {
+            time: "0–3 min",
+            title: "Precision before the slogan",
+            detail:
+              "At a query $q$, softmax attention solves a local-constant kernel fit: minimize $\\frac12\\sum_\\tau \\kappa(q,k_\\tau)\\lVert c-v_\\tau\\rVert^2$ over one constant $c$. An unrestricted function with $w=1$ and no regularizer would not, by itself, produce this weighted average.",
+          },
+          {
+            time: "3–7 min",
+            title: "One objective, four dials",
+            detail:
+              "Read $M_t=\\arg\\min_M\\;\\frac12\\sum_{\\tau\\le t}w_{t,\\tau}\\lVert M(k_\\tau)-v_\\tau\\rVert^2+\\Omega(M)$. Track four choices: learned key/value/query views, history weights, regularization, and the solver. The solver is the new rung.",
+          },
+          {
+            time: "7–12 min",
+            title: "The corrected memory spectrum",
+            detail:
+              "Exact softmax keeps the prefix’s $K/V$ pairs as the nonparametric regressor’s dataset. A factorized kernel can instead keep the exact sufficient-statistic pair $(S_t,z_t)$. An online linear update keeps a bounded matrix state, as in the Delta-rule view. These are different statistical contracts—no state compression versus fixed-size, lossy compression—not settled equivalences.",
+          },
+          {
+            time: "12–15 min",
+            title: "What selection can learn",
+            detail:
+              "Use Mamba-style selectivity only as an interpretive bridge: token-dependent state retention and input injection play roles analogous to a learned forgetting and update schedule. That analogy does not derive Mamba from the regression objective or cover selective-scan implementation details.",
+          },
+          {
+            time: "15–17 min",
+            title: "Two minutes of scalar LQR",
+            detail:
+              "Contrast fitting the prefix with evaluating a finite horizon. Step backward through $P\\leftarrow q_c+a^2P-(abP)^2/(r_c+b^2P)$, then inspect the first gain $K_1=-(r_c+b^2P)^{-1}bPa$. Changing the horizon can change the first action before any new token is emitted.",
+          },
+          {
+            time: "17–20 min",
+            title: "A rematch, not a referendum",
+            detail:
+              "End with the discussion prompt below: separate parameter matching, generated-token matching, and total inference-compute matching before interpreting a frontier result.",
+          },
+        ],
+        discussionPrompt:
+          "Read Table 2 and §E.2 of Wang et al. (2026). Which comparisons are approximately parameter-matched, which share the prompting and output-token protocol, and which are not matched for total inference compute? Design a horizon-$T$ rematch that fixes the backbone, data, prompt, sampling, hardware, and output cap; then equalizes measured FLOPs or wall-clock cost per item, including the planner’s internal work. What accuracy-versus-compute curve, uncertainty, and memory-only baseline would you report? Treat this as a rematch, not a referendum.",
       },
     ],
     resourceTitle: "📚 Resources, Readings & Colab",
