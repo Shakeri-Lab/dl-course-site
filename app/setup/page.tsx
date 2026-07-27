@@ -90,7 +90,7 @@ export default function SetupPage() {
                   </div>
                 ))}
               </div>
-              <Button asChild className="w-full"><a href="#local-setup">Follow Local Setup Guide</a></Button>
+              <Button asChild className="h-auto min-h-10 w-full whitespace-normal py-2 text-center leading-snug"><a href="#local-setup">Follow Local Setup Guide</a></Button>
             </CardContent>
           </Card>
 
@@ -112,10 +112,10 @@ export default function SetupPage() {
                 ))}
               </div>
               <div className="space-y-2">
-                <Button asChild variant="outline" className="w-full">
+                <Button asChild variant="outline" className="h-auto min-h-10 w-full whitespace-normal py-2 text-center leading-snug">
                   <a href="https://colab.research.google.com/" target="_blank" rel="noopener noreferrer">Open Google Colab<ExternalLink className="h-4 w-4 ml-2" /></a>
                 </Button>
-                <Button asChild className="w-full">
+                <Button asChild className="h-auto min-h-10 w-full whitespace-normal py-2 text-center leading-snug">
                   <a href="https://services.sheerid.com/verify/67a3f0217c740a497f6b4af3/?externalUserId=e4ae4d51-a65a-41f5-838e-969523ee9d96" target="_blank" rel="noopener noreferrer">Apply for Colab Pro (student verification)<ExternalLink className="h-4 w-4 ml-2" /></a>
                 </Button>
               </div>
@@ -128,15 +128,15 @@ export default function SetupPage() {
           {setupSteps.map((step) => (
             <Card key={step.id} className="dark:border-white/10 dark:bg-gray-900/70">
               <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 font-bold text-sm">{step.id}</div>
-                    <div>
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div className="flex min-w-0 items-center space-x-3">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-600 dark:bg-blue-900/50 dark:text-blue-400">{step.id}</div>
+                    <div className="min-w-0">
                       <CardTitle className="text-xl dark:text-white">{step.title}</CardTitle>
                       <CardDescription className="mt-1 dark:text-gray-400">{step.description}</CardDescription>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <Badge className={getDifficultyColor(step.difficulty)}>{step.difficulty}</Badge>
                     <Badge variant="outline">{step.estimatedTime}</Badge>
                   </div>
@@ -149,8 +149,8 @@ export default function SetupPage() {
                     <ol className="space-y-2">
                       {step.steps.map((stepItem, index) => (
                         <li key={index} className="flex items-start space-x-2">
-                          <span className="flex items-center justify-center w-5 h-5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs font-medium mt-0.5">{index + 1}</span>
-                          <span className="text-gray-700 dark:text-gray-300 text-sm">{stepItem}</span>
+                          <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-gray-100 text-xs font-medium text-gray-600 dark:bg-gray-800 dark:text-gray-400">{index + 1}</span>
+                          <span className="min-w-0 break-words text-sm text-gray-700 dark:text-gray-300">{stepItem}</span>
                         </li>
                       ))}
                     </ol>
@@ -182,7 +182,7 @@ export default function SetupPage() {
                   <div className="flex items-start space-x-3">
                     <AlertCircle className="h-5 w-5 text-orange-500 dark:text-orange-400 mt-0.5" />
                     <div className="flex-1">
-                      <div className="flex items-center space-x-2 mb-2">
+                      <div className="mb-2 flex flex-wrap items-center gap-2">
                         <h4 className="font-semibold text-gray-900 dark:text-white">{item.problem}</h4>
                         <Badge variant="secondary" className="text-xs">{item.category}</Badge>
                       </div>

@@ -30,14 +30,13 @@ const refreshers = [
 const loop = [
   { step: "Watch", detail: "the module's lecture videos (most are board lectures — have pen and paper ready)." },
   { step: "Read", detail: "the linked course-book chapters first, then use the alternative readings where useful." },
-  { step: "Self-check", detail: "answer the \"Test your understanding\" questions before revealing the answers." },
   { step: "Code", detail: "open the module's Colab notebook and run/modify the lecture code yourself." },
 ]
 
 export default function StartHerePage() {
   return (
     <div className="relative min-h-screen pb-20">
-      <div className="mx-auto w-full max-w-4xl px-6 pb-12 pt-10">
+      <div className="mx-auto w-full max-w-4xl px-4 pb-12 pt-8 sm:px-6 sm:pt-10">
         <h1 className="text-3xl font-bold text-slate-900 dark:text-white md:text-4xl">Start here</h1>
         <p className="mt-3 text-lg text-slate-600 dark:text-slate-300">
           Everything on this site is free and self-paced: 12 modules that take you from linear

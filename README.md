@@ -5,7 +5,7 @@ Virginia), taught by [Heman Shakeri](https://shakeri-lab.github.io/). Twelve mod
 you from linear models and backpropagation to transformers, parameter-efficient
 fine-tuning, and generative AI through video lectures, the open course book
 [*Deep Learning: Making It Learnable*](https://shakeri-lab.github.io/dl-book/),
-selected alternative readings, Colab notebooks, and self-check questions.
+selected alternative readings, and Colab notebooks.
 
 **Live site:** <https://shakeri-lab.github.io/dl-course-site/>
 **YouTube playlist:** <https://www.youtube.com/playlist?list=PLwZv_wzaKu3vzW88m6ASKemCTb70ukycH>
@@ -17,7 +17,7 @@ submissions, grades) live in UVA's Canvas, not here.
 
 - [Next.js 15](https://nextjs.org) (App Router, static export) + React 19 + TypeScript
 - Tailwind CSS + a trimmed set of [shadcn/ui](https://ui.shadcn.com) components
-- [KaTeX](https://katex.org) for math in self-check questions (rendered at build time)
+- [KaTeX](https://katex.org) for module math (rendered at build time)
 - Deployed to GitHub Pages by `.github/workflows/deploy.yml` on every push to `main`
 
 ## Where content lives
@@ -28,7 +28,6 @@ All course content is data, not markup. To update content you almost never touch
 |------|----------|
 | `lib/module-data.ts` | Per-module lectures (YouTube IDs, slide PDFs), Colab links, readings, descriptions |
 | `lib/module-extras.ts` | Per-module learning objectives, time estimates, prerequisites, course-book chapter mappings, D2L alternatives, homepage topics |
-| `lib/self-check-data.ts` | Per-module self-check questions (KaTeX `$...$` math supported) |
 | `lib/site-config.ts` | Site-wide facts: URLs, instructor, playlist, analytics code, "content current as of" |
 | `public/` | Slide PDFs (Modules 11–12), syllabus PDF, logo, social-share card, `llms.txt` |
 
@@ -42,8 +41,6 @@ same data — adding a module to `module-data.ts` updates everything automatical
   `lib/module-data.ts`.
 - **Change a reading:** edit `bookChapters` or `d2lLinks` in `lib/module-extras.ts`.
   The former accepts several chapters because the course and book do not map one-to-one.
-- **Add a self-check question:** append to the module's array in `lib/self-check-data.ts`,
-  then run `npm run study-guide` to refresh the consolidated Markdown copy.
 - **Enable analytics:** create a free [GoatCounter](https://www.goatcounter.com) site and
   put its code in `siteConfig.goatcounter`.
 - **New semester:** update `siteConfig.contentCurrentAsOf`, tag the release
@@ -68,7 +65,7 @@ links (D2L, arXiv, YouTube) and opens an issue if any rot.
 
 ## Design principles
 
-- **One learning path per module** — watch → read → self-check → code, all on the module
+- **One learning path per module** — watch → read → code, all on the module
   page. Reviewed course-book chapters are the primary reading; D2L stays available as
   an alternative or parallel treatment. Keep every mapping aligned with the book's
   reading order and verify new chapter URLs after publication.

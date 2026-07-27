@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { SiteNav } from "@/components/site-nav"
 import { SiteFooter } from "@/components/site-footer"
 import { Analytics } from "@/components/analytics"
+import { SiteJsonLd } from "@/components/structured-data"
 import { siteConfig } from "@/lib/site-config"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-body" })
@@ -45,7 +46,19 @@ export const metadata: Metadata = {
     description: siteConfig.description,
     images: ["/images/og-card.png"],
   },
-  robots: { index: true, follow: true },
+  alternates: { canonical: "/" },
+  manifest: "/manifest.webmanifest",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
 }
 
 export default function RootLayout({
@@ -56,6 +69,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${spaceGrotesk.variable} antialiased`}>
+        <SiteJsonLd />
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-[#002862] focus:px-4 focus:py-2 focus:text-white"

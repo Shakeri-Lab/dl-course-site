@@ -19,18 +19,16 @@ import { Check, ChevronDown, Clock, ExternalLink, Target } from "lucide-react"
 import { ModulePager } from "@/components/module-pager"
 import { LiteYouTube } from "@/components/lite-youtube"
 import { MathText } from "@/components/math-text"
-import { SelfCheck } from "@/components/self-check"
 import { ModuleJsonLd } from "@/components/structured-data"
 import { modules, type ModuleData, type ColabLink, type Reading } from "@/lib/module-data"
 import { moduleExtras } from "@/lib/module-extras"
-import { selfChecks } from "@/lib/self-check-data"
 import { siteConfig } from "@/lib/site-config"
 
 const CARD_CLASSES =
-  "mb-12 border border-white/30 dark:border-white/10 bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl shadow-[0_32px_60px_-38px_rgba(0,40,98,0.45)]"
+  "mb-8 border border-white/30 dark:border-white/10 bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl shadow-[0_32px_60px_-38px_rgba(0,40,98,0.45)] sm:mb-12"
 
 const LINK_CLASSES =
-  "text-[#002862] dark:text-[#7EB5F0] underline decoration-[#FFBA69]/70 underline-offset-4 hover:text-[#001a44] dark:hover:text-[#a8d0ff]"
+  "break-words text-[#002862] dark:text-[#7EB5F0] underline decoration-[#FFBA69]/70 underline-offset-4 hover:text-[#001a44] dark:hover:text-[#a8d0ff]"
 
 const moduleOptions = Object.values(modules).sort((left, right) => left.moduleNumber - right.moduleNumber)
 
@@ -43,7 +41,11 @@ function ColabButtons({ links }: { links: ColabLink[] }) {
     <>
       {links.map((link) => (
         <div key={link.url} className="pt-2">
-          <Button asChild variant={link.variant ?? "default"}>
+          <Button
+            asChild
+            variant={link.variant ?? "default"}
+            className="h-auto min-h-10 whitespace-normal py-2 text-center leading-snug"
+          >
             <a href={link.url} target="_blank" rel="noopener noreferrer">
               {link.label}
               <ExternalLink className="h-4 w-4 ml-2" />
@@ -66,7 +68,7 @@ function ReadingsList({ readings }: { readings: Reading[] }) {
               href={reading.url}
               target="_blank"
               rel="noopener noreferrer"
-              className={LINK_CLASSES}
+              className={`${LINK_CLASSES} break-words`}
             >
               {reading.label}
             </a>
@@ -79,7 +81,6 @@ function ReadingsList({ readings }: { readings: Reading[] }) {
 
 export function ModuleTemplate({ data }: { data: ModuleData }) {
   const extras = moduleExtras[data.moduleNumber]
-  const questions = selfChecks[data.moduleNumber]
 
   const hasSharedResources =
     (extras?.bookChapters && extras.bookChapters.length > 0) ||
@@ -95,7 +96,7 @@ export function ModuleTemplate({ data }: { data: ModuleData }) {
   return (
     <div className="relative min-h-screen bg-transparent pb-20">
       <ModuleJsonLd data={data} />
-      <div className="mx-auto w-full max-w-5xl px-6 pb-12 pt-5">
+      <div className="mx-auto w-full max-w-5xl px-4 pb-12 pt-5 sm:px-6">
         <div className="mb-8 border-b border-white/40 pb-3 dark:border-white/10">
           <Breadcrumb className="text-sm">
             <BreadcrumbList className="gap-2 text-slate-500 dark:text-slate-400">
@@ -113,13 +114,13 @@ export function ModuleTemplate({ data }: { data: ModuleData }) {
                       className="inline-flex items-center gap-1.5 rounded-full border border-white/60 bg-white/75 px-3 py-1 text-sm font-medium text-slate-700 transition-colors hover:text-[#002862] focus:outline-none focus:ring-2 focus:ring-[#FFBA69]/60 dark:border-white/10 dark:bg-gray-900/75 dark:text-slate-200 dark:hover:text-[#7EB5F0]"
                       aria-label="Open module navigation"
                     >
-                      <span>{getModuleLabel(data)}</span>
+                      <span className="min-w-0 break-words">{getModuleLabel(data)}</span>
                       <ChevronDown className="h-4 w-4 text-slate-400 dark:text-slate-500" />
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
                     align="start"
-                    className="max-h-[70vh] w-[20rem] overflow-y-auto border-white/50 bg-white/95 p-1.5 dark:border-white/10 dark:bg-gray-900/95"
+                    className="max-h-[70vh] w-[min(20rem,calc(100vw-2rem))] overflow-y-auto border-white/50 bg-white/95 p-1.5 dark:border-white/10 dark:bg-gray-900/95"
                   >
                     {moduleOptions.map((module) => {
                       const isCurrent = module.moduleNumber === data.moduleNumber
@@ -157,9 +158,9 @@ export function ModuleTemplate({ data }: { data: ModuleData }) {
                   <Target className="h-5 w-5 text-[#002862] dark:text-[#7EB5F0]" aria-hidden="true" />
                   What you&apos;ll learn
                 </CardTitle>
-                <div className="flex flex-wrap items-center gap-2">
+                <div className="flex max-w-full flex-wrap items-center gap-2">
                   {extras.prereq && (
-                    <Badge variant="secondary" className="font-normal">
+                    <Badge variant="secondary" className="whitespace-normal font-normal">
                       {extras.prereq}
                     </Badge>
                   )}
@@ -185,7 +186,7 @@ export function ModuleTemplate({ data }: { data: ModuleData }) {
           <Card key={index} className={CARD_CLASSES}>
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle className="text-2xl dark:text-white">{lecture.title}</CardTitle>
+                <CardTitle className="break-words text-xl dark:text-white sm:text-2xl">{lecture.title}</CardTitle>
               </div>
             </CardHeader>
             <CardContent className="space-y-5">
@@ -244,7 +245,7 @@ export function ModuleTemplate({ data }: { data: ModuleData }) {
                         src={lecture.pdf}
                         title={`${lecture.title} slides`}
                         loading="lazy"
-                        className="h-96 w-full"
+                      className="h-[60vh] min-h-80 w-full sm:h-96"
                       />
                     </div>
                   </div>
@@ -256,7 +257,12 @@ export function ModuleTemplate({ data }: { data: ModuleData }) {
                       </a>
                     </Button>
                     {lecture.colabLinks && lecture.colabLinks.map((link) => (
-                      <Button key={link.url} asChild variant={link.variant ?? "default"}>
+                      <Button
+                        key={link.url}
+                        asChild
+                        variant={link.variant ?? "default"}
+                        className="h-auto min-h-10 whitespace-normal py-2 text-center leading-snug"
+                      >
                         <a href={link.url} target="_blank" rel="noopener noreferrer">
                           {link.label}
                           <ExternalLink className="h-4 w-4 ml-2" />
@@ -390,7 +396,7 @@ export function ModuleTemplate({ data }: { data: ModuleData }) {
                       src={data.pdfPreview.src}
                       title={data.pdfPreview.title}
                       loading="lazy"
-                      className="w-full h-96"
+                      className="h-[60vh] min-h-80 w-full sm:h-96"
                     />
                   </div>
                 </div>
@@ -448,9 +454,6 @@ export function ModuleTemplate({ data }: { data: ModuleData }) {
             </CardContent>
           </Card>
         ))}
-
-        {/* Self-check */}
-        {questions && <SelfCheck questions={questions} />}
 
         <ModulePager current={data.moduleNumber} />
       </div>
