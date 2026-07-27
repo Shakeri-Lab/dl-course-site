@@ -16,8 +16,8 @@ export default function CoursePage() {
       <div className="pointer-events-none absolute right-[5%] top-32 h-64 w-64 rounded-full bg-[radial-gradient(circle_at_center,rgba(255,186,105,0.28),rgba(255,186,105,0))] dark:bg-[radial-gradient(circle_at_center,rgba(255,186,105,0.1),rgba(255,186,105,0))] blur-3xl" />
       <div className="pointer-events-none absolute left-[8%] top-[55%] h-72 w-72 rounded-full bg-[radial-gradient(circle_at_center,rgba(46,119,209,0.35),rgba(46,119,209,0))] dark:bg-[radial-gradient(circle_at_center,rgba(46,119,209,0.15),rgba(46,119,209,0))] blur-[90px]" />
 
-      <header className="relative mx-auto flex max-w-4xl flex-col items-center px-6 pb-12 pt-16 text-center">
-        <h1 className="text-4xl font-semibold tracking-tight text-slate-900 dark:text-white md:text-5xl">
+      <header className="relative mx-auto flex max-w-4xl flex-col items-center px-4 pb-10 pt-12 text-center sm:px-6 sm:pb-12 sm:pt-16">
+        <h1 className="text-3xl font-semibold tracking-tight text-slate-900 dark:text-white sm:text-4xl md:text-5xl">
           Deep Learning
         </h1>
         <p className="mt-4 max-w-2xl text-lg text-slate-600 dark:text-slate-300">
@@ -78,11 +78,11 @@ export default function CoursePage() {
         </div>
       </header>
 
-      <section className="relative mx-auto max-w-6xl px-6" aria-label="Course modules">
+      <section className="relative mx-auto max-w-6xl px-4 sm:px-6" aria-label="Course modules">
         <ModuleGrid />
       </section>
 
-      <section className="relative mx-auto mt-14 max-w-4xl px-6 text-center">
+      <section className="relative mx-auto mt-14 max-w-4xl px-4 text-center sm:px-6">
         <p className="text-sm text-slate-500 dark:text-slate-400">
           All materials stay freely available — no account needed. Course code and original materials
           are open under CC BY 4.0 on{" "}

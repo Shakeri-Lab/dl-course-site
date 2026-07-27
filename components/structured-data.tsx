@@ -20,6 +20,40 @@ const instructor = {
   url: siteConfig.instructor.url,
 }
 
+export function SiteJsonLd() {
+  const data = [
+    {
+      "@context": "https://schema.org",
+      "@type": "ResearchOrganization",
+      name: "Shakeri Lab",
+      alternateName: "DYNAMO Lab",
+      url: siteConfig.lab,
+      logo: "https://shakeri-lab.github.io/logo-square.jpeg",
+      parentOrganization: {
+        "@type": "CollegeOrUniversity",
+        name: "University of Virginia",
+        url: "https://www.virginia.edu/",
+      },
+      sameAs: [siteConfig.repo, siteConfig.youtube.channel],
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: siteConfig.title,
+      url: `${siteConfig.url}/`,
+      description: siteConfig.description,
+      inLanguage: "en",
+      publisher: {
+        "@type": "ResearchOrganization",
+        name: "Shakeri Lab",
+        url: siteConfig.lab,
+      },
+    },
+  ]
+
+  return <JsonLd data={data} />
+}
+
 // schema.org/Course markup for the homepage — enables course rich results.
 export function CourseJsonLd() {
   const data = {

@@ -14,7 +14,7 @@ function ThemeToggle() {
   return (
     <button
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:text-[#002862] dark:hover:text-[#7EB5F0] hover:bg-white/60 dark:hover:bg-white/10 transition-colors"
+      className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-slate-600 transition-colors hover:bg-white/60 hover:text-[#002862] focus:outline-none focus:ring-2 focus:ring-[#FFBA69]/60 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-[#7EB5F0]"
       aria-label="Toggle dark mode"
     >
       <Sun className="h-5 w-5 hidden dark:block" />
@@ -48,11 +48,11 @@ export function SiteNav() {
 
   return (
     <nav className="sticky top-0 z-50 border-b border-white/30 dark:border-white/10 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl shadow-[0_12px_30px_-18px_rgba(35,45,75,0.45)]">
-      <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-6">
-        <div className="flex items-center space-x-10">
+      <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-2 px-4 sm:px-6">
+        <div className="flex min-w-0 items-center space-x-10">
           <Link
             href="/"
-            className="flex items-center gap-2.5 text-xl font-semibold text-slate-900 dark:text-white transition-colors duration-200 hover:text-[#002862] dark:hover:text-[#7EB5F0]"
+            className="flex min-w-0 items-center gap-2 text-base font-semibold text-slate-900 transition-colors duration-200 hover:text-[#002862] min-[360px]:text-lg sm:gap-2.5 sm:text-xl dark:text-white dark:hover:text-[#7EB5F0]"
           >
             <Image
               src={logoSrc}
@@ -60,9 +60,9 @@ export function SiteNav() {
               width={36}
               height={36}
               priority
-              className="h-9 w-9 object-contain"
+              className="h-8 w-8 shrink-0 object-contain sm:h-9 sm:w-9"
             />
-            <span>Deep Learning</span>
+            <span className="truncate">Deep Learning</span>
           </Link>
           <div className="hidden items-center space-x-6 text-sm font-medium text-slate-600 dark:text-slate-300 md:flex">
             {navLinks.map((link) => (
@@ -97,12 +97,14 @@ export function SiteNav() {
           </a>
         </div>
         {/* Mobile menu button */}
-        <div className="flex items-center gap-2 md:hidden">
+        <div className="flex shrink-0 items-center gap-1 md:hidden">
           <ThemeToggle />
           <button
-            className="p-2 text-slate-600 dark:text-slate-300 hover:text-[#002862] dark:hover:text-[#7EB5F0] transition-colors"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-lg text-slate-600 transition-colors hover:bg-white/60 hover:text-[#002862] focus:outline-none focus:ring-2 focus:ring-[#FFBA69]/60 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-[#7EB5F0]"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle mobile menu"
+            aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-navigation"
           >
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -110,13 +112,13 @@ export function SiteNav() {
       </div>
       {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-white/30 dark:border-white/10 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl">
-          <div className="px-6 py-4 space-y-3">
+        <div id="mobile-navigation" className="border-t border-white/30 bg-white/95 backdrop-blur-xl md:hidden dark:border-white/10 dark:bg-gray-900/95">
+          <div className="space-y-1 px-4 py-3 sm:px-6">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="block text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-[#002862] dark:hover:text-[#7EB5F0] transition-colors"
+                className="block min-h-11 rounded-lg px-3 py-3 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-[#002862] dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-[#7EB5F0]"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {link.label}
@@ -126,7 +128,7 @@ export function SiteNav() {
               href={siteConfig.youtube.playlist}
               target="_blank"
               rel="noopener noreferrer"
-              className="block text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-[#002862] dark:hover:text-[#7EB5F0] transition-colors"
+              className="block min-h-11 rounded-lg px-3 py-3 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-[#002862] dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-[#7EB5F0]"
               onClick={() => setMobileMenuOpen(false)}
             >
               YouTube Playlist

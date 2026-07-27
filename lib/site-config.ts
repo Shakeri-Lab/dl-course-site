@@ -5,7 +5,7 @@ export const siteConfig = {
   title: "Deep Learning (DS 6050) — Shakeri Lab, UVA",
   titleTemplate: "%s · DS 6050 Deep Learning",
   description:
-    "A free, open graduate deep learning course from UVA's School of Data Science: course-book chapters, video lectures, self-checks, and hands-on PyTorch notebooks from linear models through generative AI.",
+    "A free, open graduate deep learning course from UVA's School of Data Science: course-book chapters, video lectures, and hands-on PyTorch notebooks from linear models through generative AI.",
   // Production origin + basePath. Used for canonical URLs, OG tags, sitemap, JSON-LD.
   url: "https://shakeri-lab.github.io/dl-course-site",
   institution: "School of Data Science, University of Virginia",

@@ -66,7 +66,7 @@ export default function SyllabusPage() {
 
   return (
     <div className="relative min-h-screen pb-20">
-      <div className="mx-auto w-full max-w-4xl px-6 pb-12 pt-10">
+      <div className="mx-auto w-full max-w-4xl px-4 pb-12 pt-8 sm:px-6 sm:pt-10">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold text-slate-900 dark:text-white md:text-4xl">Syllabus</h1>
@@ -108,8 +108,8 @@ export default function SyllabusPage() {
         </p>
         <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">
           Self-paced learners: dates, submissions, and grades apply to the for-credit UVA offering
-          (managed in Canvas). Everything you need to learn — videos, readings, notebooks,
-          self-checks — is on this site, free.
+          (managed in Canvas). Everything you need to learn — videos, readings, and notebooks —
+          is on this site, free.
         </p>
 
         <h2 className="mt-10 flex items-center gap-2 text-2xl font-bold text-slate-900 dark:text-white">
@@ -134,14 +134,14 @@ export default function SyllabusPage() {
                   {moduleList
                     .filter((m) => m.moduleNumber >= phase.range[0] && m.moduleNumber <= phase.range[1])
                     .map((m) => (
-                      <li key={m.moduleNumber} className="flex items-baseline gap-2 text-sm">
+                      <li key={m.moduleNumber} className="flex flex-col gap-1 text-sm sm:flex-row sm:items-baseline sm:gap-2">
                         <Link
                           href={`/module/${m.moduleNumber}`}
                           className="text-[#002862] underline decoration-[#FFBA69]/70 underline-offset-4 hover:text-[#001a44] dark:text-[#7EB5F0] dark:hover:text-[#a8d0ff]"
                         >
                           {m.metadata.title}
                         </Link>
-                        <span className="text-slate-400 dark:text-slate-500">
+                        <span className="shrink-0 text-slate-400 dark:text-slate-500">
                           {moduleExtras[m.moduleNumber]?.estimatedTime}
                         </span>
                       </li>
