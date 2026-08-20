@@ -22,7 +22,6 @@ import { MathText } from "@/components/math-text"
 import { ModuleJsonLd } from "@/components/structured-data"
 import { modules, type ModuleData, type ColabLink, type Reading } from "@/lib/module-data"
 import { moduleExtras } from "@/lib/module-extras"
-import { siteConfig } from "@/lib/site-config"
 
 const CARD_CLASSES =
   "mb-8 border border-white/30 dark:border-white/10 bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl shadow-[0_32px_60px_-38px_rgba(0,40,98,0.45)] sm:mb-12"
@@ -84,8 +83,6 @@ export function ModuleTemplate({ data }: { data: ModuleData }) {
 
   const hasSharedResources =
     (extras?.bookChapters && extras.bookChapters.length > 0) ||
-    extras?.d2lLinks?.length ||
-    data.d2lReference ||
     (data.researchLensReadings && data.researchLensReadings.length > 0) ||
     data.resourceDescription ||
     data.homeworkDescription ||
@@ -147,6 +144,9 @@ export function ModuleTemplate({ data }: { data: ModuleData }) {
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
+          <h1 className="mt-4 break-words text-2xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-3xl md:text-4xl">
+            {data.metadata.title}
+          </h1>
         </div>
 
         {/* What you'll learn */}
@@ -293,7 +293,7 @@ export function ModuleTemplate({ data }: { data: ModuleData }) {
               {extras?.bookChapters && extras.bookChapters.length > 0 && (
                 <div className="space-y-1 text-slate-600 dark:text-slate-300">
                   <p className="font-medium text-slate-800 dark:text-slate-100">
-                    Course book · primary reading
+                    Course book · current module route
                   </p>
                   <ul className="list-disc pl-6 space-y-1">
                     {extras.bookChapters.map((chapter) => (
@@ -335,47 +335,6 @@ export function ModuleTemplate({ data }: { data: ModuleData }) {
                     ))}
                   </ul>
                 </div>
-              )}
-
-              {extras?.d2lLinks && extras.d2lLinks.length > 0 ? (
-                <div className="space-y-1 text-slate-600 dark:text-slate-300">
-                  <p>
-                    {extras.bookChapters?.length ? "Alternative reading from " : "Recommended reading from "}
-                    <a
-                      href={siteConfig.textbook.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={LINK_CLASSES}
-                    >
-                      {siteConfig.textbook.name}
-                    </a>
-                    :
-                  </p>
-                  <ul className="list-disc pl-6 space-y-1">
-                    {extras.d2lLinks.map((link) => (
-                      <li key={link.url}>
-                        <a href={link.url} target="_blank" rel="noopener noreferrer" className={LINK_CLASSES}>
-                          {link.label}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ) : (
-                data.d2lReference && (
-                  <p className="text-slate-600 dark:text-slate-300">
-                    Recommended reading:{" "}
-                    <a
-                      href="https://d2l.ai/index.html"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={LINK_CLASSES}
-                    >
-                      Dive into Deep Learning
-                    </a>{" "}
-                    — D2L: <strong>{data.d2lReference}</strong>.
-                  </p>
-                )
               )}
 
               {data.resourceDescription && (

@@ -6,8 +6,7 @@
 
 Site: https://shakeri-lab.github.io/dl-course-site/
 YouTube playlist: https://www.youtube.com/playlist?list=PLwZv_wzaKu3vzW88m6ASKemCTb70ukycH
-Course book: https://shakeri-lab.github.io/dl-book/ (primary where chapters are reviewed)
-Alternative text: https://d2l.ai (Dive into Deep Learning)
+Course book: https://shakeri-lab.github.io/dl-book/ (canonical reading route for all 12 modules)
 License: original materials CC BY 4.0; lecture videos © Heman Shakeri
 
 ## Modules

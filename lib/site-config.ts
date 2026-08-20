@@ -22,10 +22,6 @@ export const siteConfig = {
   repo: "https://github.com/Shakeri-Lab/dl-course-site",
   lab: "https://shakeri-lab.github.io/",
   support: "https://buymeacoffee.com/hshakeri",
-  textbook: {
-    name: "Dive into Deep Learning (D2L)",
-    url: "https://d2l.ai",
-  },
   courseBook: {
     name: "Deep Learning: Making It Learnable",
     url: "https://shakeri-lab.github.io/dl-book/",

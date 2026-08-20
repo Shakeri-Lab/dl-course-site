@@ -5,7 +5,7 @@ Virginia), taught by [Heman Shakeri](https://shakeri-lab.github.io/). Twelve mod
 you from linear models and backpropagation to transformers, parameter-efficient
 fine-tuning, and generative AI through video lectures, the open course book
 [*Deep Learning: Making It Learnable*](https://shakeri-lab.github.io/dl-book/),
-selected alternative readings, and Colab notebooks.
+selected research papers, and Colab notebooks.
 
 **Live site:** <https://shakeri-lab.github.io/dl-course-site/>
 **YouTube playlist:** <https://www.youtube.com/playlist?list=PLwZv_wzaKu3vzW88m6ASKemCTb70ukycH>
@@ -27,7 +27,7 @@ All course content is data, not markup. To update content you almost never touch
 | File | Contents |
 |------|----------|
 | `lib/module-data.ts` | Per-module lectures (YouTube IDs, slide PDFs), Colab links, readings, descriptions |
-| `lib/module-extras.ts` | Per-module learning objectives, time estimates, prerequisites, course-book chapter mappings, D2L alternatives, homepage topics |
+| `lib/module-extras.ts` | Per-module learning objectives, time estimates, prerequisites, current course-book route, homepage topics |
 | `lib/site-config.ts` | Site-wide facts: URLs, instructor, playlist, analytics code, "content current as of" |
 | `public/` | Slide PDFs (Modules 11–12), syllabus PDF, logo, social-share card, `llms.txt` |
 
@@ -39,8 +39,9 @@ same data — adding a module to `module-data.ts` updates everything automatical
 
 - **New lecture video:** add `{ title, videoId }` to the module's `lectures` array in
   `lib/module-data.ts`.
-- **Change a reading:** edit `bookChapters` or `d2lLinks` in `lib/module-extras.ts`.
-  The former accepts several chapters because the course and book do not map one-to-one.
+- **Change a reading:** edit `bookChapters` in `lib/module-extras.ts`. It accepts
+  chapters, interludes, and reference appendices because the course and book do not
+  map one-to-one.
 - **Enable analytics:** create a free [GoatCounter](https://www.goatcounter.com) site and
   put its code in `siteConfig.goatcounter`.
 - **New semester:** update `siteConfig.contentCurrentAsOf`, tag the release
@@ -61,14 +62,13 @@ The production build serves under the `/dl-course-site` base path (see
 
 Push to `main` → GitHub Actions builds the static export and publishes it to GitHub
 Pages. Nothing manual. A separate weekly workflow (`link-check.yml`) sweeps all external
-links (D2L, arXiv, YouTube) and opens an issue if any rot.
+links (course book, arXiv, YouTube) and opens an issue if any rot.
 
 ## Design principles
 
 - **One learning path per module** — watch → read → code, all on the module
-  page. Reviewed course-book chapters are the primary reading; D2L stays available as
-  an alternative or parallel treatment. Keep every mapping aligned with the book's
-  reading order and verify new chapter URLs after publication.
+  page. The course book is the canonical reading route. Keep every mapping aligned
+  with the book's published module route and verify new chapter URLs after publication.
 - **No slide duplication** — lectures are board-first; slides are published only where
   they substitute for not-yet-recorded videos (Modules 11–12). Keeping slides out of the
   site elsewhere avoids drift against the LaTeX sources.
@@ -77,4 +77,4 @@ links (D2L, arXiv, YouTube) and opens an issue if any rot.
 ## License
 
 Original course materials are licensed [CC BY 4.0](LICENSE). Lecture videos
-© Heman Shakeri. Linked readings (papers, D2L) remain under their own licenses.
+© Heman Shakeri. Linked research papers remain under their own licenses.

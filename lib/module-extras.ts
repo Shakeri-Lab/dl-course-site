@@ -1,5 +1,5 @@
-// Per-module learning metadata. Generated from Syllabus.tex design tables and a
-// verified d2l.ai link map (June 2026); edit freely — this file is the source of truth.
+// Per-module learning metadata and the canonical route through the course book.
+// Keep this map aligned with the route published on the book homepage.
 
 export type ModuleCategory =
   | "fundamentals"
@@ -10,7 +10,6 @@ export type ModuleCategory =
   | "transformer"
   | "advanced"
 
-export type D2lLink = { label: string; url: string }
 export type BookChapter = { label: string; url: string }
 
 export type ModuleExtras = {
@@ -20,7 +19,27 @@ export type ModuleExtras = {
   estimatedTime: string
   prereq?: string
   bookChapters?: BookChapter[]
-  d2lLinks?: D2lLink[]
+}
+
+const appendixA: BookChapter = {
+  label: "Appendix A · Linear Algebra and the SVD",
+  url: "https://shakeri-lab.github.io/dl-book/chapters/appendices/a1-linear-algebra.html",
+}
+const appendixB: BookChapter = {
+  label: "Appendix B · Tensors in Practice",
+  url: "https://shakeri-lab.github.io/dl-book/chapters/appendices/a2-tensors.html",
+}
+const appendixC: BookChapter = {
+  label: "Appendix C · Numerical Precision and Hardware Efficiency",
+  url: "https://shakeri-lab.github.io/dl-book/chapters/appendices/a3-precision-performance.html",
+}
+const appendixD: BookChapter = {
+  label: "Appendix D · Notation",
+  url: "https://shakeri-lab.github.io/dl-book/chapters/appendices/a4-notation.html",
+}
+const appendixE: BookChapter = {
+  label: "Appendix E · Statistical Learning Contracts",
+  url: "https://shakeri-lab.github.io/dl-book/chapters/appendices/a5-statistical-learning.html",
 }
 
 export const moduleExtras: Record<number, ModuleExtras> = {
@@ -39,13 +58,10 @@ export const moduleExtras: Record<number, ModuleExtras> = {
       { label: "Ch. 2 · Linear Models that Classify", url: "https://shakeri-lab.github.io/dl-book/chapters/part1/02-logistic-softmax.html" },
       { label: "Ch. 3 · Nonlinearity and the MLP", url: "https://shakeri-lab.github.io/dl-book/chapters/part1/03-nonlinearity-mlp.html" },
       { label: "Ch. 4 · Training: Loss and SGD", url: "https://shakeri-lab.github.io/dl-book/chapters/part1/04-training-loss-sgd.html" },
-    ],
-    d2lLinks: [
-      { label: "§ 2.3 Linear Algebra", url: "https://d2l.ai/chapter_preliminaries/linear-algebra.html" },
-      { label: "§ 3.1 Linear Regression", url: "https://d2l.ai/chapter_linear-networks-regression/linear-regression.html" },
-      { label: "§ 4.1 Softmax Regression", url: "https://d2l.ai/chapter_linear-networks-classification/softmax-regression.html" },
-      { label: "§ 5.1 Multilayer Perceptrons", url: "https://d2l.ai/chapter_multilayer-perceptrons/mlp.html" },
-      { label: "§ 12.4 Stochastic Gradient Descent", url: "https://d2l.ai/chapter_optimization-algorithms/sgd.html" },
+      appendixA,
+      appendixB,
+      appendixD,
+      appendixE,
     ],
   },
   2: {
@@ -60,11 +76,8 @@ export const moduleExtras: Record<number, ModuleExtras> = {
     prereq: "Builds on Module 1",
     bookChapters: [
       { label: "Ch. 5 · Backpropagation", url: "https://shakeri-lab.github.io/dl-book/chapters/part1/05-backpropagation.html" },
-    ],
-    d2lLinks: [
-      { label: "§ 2.4 Calculus", url: "https://d2l.ai/chapter_preliminaries/calculus.html" },
-      { label: "§ 2.5 Automatic Differentiation", url: "https://d2l.ai/chapter_preliminaries/autograd.html" },
-      { label: "§ 5.3 Forward Propagation, Backward Propagation, and Computational Graphs", url: "https://d2l.ai/chapter_multilayer-perceptrons/backprop.html" },
+      appendixB,
+      appendixD,
     ],
   },
   3: {
@@ -80,12 +93,9 @@ export const moduleExtras: Record<number, ModuleExtras> = {
       { label: "Ch. 4 · Training: Loss and SGD", url: "https://shakeri-lab.github.io/dl-book/chapters/part1/04-training-loss-sgd.html" },
       { label: "Ch. 6 · Generalization and Inductive Bias", url: "https://shakeri-lab.github.io/dl-book/chapters/part1/06-generalization-inductive-bias.html" },
       { label: "Interlude · Who Trains the Trainer? Learning by Experiment", url: "https://shakeri-lab.github.io/dl-book/chapters/interludes/learning-by-experiment.html" },
-    ],
-    d2lLinks: [
-      { label: "§ 3.6 Generalization", url: "https://d2l.ai/chapter_linear-networks-regression/generalization.html" },
-      { label: "§ 3.7 Weight Decay", url: "https://d2l.ai/chapter_linear-networks-regression/weight-decay.html" },
-      { label: "Ch. 12 Optimization Algorithms", url: "https://d2l.ai/chapter_optimization-algorithms/index.html" },
-      { label: "Ch. 19 Hyperparameter Optimization", url: "https://d2l.ai/chapter_hyperparameter-optimization/index.html" },
+      appendixB,
+      appendixD,
+      appendixE,
     ],
   },
   4: {
@@ -102,12 +112,9 @@ export const moduleExtras: Record<number, ModuleExtras> = {
       { label: "Ch. 6 · Generalization and Inductive Bias", url: "https://shakeri-lab.github.io/dl-book/chapters/part1/06-generalization-inductive-bias.html" },
       { label: "Ch. 7 · Filters and Convolution", url: "https://shakeri-lab.github.io/dl-book/chapters/part2/07-filters-convolution.html" },
       { label: "Ch. 8 · CNNs: Making Filters Learnable", url: "https://shakeri-lab.github.io/dl-book/chapters/part2/08-cnn.html" },
-    ],
-    d2lLinks: [
-      { label: "§ 5.6 Dropout", url: "https://d2l.ai/chapter_multilayer-perceptrons/dropout.html" },
-      { label: "Ch. 7 Convolutional Neural Networks", url: "https://d2l.ai/chapter_convolutional-neural-networks/index.html" },
-      { label: "§ 8.1 Deep Convolutional Neural Networks (AlexNet)", url: "https://d2l.ai/chapter_modern-convolutional-neural-networks/deep-alexnet.html" },
-      { label: "§ 14.1 Image Augmentation", url: "https://d2l.ai/chapter_computer-vision/image-augmentation.html" },
+      appendixB,
+      appendixD,
+      appendixE,
     ],
   },
   5: {
@@ -122,15 +129,9 @@ export const moduleExtras: Record<number, ModuleExtras> = {
     prereq: "Builds on Modules 1–4",
     bookChapters: [
       { label: "Ch. 9 · Modern CNNs and Transfer Learning", url: "https://shakeri-lab.github.io/dl-book/chapters/part2/09-modern-cnns-transfer.html" },
-    ],
-    d2lLinks: [
-      { label: "§ 5.4 Numerical Stability and Initialization", url: "https://d2l.ai/chapter_multilayer-perceptrons/numerical-stability-and-init.html" },
-      { label: "§ 8.2 Networks Using Blocks (VGG)", url: "https://d2l.ai/chapter_modern-convolutional-neural-networks/vgg.html" },
-      { label: "§ 8.3 Network in Network (NiN)", url: "https://d2l.ai/chapter_modern-convolutional-neural-networks/nin.html" },
-      { label: "§ 8.4 Multi-Branch Networks (GoogLeNet)", url: "https://d2l.ai/chapter_modern-convolutional-neural-networks/googlenet.html" },
-      { label: "§ 8.5 Batch Normalization", url: "https://d2l.ai/chapter_modern-convolutional-neural-networks/batch-norm.html" },
-      { label: "§ 8.6 Residual Networks (ResNet) and ResNeXt", url: "https://d2l.ai/chapter_modern-convolutional-neural-networks/resnet.html" },
-      { label: "§ 14.2 Fine-Tuning", url: "https://d2l.ai/chapter_computer-vision/fine-tuning.html" },
+      appendixB,
+      appendixC,
+      appendixD,
     ],
   },
   6: {
@@ -143,13 +144,10 @@ export const moduleExtras: Record<number, ModuleExtras> = {
     estimatedTime: "≈5 h · 1.5 h video · 1.5 h reading · 2 h coding",
     prereq: "Builds on Modules 1–5",
     bookChapters: [
-      { label: "Interlude · Making PCA Learnable", url: "https://shakeri-lab.github.io/dl-book/chapters/interludes/making-pca-learnable.html" },
-      { label: "Appendix A § PCA is SVD after centering", url: "https://shakeri-lab.github.io/dl-book/chapters/appendices/a1-linear-algebra.html#pca-is-svd-after-centering" },
-    ],
-    d2lLinks: [
-      { label: "§ 10.6 The Encoder-Decoder Architecture", url: "https://d2l.ai/chapter_modern-recurrent-neural-networks/encoder-decoder.html" },
-      { label: "§ 14.10 Transposed Convolution", url: "https://d2l.ai/chapter_computer-vision/transposed-conv.html" },
-      { label: "§ 14.11 Fully Convolutional Networks", url: "https://d2l.ai/chapter_computer-vision/fcn.html" },
+      { label: "Interlude · Autoencoders—Making PCA Learnable", url: "https://shakeri-lab.github.io/dl-book/chapters/interludes/making-pca-learnable.html" },
+      appendixA,
+      appendixB,
+      appendixD,
     ],
   },
   7: {
@@ -166,10 +164,8 @@ export const moduleExtras: Record<number, ModuleExtras> = {
     bookChapters: [
       { label: "Ch. 10 · Sequences and Recurrence", url: "https://shakeri-lab.github.io/dl-book/chapters/part3/10-sequences-rnn.html" },
       { label: "Ch. 11 · Encoder–Decoder, Teacher Forcing, Beam Search", url: "https://shakeri-lab.github.io/dl-book/chapters/part3/11-encoder-decoder.html" },
-    ],
-    d2lLinks: [
-      { label: "Ch. 9 Recurrent Neural Networks", url: "https://d2l.ai/chapter_recurrent-neural-networks/index.html" },
-      { label: "Ch. 10 Modern Recurrent Neural Networks", url: "https://d2l.ai/chapter_modern-recurrent-neural-networks/index.html" },
+      appendixB,
+      appendixD,
     ],
   },
   8: {
@@ -185,13 +181,9 @@ export const moduleExtras: Record<number, ModuleExtras> = {
     bookChapters: [
       { label: "Ch. 12 · Kernel Regression", url: "https://shakeri-lab.github.io/dl-book/chapters/part4/12-kernel-regression.html" },
       { label: "Ch. 13 · Attention: Making Similarity Learnable", url: "https://shakeri-lab.github.io/dl-book/chapters/part4/13-attention.html" },
-    ],
-    d2lLinks: [
-      { label: "§ 11.1 Queries, Keys, and Values", url: "https://d2l.ai/chapter_attention-mechanisms-and-transformers/queries-keys-values.html" },
-      { label: "§ 11.2 Attention Pooling by Similarity", url: "https://d2l.ai/chapter_attention-mechanisms-and-transformers/attention-pooling.html" },
-      { label: "§ 11.3 Attention Scoring Functions", url: "https://d2l.ai/chapter_attention-mechanisms-and-transformers/attention-scoring-functions.html" },
-      { label: "§ 11.4 The Bahdanau Attention Mechanism", url: "https://d2l.ai/chapter_attention-mechanisms-and-transformers/bahdanau-attention.html" },
-      { label: "§ 11.5 Multi-Head Attention", url: "https://d2l.ai/chapter_attention-mechanisms-and-transformers/multihead-attention.html" },
+      appendixA,
+      appendixB,
+      appendixD,
     ],
   },
   9: {
@@ -206,9 +198,10 @@ export const moduleExtras: Record<number, ModuleExtras> = {
     prereq: "Builds on Modules 1–8",
     bookChapters: [
       { label: "Ch. 14 · Self-Attention and the Transformer", url: "https://shakeri-lab.github.io/dl-book/chapters/part4/14-self-attention-transformer.html" },
-    ],
-    d2lLinks: [
-      { label: "Ch. 11 Attention Mechanisms and Transformers", url: "https://d2l.ai/chapter_attention-mechanisms-and-transformers/index.html" },
+      { label: "Interlude · Attention as Test-Time Regression", url: "https://shakeri-lab.github.io/dl-book/chapters/interludes/attention-as-test-time-regression.html" },
+      appendixB,
+      appendixC,
+      appendixD,
     ],
   },
   10: {
@@ -226,9 +219,9 @@ export const moduleExtras: Record<number, ModuleExtras> = {
     bookChapters: [
       { label: "Ch. 15 · BERT and Pretraining", url: "https://shakeri-lab.github.io/dl-book/chapters/part4/15-bert-pretraining.html" },
       { label: "Ch. 16 · Vision Transformers and Scaling", url: "https://shakeri-lab.github.io/dl-book/chapters/part4/16-vit-scaling.html" },
-    ],
-    d2lLinks: [
-      { label: "Ch. 11 Attention Mechanisms and Transformers", url: "https://d2l.ai/chapter_attention-mechanisms-and-transformers/index.html" },
+      appendixB,
+      appendixC,
+      appendixD,
     ],
   },
   11: {
@@ -246,6 +239,10 @@ export const moduleExtras: Record<number, ModuleExtras> = {
     bookChapters: [
       { label: "Ch. 17 · Prompting, Retrieval, PEFT, and Quantization", url: "https://shakeri-lab.github.io/dl-book/chapters/part5/17-peft-quantization.html" },
       { label: "Ch. 18 · Alignment and RL Fine-Tuning", url: "https://shakeri-lab.github.io/dl-book/chapters/part5/18-alignment.html" },
+      appendixB,
+      appendixC,
+      appendixD,
+      appendixE,
     ],
   },
   12: {
@@ -263,6 +260,11 @@ export const moduleExtras: Record<number, ModuleExtras> = {
     bookChapters: [
       { label: "Ch. 19 · Generative Models: From Codes to Samples", url: "https://shakeri-lab.github.io/dl-book/chapters/part5/19-generative.html" },
       { label: "Ch. 20 · Multimodal Learning: One Space, Two Views", url: "https://shakeri-lab.github.io/dl-book/chapters/part5/20-multimodal.html" },
+      appendixA,
+      appendixB,
+      appendixC,
+      appendixD,
+      appendixE,
     ],
   },
 }

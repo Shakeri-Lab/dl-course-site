@@ -1,6 +1,6 @@
 name: Link Check
 
-# Weekly sweep of every external link the site ships (D2L sections, arXiv papers,
+# Weekly sweep of every external link the site ships (course-book chapters, arXiv papers,
 # Colab notebooks, YouTube embeds). Opens/updates an issue when links rot.
 on:
   schedule:

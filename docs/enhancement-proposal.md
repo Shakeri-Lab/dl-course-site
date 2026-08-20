@@ -38,7 +38,7 @@ slide sources exist in `6050/LaTeX/`. A public learner landing on Module 2 gets 
 and a Colab link with no objectives, no context, and no path forward.
 
 The proposal below matches your stated priorities: **public learners first, one
-consolidated learning path per module (D2L as the spine), evergreen maintenance over
+consolidated learning path per module (the assigned text as the spine), evergreen maintenance over
 semester deadlines.** Phases are independent; each ends in a deployable state.
 
 ---
@@ -56,7 +56,7 @@ pass (accuracy / pedagogy / prioritization critics).
 - **Architecture**: Next.js 15 static export → GitHub Pages via Actions; clean separation
   of data (`module-data.ts`) and presentation (`module-template.tsx`); 109 tracked files.
 - **Content integrity**: 27/27 videos live on @hemanshakeri8145; 20+ Colabs accessible;
-  28+ paper links valid; D2L links valid. Zero broken links.
+  course-book and paper links valid. Zero broken links.
 - **UX fundamentals**: responsive, dark mode, breadcrumb + module dropdown + prev/next
   pager, custom 404, correct heading hierarchy, focus styles, aria labels.
 - **Rich exemplar modules**: 11 and 12 show the target format — per-lecture slides PDF,
@@ -79,7 +79,7 @@ pass (accuracy / pedagogy / prioritization critics).
 | 11 | **GitHub repo metadata empty** (no description/homepage/topics on any course repo); README is template boilerplate with `your-username` placeholder links | `gh api` shows `topics: []`, `homepage: null` | GitHub search surface wasted; README misleads collaborators |
 | 12 | **Repo/site hygiene debris** | 2 MB `logo square.jpeg` at repo root; `Syllabus.tex` duplicated in site repo; v0 `placeholder-*.{png,svg,jpg}` shipped in `public/`; 11 MB `12.1 Multimodal Leaning.pdf`; empty leftover `app/module/[id]/` dir; footer says © 2025; ~8 unused top-level deps (recharts, embla-carousel, zod, cmdk, react-hook-form, @hookform/resolvers, sonner, date-fns) plus unused radix packages behind ~40 dead `components/ui/*` files | Repo weight, build time, professionalism |
 | 13 | **Accessibility gaps**: no skip-to-content link, no `prefers-reduced-motion` handling, dark mode ignores OS preference (`enableSystem={false}`) | `app/layout.tsx:64`, `globals.css` | WCAG 2.1 AA misses; needless friction |
-| 14 | **D2L references are plain strings** ("D2L: 2.3; 3.1.4; 4.1") | `module-data.ts` `d2lReference` | The canonical textbook is a manual navigation away — works against the consolidation goal |
+| 14 | **Reading references were unstructured strings** | Historical module data | Manual navigation worked against the consolidation goal |
 
 Refuted during verification (no action needed): "dl-course repo staleness breaks the
 site" — module content is self-contained in the site repo.
@@ -101,12 +101,11 @@ Content-ops observations (local, not site):
 
 ## 3. The proposal
 
-> **July 2026 update:** this document records the site's original design decision,
-> when D2L was the canonical reading. Reviewed chapters from the course's own book are
-> now the primary readings through a plural `bookChapters` mapping; D2L remains an
-> alternative. The July 15 course-alignment pass completed the primary course-book
-> route across all twelve modules, including the experimentation and autoencoder
-> interludes; slides and papers remain parallel resources rather than stub fallbacks.
+> **August 2026 update:** this document records the site's original design decision,
+> when an external textbook was the canonical reading. The course's own book is now the
+> single canonical route through a plural `bookChapters` mapping. The August 20 alignment
+> pass synchronized all twelve modules with the rolling book build, including the three
+> interludes and five reference appendices; slides and papers remain parallel resources.
 
 ### Guiding principles (from your constraints)
 
@@ -114,10 +113,9 @@ Content-ops observations (local, not site):
    semester logistics. Anything cohort-specific (deadlines, Gradescope, Canvas) stays in
    Canvas; the site stays evergreen.
 2. **One learning path per module — no fragmentation.** The module page is the *only*
-   hub: watch → read → self-check → code. Reviewed chapters from the course's own book
-   are the primary reading, with several chapters linked when the structures do not map
-   one-to-one. D2L remains a clearly labeled alternative; slides and primary-source
-   links provide parallel treatments where they add value.
+   hub: watch → read → self-check → code. The course book is the canonical reading,
+   with several chapters, interludes, and appendices linked when the structures do not
+   map one-to-one. Slides and primary-source links add parallel treatments where useful.
 3. **Evergreen.** Prioritize by impact; every phase leaves the site deployable; prefer
    features with near-zero ongoing maintenance.
 
@@ -170,14 +168,10 @@ set the target after measuring, don't pre-commit to a number).
     can start as your gut estimate ("≈6 h: 2 video + 2 reading + 2 coding") and be
     corrected by analytics later. The `hidden` flag replaces the delete-the-link-each-
     semester pattern, preserving history.
-12. **D2L links, honestly scoped.** The reference strings are inconsistent ("2.3;
-    3.1.4", "Ch. 7", "Chapter 11 up to 11.5") and d2l.ai has stable URLs per *section*
-    page, not per subsection — so this is a hand-built lookup table, not a parser.
-    Pragmatic plan: normalize `d2lReference` into structured entries
-    `{ label: "3.1.4", url: <section page URL> }` linking at section level (subsection →
-    parent section page). ~30–40 distinct references across 10 modules; a few hours of
-    careful mapping, M effort. Add the d2l.ai URLs to the CI link checker (Phase 4) so
-    upstream drift gets caught.
+12. **Keep the course-book route structured and current.** Store each module's route as
+    `bookChapters` entries with explicit labels and stable URLs. Include the chapters,
+    interludes, and reference appendices listed on the live book homepage, then cover
+    those URLs in CI so publication changes cannot silently break the course path.
 13. **Publish *your* slides for Modules 1–10 — copyright-aware.** Do not blanket-publish
     the local PDFs: Module folders mix your decks with third-party materials (Nielsen
     book chapter, Kleinberg/Nguyen papers, etc.) that can't be rehosted. The publishable
@@ -193,14 +187,14 @@ set the target after measuring, don't pre-commit to a number).
     watch → read → **self-check** → code loop *inside the same hub* — depth without
     fragmentation.
 15. **Even out sparse modules (1–7)** to the same minimum: objectives, 2–3 sentence
-    framing, D2L links, per-module prerequisite note ("Builds on Modules 1–3"), lecture
+    framing, course-book links, per-module prerequisite note ("Builds on Modules 1–3"), lecture
     Colabs, homework entry, self-check. Label the intentionally shared notebooks
     explicitly ("Shared notebook for Modules 2–3" — M2/M3 share one Colab URL, M4/M5
     share another) so the reuse reads as design, not error.
 16. **Homepage as the front door.** Derive module cards from `module-data.ts` (delete
     the duplicate array in `app/page.tsx`); hero gets: 2–3 sentence course pitch,
-    instructor line (photo, one-line bio, lab link), YouTube playlist button, D2L
-    textbook callout, and **two equal CTAs: "Start Here" and "Module 1"**.
+    instructor line (photo, one-line bio, lab link), YouTube playlist button, course-book
+    callout, and **two equal CTAs: "Start Here" and "Module 1"**.
 17. **A `/start-here` page**: what this course is, prerequisites (linear algebra,
     calculus, Python) with the `0- Recap` materials as "Module 0", how to use the course
     (watch → read → self-check → code), suggested pacing (**"~1–2 weeks per module"** —
@@ -217,10 +211,10 @@ set the target after measuring, don't pre-commit to a number).
 *Done when: Modules 10–12 (+ Module 3's ablation methodology) have web-native notes, and
 site search works.*
 
-20. **Notes only where D2L is thin.** Convert the relevant LaTeX notes for Modules 10–12
+20. **Notes where the course book needs course-specific depth.** Convert the relevant LaTeX notes for Modules 10–12
     and the Module 3 ablation-methodology material (your original content) to web pages
     with build-time KaTeX (`remark-math` + `rehype-katex`; stays fully static). For
-    Modules 1–9, resist the urge: D2L + your slides is the consolidated path.
+    Modules 1–9, resist the urge: the course book plus your slides is the consolidated path.
 21. **Client-side search** with Pagefind (runs post-build over the static export; zero
     runtime cost). Caveat: it indexes page text, not PDFs — which is fine once
     objectives/self-checks/notes exist as HTML. Don't bother before Phase 2 lands.
@@ -238,7 +232,7 @@ site search works.*
     installs/builds; bundle effect is modest (tree-shaking already helps) — this is
     hygiene, not perf.
 25. **CI**: bump Node 18 → 20/22; try dropping `--legacy-peer-deps`; add a link-checker
-    step (lychee) covering external links *and* the d2l.ai map; add a Lighthouse CI
+    step (lychee) covering external links *and* the course-book map; add a Lighthouse CI
     budget so the 6 MB-logo class of regression can't recur.
 26. **Small fixes**: footer year (auto from build date, plus "Content current as of
     <semester>"); `enableSystem` for dark mode; skip-to-content link;
@@ -283,7 +277,7 @@ site search works.*
 | P0 | GitHub repo metadata + honest README | Med | S–M |
 | P0 | One YouTube playlist + video descriptions ↔ site | High | S (manual) |
 | P1 | ModuleData: objectives, estimatedTime, homework `hidden` flag | High | M |
-| P1 | D2L section-link map (hand-built, ~30–40 refs) | High | M |
+| P1 | Course-book route map (chapters, interludes, appendices) | High | M |
 | P1 | Compile + publish *your* beamer decks for M1–10 (copyright-aware; compress) | High | M–L |
 | P1 | Self-checks from quiz .tex bank (per module, `<details>` + KaTeX) | High | M |
 | P1 | Even out Modules 1–7 + label shared notebooks + prereq notes | High | M |
@@ -294,7 +288,7 @@ site search works.*
 | P2 | Pagefind search (after Phase 2 content exists) | Med | S–M |
 | P2 | GitHub Discussions feedback channel; /cite page | Med | S |
 | P3 | Dependency/component prune | Med | S |
-| P3 | CI: Node bump, lychee link check (incl. d2l map), Lighthouse budget | Med | S–M |
+| P3 | CI: Node bump, lychee link check (incl. course-book map), Lighthouse budget | Med | S–M |
 | P3 | A11y fixes, footer year/"current as of", dark-mode system pref, llms.txt | Low–Med | S |
 | P3 | Licensing clarity; semester tags + CHANGELOG | Low | S |
 

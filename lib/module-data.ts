@@ -40,7 +40,6 @@ export type ModuleData = {
   metadata: { title: string; description: string }
   lectures: Lecture[]
   resourceTitle?: string
-  d2lReference?: string
   resourceDescription?: string
   homeworkDescription?: string
   colabLinks?: ColabLink[]
@@ -67,7 +66,6 @@ export const modules: Record<number, ModuleData> = {
         videoId: "WOFb8EKAy7I",
       },
     ],
-    d2lReference: "2.3; 3.1.4; 4.1; 5.1; 12.4",
     resourceDescription:
       "These Colab notebooks contain the lecture codes demonstrated in class and help you with the homework 1. Read the instructions at the top and run the cells in order.",
     colabLinks: [
@@ -92,7 +90,6 @@ export const modules: Record<number, ModuleData> = {
         videoId: "MKh0OtgrVHQ",
       },
     ],
-    d2lReference: "2.4; 2.5; 5.3",
     resourceDescription:
       "The Colab notebook contains the lecture code for Module 2 (backpropagation and PyTorch basics). Follow along by running the cells in order.",
     colabLinks: [
@@ -122,7 +119,6 @@ export const modules: Record<number, ModuleData> = {
         videoId: "XdzQ5C5NSBw",
       },
     ],
-    d2lReference: "3.6–3.7; 12; 19",
     resourceDescription:
       "The Colab notebook contains the lecture code for Module 3 (optimization and training MLPs). Run the cells sequentially as demonstrated in the lecture.",
     colabLinks: [
@@ -146,7 +142,6 @@ export const modules: Record<number, ModuleData> = {
         videoId: "Dprs8jH13GA",
       },
     ],
-    d2lReference: "5.6; Ch. 7; 8.1; 14.1",
     resourceDescription:
       "The Colab notebook includes the lecture code for Module 4 (CNNs and a first PyTorch CNN). Use it to reproduce the code demos from lecture.",
     colabLinks: [
@@ -166,7 +161,6 @@ export const modules: Record<number, ModuleData> = {
         videoId: "-R64Wg5Sgsc",
       },
     ],
-    d2lReference: "5.4.1; 8.2–8.6; 14.2",
     resourceDescription:
       "The Colab notebook contains the lecture code for Module 5 (advanced CNN architectures and transfer learning). Use it to follow along the in-class demos.",
     colabLinks: [
@@ -194,7 +188,6 @@ export const modules: Record<number, ModuleData> = {
         videoId: "7faFnaelya0",
       },
     ],
-    d2lReference: "10.6; 14.10; 14.11",
     resourceDescription:
       "The Colab notebook contains the lecture code for Module 6 (encoder–decoder architectures). Use it to follow along with the in-class demos.",
     colabLinks: [
@@ -222,7 +215,6 @@ export const modules: Record<number, ModuleData> = {
         videoId: "Az0K6fyf-X4",
       },
     ],
-    d2lReference: "9; 10",
     colabLinks: [
       { label: "Open Colab Notebook", url: "https://colab.research.google.com/drive/1RizCNioTF-6u5F-BopXPBefOReV3rSgu?usp=sharing" },
       { label: "Useful decorators in PyTorch (Colab)", url: "https://colab.research.google.com/drive/102yn6vsljzZyx8ypgbqH1t-6EJZzKltK?usp=sharing", variant: "outline" },
@@ -250,7 +242,6 @@ export const modules: Record<number, ModuleData> = {
       },
     ],
     resourceTitle: "📚 Resources & Live Coding",
-    d2lReference: "Chapter 11 up to 11.5",
     researchLensReadings: [
       {
         label: "Wang, Shi & Fox, “Test-Time Regression” (2025)",
@@ -288,7 +279,6 @@ export const modules: Record<number, ModuleData> = {
         videoId: "tG8b2eNm6Gg",
       },
     ],
-    d2lReference: "Chapter 11",
     researchLensReadings: [
       {
         label: "Wang, Shi & Fox, “Test-Time Regression” (2025)",
@@ -373,7 +363,6 @@ export const modules: Record<number, ModuleData> = {
       },
     ],
     resourceTitle: "📚 Resources, Readings & Colab",
-    d2lReference: "Chapter 11",
     readings: [
       { label: "Vision Transformer (ViT)", url: "https://arxiv.org/abs/2010.11929" },
       { label: "DeiT", url: "https://arxiv.org/abs/2012.12877" },

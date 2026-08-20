@@ -21,15 +21,16 @@ const prerequisites = [
 ]
 
 const refreshers = [
-  { label: "D2L Preliminaries (Ch. 2): linear algebra, calculus, probability", url: "https://d2l.ai/chapter_preliminaries/index.html" },
+  { label: "Course book Appendix A — Linear Algebra and the SVD", url: "https://shakeri-lab.github.io/dl-book/chapters/appendices/a1-linear-algebra.html" },
+  { label: "Course book Appendix B — Tensors in Practice", url: "https://shakeri-lab.github.io/dl-book/chapters/appendices/a2-tensors.html" },
+  { label: "Course book Appendix E — Statistical Learning Contracts", url: "https://shakeri-lab.github.io/dl-book/chapters/appendices/a5-statistical-learning.html" },
   { label: "3Blue1Brown — Essence of Linear Algebra (visual intuition)", url: "https://www.3blue1brown.com/topics/linear-algebra" },
   { label: "3Blue1Brown — Neural Networks series", url: "https://www.3blue1brown.com/topics/neural-networks" },
-  { label: "Python/NumPy refresher (D2L appendix style notebooks)", url: "https://d2l.ai/chapter_preliminaries/ndarray.html" },
 ]
 
 const loop = [
   { step: "Watch", detail: "the module's lecture videos (most are board lectures — have pen and paper ready)." },
-  { step: "Read", detail: "the linked course-book chapters first, then use the alternative readings where useful." },
+  { step: "Read", detail: "the linked course-book chapters, interludes, and reference appendices in the listed order." },
   { step: "Code", detail: "open the module's Colab notebook and run/modify the lecture code yourself." },
 ]
 
@@ -109,19 +110,18 @@ export default function StartHerePage() {
               ))}
             </ol>
             <p className="text-slate-600 dark:text-slate-300">
-              Reviewed chapters from the free{" "}
+              The free{" "}
               <a
                 href={siteConfig.courseBook.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[#002862] underline decoration-[#FFBA69]/70 underline-offset-4 hover:text-[#001a44] dark:text-[#7EB5F0] dark:hover:text-[#a8d0ff]"
               >
-              course book
+                course book
               </a>{" "}
-              are the primary reading, and a module may link several chapters because the two
-              structures do not map one-to-one. The exact D2L sections remain as alternatives.
-              The linked course-book route now spans every module; slides and papers remain
-              available when a second treatment is useful.
+              is the canonical reading. Its current route spans all 12 modules and pairs core
+              chapters and interludes with the reference appendices needed for each topic. Slides
+              and primary-source papers remain available when a second treatment is useful.
             </p>
             <p className="text-slate-600 dark:text-slate-300">
               <span className="font-semibold text-slate-800 dark:text-slate-100">Suggested pacing:</span>{" "}

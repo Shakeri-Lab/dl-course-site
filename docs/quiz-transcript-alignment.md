@@ -8,8 +8,8 @@ comparing Modules 1–10 against auto-caption transcripts. The current bank cont
 
 Transcripts cover **only the videos**. The quizzes (drawn from the LaTeX quiz bank)
 test the **whole module**: video, assigned course-book or alternative reading, and
-slides. In the original audit, D2L was the assigned text, so each apparent gap was
-cross-checked against those then-current sections.
+slides. In the original audit, an external textbook was assigned, so each apparent gap
+was cross-checked against those then-current sections.
 
 ## Verdict
 
