@@ -21,7 +21,7 @@ import { siteConfig } from "@/lib/site-config"
 export const metadata = pageMetadata({
   title: "Syllabus",
   description:
-    "Spring 2026 syllabus for DS 6050 Deep Learning at UVA: course structure, weekly topics, assignments, project milestones, grading, and academic integrity.",
+    "Spring 2026 syllabus for DS 6050 Deep Learning at UVA: weekly topics, five 100-point assignments, the one-drop homework policy, project milestones, and grading.",
   path: "/syllabus/",
 })
 
@@ -71,30 +71,35 @@ const assignments = [
   {
     name: "Homework 1",
     modules: "Modules 1–2",
+    points: "100 points",
     focus: "Foundations & backpropagation",
     detail: "Linear models, gradients, and early autograd practice. The supporting Colab is on Module 1.",
   },
   {
     name: "Homework 2",
     modules: "Modules 4–5",
+    points: "100 points",
     focus: "Optimization & CNNs",
     detail: "Training stability, convolutional stacks, and transfer learning. The supporting Colab is on Module 5.",
   },
   {
     name: "Homework 3",
     modules: "Module 7",
+    points: "100 points",
     focus: "Sequence-to-sequence learning",
     detail: "Implement and study a recurrent sequence-to-sequence model in the provided Colab.",
   },
   {
     name: "Homework 4",
     modules: "Module 8",
+    points: "100 points",
     focus: "Attention",
     detail: "Add cross-attention to a GRU-based sequence-to-sequence model.",
   },
   {
     name: "Homework 5",
     modules: "Module 10",
+    points: "100 points",
     focus: "Transformer 2.0",
     detail: "Integrate the course's Transformer concepts in the final programming assignment.",
   },
@@ -107,7 +112,11 @@ const projectMilestones = [
 ]
 
 const grading = [
-  { component: "Programming assignments", weight: "40%", detail: "Sum of five assignment grades" },
+  {
+    component: "Programming assignments",
+    weight: "40%",
+    detail: "Five assignments, each out of 100; grade is the average of your four highest scores (one automatic drop)",
+  },
   { component: "Group project", weight: "40%", detail: "Proposal, checkpoint, and final deliverables" },
   { component: "Participation", weight: "20%", detail: "Canvas quizzes and course engagement" },
 ]
@@ -249,15 +258,91 @@ export default function SyllabusPage() {
           <div className="mt-3 grid gap-3 md:grid-cols-2">
             {assignments.map((assignment) => (
               <div key={assignment.name} className="min-w-0 rounded-2xl border border-white/40 bg-white/70 p-4 dark:border-white/10 dark:bg-gray-900/70">
-                <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex flex-wrap items-start justify-between gap-2">
                   <p className="font-semibold text-slate-900 dark:text-white">{assignment.name}</p>
-                  <Badge variant="outline">{assignment.modules}</Badge>
+                  <div className="flex flex-wrap justify-end gap-2">
+                    <Badge variant="outline">{assignment.modules}</Badge>
+                    <Badge className="border-[#FFBA69]/70 bg-[#FFBA69]/20 text-[#6b3b00] hover:bg-[#FFBA69]/20 dark:text-[#ffd9a8]">
+                      {assignment.points}
+                    </Badge>
+                  </div>
                 </div>
                 <p className="mt-2 text-sm font-semibold text-[#174f95] dark:text-[#7EB5F0]">{assignment.focus}</p>
                 <p className="mt-1 text-sm leading-relaxed text-slate-600 dark:text-slate-300">{assignment.detail}</p>
               </div>
             ))}
           </div>
+
+          <section
+            className="mt-5 overflow-hidden rounded-3xl border border-[#FFBA69]/60 bg-white/75 shadow-[0_24px_60px_-48px_rgba(0,40,98,0.9)] dark:border-[#FFBA69]/25 dark:bg-gray-900/75"
+            aria-labelledby="homework-policy-heading"
+          >
+            <div className="bg-[radial-gradient(circle_at_top_right,rgba(255,186,105,0.28),transparent_48%),linear-gradient(135deg,rgba(0,40,98,0.08),rgba(255,255,255,0.45))] p-5 dark:bg-[radial-gradient(circle_at_top_right,rgba(255,186,105,0.14),transparent_48%),linear-gradient(135deg,rgba(46,119,209,0.13),rgba(15,23,42,0.25))] sm:p-6">
+              <Badge className="border-[#FFBA69]/70 bg-[#FFBA69]/20 text-[#6b3b00] hover:bg-[#FFBA69]/20 dark:text-[#ffd9a8]">
+                Homework policy
+              </Badge>
+              <h3 id="homework-policy-heading" className="mt-3 text-xl font-bold text-slate-950 dark:text-white sm:text-2xl">
+                One automatic drop, equal weight
+              </h3>
+              <p className="mt-3 max-w-4xl text-base leading-relaxed text-slate-700 dark:text-slate-200">
+                Every homework is graded out of <strong>100 points</strong>, so all five carry exactly the same weight.
+                Your homework grade is the <strong>average of your four highest scores out of five</strong>: one homework
+                is dropped for everyone, automatically.
+              </p>
+            </div>
+
+            <div className="grid gap-px bg-slate-200/80 dark:bg-white/10 md:grid-cols-3">
+              <div className="bg-white/80 p-5 dark:bg-gray-900/90">
+                <p className="font-semibold text-slate-900 dark:text-white">The drop is the skip</p>
+                <p className="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+                  A skipped homework is scored 0 and becomes your drop. If you submit all five, your weakest score is
+                  dropped. Everyone is graded on four assignments; there is no separate skip plus drop.
+                </p>
+              </div>
+              <div className="bg-white/80 p-5 dark:bg-gray-900/90">
+                <p className="font-semibold text-slate-900 dark:text-white">Nothing is submitted late</p>
+                <p className="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+                  Work not submitted by the deadline is scored 0 and becomes your drop. You do not need to notify us,
+                  apologize, or make a request.
+                </p>
+              </div>
+              <div className="bg-white/80 p-5 dark:bg-gray-900/90">
+                <p className="font-semibold text-slate-900 dark:text-white">Documented exceptions</p>
+                <p className="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+                  A second missed homework requires instructor or TA approval before the deadline. If a sudden emergency
+                  prevents advance notice, contact us as soon as you are able, with documentation. An approved absence is
+                  removed from the calculation, and your automatic drop still applies.
+                </p>
+              </div>
+            </div>
+
+            <div className="border-t border-slate-200/80 bg-[#002862]/5 p-5 dark:border-white/10 dark:bg-[#7EB5F0]/10 sm:p-6">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#174f95] dark:text-[#7EB5F0]">
+                Same benefit for everyone
+              </p>
+              <p className="mt-2 text-base leading-relaxed text-slate-800 dark:text-slate-100">
+                All five count equally. No homework is worth more than another, and <strong>there is nothing to gain by
+                choosing which one to skip.</strong>
+              </p>
+              <div className="mt-4 grid gap-3 lg:grid-cols-2">
+                <div className="min-w-0 rounded-2xl border border-slate-200/80 bg-white/70 p-4 dark:border-white/10 dark:bg-gray-950/35">
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500 dark:text-slate-400">One skipped</p>
+                  <p className="mt-1 break-words font-mono text-sm font-semibold text-slate-800 dark:text-slate-100">
+                    92, 88, 0, 95, 90 → 91.25
+                  </p>
+                </div>
+                <div className="min-w-0 rounded-2xl border border-slate-200/80 bg-white/70 p-4 dark:border-white/10 dark:bg-gray-950/35">
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500 dark:text-slate-400">All submitted</p>
+                  <p className="mt-1 break-words font-mono text-sm font-semibold text-slate-800 dark:text-slate-100">
+                    92, 88, 71, 95, 90 → 91.25
+                  </p>
+                </div>
+              </div>
+              <p className="mt-3 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
+                In both examples, the lowest score is removed and the remaining four scores are averaged.
+              </p>
+            </div>
+          </section>
 
           <div className="mt-5 grid gap-4 lg:grid-cols-2">
             <Card className="border-white/40 bg-white/70 dark:border-white/10 dark:bg-gray-900/70">
@@ -308,7 +393,9 @@ export default function SyllabusPage() {
             <GraduationCap className="h-6 w-6 text-[#002862] dark:text-[#7EB5F0]" aria-hidden="true" />
             Grading
           </h2>
-          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Late work and extensions follow standard MSDS practice.</p>
+          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+            Homework deadlines, the automatic drop, and excused absences follow the homework policy above.
+          </p>
           <div className="mt-5 grid gap-3 sm:grid-cols-3">
             {grading.map((item) => (
               <div key={item.component} className="rounded-2xl border border-white/40 bg-white/70 p-5 dark:border-white/10 dark:bg-gray-900/70">
