@@ -29,5 +29,5 @@ export const siteConfig = {
   // Set to your GoatCounter code (e.g. "dl6050") to enable privacy-friendly analytics.
   // Sign up free at https://www.goatcounter.com — no cookies, no consent banner needed.
   goatcounter: "",
-  contentCurrentAsOf: "Spring 2026",
+  contentCurrentAsOf: "Fall 2026",
 }

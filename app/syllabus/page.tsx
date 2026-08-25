@@ -21,7 +21,7 @@ import { siteConfig } from "@/lib/site-config"
 export const metadata = pageMetadata({
   title: "Syllabus",
   description:
-    "Spring 2026 syllabus for DS 6050 Deep Learning at UVA: weekly topics, five 100-point assignments, the one-drop homework policy, project milestones, and grading.",
+    "Fall 2026 syllabus for DS 6050 Deep Learning at UVA: weekly topics, five 100-point assignments, the one-drop homework policy, project milestones, and grading.",
   path: "/syllabus/",
 })
 
