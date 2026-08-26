@@ -164,7 +164,7 @@ export default function SyllabusPage() {
             </div>
             <div className="rounded-2xl border border-white/60 bg-white/65 p-4 dark:border-white/10 dark:bg-white/5">
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">Delivery</p>
-              <p className="mt-2 font-semibold text-slate-900 dark:text-white">Asynchronous</p>
+              <p className="mt-2 font-semibold text-slate-900 dark:text-white">Weekly live lectures</p>
               <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">Weekly lectures and readings on Canvas</p>
             </div>
             <div className="rounded-2xl border border-white/60 bg-white/65 p-4 dark:border-white/10 dark:bg-white/5">
