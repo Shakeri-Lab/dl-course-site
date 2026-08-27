@@ -293,7 +293,7 @@ export function ModuleTemplate({ data }: { data: ModuleData }) {
               {extras?.bookChapters && extras.bookChapters.length > 0 && (
                 <div className="space-y-1 text-slate-600 dark:text-slate-300">
                   <p className="font-medium text-slate-800 dark:text-slate-100">
-                    Course book · current module route
+                    Required reading · course book
                   </p>
                   <ul className="list-disc pl-6 space-y-1">
                     {extras.bookChapters.map((chapter) => (

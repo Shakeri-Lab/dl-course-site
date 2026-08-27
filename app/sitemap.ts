@@ -5,7 +5,7 @@ import { siteConfig } from "@/lib/site-config"
 export const dynamic = "force-static"
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const lastModified = new Date("2026-07-27")
+  const lastModified = new Date("2026-08-27")
   const staticRoutes = ["", "/start-here", "/syllabus", "/resources", "/setup", "/faq"].map((route) => ({
     url: `${siteConfig.url}${route}/`,
     lastModified,
