@@ -92,7 +92,7 @@ export const moduleExtras: Record<number, ModuleExtras> = {
     bookChapters: [
       { label: "Ch. 4 · Training: Loss and SGD", url: "https://shakeri-lab.github.io/dl-book/chapters/part1/04-training-loss-sgd.html" },
       { label: "Ch. 6 · Generalization and Inductive Bias", url: "https://shakeri-lab.github.io/dl-book/chapters/part1/06-generalization-inductive-bias.html" },
-      { label: "Interlude · Who Trains the Trainer? Learning by Experiment", url: "https://shakeri-lab.github.io/dl-book/chapters/interludes/learning-by-experiment.html" },
+      { label: "Ch. 7 · Interlude: Who Trains the Trainer? Learning by Experiment", url: "https://shakeri-lab.github.io/dl-book/chapters/interludes/learning-by-experiment.html" },
       appendixB,
       appendixD,
       appendixE,
@@ -110,8 +110,8 @@ export const moduleExtras: Record<number, ModuleExtras> = {
     prereq: "Builds on Modules 1–3",
     bookChapters: [
       { label: "Ch. 6 · Generalization and Inductive Bias", url: "https://shakeri-lab.github.io/dl-book/chapters/part1/06-generalization-inductive-bias.html" },
-      { label: "Ch. 7 · Filters and Convolution", url: "https://shakeri-lab.github.io/dl-book/chapters/part2/07-filters-convolution.html" },
-      { label: "Ch. 8 · CNNs: Making Filters Learnable", url: "https://shakeri-lab.github.io/dl-book/chapters/part2/08-cnn.html" },
+      { label: "Ch. 8 · Filters and Convolution", url: "https://shakeri-lab.github.io/dl-book/chapters/part2/07-filters-convolution.html" },
+      { label: "Ch. 9 · CNNs: Making Filters Learnable", url: "https://shakeri-lab.github.io/dl-book/chapters/part2/08-cnn.html" },
       appendixB,
       appendixD,
       appendixE,
@@ -128,7 +128,7 @@ export const moduleExtras: Record<number, ModuleExtras> = {
     estimatedTime: "≈6 h · 2 h video · 2 h reading · 2 h coding",
     prereq: "Builds on Modules 1–4",
     bookChapters: [
-      { label: "Ch. 9 · Modern CNNs and Transfer Learning", url: "https://shakeri-lab.github.io/dl-book/chapters/part2/09-modern-cnns-transfer.html" },
+      { label: "Ch. 10 · Modern CNNs and Transfer Learning", url: "https://shakeri-lab.github.io/dl-book/chapters/part2/09-modern-cnns-transfer.html" },
       appendixB,
       appendixC,
       appendixD,
@@ -144,7 +144,7 @@ export const moduleExtras: Record<number, ModuleExtras> = {
     estimatedTime: "≈5 h · 1.5 h video · 1.5 h reading · 2 h coding",
     prereq: "Builds on Modules 1–5",
     bookChapters: [
-      { label: "Interlude · Autoencoders—Making PCA Learnable", url: "https://shakeri-lab.github.io/dl-book/chapters/interludes/making-pca-learnable.html" },
+      { label: "Ch. 11 · Interlude: Autoencoders—Making PCA Learnable", url: "https://shakeri-lab.github.io/dl-book/chapters/interludes/making-pca-learnable.html" },
       appendixA,
       appendixB,
       appendixD,
@@ -162,8 +162,8 @@ export const moduleExtras: Record<number, ModuleExtras> = {
     estimatedTime: "≈7 h · 2.5 h video · 2 h reading · 2.5 h coding",
     prereq: "Builds on Modules 1–6",
     bookChapters: [
-      { label: "Ch. 10 · Sequences and Recurrence", url: "https://shakeri-lab.github.io/dl-book/chapters/part3/10-sequences-rnn.html" },
-      { label: "Ch. 11 · Encoder–Decoder, Teacher Forcing, Beam Search", url: "https://shakeri-lab.github.io/dl-book/chapters/part3/11-encoder-decoder.html" },
+      { label: "Ch. 12 · Sequences and Recurrence", url: "https://shakeri-lab.github.io/dl-book/chapters/part3/10-sequences-rnn.html" },
+      { label: "Ch. 13 · Encoder–Decoder, Teacher Forcing, Beam Search", url: "https://shakeri-lab.github.io/dl-book/chapters/part3/11-encoder-decoder.html" },
       appendixB,
       appendixD,
     ],
@@ -179,8 +179,8 @@ export const moduleExtras: Record<number, ModuleExtras> = {
     estimatedTime: "≈6 h · 2 h video · 2 h reading · 2 h coding",
     prereq: "Builds on Modules 1–7",
     bookChapters: [
-      { label: "Ch. 12 · Kernel Regression", url: "https://shakeri-lab.github.io/dl-book/chapters/part4/12-kernel-regression.html" },
-      { label: "Ch. 13 · Attention: Making Similarity Learnable", url: "https://shakeri-lab.github.io/dl-book/chapters/part4/13-attention.html" },
+      { label: "Ch. 14 · Kernel Regression", url: "https://shakeri-lab.github.io/dl-book/chapters/part4/12-kernel-regression.html" },
+      { label: "Ch. 15 · Attention: Making Similarity Learnable", url: "https://shakeri-lab.github.io/dl-book/chapters/part4/13-attention.html" },
       appendixA,
       appendixB,
       appendixD,
@@ -197,8 +197,8 @@ export const moduleExtras: Record<number, ModuleExtras> = {
     estimatedTime: "≈6 h · 2 h video · 2 h reading · 2 h coding",
     prereq: "Builds on Modules 1–8",
     bookChapters: [
-      { label: "Ch. 14 · Self-Attention and the Transformer", url: "https://shakeri-lab.github.io/dl-book/chapters/part4/14-self-attention-transformer.html" },
-      { label: "Interlude · Attention as Test-Time Regression", url: "https://shakeri-lab.github.io/dl-book/chapters/interludes/attention-as-test-time-regression.html" },
+      { label: "Ch. 16 · Self-Attention and the Transformer", url: "https://shakeri-lab.github.io/dl-book/chapters/part4/14-self-attention-transformer.html" },
+      { label: "Ch. 17 · Interlude: Attention as Test-Time Regression", url: "https://shakeri-lab.github.io/dl-book/chapters/interludes/attention-as-test-time-regression.html" },
       appendixB,
       appendixC,
       appendixD,
@@ -217,8 +217,8 @@ export const moduleExtras: Record<number, ModuleExtras> = {
     estimatedTime: "≈6.5 h · 2 h video · 20 min frontier outline · 2 h reading · 2 h coding",
     prereq: "Builds on Modules 1–9",
     bookChapters: [
-      { label: "Ch. 15 · BERT and Pretraining", url: "https://shakeri-lab.github.io/dl-book/chapters/part4/15-bert-pretraining.html" },
-      { label: "Ch. 16 · Vision Transformers and Scaling", url: "https://shakeri-lab.github.io/dl-book/chapters/part4/16-vit-scaling.html" },
+      { label: "Ch. 18 · BERT and Pretraining", url: "https://shakeri-lab.github.io/dl-book/chapters/part4/15-bert-pretraining.html" },
+      { label: "Ch. 19 · Vision Transformers and Scaling", url: "https://shakeri-lab.github.io/dl-book/chapters/part4/16-vit-scaling.html" },
       appendixB,
       appendixC,
       appendixD,
@@ -237,8 +237,8 @@ export const moduleExtras: Record<number, ModuleExtras> = {
     estimatedTime: "≈7 h · 2 h video · 3 h reading · 2 h coding",
     prereq: "Builds on Modules 1–10",
     bookChapters: [
-      { label: "Ch. 17 · Prompting, Retrieval, PEFT, and Quantization", url: "https://shakeri-lab.github.io/dl-book/chapters/part5/17-peft-quantization.html" },
-      { label: "Ch. 18 · Alignment and RL Fine-Tuning", url: "https://shakeri-lab.github.io/dl-book/chapters/part5/18-alignment.html" },
+      { label: "Ch. 20 · Prompting, Retrieval, PEFT, and Quantization", url: "https://shakeri-lab.github.io/dl-book/chapters/part5/17-peft-quantization.html" },
+      { label: "Ch. 21 · Alignment and RL Fine-Tuning", url: "https://shakeri-lab.github.io/dl-book/chapters/part5/18-alignment.html" },
       appendixB,
       appendixC,
       appendixD,
@@ -258,8 +258,8 @@ export const moduleExtras: Record<number, ModuleExtras> = {
     estimatedTime: "≈8 h · 2.5 h video · 3 h reading · 2.5 h coding",
     prereq: "Builds on Modules 1–11",
     bookChapters: [
-      { label: "Ch. 19 · Generative Models: From Codes to Samples", url: "https://shakeri-lab.github.io/dl-book/chapters/part5/19-generative.html" },
-      { label: "Ch. 20 · Multimodal Learning: One Space, Two Views", url: "https://shakeri-lab.github.io/dl-book/chapters/part5/20-multimodal.html" },
+      { label: "Ch. 22 · Generative Models: From Codes to Samples", url: "https://shakeri-lab.github.io/dl-book/chapters/part5/19-generative.html" },
+      { label: "Ch. 23 · Multimodal Learning: One Space, Two Views", url: "https://shakeri-lab.github.io/dl-book/chapters/part5/20-multimodal.html" },
       appendixA,
       appendixB,
       appendixC,
