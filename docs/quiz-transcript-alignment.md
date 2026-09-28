@@ -48,7 +48,7 @@ These repairs resolve the two genuine misalignments in the original bank. The sy
 ## Reading-supported or deliberately adjacent items
 
 - **M1 universal approximation** is now reinforced by the compact-bump construction in course-book Chapter 3.
-- **M8 causal masking** is a deliberate preview of the decoder material formalized in the following module and course-book Chapter 11.
+- **M8 causal masking** is a deliberate preview of the decoder material formalized in the following module and course-book Chapter 13 (Encoder–Decoder).
 - **M9 $\sqrt{d_k}$ scaling** is derived in the preceding attention lecture and revisited in the assigned material.
 - **M10 T5 prefixes** assess the taught text-to-text principle; the prefixes are examples of task conditioning rather than a fixed vocabulary.
 
